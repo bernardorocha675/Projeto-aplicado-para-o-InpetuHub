@@ -13,7 +13,7 @@ Projeto acadêmico desenvolvido na disciplina de **Projeto Aplicado do UniSENAI*
 
 ## Versão atual
 
-**Versão 03 · pacote Java 3.0.0** — disponível na pasta [versão 03](vers%C3%A3o%2003). Inclui logs persistentes, diagnóstico e recuperação local de acessos e exibição opcional de senhas.
+**Versão 03** — disponível na pasta [versão 03](vers%C3%A3o%2003). Inclui logs persistentes, diagnóstico e recuperação local de acessos e exibição opcional de senhas.
 
 O handover técnico reúne arquitetura, operação, segurança, backup, testes e pendências para continuidade do projeto. A execução local foi validada; a implantação em produção permanece pendente.
 
