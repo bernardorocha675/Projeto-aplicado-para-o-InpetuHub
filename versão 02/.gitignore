@@ -1,0 +1,17 @@
+.env
+.env.local
+.tools
+data/
+target/
+*.log
+.DS_Store
+
+.secrets/
+backups/
+*.p12
+*.jks
+*.pem
+*.key
+*.zip
+*.db
+*.db.*

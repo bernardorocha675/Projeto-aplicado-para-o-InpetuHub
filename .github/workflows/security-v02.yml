@@ -1,0 +1,92 @@
+name: Segurança e compatibilidade da versão 02
+on:
+  push:
+    branches: ['main', 'security-v02']
+    paths: ['versão 02/**', '.github/**']
+  pull_request:
+    paths: ['versão 02/**', '.github/**']
+  workflow_dispatch:
+  schedule:
+    - cron: '17 9 * * 1'
+permissions:
+  contents: read
+jobs:
+  native:
+    name: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm, macos-15, macos-15-intel, windows-2025, windows-11-arm]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: versão 02
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - name: Configurar Linux e macOS
+        if: runner.os != 'Windows'
+        run: bash configurar.sh
+      - name: Configurar Windows
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: configurar.bat
+      - name: Verificar inicialização HTTP
+        run: python scripts/smoke.py
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verificar exclusão de dados privados
+        run: python 'versão 02/scripts/check_secrets.py'
+      - uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_COMMENTS: 'false'
+  dependencies:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: versão 02
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: mvn -B -ntp dependency:list -DincludeScope=runtime -DoutputFile=target/dependencies.txt
+      - run: python scripts/check_dependencies.py
+  codeql:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: github/codeql-action/init@24c54180a607b1449ed407dd24f251e4e9147c8d
+        with:
+          languages: java-kotlin
+          build-mode: manual
+          queries: security-extended
+      - run: mvn -B -ntp -DskipTests clean package
+        working-directory: versão 02
+      - uses: github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d
+        with:
+          category: /language:java-v02
