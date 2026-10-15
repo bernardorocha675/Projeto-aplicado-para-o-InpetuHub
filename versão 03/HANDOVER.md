@@ -52,3 +52,7 @@ Não habilite logs HTTP/SQL/SMTP externos, flags de depuração que imprimam con
 Não há coleta centralizada, alerta por email, painel de métricas nem trilha de arquivo inviolável. Quem controla o usuário do sistema pode ler/apagar os arquivos. A auditoria transacional no banco é a referência para operações confirmadas; arquivos são apoio operacional. Uma falha de disco/permissão em runtime pode impedir novas gravações e será sinalizada pelo Logback no terminal. Monitore espaço e permissões no ambiente de produção.
 
 A autenticação, CSRF, MFA, limites, TLS e regras de negócio vêm da versão 02. Não houve deploy. As condições de SMTP/TLS/MySQL e cobertura de navegador continuam exigindo validação no ambiente de uso. Evidências desta entrega em [docs/VALIDACAO.md](docs/VALIDACAO.md).
+
+## Correção de acesso e exibição de senha
+
+A versão 03 possui botão Mostrar/Ocultar senha nos formulários de senha. Para login inválido, consulte [ACESSOS.md](ACESSOS.md): os comandos `acessos.sh`/`acessos.bat` conferem o arquivo privado com o banco local e permitem recuperação explícita, com servidor parado e confirmação após backup. Não apagam reservas/cadastros, não imprimem credenciais e preservam perfil/MFA de contas existentes. Reiniciar normalmente continua sem redefinir senhas.

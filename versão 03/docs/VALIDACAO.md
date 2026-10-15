@@ -28,3 +28,11 @@ Os nove jobs concluíram com sucesso: Ubuntu 24.04 x64/ARM64, macOS 15 Apple Sil
 ## Limites
 
 Testes não substituem pentest nem verificação da infraestrutura de produção. Não houve deploy, uso de SMTP/certificado real nem testes gráficos em navegador. Rotação por tamanho é testada com limite menor para gerar arquivos compactados; não é necessário preencher 200 MB ou aguardar 14 dias. A retenção usa uma rotina serializada própria e é testada com relógio fixo, limites reduzidos e arquivos fictícios: exclui expirados/excedentes, preserva o ativo e a compactação recente. A rotação diária é simulada pelo relógio do Logback, sem alterar o computador. A limpeza automática de histórico do Logback foi desativada após o teste de rotações rápidas revelar remoção prematura de arquivos da data atual; a rotação e compactação continuam usando Logback. Disco cheio, permissões alteradas depois do início e encerramento abrupto exigem acompanhamento operacional.
+
+## Atualização: recuperação de acesso e senha visível
+
+Foi identificado no código o provisionamento único: contas copiadas após o primeiro início não entram no banco automaticamente. A mensagem da imagem é genérica; não comprova qual conta/arquivo existe no computador do colega. Não houve acesso àquela máquina.
+
+A correção adiciona comandos offline H2 para conferir e recuperar contas a partir do arquivo privado, com lock de instalação, confirmação explícita, transação e auditoria. Testes novos cobrem conta ausente, senha diferente, reativação, preservação de perfil/MFA/contas não listadas e rollback de falha parcial. O executor testa a cópia tardia em um banco real, cancelamento e login da conta recuperada.
+
+O botão Mostrar/Ocultar senha usa script local permitido pela CSP, não modifica o valor e volta a ocultar ao enviar/trocar de aba. Foi conferido por teste funcional JavaScript com DOM simulado e checagem de sintaxe, sem afirmar cobertura de navegador gráfico. Os testes nativos desta atualização serão registrados após a rodada.

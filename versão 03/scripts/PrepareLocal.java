@@ -49,6 +49,8 @@ class PrepareLocal {
     Files.createDirectories(secrets);
     protect(secrets);
     create(secrets.resolve("mfa.key"), secret(32) + "\n");
+    boolean generatedAccount =
+        !Files.exists(secrets.resolve("accounts.properties"), LinkOption.NOFOLLOW_LINKS);
     create(
         secrets.resolve("accounts.properties"),
         "account.1.name=Gestor local\naccount.1.login=gestor-"
@@ -63,5 +65,11 @@ class PrepareLocal {
     protect(Path.of("data"));
     System.out.println(
         "Configuração privada preparada em .secrets/. Nenhuma credencial foi impressa.");
+    System.out.println(
+        generatedAccount
+            ? "Sem pacote privado: foi criado um administrador aleatório para este computador. As"
+                  + " contas da equipe não vêm do GitHub. Leia ACESSOS.md antes do primeiro início."
+            : "Arquivo privado de contas preservado. Em banco já iniciado, copiar este arquivo não"
+                  + " troca as senhas automaticamente; consulte ACESSOS.md.");
   }
 }
