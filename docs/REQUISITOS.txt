@@ -1,0 +1,1389 @@
+Quero que você desenvolva um MVP completo e funcional de um sistema web para o InPETU Hub.
+
+Antes de começar a programar, leia TODO este prompt e planeje a arquitetura, o banco de dados, as páginas e os fluxos. Não simplifique requisitos sem necessidade e não invente funcionalidades que não foram solicitadas.
+
+============================================================
+1. CONTEXTO DO PROJETO
+============================================================
+
+Somos estudantes desenvolvendo um projeto aplicado para o InPETU Hub.
+
+O projeto terá duas interfaces integradas:
+
+1. SITE PÚBLICO / AGENDA
+   - utilizado por empreendedores, empresas e instituições;
+   - permite consultar a agenda;
+   - consultar disponibilidade;
+   - selecionar data e horário;
+   - selecionar espaço;
+   - solicitar uma reserva.
+
+2. SISTEMA INTERNO / CRM
+   - utilizado pelos colaboradores do InPETU Hub;
+   - protegido por login;
+   - recebe as solicitações realizadas pelo site público;
+   - permite aprovar, recusar ou alterar uma reserva;
+   - permite consultar empreendedores;
+   - permite visualizar histórico;
+   - permite consultar reservas;
+   - mantém o CRM integrado às reservas.
+
+As duas interfaces devem usar o MESMO backend e o MESMO banco de dados.
+
+============================================================
+2. STACK OBRIGATÓRIA
+============================================================
+
+Backend:
+- Java
+- Spring Boot
+- Spring MVC
+- Spring Data JPA
+- Spring Security
+- Jakarta Validation
+- JavaMailSender
+
+Banco:
+- MySQL
+
+Frontend:
+- HTML5
+- CSS3
+- JavaScript puro
+- Bootstrap pode ser utilizado somente quando ajudar, mas o design deve ser personalizado.
+
+Template engine:
+- Preferencialmente Thymeleaf para facilitar a execução local em um único projeto Spring Boot.
+
+Build:
+- Maven
+
+O sistema deve funcionar localmente.
+
+Não utilizar:
+- React
+- Angular
+- Vue
+- Node como backend
+- Firebase
+- banco NoSQL
+
+============================================================
+3. DESIGN
+============================================================
+
+Use como referência visual PRINCIPAL a página de Agenda do InPETU Hub apresentada na imagem fornecida.
+
+O sistema inteiro deve seguir essa identidade visual.
+
+Características principais:
+
+- fundo predominantemente branco / cinza muito claro;
+- azul institucional;
+- detalhes em azul claro;
+- tipografia limpa e moderna;
+- cards com cantos arredondados;
+- bastante espaço entre os elementos;
+- interface limpa;
+- visual profissional;
+- menu superior inspirado no site do InPETU;
+- logotipo/texto "InPETUhub";
+- calendário com aparência semelhante ao print;
+- responsivo.
+
+A Agenda pública deve ser visualmente muito próxima da referência fornecida.
+
+Não copiar conteúdo textual desnecessário do site real, mas copiar a linguagem visual e estrutural.
+
+No sistema interno, manter a mesma identidade, mas usar estrutura de dashboard administrativo:
+
+- menu lateral ou navbar;
+- cards;
+- tabelas;
+- filtros;
+- badges de status;
+- modais/formulários consistentes.
+
+============================================================
+4. BANCO DE DADOS BASE
+============================================================
+
+Use como BASE o modelo conceitual fornecido.
+
+As entidades principais existentes devem ser preservadas:
+
+EMPREENDEDOR
+- CNPJ
+- status
+- nome
+- email
+- telefone
+- cidade
+- empresa/instituicao
+- segmento
+- cargo
+
+RESERVA
+- id_reserva
+- data
+- hora
+
+ESPACO
+- id_espaco
+- nome_espaco
+- capacidade
+- disponibilidade
+
+ATENDIMENTO
+- id_atendimento
+- data
+- descricao
+- observacoes
+- encaminhamentos
+
+VISITA
+- id_visita
+- data
+- horario
+- objetivo
+- participantes
+- status
+
+COLABORADOR
+- id_colaborador
+- nome
+- email
+- usuario/login
+- senha
+- perfil/permissao
+- status
+
+Relacionamentos conceituais:
+
+EMPREENDEDOR 1:N RESERVA
+EMPREENDEDOR 1:N ATENDIMENTO
+EMPREENDEDOR 1:N VISITA
+
+COLABORADOR 1:N ATENDIMENTO
+COLABORADOR 1:N VISITA
+
+ESPACO 1:N RESERVA
+
+IMPORTANTE:
+
+No modelo anterior existe incompatibilidade no relacionamento entre RESERVA e ESPACO.
+
+A FK deve ficar em RESERVA:
+
+reserva.id_espaco -> espaco.id_espaco
+
+Um espaço pode possuir várias reservas.
+
+NÃO criar FK de reserva dentro de espaço.
+
+============================================================
+5. ALTERAÇÕES MÍNIMAS NECESSÁRIAS NO MODELO
+============================================================
+
+Faça somente as alterações necessárias para que os requisitos definidos funcionem corretamente.
+
+Exemplos obrigatórios:
+
+EMPREENDEDOR:
+- preferir id_empreendedor como PK;
+- manter CNPJ como UNIQUE;
+- CNPJ deve ser VARCHAR/CHAR, nunca INT;
+- telefone deve ser VARCHAR.
+
+RESERVA:
+substituir o campo simples "hora" por:
+
+- hora_inicio
+- hora_fim
+
+Adicionar:
+
+- data_hora_solicitacao
+- status_reserva
+- objetivo
+- numero_participantes
+- observacoes
+- motivo_recusa
+- valor_base
+- valor_final
+- percentual_sinal
+- valor_sinal
+- valor_restante
+- status_pagamento
+
+FK:
+- id_empreendedor
+- id_espaco
+- id_colaborador_responsavel nullable
+
+COLABORADOR:
+- senha deve ser armazenada com BCrypt;
+- nunca armazenar senha em texto puro.
+
+============================================================
+6. ENTIDADES DE APOIO NECESSÁRIAS
+============================================================
+
+Como o fluxo definido possui regras adicionais, criar somente as tabelas auxiliares necessárias.
+
+Criar:
+
+PERSONA
+- id
+- codigo
+- nome
+- descricao
+- cota_mensal_horas nullable
+
+COTA_MENSAL
+- id
+- persona_id
+- ano
+- mes
+- horas_totais
+- horas_utilizadas
+- horas_reservadas_pendentes
+- saldo_devedor
+
+MOVIMENTACAO_COTA
+- id
+- persona_id
+- reserva_id nullable
+- data_hora
+- quantidade_horas
+- tipo
+- descricao
+
+FERIADO
+- id
+- data
+- descricao
+- ativo
+
+TABELA_PRECO
+- id
+- ano
+- quantidade_turnos
+- percentual
+- valor
+- ativo
+
+Se necessário, adicionar uma tabela de configuração para outras taxas, mas não criar estruturas exageradas.
+
+============================================================
+7. PERSONAS
+============================================================
+
+O sistema deve trabalhar com estas personas:
+
+P1 - InPETU Hub
+
+P2 - UFSC outros
+
+P3 - Ecossistema Sapiens Parque
+
+P4 - Governo, ICTs e 3º setor
+
+P5 - Parceiros do InPETU
+
+P6 - Externos
+
+Cotas mensais atualmente definidas:
+
+P2 = 30 horas
+P3 = 20 horas
+P4 = 10 horas
+P5 = 10 horas
+
+P1 e P6 não utilizam esse mesmo sistema de cota.
+
+Deixar esses valores configuráveis no banco.
+
+============================================================
+8. REGRAS DE COTA
+============================================================
+
+Implementar:
+
+1. Para utilizar a cota, a solicitação deve ser realizada com pelo menos 15 dias de antecedência.
+
+2. Enquanto houver saldo na cota mensal, as solicitações elegíveis utilizam a cota por ordem de chegada.
+
+3. Reservas PENDENTES devem reservar provisoriamente as horas da cota para impedir concorrência.
+
+4. Se uma reserva pendente for recusada/cancelada sem penalidade, devolver as horas reservadas.
+
+5. Depois de atingir o teto mensal, novas reservas continuam possíveis, porém sem os descontos da cota.
+
+6. Horas não utilizadas não acumulam para o próximo mês.
+
+7. Cancelamento/desistência:
+   - comunicado com 30 dias ou mais de antecedência: sem penalidade;
+   - comunicado com menos de 30 dias, sem motivo de força maior:
+     descontar da cota o dobro das horas reservadas.
+
+Exemplo:
+reserva de 4 horas cancelada fora do prazo:
+penalidade = 8 horas.
+
+8. Caso a cota atual não seja suficiente para a penalidade, registrar saldo devedor para os meses seguintes.
+
+9. Excepcionalidades podem ser decididas pelo gestor.
+
+============================================================
+9. TAXAÇÃO / PERSONAS
+============================================================
+
+Criar lógica de regras de negócio para determinar os percentuais de:
+
+- locação
+- operação
+- limpeza
+
+Utilizar as regras:
+
+P1 InPETU:
+- locação 0%
+- operação 0%
+- limpeza 0%
+
+P2, atividade acadêmica, dentro da cota e sem pagamento:
+- locação 0%
+- operação 0%
+- limpeza conforme insumos
+
+P2, evento pago/financiado dentro da cota:
+- locação 50%
+- operação 100%
+- limpeza 100%
+
+P2 fora da cota:
+- locação 100%
+- operação 100%
+- limpeza 100%
+
+P3 dentro da cota sem pagamento:
+- locação 0%
+- operação 100%
+- limpeza 100%
+
+P3 dentro da cota com evento pago:
+- locação 75%
+- operação 100%
+- limpeza 100%
+
+P3 fora da cota:
+- 100%, 100%, 100%
+
+P4:
+mesma lógica geral de:
+- dentro da cota sem pagamento: locação 0%, operação 100%, limpeza 100%
+- dentro da cota evento pago: locação 75%, operação 100%, limpeza 100%
+- fora da cota: 100%, 100%, 100%
+
+P5:
+- dentro da cota sem pagamento: locação 0%, operação 100%, limpeza 100%
+- dentro da cota evento pago: locação 75%, operação 100%, limpeza 100%
+- fora da cota: 100%, 100%, 100%
+
+P6:
+- 100%, 100%, 100%
+
+Criar as regras de forma organizada em uma camada Service.
+
+NÃO espalhar ifs aleatórios por Controllers.
+
+============================================================
+10. PREÇOS
+============================================================
+
+Para 2026, utilizar inicialmente:
+
+LOCAÇÃO:
+
+1 turno:
+100% = R$ 1.600
+75%  = R$ 1.200
+50%  = R$ 800
+
+2 turnos:
+100% = R$ 2.800
+75%  = R$ 2.100
+50%  = R$ 1.400
+
+3 turnos:
+100% = R$ 3.600
+75%  = R$ 2.700
+50%  = R$ 1.800
+
+Armazenar esses preços no banco.
+
+Não hardcodar permanentemente esses valores na lógica Java.
+
+Os preços devem poder mudar conforme o ano.
+
+============================================================
+11. REGRA DO SINAL
+============================================================
+
+Toda reserva de sala deve possuir sinal.
+
+Dia comum:
+- sinal = 30% do valor final da reserva.
+
+Domingo OU feriado:
+- sinal = 60% do valor final da reserva.
+
+Exemplo:
+
+valor final = R$ 1.600
+
+dia comum:
+sinal = R$ 480
+
+domingo/feriado:
+sinal = R$ 960
+
+O cálculo deve acontecer depois de aplicar taxação/descontos.
+
+Fluxo:
+
+valor base
+-> aplicar regra da persona
+-> calcular valor final
+-> verificar data
+-> domingo ou feriado?
+-> 30% ou 60%
+-> calcular valor do sinal
+-> calcular restante
+
+Feriados devem ser consultados na tabela FERIADO.
+
+Não hardcodar feriados dentro do Java.
+
+============================================================
+12. AGENDA PÚBLICA
+============================================================
+
+Página principal da Agenda deve reproduzir o estilo da imagem fornecida.
+
+Mostrar:
+
+- mês atual;
+- calendário;
+- navegação mês anterior/próximo;
+- dias;
+- indicação visual de disponibilidade;
+- eventos/reservas quando aplicável.
+
+Ao clicar em uma data:
+
+abrir área/modal para consultar:
+
+- espaço;
+- horários disponíveis;
+- horários indisponíveis.
+
+O usuário deve poder escolher:
+
+DATA
++
+HORÁRIO INICIAL
++
+HORÁRIO FINAL
++
+ESPAÇO
+
+O sistema deve verificar sobreposição de horário.
+
+Exemplo:
+
+Reserva existente:
+14:00 até 16:00
+
+Nova:
+15:00 até 17:00
+
+Deve identificar conflito.
+
+A regra correta de conflito é:
+
+novaHoraInicio < horaFimExistente
+AND
+novaHoraFim > horaInicioExistente
+
+Considerar reservas:
+
+PENDENTE
+APROVADA
+
+como bloqueadoras do horário.
+
+RECUSADA e CANCELADA não devem bloquear.
+
+============================================================
+13. FORMULÁRIO PÚBLICO DE RESERVA
+============================================================
+
+Depois de escolher data/horário/espaço, solicitar:
+
+- nome
+- CNPJ
+- empresa/instituição
+- email
+- telefone
+- cidade
+- segmento
+- cargo
+
+- persona declarada
+- nome/título do evento
+- objetivo
+- quantidade de participantes
+
+Perguntas:
+
+- evento possui inscrição paga?
+- evento possui patrocínio/financiamento?
+
+Mostrar:
+
+- data
+- hora inicial
+- hora final
+- duração
+- espaço
+
+Antes de enviar, calcular:
+
+- elegibilidade da cota;
+- saldo da cota;
+- taxação;
+- valor estimado;
+- percentual de sinal;
+- valor do sinal;
+- valor restante.
+
+Mostrar um resumo antes da confirmação.
+
+============================================================
+14. CRIAÇÃO/VINCULAÇÃO DO EMPREENDEDOR
+============================================================
+
+Ao enviar reserva:
+
+Se CNPJ já estiver cadastrado:
+- vincular reserva ao empreendedor existente.
+
+Se CNPJ não existir:
+- criar automaticamente o cadastro de empreendedor.
+
+Nunca duplicar empreendedor com mesmo CNPJ.
+
+============================================================
+15. STATUS DE RESERVA
+============================================================
+
+Criar enum:
+
+PENDENTE
+APROVADA
+RECUSADA
+CANCELADA
+CONCLUIDA
+
+Para financeiro:
+
+PENDENTE
+SINAL_PAGO
+PAGO
+
+Os status devem ser separados.
+
+============================================================
+16. SISTEMA INTERNO DO COLABORADOR
+============================================================
+
+Criar área protegida por login.
+
+Após login, dashboard.
+
+Dashboard deve mostrar:
+
+- quantidade de reservas pendentes;
+- reservas de hoje;
+- próximas reservas;
+- total de empreendedores;
+- últimas solicitações.
+
+Menu:
+
+Dashboard
+Reservas
+Empreendedores
+Espaços
+Atendimentos
+Visitas
+Administração
+
+============================================================
+17. RESERVAS NO PAINEL
+============================================================
+
+Tela com abas:
+
+- Pendentes
+- Aprovadas
+- Recusadas
+- Canceladas
+- Todas
+
+Tabela:
+
+Data
+Horário
+Empreendedor
+Empresa
+Espaço
+Persona
+Status
+Ações
+
+Filtros:
+
+- data;
+- status;
+- espaço;
+- empreendedor;
+- persona.
+
+============================================================
+18. ANÁLISE DA RESERVA
+============================================================
+
+Ao abrir solicitação, mostrar:
+
+DADOS DO SOLICITANTE
+
+DADOS DO EVENTO
+
+DATA/HORÁRIO
+
+ESPAÇO
+
+PERSONA DECLARADA
+
+ANTECEDÊNCIA
+
+COTA:
+
+- cota total;
+- utilizada;
+- reservada;
+- saldo;
+- horas da solicitação.
+
+TAXAÇÃO:
+
+- locação;
+- operação;
+- limpeza.
+
+FINANCEIRO:
+
+- valor base;
+- valor final;
+- sinal percentual;
+- valor sinal;
+- valor restante;
+- status pagamento.
+
+Ações:
+
+APROVAR
+RECUSAR
+ALTERAR
+
+============================================================
+19. APROVAÇÃO
+============================================================
+
+Antes de aprovar:
+
+- verificar novamente disponibilidade;
+- verificar conflito;
+- verificar cota;
+- recalcular valores;
+- verificar domingo/feriado;
+- recalcular sinal.
+
+Depois:
+
+status = APROVADA
+
+Registrar colaborador responsável.
+
+Enviar email ao solicitante.
+
+============================================================
+20. RECUSA
+============================================================
+
+Ao recusar:
+
+pedir obrigatoriamente:
+
+- motivo da recusa.
+
+Status:
+RECUSADA.
+
+Liberar horário.
+
+Liberar cota provisoriamente reservada.
+
+Enviar email ao solicitante informando:
+
+- que a solicitação foi recusada;
+- data;
+- horário;
+- espaço;
+- motivo.
+
+============================================================
+21. ALTERAÇÃO
+============================================================
+
+O colaborador pode alterar:
+
+- data;
+- horário inicial;
+- horário final;
+- espaço.
+
+Sempre que alterar:
+
+recalcular:
+
+- conflito;
+- disponibilidade;
+- duração;
+- antecedência;
+- cota;
+- taxação;
+- valor final;
+- domingo/feriado;
+- sinal.
+
+Nunca apenas atualizar os campos sem recalcular.
+
+Registrar a alteração.
+
+============================================================
+22. EMPREENDEDORES / CRM
+============================================================
+
+Tela:
+
+- listar;
+- buscar;
+- visualizar;
+- editar.
+
+Busca por:
+
+- nome;
+- CNPJ;
+- empresa;
+- email.
+
+Perfil do empreendedor deve mostrar:
+
+Dados
+
++
+Reservas
+
++
+Atendimentos
+
++
+Visitas
+
++
+Histórico.
+
+============================================================
+23. ATENDIMENTOS
+============================================================
+
+Permitir:
+
+- registrar atendimento;
+- vincular empreendedor;
+- vincular colaborador;
+- data;
+- descrição;
+- observações;
+- encaminhamentos.
+
+Mostrar no histórico do empreendedor.
+
+============================================================
+24. VISITAS
+============================================================
+
+Manter a entidade de visita do modelo conceitual.
+
+Campos:
+
+- data;
+- horário;
+- objetivo;
+- participantes;
+- status;
+- empreendedor;
+- colaborador.
+
+Implementar CRUD básico.
+
+============================================================
+25. ESPAÇOS
+============================================================
+
+CRUD:
+
+- nome;
+- capacidade;
+- disponibilidade;
+- status.
+
+Permitir ativar/desativar espaço.
+
+Espaço desativado não pode receber novas reservas.
+
+============================================================
+26. LOGIN
+============================================================
+
+Criar login funcional utilizando Spring Security.
+
+Tela visualmente compatível com a identidade do InPETU.
+
+Criar usuário inicial automaticamente no banco para testes locais.
+
+Exemplo:
+
+login:
+admin@inpetuhub.local
+
+senha inicial:
+Inpetu@123
+
+Perfil:
+ADMIN
+
+A senha deve ser armazenada com BCrypt.
+
+Documentar no README que se trata apenas de credencial de desenvolvimento.
+
+Criar também papel:
+
+COLABORADOR
+
+Perfis:
+ADMIN
+COLABORADOR
+
+============================================================
+27. EMAIL
+============================================================
+
+O sistema deve conseguir enviar emails relacionados às reservas.
+
+Remetente desejado:
+
+joaoecker27@gmail.com
+
+Usar Spring Boot Mail / JavaMailSender.
+
+NUNCA:
+
+- colocar senha do Gmail no código;
+- colocar App Password no Git;
+- colocar credenciais no application.properties versionado.
+
+Usar variáveis de ambiente:
+
+MAIL_USERNAME=joaoecker27@gmail.com
+MAIL_PASSWORD=<APP_PASSWORD_DO_GMAIL>
+
+Configuração esperada:
+
+SMTP Gmail
+smtp.gmail.com
+porta 587
+STARTTLS
+
+Criar configuração que funcione localmente.
+
+Caso as variáveis de email não existam, o sistema deve continuar rodando localmente, apenas exibindo log de que o envio de email não está configurado.
+
+Criar emails em HTML simples, seguindo a identidade InPETU.
+
+Enviar email quando:
+
+- solicitação recebida;
+- reserva aprovada;
+- reserva recusada;
+- reserva alterada;
+- reserva cancelada.
+
+============================================================
+28. SEGURANÇA
+============================================================
+
+Rotas públicas:
+
+/
+agenda
+/reservas/solicitar
+/disponibilidade
+etc.
+
+Rotas internas:
+
+/admin/**
+/crm/**
+/colaborador/**
+
+devem exigir login.
+
+Utilizar:
+
+- BCrypt;
+- CSRF corretamente;
+- validação server-side;
+- proteção contra SQL Injection via JPA;
+- mensagens de erro amigáveis.
+
+Não confiar somente nas validações JavaScript.
+
+============================================================
+29. ARQUITETURA JAVA
+============================================================
+
+Organizar aproximadamente:
+
+src/main/java/...
+
+config/
+controller/
+service/
+repository/
+entity/
+dto/
+enums/
+exception/
+security/
+
+Evitar lógica complexa dentro de Controller.
+
+Criar services separados, por exemplo:
+
+ReservaService
+DisponibilidadeService
+CotaService
+TaxacaoService
+PrecoService
+EmailService
+EmpreendedorService
+
+============================================================
+30. FRONTEND
+============================================================
+
+Estrutura recomendada:
+
+templates/
+    public/
+        agenda.html
+        reserva-form.html
+        reserva-resumo.html
+        reserva-sucesso.html
+
+    auth/
+        login.html
+
+    admin/
+        dashboard.html
+        reservas/
+        empreendedores/
+        espacos/
+        atendimentos/
+        visitas/
+
+static/
+    css/
+        style.css
+        admin.css
+
+    js/
+        agenda.js
+        reserva.js
+        admin.js
+
+    images/
+
+Evitar CSS inline grande.
+
+Evitar JavaScript inline grande.
+
+============================================================
+31. MYSQL
+============================================================
+
+Criar:
+
+- schema;
+- migrations;
+- constraints;
+- índices.
+
+Preferencialmente usar Flyway.
+
+Criar migrations do tipo:
+
+V1__create_base_tables.sql
+V2__create_reservation_support_tables.sql
+V3__seed_personas.sql
+V4__seed_prices_2026.sql
+V5__seed_admin_user.sql
+
+ou equivalente.
+
+Criar índices em:
+
+- CNPJ;
+- email;
+- data reserva;
+- espaço + data;
+- status reserva;
+- FKs.
+
+============================================================
+32. VALIDAÇÕES IMPORTANTES
+============================================================
+
+Não permitir:
+
+- hora final <= hora inicial;
+- reserva no passado;
+- conflito de espaço/horário;
+- espaço inativo;
+- CNPJ duplicado;
+- email inválido;
+- quantidade de participantes negativa;
+- número de participantes maior que capacidade sem aviso/impedimento;
+- aprovação se surgir conflito.
+
+============================================================
+33. EXPERIÊNCIA DO USUÁRIO
+============================================================
+
+Mostrar feedback para todas as ações:
+
+- sucesso;
+- erro;
+- conflito;
+- envio;
+- aprovação;
+- recusa.
+
+Utilizar badges:
+
+PENDENTE
+APROVADA
+RECUSADA
+CANCELADA
+CONCLUIDA
+
+O calendário deve indicar visualmente:
+
+- disponível;
+- parcialmente ocupado;
+- indisponível.
+
+Não depender somente de cor:
+usar texto, ícone ou outra indicação acessível.
+
+============================================================
+34. EXECUÇÃO LOCAL
+============================================================
+
+O projeto deve rodar localmente.
+
+Quero conseguir fazer algo semelhante a:
+
+1. criar banco MySQL;
+
+2. configurar .env ou variáveis de ambiente;
+
+3. executar:
+
+mvn spring-boot:run
+
+4. acessar:
+
+http://localhost:8080/
+
+Agenda pública.
+
+E:
+
+http://localhost:8080/login
+
+Área interna.
+
+============================================================
+35. CONFIGURAÇÃO
+============================================================
+
+Criar:
+
+application.properties
+
+mas nunca incluir senha real.
+
+Utilizar variáveis como:
+
+DB_URL
+DB_USERNAME
+DB_PASSWORD
+
+MAIL_USERNAME
+MAIL_PASSWORD
+
+Criar também:
+
+.env.example
+
+contendo somente exemplos.
+
+============================================================
+36. README
+============================================================
+
+Criar README.md completo explicando:
+
+- descrição;
+- tecnologias;
+- arquitetura;
+- dependências;
+- requisitos;
+- instalação do MySQL;
+- criação/configuração do banco;
+- variáveis de ambiente;
+- como executar;
+- login inicial;
+- como configurar Gmail App Password;
+- URLs principais;
+- estrutura de pastas.
+
+============================================================
+37. DADOS DE DESENVOLVIMENTO
+============================================================
+
+Criar dados de exemplo suficientes para testar:
+
+- pelo menos 3 espaços;
+- pelo menos 5 empreendedores;
+- personas P1-P6;
+- preços 2026;
+- alguns feriados;
+- algumas reservas pendentes/aprovadas;
+- colaborador ADMIN.
+
+Não exagerar.
+
+============================================================
+38. QUALIDADE
+============================================================
+
+Código deve:
+
+- compilar;
+- executar;
+- ter nomes claros;
+- não possuir TODOs críticos;
+- não deixar páginas vazias;
+- não deixar botões sem função;
+- não criar endpoints que não são utilizados;
+- tratar erros;
+- ter validações.
+
+Criar alguns testes essenciais para:
+
+- conflito de reserva;
+- cálculo de sinal 30%;
+- cálculo de sinal 60%;
+- identificação de domingo;
+- identificação de feriado;
+- cota;
+- aprovação;
+- recusa.
+
+============================================================
+39. ORDEM DE IMPLEMENTAÇÃO
+============================================================
+
+Faça nesta ordem:
+
+ETAPA 1
+- criar projeto Spring Boot;
+- configurar MySQL;
+- entidades;
+- migrations;
+- repositories.
+
+ETAPA 2
+- Spring Security;
+- usuário inicial;
+- login.
+
+ETAPA 3
+- agenda pública;
+- calendário;
+- disponibilidade.
+
+ETAPA 4
+- formulário de reserva;
+- empreendedor;
+- reserva;
+- conflito.
+
+ETAPA 5
+- personas;
+- cotas;
+- preços;
+- taxação;
+- sinal.
+
+ETAPA 6
+- sistema interno;
+- dashboard;
+- aprovação;
+- recusa;
+- alteração.
+
+ETAPA 7
+- email.
+
+ETAPA 8
+- CRM;
+- empreendedores;
+- atendimentos;
+- visitas;
+- histórico.
+
+ETAPA 9
+- testes;
+- acabamento visual;
+- documentação.
+
+============================================================
+40. IMPORTANTE SOBRE O MODELO CONCEITUAL
+============================================================
+
+Não quero que o banco seja redesenhado completamente.
+
+Use o modelo conceitual fornecido como base.
+
+Preserve principalmente:
+
+Empreendedor
+Reserva
+Espaço
+Colaborador
+Atendimento
+Visita
+
+e seus relacionamentos.
+
+Somente faça alterações estruturais quando forem tecnicamente necessárias para:
+
+- corrigir incompatibilidades;
+- suportar o novo fluxo de reservas;
+- suportar cotas;
+- suportar preços;
+- suportar sinal;
+- suportar aprovação;
+- suportar autenticação.
+
+Documente no README todas as diferenças entre o modelo conceitual original e o modelo físico implementado, explicando o motivo de cada mudança.
+
+============================================================
+41. RESULTADO ESPERADO
+============================================================
+
+Ao final eu preciso conseguir demonstrar este cenário:
+
+1. abrir o site público;
+2. entrar na Agenda;
+3. mudar de mês;
+4. clicar em uma data;
+5. escolher espaço;
+6. ver horários;
+7. escolher horário inicial/final;
+8. preencher os dados do empreendedor;
+9. escolher/informar persona;
+10. informar características do evento;
+11. visualizar cota;
+12. visualizar preço estimado;
+13. visualizar sinal de 30% ou 60%;
+14. enviar a solicitação;
+
+depois:
+
+15. abrir /login;
+16. entrar como funcionário;
+17. visualizar a solicitação no dashboard;
+18. abrir os detalhes;
+19. consultar dados, cota, taxação e valores;
+20. aprovar, alterar ou recusar;
+21. atualizar automaticamente o calendário;
+22. enviar email ao empreendedor;
+23. acessar o cadastro do empreendedor;
+24. visualizar a reserva no histórico.
+
+Tudo deve funcionar localmente.
+
+============================================================
+42. FORMA DE TRABALHO
+============================================================
+
+Antes de criar arquivos:
+
+1. apresente um plano curto da arquitetura;
+2. apresente o modelo físico proposto;
+3. indique quais mudanças serão feitas em relação ao modelo conceitual;
+4. depois comece a implementar.
+
+Não pare depois do planejamento.
+
+Continue até entregar o projeto funcional.
+
+Sempre que houver uma decisão pequena de implementação que não altere requisito de negócio, escolha a solução mais simples e robusta e prossiga.
+
+Se encontrar conflito entre requisitos, preserve:
+1. integridade dos dados;
+2. regras de negócio;
+3. funcionamento do MVP;
+4. simplicidade.
+
+Não invente regras financeiras além das que estão descritas neste prompt.
