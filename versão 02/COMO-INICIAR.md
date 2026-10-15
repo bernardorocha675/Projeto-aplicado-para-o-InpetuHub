@@ -99,3 +99,7 @@ O banco, as contas e os registros permanecem em `data/`. A chave MFA está em `.
 | Código por email não chegou | Confira SMTP, contato institucional e spam. Sem SMTP, o modo local usa conferência manual da equipe. |
 
 Para compartilhar um erro, envie somente o comando e a mensagem, ocultando arquivos privados, credenciais, códigos e dados pessoais.
+
+## 9. Conferir o funcionamento automaticamente
+
+Pare o servidor com Ctrl+C e execute `bash testar.sh` (Linux/macOS) ou `.\testar.bat` (Windows). Abra `relatorios-testes/ultimo.html` no navegador. O comando usa banco e contas descartáveis e gera um relatório com aprovações, falhas e o que ainda precisa de conferência manual. Não precisa de Python. Leia [TESTAR.md](TESTAR.md).
