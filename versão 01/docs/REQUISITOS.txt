@@ -908,7 +908,7 @@ O sistema deve conseguir enviar emails relacionados às reservas.
 
 Remetente desejado:
 
-joaoecker27@gmail.com
+remetente@example.com
 
 Usar Spring Boot Mail / JavaMailSender.
 
@@ -920,7 +920,7 @@ NUNCA:
 
 Usar variáveis de ambiente:
 
-MAIL_USERNAME=joaoecker27@gmail.com
+MAIL_USERNAME=remetente@example.com
 MAIL_PASSWORD=<APP_PASSWORD_DO_GMAIL>
 
 Configuração esperada:
