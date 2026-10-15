@@ -45,7 +45,7 @@ Mudar o status PENDENTE foi uma decisão de segurança deliberada. A ordem de en
 - `db/migration/V3__seguranca.sql`: novas tabelas e campos e compensação das alocações provisórias antigas. V1/V2 foram preservadas.
 - `scripts/PrepareLocal.java`: geração local de segredos e permissões POSIX/ACL, sem expor valores.
 - `scripts/Backup.java` e wrappers: backup/restauração H2 cifrados.
-- `scripts/check_secrets.py`, `check_dependencies.py`, `smoke.py`: verificações auxiliares; requerem Python 3.
+- `scripts/check_secrets.py`, `check_dependencies.py`, `smoke.py`, `test_backup.py`: verificações auxiliares; requerem Python 3.
 - `.github/workflows/security-v02.yml`: verificações contínuas. Não habilita deploy.
 
 ## Migração de um banco existente
@@ -71,6 +71,8 @@ bash backup.sh restore /caminho/privado/arquivo.inpetu
 ```
 
 No Windows use `.\backup.bat backup C:\caminho\arquivo.inpetu` ou `.\backup.bat restore C:\caminho\arquivo.inpetu`. A senha não vai na linha de comando; use pelo menos 16 caracteres e guarde-a separadamente. Uma senha incorreta ou arquivo adulterado é recusado antes de escrever os arquivos de destino. A ferramenta não substitui arquivos existentes e limita o tamanho restaurado a 1 GiB.
+
+Na pasta nova de restauração, disponibilize primeiro Java 17/21 pelo sistema ou por `JAVA_HOME`; não execute ainda o configurador, pois ele criaria arquivos privados que a restauração se recusaria a sobrescrever. Você pode reutilizar o JDK baixado na instalação anterior: `export JAVA_HOME="/caminho/anterior/.tools/jdk"` no Linux; no macOS use a pasta que contém `bin/java` (normalmente `.tools/jdk/Contents/Home`). No PowerShell, use `$env:JAVA_HOME='C:\caminho\anterior\.tools\jdk'`. Copie apenas o código para o destino novo e execute o comando de restauração a partir dele. Após restaurar, execute o configurador para baixar Maven, compilar e testar; ele preserva a configuração e a chave restauradas. Em seguida, execute o comando de iniciar.
 
 O backup contém banco, configuração e chave MFA; pode incluir o arquivo inicial de contas se ele ainda estiver na instalação. O arquivo completo é cifrado. Sem a senha do backup não há recuperação. Não publique o arquivo nem sua senha.
 
