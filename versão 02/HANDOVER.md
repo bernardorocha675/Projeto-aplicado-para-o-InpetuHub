@@ -95,3 +95,7 @@ Para trocar o conjunto de contas de um banco em uso, não edite o marcador de bo
 Consulte [docs/VALIDACAO.md](docs/VALIDACAO.md) e [docs/SEGURANCA.md](docs/SEGURANCA.md). Verificação de dependências deve ser repetida: uma versão sem alertas hoje pode receber um aviso amanhã. A CI semanal consulta novamente a base OSV. Ausência de alertas não comprova ausência de vulnerabilidades.
 
 Não houve publicação de servidor na internet nem configuração de infraestrutura real. Certificados de produção, entrega SMTP real, permissões operacionais do MySQL, retenção de dados e monitoramento externo precisam ser validados no ambiente de destino. Não armazenar dados pessoais reais nos exemplos ou nos relatórios públicos.
+
+## Executor de testes para a equipe
+
+`testar.sh`, `testar.bat` e `testar.ps1` executam `scripts/Testar.java` com o JDK instalado. O comando compila, lê os resultados JUnit, testa servidor HTTP/H2 isolado com credenciais sintéticas e verifica backup/restauração com o CLI real. Os relatórios HTML/TXT ficam em `relatorios-testes/` (ignorado pelo Git). Bancos, contas e arquivos restaurados são removidos após a rodada; logs privados ficam em `.tools/testes`. O executor não lê as cinco contas particulares nem a configuração de banco/SMTP da instalação normal. Interrupção forçada pode deixar temporários sintéticos; veja [TESTAR.md](TESTAR.md). Os testes lógicos de expiração simulam datas, sem alterar o relógio do computador.

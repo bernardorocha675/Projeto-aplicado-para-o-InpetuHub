@@ -56,3 +56,7 @@ No Windows, substitua `bash maven.sh` por `.\maven.bat`. Python 3 é necessário
 Para produzir um backup, pare o servidor e execute `bash backup.sh backup arquivo.inpetu` ou `.\backup.bat backup arquivo.inpetu`. A senha é solicitada pelo terminal. Veja a restauração e os requisitos de produção no handover.
 
 Os resultados e limites estão em [docs/VALIDACAO.md](docs/VALIDACAO.md) e [docs/SEGURANCA.md](docs/SEGURANCA.md). As melhorias funcionais do PDF, como fotos das salas e adequação do rodapé original, continuam sendo um escopo separado; esta versão trata da segurança.
+
+## Testar com um comando
+
+Depois de configurar, execute `bash testar.sh` no Linux/macOS ou `.\testar.bat` no Windows. Abra `relatorios-testes/ultimo.html` no navegador. O executor usa banco e contas descartáveis, sem usar os acessos privados. Veja [TESTAR.md](TESTAR.md).
