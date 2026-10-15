@@ -152,8 +152,10 @@ class Backup {
           || !names.contains(".env.local")) throw new IOException("Backup incompleto.");
       for (String name : names) {
         Path dest = Path.of(name);
-        Files.createDirectories(dest.getParent());
-        privateFile(dest.getParent());
+        if (dest.getParent() != null) {
+          Files.createDirectories(dest.getParent());
+          privateFile(dest.getParent());
+        }
         Files.move(stage.resolve("files").resolve(name), dest);
         privateFile(dest);
       }

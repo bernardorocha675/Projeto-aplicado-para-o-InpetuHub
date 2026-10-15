@@ -1,0 +1,7 @@
+# Apenas o vetor público do RFC 6238 usado no teste de TOTP; nenhum segredo real.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Chave pública de teste RFC 6238, não utilizada em produção"
+regexes = ['''GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ''']

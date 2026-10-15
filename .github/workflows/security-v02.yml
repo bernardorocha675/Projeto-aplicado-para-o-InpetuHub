@@ -33,6 +33,8 @@ jobs:
         if: runner.os == 'Windows'
         shell: cmd
         run: configurar.bat
+      - name: Verificar backup e restauração
+        run: python scripts/test_backup.py
       - name: Verificar inicialização HTTP
         run: python scripts/smoke.py
   source:
@@ -90,3 +92,21 @@ jobs:
       - uses: github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d
         with:
           category: /language:java-v02
+          output: ${{ github.workspace }}/results
+      - name: Conferir resultados CodeQL
+        run: |
+          python - <<'PYCODE'
+          import json, pathlib
+          paths = list(pathlib.Path('results').glob('*.sarif'))
+          if not paths:
+              raise SystemExit('SARIF ausente: análise não comprovada.')
+          findings = []
+          for path in paths:
+              for run in json.loads(path.read_text()).get('runs', []):
+                  findings.extend(run.get('results', []))
+          for item in findings:
+              print(item.get('ruleId'), item.get('level'), item.get('message', {}).get('text', ''))
+          print('Resultados CodeQL:', len(findings))
+          if findings:
+              raise SystemExit('Revise os resultados CodeQL antes de publicar.')
+          PYCODE

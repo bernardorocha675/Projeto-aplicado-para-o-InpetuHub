@@ -13,12 +13,13 @@
     },
     {
       "type": "java",
-      "name": "InPETU Hub (MySQL)",
+      "name": "InPETU Hub (produção TLS/MySQL)",
       "request": "launch",
       "mainClass": "br.com.inpetu.hub.InpetuApplication",
       "projectName": "inpetu-hub",
       "cwd": "${workspaceFolder}",
       "envFile": "${workspaceFolder}/.env",
+      "args": "--spring.profiles.active=prod",
       "console": "integratedTerminal"
     }
   ]

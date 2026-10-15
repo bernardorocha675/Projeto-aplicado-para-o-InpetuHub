@@ -47,7 +47,7 @@ if (-not (Use-Maven)) {
     Remove-Item '.tools\maven.zip', '.tools\maven.sha512'
     if (-not (Use-Maven)) { throw 'Falha ao preparar Maven.' }
 }
-& "$env:JAVA_HOME\bin\java.exe" -Dfile.encoding=UTF-8 --source 17 scripts/PrepareLocal.java
+& "$env:JAVA_HOME\bin\java.exe" '-Dfile.encoding=UTF-8' --source 17 scripts/PrepareLocal.java
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 Write-Host 'Baixando dependencias, compilando e executando os testes...'
 Remove-Item '.tools\ready' -ErrorAction SilentlyContinue
