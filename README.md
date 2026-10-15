@@ -8,3 +8,7 @@ Trabalho desenvolvido na disciplina de **Projeto Aplicado do UniSENAI**, em parc
 - João Mussiol
 - João Feitosa
 - Guilherme Batista
+
+## Uso de inteligência artificial
+
+Utilizamos ferramentas de inteligência artificial como apoio ao desenvolvimento deste projeto.
