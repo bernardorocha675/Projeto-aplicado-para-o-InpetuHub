@@ -2,7 +2,7 @@
 
 Data: 15/10/2026. Base original preservada: versão 01, commit 08f2de3.
 
-## Evidência local já concluída
+## Rodada original de segurança, anterior ao executor
 
 - Compilação Java 17 com Spring Boot 4.1.1.
 - 46 testes passaram: 5 unitários de regras, 19 de fluxos, 2 de concorrência, 3 unitários de segurança e 17 de integração de segurança.
@@ -39,3 +39,21 @@ Gitleaks, consulta OSV e CodeQL também concluíram com sucesso. Os limites espe
 ## Limites
 
 Testes automatizados não equivalem a um pentest exaustivo. Não houve deploy em produção nem uso de credenciais reais de SMTP ou certificado público. O programa de backup atende H2; MySQL precisa de ferramentas próprias. Os resultados da versão 01 não são reaproveitados como comprovação da versão 02.
+
+
+## Atualização: comando de testes para a equipe
+
+Foi acrescentado `testar.sh` / `testar.bat`, com instruções em [TESTAR.md](../TESTAR.md). A aplicação executável não recebeu mudanças de comportamento nesta atualização; as mudanças são no executor, testes, documentação e CI.
+
+- 48 casos JUnit passaram. Foram acrescentados testes dos prazos absolutos de sessão/MFA e de expiração de solicitações/reservas.
+- O comando completo aprovou 64 verificações locais, somando casos JUnit, compilação, HTTP real, persistência, backup e limpeza.
+- O servidor real usou H2, chave MFA e contas sintéticas em uma instalação descartável. Foram verificados TOTP, códigos de recuperação, restrição de colaborador, CSRF, rotas codificadas, limite de login, troca de senha e revogação de outra sessão.
+- O CLI real de backup foi testado com banco H2: restauração idêntica, senha errada, adulteração, sobrescrita e recusa com servidor aberto.
+- Os arquivos privados da instalação normal foram comparados antes/depois e permaneceram idênticos. Nenhum dos cinco acessos particulares foi encontrado no HTML/TXT gerados.
+- Três falhas simuladas do executor foram verificadas: compilação recusada, resultado JUnit antigo e teste ignorado. Todas produziram saída de erro, relatório sem falsa aprovação e impediram a etapa HTTP.
+- Gitleaks sobre uma exportação dos arquivos versionados: nenhum segredo encontrado.
+
+O roteiro manual e as limitações de cobertura dos 24 cenários do PDF estão em TESTAR.md. Testes HTTP não controlam um navegador gráfico nem comprovam entrega SMTP, autenticador do celular ou TLS/MySQL reais.
+
+
+A [rodada nativa do executor](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/38754288116), no código `5b07db7ce1407c5d3e7d61a71e7fd2c469774fa8`, aprovou os nove jobs: seis plataformas (Ubuntu x64/ARM64, macOS Intel/Apple Silicon e Windows x64/ARM64), segredos, dependências e CodeQL. Cada plataforma executou a configuração e o novo comando de testes. Os relatórios HTML/TXT sem credenciais são guardados como artefatos da CI; bancos, chaves, contas e logs privados não são enviados como artefatos.

@@ -33,10 +33,22 @@ jobs:
         if: runner.os == 'Windows'
         shell: cmd
         run: configurar.bat
-      - name: Verificar backup e restauração
-        run: python scripts/test_backup.py
-      - name: Verificar inicialização HTTP
-        run: python scripts/smoke.py
+      - name: Executar roteiro automático Linux e macOS
+        if: runner.os != 'Windows'
+        run: bash testar.sh
+      - name: Executar roteiro automático Windows
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: testar.bat
+      - name: Guardar relatório sem credenciais
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: testes-${{ matrix.os }}
+          path: |
+            versão 02/relatorios-testes/ultimo.html
+            versão 02/relatorios-testes/ultimo.txt
+          if-no-files-found: ignore
   source:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
