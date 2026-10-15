@@ -1,0 +1,24 @@
+INPETU HUB - INICIO RAPIDO
+
+1. Abra a pasta que contem pom.xml no VS Code (versão 0.1 no repositorio ou inpetu-hub no ZIP original).
+2. Abra Terminal > Novo Terminal.
+
+WINDOWS (PowerShell ou CMD)
+Configurar: .\configurar.bat
+Rodar:      .\iniciar.bat
+
+MACOS / LINUX
+Configurar: bash configurar.sh
+Rodar:      bash iniciar.sh
+
+Depois de iniciar, abra http://localhost:8080
+Login: admin@inpetuhub.local
+Senha: Inpetu@123
+
+Configurar requer internet, baixa o que falta e executa os testes.
+Rodar inicia o app. Ctrl+C para parar.
+O modo automatico usa H2 em arquivo; dados ficam em data/.
+Nao apague essa pasta. MySQL original continua disponivel; veja README.md.
+Email real e opcional e precisa de credenciais propias.
+
+Handover tecnico e pendencias: HANDOVER.md

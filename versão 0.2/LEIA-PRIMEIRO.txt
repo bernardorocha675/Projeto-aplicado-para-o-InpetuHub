@@ -1,0 +1,12 @@
+INPETU HUB — VERSÃO 0.2
+Abra COMO-INICIAR.md antes da primeira execução.
+
+Use a pasta versão 0.2 no VS Code.
+Linux/macOS: bash configurar.sh; depois bash iniciar.sh.
+Windows: .\configurar.bat; depois .\iniciar.bat.
+
+Não existe login público padrão. O configurador prepara arquivos privados em .secrets/.
+Para usar contas recebidas em privado, copie accounts.properties para .secrets/ ANTES de configurar e iniciar em um banco novo.
+No primeiro acesso, administradores configuram um aplicativo autenticador.
+As contas, as senhas e os dados não acompanham git clone.
+Não publique .secrets/, .env.local, bancos nem backups.
