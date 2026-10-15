@@ -11,13 +11,18 @@ Projeto acadêmico desenvolvido na disciplina de **Projeto Aplicado do UniSENAI*
 - João Feitosa
 - Guilherme Batista
 
-## Documentação
+## Versão atual
 
-A versão atual está na pasta [versão 03](vers%C3%A3o%2003).
+**Versão 03 · pacote Java 3.0.0** — disponível na pasta [versão 03](vers%C3%A3o%2003). Inclui logs persistentes, diagnóstico e recuperação local de acessos e exibição opcional de senhas.
+
+O handover técnico reúne arquitetura, operação, segurança, backup, testes e pendências para continuidade do projeto. A execução local foi validada; a implantação em produção permanece pendente.
+
+## Documentação
 
 - [Instalação e execução](vers%C3%A3o%2003/COMO-INICIAR.md)
 - [Guia de testes](vers%C3%A3o%2003/TESTAR.md)
-- [Handover e manutenção](vers%C3%A3o%2003/HANDOVER.md)
+- [Acessos e recuperação](vers%C3%A3o%2003/ACESSOS.md)
+- [Handover técnico — versão 03](vers%C3%A3o%2003/HANDOVER.md)
 
 ---
 

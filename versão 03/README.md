@@ -1,8 +1,10 @@
 # InPETU Hub — versão 03
 
+**Pacote Java: 3.0.0.** Entrega acadêmica com execução local validada, logs persistentes, diagnóstico/recuperação local de acessos e botão Mostrar/Ocultar senha. A implantação em produção permanece pendente.
+
 Agenda pública e CRM em Java 17/21, Spring Boot 4.1.1, Spring Security, Thymeleaf, JPA e Flyway. O modo local usa H2 em arquivo. O perfil `prod` usa MySQL e exige HTTPS direto e SMTP.
 
-Leia [COMO-INICIAR.md](COMO-INICIAR.md) para instalar e [HANDOVER.md](HANDOVER.md) para manter ou migrar. As credenciais reais são entregues fora do repositório; não existe usuário ou senha padrão.
+Leia [COMO-INICIAR.md](COMO-INICIAR.md) para instalar e o [handover técnico](HANDOVER.md) para assumir a manutenção: arquitetura, operação, acessos, backup, atualização, evidências de testes e pendências. As credenciais reais são entregues fora do repositório; não existe usuário ou senha padrão.
 
 ## Configurar e executar
 
