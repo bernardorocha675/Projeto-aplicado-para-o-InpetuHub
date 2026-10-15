@@ -2,7 +2,7 @@
 
 **Referência:** versão `1.0.0` do `pom.xml`, preparada para execução local e apresentação.
 **Data:** 14 de outubro de 2026.
-**Repositório:** [bernardorocha675/Projeto-aplicado-parao-InpetuHub](https://github.com/bernardorocha675/Projeto-aplicado-parao-InpetuHub).
+**Repositório:** [bernardorocha675/Projeto-aplicado-para-o-InpetuHub](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub).
 
 ## 1. Origem e escopo da entrega
 
@@ -13,8 +13,10 @@ SHA-256 do ZIP de origem:
 c62837557ea50400d2bfadc0554aeb2931b107aa600591b0d3847306102ce909
 ```
 
-O conteúdo da pasta `inpetu-hub` do ZIP foi colocado diretamente na raiz do
-repositório. Assim, `pom.xml`, `configurar.sh` e `iniciar.sh` ficam no mesmo nível.
+O conteúdo da pasta `inpetu-hub` do ZIP está na pasta `versão 01` do
+repositório. Dentro dela, `pom.xml`, `configurar.sh` e `iniciar.sh` ficam no mesmo nível.
+O README na raiz do repositório está vazio; a documentação desta versão fica
+junto do código em `versão 01`.
 As classes Java, as migrations SQL, os testes, os templates e os scripts de
 execução foram preservados. Foram acrescentados este handover e instruções de
 clonagem no README; o exemplo SMTP do README usa um endereço genérico.
@@ -26,11 +28,12 @@ na internet.
 
 ## 2. Retomar o projeto em outro computador
 
-Clone e abra a pasta do repositório no VS Code:
+Clone o repositório e abra a pasta `versão 01` no VS Code:
 
 ```sh
-git clone https://github.com/bernardorocha675/Projeto-aplicado-parao-InpetuHub.git
-cd Projeto-aplicado-parao-InpetuHub
+git clone https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub.git
+cd Projeto-aplicado-para-o-InpetuHub
+cd "versão 01"
 ```
 
 O terminal precisa estar na pasta que contém `pom.xml`.

@@ -1,6 +1,6 @@
 INPETU HUB - INICIO RAPIDO
 
-1. Abra a pasta que contem pom.xml no VS Code (raiz do repositorio ou inpetu-hub no ZIP original).
+1. Abra a pasta que contem pom.xml no VS Code (versão 01 no repositorio ou inpetu-hub no ZIP original).
 2. Abra Terminal > Novo Terminal.
 
 WINDOWS (PowerShell ou CMD)
