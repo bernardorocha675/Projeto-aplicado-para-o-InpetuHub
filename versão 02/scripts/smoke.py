@@ -1,5 +1,6 @@
 """Teste HTTP da instalação atual sem imprimir dados do arquivo privado ou corpos de resposta."""
 import http.cookiejar
+import urllib.error
 import os
 import pathlib
 import re
@@ -33,18 +34,38 @@ try:
         html = response.read().decode()
     token = re.search(r'name="_csrf"[^>]*value="([^"]+)"', html)
     assert token, 'Token CSRF ausente.'
+    fake = urllib.parse.urlencode({'username': 'compatibility-probe', 'password': 'ficticio', '_csrf': token[1]}).encode()
+    for attempt in range(10):
+        with opener.open(base + '/l%6fgin', data=fake) as response:
+            assert response.url.endswith('/login?error')
+    try:
+        opener.open(base + '/l%6fgin', data=fake)
+        raise AssertionError('Login codificado contornou o limite de tentativas.')
+    except urllib.error.HTTPError as error:
+        assert error.code == 429
     properties = {}
     for line in (root / '.secrets/accounts.properties').read_text().splitlines():
         if '=' in line and not line.startswith('#'):
             key, value = line.split('=', 1)
             properties[key] = value
-    data = urllib.parse.urlencode({'username': properties['account.1.login'], 'password': properties['account.1.password'], '_csrf': token[1]}).encode()
+    admin = next(key.rsplit('.', 1)[0] for key, value in properties.items() if key.endswith('.role') and value == 'ADMIN')
+    data = urllib.parse.urlencode({'username': properties[admin + '.login'], 'password': properties[admin + '.password'], '_csrf': token[1]}).encode()
     with opener.open(base + '/login', data=data) as response:
         assert response.status == 200
         assert response.url.endswith(('/conta/mfa', '/admin')), 'Login não chegou ao destino interno: ' + urllib.parse.urlparse(response.url).path + ('?error' if 'error' in urllib.parse.urlparse(response.url).query else '')
+    with opener.open(base + '/%61dmin/config') as response:
+        assert response.url.endswith('/conta/mfa'), 'Rota codificada contornou o segundo fator.'
     with opener.open(base + '/disponibilidade') as response:
         assert response.status == 200
     assert (root / 'data/inpetu-v02.mv.db').is_file()
+    java = root / '.tools/jdk/bin' / ('java.exe' if os.name == 'nt' else 'java')
+    if not java.is_file():
+        import shutil
+        java = pathlib.Path(shutil.which('java'))
+    destination = root / '.tools/smoke-lock.inpetu'
+    locked = subprocess.run([str(java), '--source', '17', 'scripts/Backup.java', 'backup', str(destination)], cwd=root,
+                            input='senha-ficticia-teste-lock-2026\n', text=True, capture_output=True, timeout=90)
+    assert locked.returncode != 0 and not destination.exists(), 'Backup aceitou banco em execução.'
     print('Instalação, agenda, login protegido, API e H2: aprovados. Credenciais não foram impressas.')
 finally:
     if os.name == 'nt':

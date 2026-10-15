@@ -250,7 +250,7 @@ public class CrudService {
         if (campo.tipo.equals("email")
             && !raw.isBlank()
             && (raw.chars().anyMatch(Character::isWhitespace)
-                || !raw.matches("[^@]+@[^@]+[.][^@]+")))
+                || !raw.matches("[^@]++@[^@.]++(?:[.][^@.]++)++")))
           throw new RegraException("Email inválido.");
         if (campo.tipo.equals("select") && !campo.opcoes.containsKey(raw))
           throw new RegraException("Opção inválida: " + campo.rotulo);

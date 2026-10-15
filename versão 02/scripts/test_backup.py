@@ -2,6 +2,7 @@
 import os
 import pathlib
 import shutil
+import secrets
 import subprocess
 import tempfile
 
@@ -10,7 +11,7 @@ java = root / '.tools' / 'jdk' / 'bin' / ('java.exe' if os.name == 'nt' else 'ja
 if not java.is_file():
     java = pathlib.Path(shutil.which('java') or '')
 source = root / 'scripts' / 'Backup.java'
-password = 'Senha-ficticia-exclusiva-do-teste-2026'
+password = secrets.token_urlsafe(24)
 
 
 def run(folder, operation, archive, secret=password):
