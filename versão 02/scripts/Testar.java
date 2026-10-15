@@ -39,7 +39,7 @@ class Testar {
   static final SecureRandom RANDOM = new SecureRandom();
   static final List<Result> RESULTS = new ArrayList<>();
   static final List<Process> CHILDREN = Collections.synchronizedList(new ArrayList<>());
-  static Path work, logs, report, isolated;
+  static Path work, logs, report, isolated, transientData;
   static String base;
   static Process server;
   static int sequence;
@@ -101,7 +101,7 @@ class Testar {
               ex instanceof ExpectedFailure
                   ? ex.getMessage()
                   : "O resultado esperado não foi confirmado. Consulte o guia TESTAR.md e os logs"
-                        + " locais privados."));
+                      + " locais privados."));
       System.out.println("  FALHOU - confira o relatório; nenhuma credencial foi exibida.");
       return false;
     }
@@ -230,7 +230,7 @@ class Testar {
     return group + ": " + label;
   }
 
-  static void junitResults() throws Exception {
+  static void junitResults(long since) throws Exception {
     var factory = DocumentBuilderFactory.newInstance();
     factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
     factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
@@ -239,6 +239,7 @@ class Testar {
     try (var files =
         Files.newDirectoryStream(ROOT.resolve("target/surefire-reports"), "TEST-*.xml")) {
       for (Path file : files) {
+        if (Files.getLastModifiedTime(file).toMillis() < since) continue;
         NodeList cases =
             factory.newDocumentBuilder().parse(file.toFile()).getElementsByTagName("testcase");
         for (int i = 0; i < cases.getLength(); i++) {
@@ -258,7 +259,7 @@ class Testar {
                   state.equals("PASSOU")
                       ? "Resultado confirmado no banco de testes."
                       : "Revise o log privado da compilação; não há comprovação de aprovação deste"
-                            + " caso."));
+                          + " caso."));
           count++;
         }
       }
@@ -386,7 +387,7 @@ class Testar {
   }
 
   static boolean webTests() throws Exception {
-    isolated = directory(work.resolve("instalacao-descartavel"));
+    isolated = directory(transientData.resolve("instalacao-descartavel"));
     directory(isolated.resolve(".secrets"));
     directory(isolated.resolve("data"));
     String adminLogin = "teste-" + random(9),
@@ -535,7 +536,7 @@ class Testar {
       check(
           "Backup recusa banco com servidor em execução",
           () -> {
-            Path archive = work.resolve("nao-deve-existir.inpetu");
+            Path archive = transientData.resolve("nao-deve-existir.inpetu");
             require(
                 command(
                             source(
@@ -573,7 +574,7 @@ class Testar {
   }
 
   static void backupTests() throws Exception {
-    Path archive = work.resolve("backup-descartavel.inpetu");
+    Path archive = transientData.resolve("backup-descartavel.inpetu");
     String password = random(24);
     if (!check(
         "Backup cifrado de banco H2 real e restauração íntegra",
@@ -586,7 +587,7 @@ class Testar {
                       90)
                   == 0,
               "Backup não criado.");
-          Path target = directory(work.resolve("restaurado"));
+          Path target = directory(transientData.resolve("restaurado"));
           require(
               command(
                       source(ROOT.resolve("scripts/Backup.java"), "restore", archive.toString()),
@@ -622,14 +623,14 @@ class Testar {
     check(
         "Senha errada e arquivo adulterado não extraem dados",
         () -> {
-          Path tampered = work.resolve("adulterado.inpetu");
+          Path tampered = transientData.resolve("adulterado.inpetu");
           byte[] bytes = Files.readAllBytes(archive);
           bytes[bytes.length - 1] ^= 1;
           Files.write(tampered, bytes);
           protect(tampered);
           int i = 0;
           for (Path input : List.of(archive, tampered)) {
-            Path folder = directory(work.resolve("recusado-" + i));
+            Path folder = directory(transientData.resolve("recusado-" + i));
             String key = i++ == 0 ? password + "-errada" : password;
             require(
                 command(
@@ -648,7 +649,7 @@ class Testar {
     check(
         "Restauração não substitui dados existentes",
         () -> {
-          Path target = work.resolve("restaurado"),
+          Path target = transientData.resolve("restaurado"),
               database = target.resolve("data/inpetu-v02.mv.db");
           byte[] before = Files.readAllBytes(database);
           require(
@@ -766,11 +767,15 @@ class Testar {
   }
 
   static void removeWorkData() throws Exception {
-    Path temp = work.resolve("temporarios");
+    Path temp = transientData;
+    require(
+        temp != null && temp.startsWith(work) && !temp.equals(work),
+        "Diretório temporário inválido.");
     if (!Files.exists(temp)) return;
     try (var stream = Files.walk(temp)) {
       for (Path p : stream.sorted(Comparator.reverseOrder()).toList()) Files.deleteIfExists(p);
     }
+    require(!Files.exists(temp), "Os dados temporários não foram removidos completamente.");
   }
 
   static int run() throws Exception {
@@ -783,7 +788,7 @@ class Testar {
     Path storage = directory(ROOT.resolve(".tools/testes"));
     work = directory(Files.createTempDirectory(storage, "rodada-"));
     logs = directory(work.resolve("logs"));
-    Path temporary = directory(work.resolve("temporarios"));
+    transientData = directory(work.resolve("temporarios"));
     Runtime.getRuntime()
         .addShutdownHook(
             new Thread(
@@ -801,8 +806,9 @@ class Testar {
                         ? List.of(
                             "cmd.exe", "/d", "/c", "maven.bat", "-B", "-ntp", "clean", "verify")
                         : List.of("bash", "maven.sh", "-B", "-ntp", "clean", "verify");
+                long since = System.currentTimeMillis();
                 int exit = command(cmd, ROOT, null, 1200);
-                if (Files.isDirectory(ROOT.resolve("target/surefire-reports"))) junitResults();
+                if (Files.isDirectory(ROOT.resolve("target/surefire-reports"))) junitResults(since);
                 require(
                     exit == 0,
                     "Maven não concluiu: confira configuração, conexão e os logs locais privados.");
@@ -810,13 +816,7 @@ class Testar {
               });
       if (built) {
         // Todos os arquivos sensíveis ficam sob temporarios, excluídos ao encerrar.
-        Path sessionRoot = work;
-        work = temporary;
-        try {
-          if (webTests()) backupTests();
-        } finally {
-          work = sessionRoot;
-        }
+        if (webTests()) backupTests();
       } else
         RESULTS.add(
             new Result(
