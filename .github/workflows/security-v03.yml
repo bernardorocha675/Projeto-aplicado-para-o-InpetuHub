@@ -1,7 +1,7 @@
 name: Segurança e compatibilidade da versão 03
 on:
   push:
-    branches: ['main', 'logging-v03']
+    branches: ['main', 'logging-v03', 'fix-v03-acessos']
     paths: ['versão 03/**', '.github/**']
   pull_request:
     paths: ['versão 03/**', '.github/**']

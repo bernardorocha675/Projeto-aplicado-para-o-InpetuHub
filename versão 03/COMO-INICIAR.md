@@ -109,3 +109,7 @@ Pare o servidor com Ctrl+C e execute `bash testar.sh` (Linux/macOS) ou `.\testar
 Os arquivos ficam em `logs/inpetu.log`, dentro de versão 03. Abra esse arquivo no VS Code ou siga o guia [LOGS.md](LOGS.md). O código de identificação de uma requisição aparece no cabeçalho `X-Request-ID`. Os arquivos antigos são compactados automaticamente. Não envie a pasta inteira sem revisão.
 
 Para trazer dados da versão 02 mantendo usuários, senhas e MFA, siga o procedimento em [HANDOVER.md](HANDOVER.md). Instalações novas começam com banco vazio; a versão 03 não copia dados automaticamente.
+
+## Correção de acesso e exibição de senha
+
+A versão 03 possui botão Mostrar/Ocultar senha nos formulários de senha. Para login inválido, consulte [ACESSOS.md](ACESSOS.md): os comandos `acessos.sh`/`acessos.bat` conferem o arquivo privado com o banco local e permitem recuperação explícita, com servidor parado e confirmação após backup. Não apagam reservas/cadastros, não imprimem credenciais e preservam perfil/MFA de contas existentes. Reiniciar normalmente continua sem redefinir senhas.

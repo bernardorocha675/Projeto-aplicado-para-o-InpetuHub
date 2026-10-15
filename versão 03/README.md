@@ -64,3 +64,5 @@ Depois de configurar, execute `bash testar.sh` no Linux/macOS ou `.\testar.bat` 
 ## Logs persistentes
 
 Terminal e `logs/inpetu.log` em JSON; rotação diária/10 MB, gzip, histórico de 14 dias e limite de 200 MB de arquivos antigos. Mensagens livres e dados HTTP não são gravados. Identifique uma requisição pelo cabeçalho `X-Request-ID`. Leia [LOGS.md](LOGS.md) para consultar, interpretar e relatar erros.
+
+Login recusado? Leia [ACESSOS.md](ACESSOS.md) para conferir se o pacote privado foi importado neste computador, sem apagar os dados.

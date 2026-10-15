@@ -43,6 +43,16 @@ class Testar {
   static String base;
   static Process server;
   static int sequence;
+  static String accessFixture;
+
+  static List<String> accessCommand(String mode) {
+    return List.of(
+        JAVA.toString(),
+        "-Dfile.encoding=UTF-8",
+        "-jar",
+        ROOT.resolve("target/inpetu-hub-3.0.0.jar").toString(),
+        "--" + mode + "-acessos");
+  }
 
   static String random(int bytes) {
     byte[] b = new byte[bytes];
@@ -409,6 +419,7 @@ class Testar {
             + "\naccount.2.role=COLABORADOR\n");
     write(isolated.resolve(".secrets/mfa.key"), random(32));
     write(isolated.resolve(".env.local"), "LOCAL_DB_PASSWORD=" + random(32) + "\n");
+    accessFixture = Files.readString(isolated.resolve(".secrets/accounts.properties"));
     if (!check("Servidor inicia em instalação descartável", () -> startServer(isolated))) {
       stop(server);
       return false;
@@ -437,6 +448,9 @@ class Testar {
             require(
                 post(guest, "/reservas/solicitar", Map.of()).statusCode() == 403,
                 "CSRF ausente não foi recusado.");
+            require(
+                command(accessCommand("verificar"), isolated, null, 90) != 0,
+                "Verificação abriu banco com servidor em execução.");
           });
       HttpClient employee = client();
       check(
@@ -612,6 +626,54 @@ class Testar {
                     .getPath()
                     .equals("/admin"),
                 "Dados não persistiram.");
+          } finally {
+            stop(server);
+            server = null;
+          }
+        });
+  }
+
+  static void accessTests() throws Exception {
+    check(
+        "Conferência e recuperação de contas importadas depois do primeiro início",
+        () -> {
+          String login = "fixture-" + random(9), password = random(24);
+          Path accounts = isolated.resolve(".secrets/accounts.properties");
+          // Reproduz o pacote privado copiado somente depois de o banco já estar provisionado.
+          write(
+              accounts,
+              accessFixture
+                  + "\naccount.3.name=Pessoa sintética\naccount.3.login="
+                  + login
+                  + "\naccount.3.password="
+                  + password
+                  + "\naccount.3.role=COLABORADOR\n");
+          long databaseSize = Files.size(isolated.resolve("data/inpetu-v02.mv.db"));
+          require(
+              command(accessCommand("verificar"), isolated, null, 120) == 2,
+              "Não identificou contas ausentes/senhas diferentes.");
+          require(
+              command(accessCommand("recuperar"), isolated, "CANCELAR\n", 120) == 3,
+              "Recuperação sem confirmação foi aceita.");
+          require(
+              command(accessCommand("verificar"), isolated, null, 120) == 2,
+              "Cancelamento alterou os acessos.");
+          require(
+              command(accessCommand("recuperar"), isolated, "RECUPERAR COM BACKUP\n", 120) == 0,
+              "Recuperação foi recusada.");
+          require(
+              command(accessCommand("verificar"), isolated, null, 120) == 0,
+              "Acessos não conferem após recuperação.");
+          require(databaseSize > 0, "Banco original ausente.");
+          try {
+            startServer(isolated);
+            require(
+                login(client(), login, password).uri().getPath().equals("/admin"),
+                "Conta recuperada não autentica.");
+            String text = Files.readString(isolated.resolve("logs/inpetu.log"));
+            require(
+                !text.contains(login) && !text.contains(password),
+                "Acesso sintético vazou no log.");
           } finally {
             stop(server);
             server = null;
@@ -862,7 +924,10 @@ class Testar {
               });
       if (built) {
         // Todos os arquivos sensíveis ficam sob temporarios, excluídos ao encerrar.
-        if (webTests()) backupTests();
+        if (webTests()) {
+          backupTests();
+          accessTests();
+        }
       } else
         RESULTS.add(
             new Result(

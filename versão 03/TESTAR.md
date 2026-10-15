@@ -89,3 +89,7 @@ Para relatar um bug, envie: nome do teste, sistema, navegador se aplicável, pas
 ## Logs da versão 03
 
 O mesmo comando também verifica o arquivo persistente, o identificador gerado pelo servidor e a ausência de credenciais sintéticas, parâmetros e cabeçalhos enviados no teste. JUnit verifica rotação compactada, JSON válido, descarte de mensagens livres e espelhamento da auditoria apenas após commit. Os logs da instalação descartável são removidos junto com os dados de teste; os logs do executor continuam privados em `.tools/testes/`.
+
+## Correção de acesso e exibição de senha
+
+A versão 03 possui botão Mostrar/Ocultar senha nos formulários de senha. Para login inválido, consulte [ACESSOS.md](ACESSOS.md): os comandos `acessos.sh`/`acessos.bat` conferem o arquivo privado com o banco local e permitem recuperação explícita, com servidor parado e confirmação após backup. Não apagam reservas/cadastros, não imprimem credenciais e preservam perfil/MFA de contas existentes. Reiniciar normalmente continua sem redefinir senhas.

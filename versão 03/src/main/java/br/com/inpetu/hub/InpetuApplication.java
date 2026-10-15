@@ -9,6 +9,12 @@ public class InpetuApplication {
   private static java.nio.channels.FileLock runtimeLock;
 
   public static void main(String[] args) throws Exception {
+    boolean accessTool =
+        java.util.Arrays.stream(args)
+            .anyMatch(a -> a.equals("--verificar-acessos") || a.equals("--recuperar-acessos"));
+    if (accessTool && args.length != 1)
+      throw new IllegalArgumentException(
+          "Use somente o comando de acessos, sem opções de servidor.");
     java.nio.file.Files.createDirectories(java.nio.file.Path.of(".secrets"));
     lockChannel =
         java.nio.channels.FileChannel.open(
@@ -28,6 +34,17 @@ public class InpetuApplication {
                   } catch (Exception ignored) {
                   }
                 }));
+    if (accessTool) {
+      int result;
+      try {
+        result = br.com.inpetu.hub.maintenance.LocalAccessTool.run(args[0]);
+      } finally {
+        runtimeLock.release();
+        lockChannel.close();
+      }
+      System.exit(result);
+      return;
+    }
     br.com.inpetu.hub.observability.PrivateLogDirectory.prepare();
     SpringApplication.run(InpetuApplication.class, args);
   }
