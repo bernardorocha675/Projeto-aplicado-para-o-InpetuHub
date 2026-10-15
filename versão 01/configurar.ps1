@@ -6,14 +6,15 @@ $null = New-Item -ItemType Directory -Force -Path '.tools', 'data'
 if (-not (Use-Java)) {
     $machine = $env:PROCESSOR_ARCHITEW6432
     if (-not $machine) { $machine = $env:PROCESSOR_ARCHITECTURE }
+    $javaVersion = 17
     switch ($machine) {
         'AMD64' { $architecture = 'x64' }
-        'ARM64' { $architecture = 'aarch64' }
+        'ARM64' { $architecture = 'aarch64'; $javaVersion = 21 }
         default { throw "Arquitetura nao suportada: $machine. Instale JDK 17 ou 21." }
     }
-    Write-Host 'Baixando JDK 17 (Temurin) para .tools, sem alterar o sistema...'
+    Write-Host "Baixando JDK $javaVersion (Temurin) para .tools, sem alterar o sistema..."
     $metadata = '.tools\jdk-metadata.json'
-    Get-Download "https://api.adoptium.net/v3/assets/latest/17/hotspot?architecture=$architecture&image_type=jdk&os=windows&vendor=eclipse" $metadata
+    Get-Download "https://api.adoptium.net/v3/assets/latest/$javaVersion/hotspot?architecture=$architecture&image_type=jdk&os=windows&vendor=eclipse" $metadata
     $releases = Get-Content -LiteralPath $metadata -Raw | ConvertFrom-Json
     $package = @($releases)[0].binary.package
     if (-not $package.link -or -not $package.checksum) { throw 'A API nao retornou um JDK compativel.' }
