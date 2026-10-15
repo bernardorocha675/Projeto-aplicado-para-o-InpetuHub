@@ -186,6 +186,6 @@ bash maven.sh test
 
 O configurador já executa a suíte completa. O comando de iniciar compila sem executar os testes novamente.
 
-Esta versão tem execução validada em Linux x64. Windows e macOS possuem scripts, mas não foram executados nativamente na validação registrada. Consulte [docs/VALIDACAO.md](docs/VALIDACAO.md) para o escopo dos testes.
+Esta versão passou pela instalação, pelos 26 testes e pela inicialização nativa em Linux, macOS e Windows, em x64 e ARM64. Quando precisa baixar Java no Windows ARM64, o configurador usa Temurin 21; no Windows x64 usa Temurin 17. Consulte [docs/VALIDACAO.md](docs/VALIDACAO.md) para os sistemas testados e os limites da verificação.
 
 Para usar MySQL, veja [README.md](README.md). Para arquitetura, manutenção e pendências, veja [HANDOVER.md](HANDOVER.md).

@@ -46,7 +46,7 @@ O terminal precisa estar na pasta que contém `pom.xml`.
 Execute o configurador e espere `Configuracao concluida` antes de iniciar.
 A primeira configuração precisa de internet: o download do JDK pode ter cerca
 de 200 MB. O configurador reutiliza um JDK 17 ou 21 com compilador, ou baixa
-Temurin 17; prepara Maven 3.9.9 em `.tools/`, verifica checksums, cria
+Temurin 17 (Temurin 21 no Windows ARM64); prepara Maven 3.9.9 em `.tools/`, verifica checksums, cria
 `.env.local` se necessário e executa `clean verify`.
 
 O comando de iniciar usa `clean package` com testes ignorados nessa etapa e
@@ -199,10 +199,14 @@ entrega. As evidências descritas em [docs/VALIDACAO.md](docs/VALIDACAO.md) incl
 - Checagem de sintaxe Bash, PowerShell, JavaScript e JSON do VS Code.
 
 Esta publicação acrescenta documentação e organização do repositório, sem
-alterar o código da aplicação. A suíte não foi executada novamente apenas por
-essas mudanças de documentação. Não houve teste nativo Windows/macOS, teste
-visual em navegador, envio real por Gmail ou nova execução MySQL nesta versão.
-Os prints do Ubuntu não comprovam uma execução completa nesse computador.
+alterar o código da aplicação. Na importação inicial, a suíte não foi repetida apenas por mudanças de documentação.
+Depois, a verificação de compatibilidade executou os 26 testes e a inicialização
+nativa em Linux, macOS e Windows, em x64 e ARM64. Foram necessárias duas correções
+no bootstrap do Windows: selecionar Temurin 21 em ARM64 e isolar `PSModulePath`
+nos launchers `.bat`. O código da aplicação permaneceu igual. A matriz, os limites
+e os links dos testes estão em [docs/VALIDACAO.md](docs/VALIDACAO.md).
+Não houve teste visual em navegador, envio real por Gmail ou nova execução MySQL.
+Os prints antigos do Ubuntu, por si só, não comprovavam execução completa naquele PC.
 
 Para repetir os testes após a configuração:
 

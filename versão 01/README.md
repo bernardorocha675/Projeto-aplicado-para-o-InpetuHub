@@ -53,7 +53,7 @@ Inicie sempre que quiser usar:
 Os `.bat` chamam o PowerShell com política de execução limitada àquele processo.
 Não é necessário mudar a política do Windows, reiniciar o terminal ou executar como administrador.
 
-O configurador reutiliza um JDK **17 ou 21** compatível, ou baixa Temurin 17 automaticamente.
+O configurador reutiliza um JDK **17 ou 21** compatível, ou baixa Temurin 17 automaticamente (Temurin 21 no Windows ARM64).
 Baixa também Maven **3.9.9**, verifica os arquivos por checksum, cria `.env.local`
 sem substituir configurações existentes, baixa as dependências e roda os testes.
 As ferramentas ficam dentro de `.tools/`; não é necessário configurar o PATH.
