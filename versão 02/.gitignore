@@ -15,3 +15,6 @@ backups/
 *.zip
 *.db
 *.db.*
+
+# Relatórios locais do executor; podem conter detalhes do ambiente.
+relatorios-testes/

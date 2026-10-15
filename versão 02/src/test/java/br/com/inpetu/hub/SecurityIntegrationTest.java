@@ -56,6 +56,7 @@ class SecurityIntegrationTest {
   @Autowired AuditoriaRepository audits;
   @Autowired org.springframework.jdbc.core.JdbcTemplate jdbc;
   @Autowired AuditService auditService;
+  @Autowired ExpirationService expiration;
   @org.junit.jupiter.api.io.TempDir java.nio.file.Path temp;
   static final String PASSWORD = "Synthetic-only-Password-2026!";
 
@@ -356,7 +357,14 @@ class SecurityIntegrationTest {
   void encodedInternalPathCannotSkipSecondFactor() throws Exception {
     var c = create(Perfil.ADMIN);
     var session = login(c);
-    mvc.perform(get(java.net.URI.create("/%61dmin/config")).with(req->{req.setServletPath("/admin/config");return req;}).session(session))
+    mvc.perform(
+            get(java.net.URI.create("/%61dmin/config"))
+                .with(
+                    req -> {
+                      req.setServletPath("/admin/config");
+                      return req;
+                    })
+                .session(session))
         .andExpect(redirectedUrl("/conta/mfa"));
   }
 
@@ -365,7 +373,12 @@ class SecurityIntegrationTest {
     var c = create(Perfil.COLABORADOR);
     for (int i = 0; i < 10; i++)
       mvc.perform(
-              post(java.net.URI.create("/l%6fgin")).with(req->{req.setServletPath("/login");return req;})
+              post(java.net.URI.create("/l%6fgin"))
+                  .with(
+                      req -> {
+                        req.setServletPath("/login");
+                        return req;
+                      })
                   .with(csrf())
                   .param("username", c.login)
                   .param("password", "wrong")
@@ -376,7 +389,12 @@ class SecurityIntegrationTest {
                       }))
           .andExpect(status().is3xxRedirection());
     mvc.perform(
-            post(java.net.URI.create("/l%6fgin")).with(req->{req.setServletPath("/login");return req;})
+            post(java.net.URI.create("/l%6fgin"))
+                .with(
+                    req -> {
+                      req.setServletPath("/login");
+                      return req;
+                    })
                 .with(csrf())
                 .param("username", c.login)
                 .param("password", "wrong")
@@ -386,5 +404,35 @@ class SecurityIntegrationTest {
                       return req;
                     }))
         .andExpect(status().isTooManyRequests());
+  }
+
+  @Test
+  void expiredSessionsAndPendingMfaAreRevoked() throws Exception {
+    var employee = create(Perfil.COLABORADOR);
+    var old = login(employee);
+    old.setAttribute("auth.started", clock.millis() - 7200001);
+    mvc.perform(get("/admin").session(old)).andExpect(redirectedUrl("/login?expired"));
+    var admin = create(Perfil.ADMIN);
+    var pending = login(admin);
+    pending.setAttribute("auth.started", clock.millis() - 300001);
+    mvc.perform(get("/conta/mfa").session(pending)).andExpect(redirectedUrl("/login?expired"));
+  }
+
+  @Test
+  void expiredIntakeAndReservationCannotBeAccepted() {
+    var f = form();
+    var request = requests.submit(f, UUID.randomUUID().toString());
+    var reservation = reservations.solicitar(f);
+    request.expiraEm = LocalDateTime.now(clock).minusSeconds(1);
+    reservation.expiraEm = LocalDateTime.now(clock).minusSeconds(1);
+    var actor = users.findByLogin("fixture-admin").orElseThrow();
+    assertThrows(RuntimeException.class, () -> requests.accept(request.id, actor, true, "Fixture"));
+    assertThrows(RuntimeException.class, () -> reservations.aprovar(reservation.id, actor));
+    expiration.expire();
+    assertEquals("EXPIRADA", request.estado);
+    assertEquals(StatusReserva.CANCELADA, reservation.statusReserva);
+    assertEquals(
+        0,
+        quotas.consultar(reservation.persona, reservation.data).horasReservadasPendentes.signum());
   }
 }

@@ -1,0 +1,87 @@
+# Como testar sem precisar programar
+
+Este roteiro usa os testes existentes e acrescenta verificações em um servidor real, com banco e contas descartáveis. Não pede as cinco senhas particulares e não usa os dados da instalação normal. Não precisa instalar Python para este comando.
+
+## 1. Preparar
+
+1. Atualize o projeto. Se você usou Git para baixar, abra o terminal na pasta do projeto e execute `git pull`. Se baixou ZIP, baixe a versão atual do repositório e extraia tudo em uma pasta nova.
+2. No VS Code, abra a pasta **versão 02**. No menu Terminal, escolha Novo Terminal. Confira se está vendo `pom.xml`, `testar.sh` e `testar.bat` nessa pasta.
+3. Se o servidor estiver rodando, pressione **Ctrl+C** no terminal dele e aguarde encerrar. O executor recompila o JAR.
+4. Se ainda não configurou esta cópia, execute `bash configurar.sh` no Linux/macOS ou `.\configurar.bat` no Windows. Aguarde a mensagem de conclusão. A orientação de instalação das cinco contas continua em COMO-INICIAR.md.
+
+## 2. Executar um comando
+
+No **Linux/Ubuntu ou macOS**:
+
+```bash
+bash testar.sh
+```
+
+No **Windows**, pelo terminal PowerShell ou Prompt de Comando:
+
+```powershell
+.\testar.bat
+```
+
+Outra opção no VS Code: pressione **Ctrl+Shift+P** (no macOS, **Cmd+Shift+P**), procure **Tasks: Run Task / Tarefas: Executar Tarefa** e escolha **InPETU: testar**.
+
+Não precisa abrir o site nem digitar senhas para essa rodada. Aguarde o terminal terminar; a primeira execução pode demorar vários minutos para baixar dependências. Ele avisa quando ainda está trabalhando. Não execute duas rodadas ao mesmo tempo.
+
+## 3. Abrir o resultado
+
+Abra a pasta `relatorios-testes` dentro de `versão 02`. Dê dois cliques em **ultimo.html** pelo Explorador de Arquivos ou Finder para abrir no Chrome, Edge, Firefox ou Safari. No VS Code, clicar no HTML pode abrir o código; nesse caso, use **Mostrar no Explorador / Revelar no Finder** e abra por lá.
+
+O mesmo resumo fica em `relatorios-testes/ultimo.txt`. Uma nova execução substitui esses dois relatórios; copie o resultado anterior para uma pasta privada se quiser comparar rodadas.
+
+| Resultado | O que significa | O que fazer |
+|---|---|---|
+| PASSOU | O resultado esperado foi confirmado nesta rodada. | Continue a lista. Isso não garante ausência de outros bugs. |
+| FALHOU | Uma verificação não confirmou o comportamento esperado. | Anote o nome do teste e siga a seção de problemas abaixo. |
+| NÃO EXECUTADO | Uma etapa anterior impediu este teste, ou ele foi ignorado. | Corrija a causa e repita. Não conte como aprovado. |
+| Conferência manual | Precisa de pessoa, navegador, celular ou infraestrutura real. | Use o PDF privado e a lista ao fim do relatório. |
+
+Se houver falha ou caso não executado, o comando termina com código de erro. Esse comportamento também permite ao GitHub sinalizar problemas automaticamente.
+
+## 4. O que o comando faz
+
+1. Compila o código e executa testes de regras, reservas, preços, cotas, conflitos, autorização, sessões, MFA, confirmação por email e expiração. Usa bancos de teste, sem esperar 24 horas para conferir a lógica de expiração.
+2. Cria uma instalação descartável com contas sintéticas e uma porta local livre. Não depende da porta 8080 nem exige que as senhas particulares continuem iguais às iniciais.
+3. Inicia o servidor, consulta a agenda, testa autenticação de administrador e colaborador, permissões, CSRF, MFA, URLs codificadas, limite de tentativas e troca de senha de uma conta sintética.
+4. Reinicia o servidor descartável e confere a persistência. Cria e restaura backup do H2 de teste. Recusa senha incorreta, arquivo adulterado, sobrescrita e backup com o servidor ainda aberto.
+5. Encerra os processos que iniciou, remove os bancos/contas temporários e gera o relatório. O relatório informa separadamente qualquer falha nessa limpeza.
+
+As ferramentas ficam em `.tools`. Os arquivos temporários e logs desta rodada ficam em `.tools/testes/rodada-...`. Esses diretórios e os relatórios são ignorados pelo Git. Não há alteração no código da aplicação nem importação das contas do time durante os testes.
+
+Se interromper com Ctrl+C ou o computador desligar, podem sobrar dados sintéticos dentro de `.tools/testes`. Depois de confirmar que a rodada encerrou, você pode remover **somente** essa pasta de testes. Não apague `.secrets` ou `data` da instalação normal.
+
+## 5. Relação com os 24 testes do PDF
+
+| Testes do PDF | Cobertura do comando | O que ainda conferir pessoalmente |
+|---|---|---|
+| T01-T02: configurar e configurar novamente | Compila e testa a cópia já configurada. A CI repete o comando em seis plataformas. | Instalação limpa, downloads e preservação dos dados no computador de cada pessoa. |
+| T03-T05: contas, MFA e logout | Login sintético, permissões, MFA e proteção de páginas. | Os cinco acessos reais, o autenticador do celular e o comportamento de voltar no navegador. |
+| T06-T07: erros, agenda e telas | Início do servidor, API, cabeçalhos e renderização de páginas nos testes de integração. | Mensagens claras, cliques, filtros, aparência e tela pequena em navegador real. |
+| T08-T12: solicitações, aprovação, preços e cotas | Regras de serviço, validação de identidade e concorrência no banco de teste. | Confirmar se as regras cadastradas representam a operação desejada pelo responsável. |
+| T13-T14: permissões e tentativas de login | Integração e HTTP real, incluindo caminhos codificados. | Conferência visual das mensagens apresentadas ao usuário. |
+| T15: entradas inválidas e scripts | Há validação de campos nos testes, mas não uma exploração exaustiva de entradas maliciosas. | Faça o cenário de texto malicioso do PDF e confira a exibição no navegador. |
+| T16-T19: CSRF, MFA, senha e revogação | Integração com contas sintéticas; CSRF, MFA e troca de senha também por HTTP real. | Uso do aplicativo autenticador e operação das telas administrativas pela equipe. |
+| T20: duração das sessões | Simula o prazo absoluto de duas horas e o de cinco minutos para MFA pendente. | Inatividade real de 20 minutos e comportamento do navegador durante a espera. |
+| T21: confirmação de email | Testa limites, uso único e expiração do código sem email real. | Entrega SMTP, contato institucional correto e caixa de spam. |
+| T22: expiração em 24 horas | Executa a lógica com datas de teste e recusa aprovação fora do prazo. | Agendamento e passagem do tempo no ambiente em uso. |
+| T23: persistência e auditoria | Reinicia H2 de teste, confere login e cobre auditoria por integração. | Conferência dos registros esperados pelo responsável. |
+| T24: backup e restauração | Testa backup H2 real descartável, integridade e situações de recusa. | Backup e restauração do MySQL de produção, se for utilizado. |
+
+O teste HTTP não controla um navegador gráfico. Ele não comprova aparência, acessibilidade, execução de JavaScript ou todas as interações de tela. Os testes automáticos também não comprovam certificado HTTPS ou SMTP reais.
+
+## 6. Se der problema
+
+| Situação | Como proceder |
+|---|---|
+| `testar` não foi encontrado | Extraia o ZIP completo/atualize o projeto e abra o terminal em versão 02. |
+| Solicita o configurador | Execute o comando de configurar do seu sistema, espere terminar e repita testar. |
+| Falha ao baixar arquivo, internet ou Maven | Confira conexão/proxy. Repita depois de resolver a conexão; não desative certificados ou checksums. |
+| Outra rodada está usando a instalação | Aguarde o outro terminal terminar. Não execute duas vezes em paralelo. |
+| Falha de compilação ou de um teste | Abra ultimo.html; anote o nome da verificação e o sistema. O responsável técnico pode consultar os logs privados indicados no terminal. |
+| Falha na limpeza dos temporários | Encerre os processos desta rodada e remova somente `.tools/testes` depois disso. |
+
+Para relatar um bug, envie: nome do teste, sistema, navegador se aplicável, passos para reproduzir, esperado e observado. Revise qualquer log antes de compartilhar. **Não envie o PDF de senhas, arquivos `.env`, `.secrets`, bancos ou chaves.** O relatório HTML/TXT foi feito para não incluir valores de credenciais; logs detalhados merecem revisão adicional.

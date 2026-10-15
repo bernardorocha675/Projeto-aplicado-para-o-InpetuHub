@@ -50,20 +50,14 @@
       "type": "process",
       "command": "bash",
       "args": [
-        "${workspaceFolder}/maven.sh",
-        "-B",
-        "-ntp",
-        "test"
+        "${workspaceFolder}/testar.sh"
       ],
       "windows": {
         "command": "cmd.exe",
         "args": [
           "/d",
           "/c",
-          "maven.bat",
-          "-B",
-          "-ntp",
-          "test"
+          "testar.bat"
         ]
       },
       "options": {
