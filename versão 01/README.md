@@ -1,5 +1,7 @@
 # InPETU Hub — Agenda pública + CRM
 
+**Primeira execução? Siga o [passo a passo para Linux, macOS e Windows](COMO-INICIAR.md).**
+
 MVP local em um único projeto Java 17, Spring Boot 3.5.6, MVC, Thymeleaf, Security, JPA, Validation, Mail e Maven. Banco H2 em arquivo no modo automático; MySQL continua disponível. Frontend em HTML, CSS e JavaScript puro. As duas interfaces compartilham os mesmos serviços e banco.
 
 ## Handover e clonagem
