@@ -95,6 +95,8 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Testar apresentação da agenda
+        run: node .github/scripts/test_agenda_ui.cjs
       - name: Verificar exclusão de dados privados
         run: python 'versão 0.4/scripts/check_secrets.py'
       - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e

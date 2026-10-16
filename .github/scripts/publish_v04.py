@@ -46,6 +46,7 @@ def main():
     paths=['versão 0.4','README.md','.gitignore','.gitleaks.toml','.gitleaksignore',
            '.github/SECURITY.md','.github/workflows/release-v0.4.yml',
            '.github/scripts/package_v04.py','.github/scripts/smoke_v04.py','.github/scripts/publish_v04.py',
+           '.github/scripts/test_agenda_ui.cjs',
            'VERSION','RELEASE-NOTES.md','RELEASES.md']
     tracked=list(filter(None,run('git','ls-files','-z','--',*paths).split('\0')))
     for name in tracked:

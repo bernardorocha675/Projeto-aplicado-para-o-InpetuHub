@@ -48,7 +48,7 @@ class Testar {
         JAVA.toString(),
         "-Dfile.encoding=UTF-8",
         "-jar",
-        ROOT.resolve("target/inpetu-hub-0.4.0.jar").toString(),
+        ROOT.resolve("target/inpetu-hub-0.4.1.jar").toString(),
         "--" + mode + "-acessos");
   }
 
@@ -375,7 +375,7 @@ class Testar {
             JAVA.toString(),
             "-Dfile.encoding=UTF-8",
             "-jar",
-            ROOT.resolve("target/inpetu-hub-0.4.0.jar").toString(),
+            ROOT.resolve("target/inpetu-hub-0.4.1.jar").toString(),
             "--spring.profiles.active=local",
             "--app.public-demo-accounts=false",
             "--server.port=" + port,

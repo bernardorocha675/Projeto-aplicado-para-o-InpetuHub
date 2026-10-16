@@ -1,22 +1,19 @@
-# InPETU Hub 0.4.0
+# InPETU Hub 0.4.1
 
-- Iniciador executável para Windows, macOS e Linux, com aplicativo e Java privado.
-- Configuração automática, botões Iniciar/Parar e atualização dos fixes estáveis 0.4.x.
-- Cinco contas criadas automaticamente no banco, sem arquivo de senhas para aplicar.
-- Banco novo para a 0.4, separado da instalação da 0.3. Os próximos reinícios preservam os registros novos.
+- Corrige a agenda que mostrava todos os dias ocupados quando não havia espaços cadastrados ou habilitados para reservas.
+- Exibe **Sem espaços** e orienta a equipe a cadastrar ou habilitar os espaços. Dias livres, parcialmente ocupados e lotados continuam respeitando as reservas aprovadas.
+- Preserva o banco, os cadastros, as reservas e os cinco acessos da 0.4.0. Não é necessário resetar o banco.
 
-## Baixar e usar
+## Atualizar
 
-Prefira o ZIP completo do seu sistema/arquitetura. Extraia e abra InPETU-Hub.exe (Windows), InPETU Hub.app (macOS) ou InPETU-Hub (Linux). Aguarde Pronto e clique em Iniciar. Não precisa de VS Code, Java ou Maven externos. Os iniciadores avulsos EXE/RUN precisam de internet na primeira instalação.
+Pare o aplicativo e abra novamente o iniciador da 0.4, ou use **Configurar / atualizar**. O fix estável 0.4.1 é instalado automaticamente. Depois clique em **Iniciar** e atualize a página da agenda.
 
-| Pessoa | Usuário | Senha |
-|---|---|---|
-| Milena | `milena` | `milena040` |
-| Bernardo (administrador) | `bernardo` | `bernardo040` |
-| João F | `joaof` | `joaof040` |
-| João E | `joaoe` | `joaoe040` |
-| Guilherme | `guilherme` | `guilherme040` |
+Também é possível baixar o ZIP completo do seu sistema/arquitetura, extrair e abrir InPETU-Hub.exe (Windows), InPETU Hub.app (macOS) ou InPETU-Hub (Linux). Os pacotes incluem Java; não exigem VS Code ou arquivo de senhas.
 
-São acessos públicos de demonstração local, restaurados ao iniciar. Não use dados confidenciais nem essas senhas em outros serviços. A pasta da 0.3 permanece intacta; não há importação automática de dados antigos.
+## Habilitar a agenda no primeiro uso
 
-Consulte COMO-INICIAR.md, ATUALIZACOES.md e HANDOVER.md na pasta versão 0.4 do código público. Os executáveis não têm certificado comercial/notarização Apple e podem exigir confirmação do sistema. Confira a origem do download e as instruções do seu sistema. Use Parar/Fechar iniciador para encerrar; fechar apenas a aba mantém o iniciador aberto.
+Na área da equipe, abra **Cadastros → Espaços → Novo cadastro**. Informe nome e capacidade, marque **Ativo** e **Disponível para reservas** e salve. Se o espaço já existir, edite o cadastro. Sem reservas aprovadas, ele aparecerá livre. O aviso da agenda inclui um link para essa tela.
+
+Sem espaços cadastrados, não existem horários que possam ser reservados. A correção deixa essa situação explícita; não cria salas fictícias nem remove reservas reais. As contas e senhas de demonstração permanecem iguais às da 0.4.0; consulte ACESSOS.md.
+
+Testes da agenda, do iniciador e dos pacotes integram a publicação em Windows, macOS e Linux, x64/ARM64. Consulte o handover e o guia de testes na pasta versão 0.4. Os executáveis continuam sem assinatura comercial/notarização Apple.

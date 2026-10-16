@@ -182,7 +182,10 @@ public class PublicController {
                 "ocupados",
                 eventos));
       }
-      String estado = !temLivre ? "INDISPONÍVEL" : temReserva ? "PARCIAL" : "DISPONÍVEL";
+      String estado =
+          esp.isEmpty()
+              ? "SEM_ESPACOS"
+              : !temLivre ? "INDISPONÍVEL" : temReserva ? "PARCIAL" : "DISPONÍVEL";
       dias.add(
           Map.of(
               "data",

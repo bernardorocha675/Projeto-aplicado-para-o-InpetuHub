@@ -1,4 +1,4 @@
-InPETU Hub 0.4.0
+InPETU Hub 0.4.1
 
 Para USAR, baixe o pacote nativo da release e abra o iniciador.
 Nao e necessario VS Code, Java, Maven ou arquivo de senhas.

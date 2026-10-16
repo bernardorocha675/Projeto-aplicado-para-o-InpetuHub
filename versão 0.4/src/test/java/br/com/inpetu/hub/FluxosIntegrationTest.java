@@ -257,6 +257,86 @@ class FluxosIntegrationTest {
   }
 
   @Test
+  void espacoInativoNaoSignificaAgendaOcupada() throws Exception {
+    sala.ativo = false;
+    espacos.saveAndFlush(sala);
+    mvc.perform(get("/disponibilidade").param("data", "2026-10-20"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.dias[0].estado").value("SEM_ESPACOS"))
+        .andExpect(jsonPath("$.dias[0].espacos").isEmpty());
+  }
+
+  @Test
+  void espacoDesabilitadoNaoSignificaAgendaOcupada() throws Exception {
+    sala.disponibilidade = false;
+    espacos.saveAndFlush(sala);
+    mvc.perform(get("/disponibilidade").param("data", "2026-10-20"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.dias[0].estado").value("SEM_ESPACOS"));
+  }
+
+  @Test
+  void filtroSemEspacoElegivelNaoMarcaOcupacao() throws Exception {
+    mvc.perform(get("/disponibilidade").param("data", "2026-10-20")
+            .param("espacoId", "9223372036854775807"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.dias[0].estado").value("SEM_ESPACOS"));
+  }
+
+  @Test
+  void reservaAprovadaParcialMantemHorariosLivres() throws Exception {
+    var r = service.solicitar(form("P6", LocalDate.of(2026, 10, 20)));
+    service.aprovar(r.id, admin);
+    mvc.perform(get("/disponibilidade").param("data", "2026-10-20"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.dias[0].estado").value("PARCIAL"))
+        .andExpect(jsonPath("$.dias[0].espacos[0].ocupados.length()").value(1))
+        .andExpect(jsonPath("$.dias[0].espacos[0].livres").isNotEmpty());
+  }
+
+  @Test
+  void apenasReservaAprovadaBloqueiaDiaInteiroECancelamentoLibera() throws Exception {
+    var f = form("P6", LocalDate.of(2026, 10, 20));
+    var c = configuracoes.findById(1L).orElseThrow();
+    f.horaInicio = c.abertura;
+    f.horaFim = c.fechamento;
+    var r = service.solicitar(f);
+    mvc.perform(get("/disponibilidade").param("data", "2026-10-20"))
+        .andExpect(jsonPath("$.dias[0].estado").value("DISPONÍVEL"));
+    service.aprovar(r.id, admin);
+    mvc.perform(get("/disponibilidade").param("data", "2026-10-20"))
+        .andExpect(jsonPath("$.dias[0].estado").value("INDISPONÍVEL"))
+        .andExpect(jsonPath("$.dias[0].espacos[0].livres").isEmpty());
+    service.cancelar(r.id, false, "Cancelamento de teste", admin);
+    mvc.perform(get("/disponibilidade").param("data", "2026-10-20"))
+        .andExpect(jsonPath("$.dias[0].estado").value("DISPONÍVEL"));
+  }
+
+  @Test
+  void salaLotadaNaoBloqueiaOutraSalaLivre() throws Exception {
+    var outra = new Espaco();
+    outra.nomeEspaco = "Outra sala";
+    outra.capacidade = 20;
+    outra.ativo = true;
+    outra.disponibilidade = true;
+    espacos.saveAndFlush(outra);
+    var f = form("P6", LocalDate.of(2026, 10, 20));
+    var c = configuracoes.findById(1L).orElseThrow();
+    f.horaInicio = c.abertura;
+    f.horaFim = c.fechamento;
+    var r = service.solicitar(f);
+    service.aprovar(r.id, admin);
+    mvc.perform(get("/disponibilidade").param("data", "2026-10-20"))
+        .andExpect(jsonPath("$.dias[0].estado").value("PARCIAL"));
+    mvc.perform(get("/disponibilidade").param("data", "2026-10-20")
+            .param("espacoId", sala.id.toString()))
+        .andExpect(jsonPath("$.dias[0].estado").value("INDISPONÍVEL"));
+    mvc.perform(get("/disponibilidade").param("data", "2026-10-20")
+            .param("espacoId", outra.id.toString()))
+        .andExpect(jsonPath("$.dias[0].estado").value("DISPONÍVEL"));
+  }
+
+  @Test
   @WithMockUser(username = "fixture-admin", roles = "ADMIN")
   void telasInternasRenderizam() throws Exception {
     var r = service.solicitar(form("P6", LocalDate.of(2026, 10, 20)));

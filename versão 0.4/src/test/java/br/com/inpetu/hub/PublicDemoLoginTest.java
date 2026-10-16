@@ -66,4 +66,13 @@ class PublicDemoLoginTest {
  @Test void newDesktopDatabaseStartsWithNoBusinessDemoRecords(){
   assertEquals(0,people.count());assertEquals(0,reservations.count());
  }
+
+ @Test void emptyDesktopCalendarDoesNotClaimThatEveryDayIsOccupied() throws Exception {
+  mvc.perform(get("/disponibilidade").param("mes","2026-10"))
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.dias.length()").value(31))
+      .andExpect(jsonPath("$.dias[*].estado").value(
+          org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.is("SEM_ESPACOS"))))
+      .andExpect(jsonPath("$.dias[0].espacos").isEmpty());
+ }
 }

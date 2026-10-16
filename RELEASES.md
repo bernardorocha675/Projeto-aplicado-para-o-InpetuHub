@@ -1,6 +1,6 @@
 # Publicação de versões
 
-A entrega atual é **0.4.0**, na pasta versão 0.4. Entregas anteriores permanecem no histórico. Novas entregas são publicadas em GitHub Releases depois dos testes.
+A entrega atual é **0.4.1**, na pasta versão 0.4. Entregas anteriores permanecem no histórico. Novas entregas são publicadas em GitHub Releases depois dos testes.
 
 Para um fix 0.4.x, atualize VERSION, a versão no POM e caminhos do JAR dos scripts de desenvolvimento; reescreva RELEASE-NOTES.md e os guias afetados. Envie para uma branch de trabalho e revise os resultados. Em main, o workflow da 0.4 compila seis pacotes nativos, executa o smoke do próprio executável/runtime e as verificações de código/dependências/segredos antes de publicar.
 

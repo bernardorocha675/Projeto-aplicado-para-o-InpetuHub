@@ -73,6 +73,9 @@ with tempfile.TemporaryDirectory(prefix='inpetu-desktop-smoke-') as temp:
             raise AssertionError('Controlador aceitou chamada sem token')
         except urllib.error.HTTPError as error:
             assert error.code == 403
+        with get(browser(),base+'/disponibilidade') as response:
+            fresh_calendar=json.loads(response.read())
+        assert fresh_calendar['dias'] and all(d['estado']=='SEM_ESPACOS' and not d['espacos'] for d in fresh_calendar['dias']), 'Banco sem espacos nao pode indicar ocupacao'
         admin = None
         for index, (login,password) in enumerate(accounts):
             user = browser()
@@ -92,6 +95,9 @@ with tempfile.TemporaryDirectory(prefix='inpetu-desktop-smoke-') as temp:
             response.read()
         with get(admin,base+'/admin/cadastros/espacos') as response:
             assert 'Sala persistente desktop' in response.read().decode()
+        with get(browser(),base+'/disponibilidade') as response:
+            ready_calendar=json.loads(response.read())
+        assert all(d['estado']=='DISPONÍVEL' and len(d['espacos'])==1 and d['espacos'][0]['livres'] for d in ready_calendar['dias']), 'Espaco cadastrado e sem reservas deve ficar livre'
         before=(home/'.secrets/mfa.key').read_bytes()
         api('stop')
         wait_for(lambda: not api()['Running'] and not api()['Busy'])
@@ -148,7 +154,7 @@ with tempfile.TemporaryDirectory(prefix='inpetu-desktop-smoke-') as temp:
         assert (home/'.secrets/mfa.key').read_bytes()==before
         api('close')
         wait_for(lambda: not (home/'running.json').exists(),timeout=40)
-        print('EXECUTAVEL APROVADO: configuracao sem arquivo de senhas, 15 logins, permissoes, cadastro, reinicio, troca real do iniciador, chave/banco preservados e encerramento.')
+        print('EXECUTAVEL APROVADO: configuracao sem arquivo de senhas, 15 logins, permissoes, agenda vazia/livre, cadastro, reinicio, troca real do iniciador, chave/banco preservados e encerramento.')
     finally:
         try:
             if (home/'running.json').exists():

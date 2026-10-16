@@ -1,6 +1,12 @@
-# Handover técnico — InPETU Hub 0.4.0
+# Handover técnico — InPETU Hub 0.4.1
 
-Base: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
+Base da correção: `ec65d6a0e1499df1b4a88fd8508ced48bd6f41ac` (0.4.0). Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
+
+## Correção 0.4.1
+
+A ausência de espaços ativos/disponíveis deixava `temLivre=false` na consulta pública, classificando todos os dias como indisponíveis. O endpoint `/disponibilidade` agora retorna `SEM_ESPACOS` nessa situação, inclusive para filtros sem resultado. O JavaScript mostra um estado neutro e orienta o cadastro/habilitação de espaços. Dias livres, parciais e efetivamente ocupados mantêm as regras anteriores. Não há migration, limpeza do banco, ativação forçada de espaços nem alteração das cinco contas.
+
+A regressão é coberta por testes Java para banco novo, espaços inativos/desabilitados, filtro vazio, reservas parciais/integrais, cancelamento e mais de uma sala. Os testes da interface executam o JavaScript real em Node; o smoke do pacote verifica a transição de banco sem espaços para agenda livre após o cadastro.
 
 ## Entrega
 

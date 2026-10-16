@@ -2,16 +2,16 @@
 
 ## Escolher o download
 
-Abra a release **v0.4.0** e escolha o pacote completo do seu sistema. Os arquivos de código-fonte são para desenvolvimento.
+Abra a release **v0.4.1** e escolha o pacote completo do seu sistema. Os arquivos de código-fonte são para desenvolvimento.
 
 | Computador | Pacote |
 |---|---|
-| Windows Intel/AMD | InPETU-Hub-Windows-x64-v0.4.0.zip |
-| Windows ARM | InPETU-Hub-Windows-ARM64-v0.4.0.zip |
-| Mac com Apple Silicon (M1 ou mais recente) | InPETU-Hub-macOS-ARM64-v0.4.0.zip |
-| Mac Intel | InPETU-Hub-macOS-x64-v0.4.0.zip |
-| Linux Intel/AMD | InPETU-Hub-Linux-x64-v0.4.0.zip |
-| Linux ARM64 | InPETU-Hub-Linux-ARM64-v0.4.0.zip |
+| Windows Intel/AMD | InPETU-Hub-Windows-x64-v0.4.1.zip |
+| Windows ARM | InPETU-Hub-Windows-ARM64-v0.4.1.zip |
+| Mac com Apple Silicon (M1 ou mais recente) | InPETU-Hub-macOS-ARM64-v0.4.1.zip |
+| Mac Intel | InPETU-Hub-macOS-x64-v0.4.1.zip |
+| Linux Intel/AMD | InPETU-Hub-Linux-x64-v0.4.1.zip |
+| Linux ARM64 | InPETU-Hub-Linux-ARM64-v0.4.1.zip |
 
 Os pacotes completos já incluem Java e o aplicativo. Você também pode baixar somente o iniciador `.exe` no Windows ou `.run` no Linux; nesse caso, a primeira instalação precisa de internet para baixar o pacote completo.
 
@@ -44,6 +44,16 @@ Para o iniciador avulso `.run`, use o nome completo baixado no lugar de `InPETU-
 Fechar apenas a aba não encerra o aplicativo. Abra novamente o executável para voltar ao iniciador já aberto. Não execute a mesma pasta de dados por dois iniciadores diferentes.
 
 Windows pode mostrar SmartScreen porque o EXE não tem certificado comercial. Confira se o download veio deste repositório; em computadores gerenciados, consulte o responsável. Não desative as proteções do sistema.
+
+## Primeiro cadastro de espaços
+
+O banco novo começa sem espaços cadastrados. A agenda mostra **Sem espaços**, que é diferente de um dia ocupado por reservas. Para habilitar a agenda:
+
+1. Entre na área da equipe e abra **Cadastros → Espaços** (ou use o link **Gerenciar espaços** no aviso da agenda).
+2. Clique em **Novo cadastro**, preencha o nome e a capacidade e marque **Ativo** e **Disponível para reservas**.
+3. Salve e volte à agenda. Sem reservas aprovadas, o espaço aparecerá livre; a consulta é atualizada automaticamente em até 30 segundos.
+
+Espaços já existentes podem ser editados nessa mesma tela. Não é preciso apagar ou recriar o banco.
 
 ## Dados e contas
 

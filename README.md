@@ -13,7 +13,7 @@ Projeto acadêmico desenvolvido na disciplina de **Projeto Aplicado do UniSENAI*
 
 ## Versão atual
 
-[**Versão 0.4.0**](vers%C3%A3o%200.4) — iniciador executável, configuração automática e atualizações 0.4.x.
+[**Versão 0.4.1**](vers%C3%A3o%200.4) — corrige a indicação de ocupação na agenda sem espaços cadastrados.
 
 ## Documentação
 

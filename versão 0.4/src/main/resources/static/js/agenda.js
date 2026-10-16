@@ -1,20 +1,20 @@
 (()=>{
- const grid=document.getElementById('calendario'),title=document.getElementById('mes-titulo'),details=document.getElementById('detalhe-dia'),filter=document.getElementById('filtro-espaco');
+ const grid=document.getElementById('calendario'),title=document.getElementById('mes-titulo'),details=document.getElementById('detalhe-dia'),filter=document.getElementById('filtro-espaco'),notice=document.getElementById('agenda-aviso');
  let month=new Date();month.setDate(1);let selected=null;let request=0;const dateISO=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
  const today=dateISO(new Date());const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text)n.textContent=text;if(cls)n.className=cls;return n;};
  async function render(){const seq=++request;title.textContent=month.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});grid.replaceChildren(el('p','Carregando...'));try{
   const ym=dateISO(month).slice(0,7);const query=new URLSearchParams({mes:ym});if(filter.value)query.set('espacoId',filter.value);
   const response=await fetch('/disponibilidade?'+query);if(!response.ok)throw new Error('Não foi possível consultar a agenda.');const json=await response.json();if(seq!==request)return;
-  const days=new Map(json.dias.map(d=>[d.data,d]));grid.replaceChildren();const start=new Date(month);start.setDate(1-start.getDay());
+  const days=new Map(json.dias.map(d=>[d.data,d]));notice.hidden=!json.dias.length||!json.dias.every(d=>d.estado==='SEM_ESPACOS');grid.replaceChildren();const start=new Date(month);start.setDate(1-start.getDay());
   for(let i=0;i<42;i++){const d=new Date(start);d.setDate(start.getDate()+i);if(i>=35&&d.getMonth()!==month.getMonth())break;const iso=dateISO(d),info=days.get(iso);const b=el('button',null,'day');b.type='button';b.append(el('strong',String(d.getDate())));
-   if(!info){b.classList.add('other');b.disabled=true;}else{const partial=info.estado==='PARCIAL',full=info.estado==='INDISPONÍVEL';if(partial)b.classList.add('partial');if(full)b.classList.add('full');b.append(el('span',partial?'● Parcial':full?'× Ocupado':'○ Livre'));if(iso===today)b.classList.add('today');if(iso<today)b.classList.add('past');if(iso===selected)b.classList.add('selected');b.setAttribute('aria-label',`${d.toLocaleDateString('pt-BR')}: ${info.estado}${info.feriado?', feriado':''}`);b.setAttribute('aria-pressed',iso===selected?'true':'false');b.addEventListener('click',()=>{selected=iso;grid.querySelectorAll('.day').forEach(x=>{x.classList.remove('selected');x.setAttribute('aria-pressed','false');});b.classList.add('selected');b.setAttribute('aria-pressed','true');show(info);});}
+   if(!info){b.classList.add('other');b.disabled=true;}else{const partial=info.estado==='PARCIAL',full=info.estado==='INDISPONÍVEL',empty=info.estado==='SEM_ESPACOS';if(partial)b.classList.add('partial');if(full)b.classList.add('full');if(empty)b.classList.add('empty-day');b.append(el('span',empty?'— Sem espaços':partial?'● Parcial':full?'× Ocupado':'○ Livre'));if(iso===today)b.classList.add('today');if(iso<today)b.classList.add('past');if(iso===selected)b.classList.add('selected');b.setAttribute('aria-label',`${d.toLocaleDateString('pt-BR')}: ${empty?'Sem espaços habilitados':info.estado}${info.feriado?', feriado':''}`);b.setAttribute('aria-pressed',iso===selected?'true':'false');b.addEventListener('click',()=>{selected=iso;grid.querySelectorAll('.day').forEach(x=>{x.classList.remove('selected');x.setAttribute('aria-pressed','false');});b.classList.add('selected');b.setAttribute('aria-pressed','true');show(info);});}
    grid.append(b);
   }
   if(selected&&days.has(selected))show(days.get(selected));else details.replaceChildren(el('p','Selecione uma data para consultar os horários.'));
  }catch(e){if(seq===request){grid.replaceChildren(el('p',e.message,'alert error'));}}}
  function show(info){details.replaceChildren();const formatted=new Date(info.data+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});details.append(el('h3',formatted+(info.feriado?' · Feriado':'')));
   if(info.data<today)details.append(el('p','Data passada: consulte os eventos. Novas reservas não são permitidas.','muted'));
-  if(!info.espacos.length)details.append(el('p','Nenhum espaço disponível.'));
+  if(!info.espacos.length)details.append(el('p','Não há espaços habilitados para reservas nesta consulta. Isso não indica que os horários estejam ocupados.'));
   for(const room of info.espacos){const card=el('section',null,'space-slots');card.append(el('h4',room.nome+` · até ${room.capacidade} pessoas`));
    if(room.ocupados.length){card.append(el('p','Horários indisponíveis','muted'));for(const event of room.ocupados)card.append(el('p',`${event.inicio}–${event.fim} · ${event.titulo}`,'busy'));}
    card.append(el('p',room.livres.length?'Horários disponíveis':'Sem horários livres','muted'));
