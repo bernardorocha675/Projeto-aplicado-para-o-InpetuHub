@@ -1,6 +1,6 @@
 # InPETU Hub — versão 0.3
 
-**Pacote Java: 0.3.0.** Entrega acadêmica com execução local validada, logs persistentes, diagnóstico/recuperação local de acessos e botão Mostrar/Ocultar senha. A implantação em produção permanece pendente.
+**Pacote Java: 0.3.1fix.** Entrega acadêmica com execução local validada, logs persistentes, diagnóstico/recuperação local de acessos e botão Mostrar/Ocultar senha. A implantação em produção permanece pendente.
 
 Agenda pública e CRM em Java 17/21, Spring Boot 4.1.1, Spring Security, Thymeleaf, JPA e Flyway. O modo local usa H2 em arquivo. O perfil `prod` usa MySQL e exige HTTPS direto e SMTP.
 
@@ -25,9 +25,9 @@ Cada banco é provisionado uma vez. Repetir o configurador não troca senhas nem
 
 - Senhas BCrypt, mínimo de 16 e máximo de 64 caracteres, com limite de 72 bytes.
 - Sem credenciais padrão no código, exemplos ou documentação desta versão.
-- Administrador com TOTP obrigatório; colaboradores podem ativá-lo em Segundo fator. Códigos de recuperação de uso único são mostrados apenas na ativação. Segredos TOTP são cifrados com AES-GCM usando uma chave privada da instalação.
+- Login e senha para administradores e colaboradores. O segundo fator foi removido nesta correção, inclusive para contas já configuradas; essa mudança reduz a proteção das contas administrativas.
 - Desativação, mudança de login, senha ou perfil revogam sessões anteriores na próxima requisição. Sessões expiram por inatividade e têm limite absoluto de duas horas.
-- Limites para login, segundo fator, consultas e solicitações; endereços encaminhados pelo cliente não são confiados.
+- Limites para login, consultas e solicitações; endereços encaminhados pelo cliente não são confiados.
 - CSRF, escape HTML, consultas parametrizadas, CSP, Referrer-Policy e restrições de recursos do navegador.
 - Auditoria de autenticação, contas, cadastros, disponibilidade e operações privilegiadas; nenhum valor de senha ou token é registrado.
 - Backup local cifrado, com exclusão mútua entre servidor e cópia/restauração.
@@ -45,7 +45,7 @@ Os parâmetros financeiros, taxas, expediente, capacidades, feriados e preços i
 
 ## Dados, testes e produção
 
-O H2 fica em `data/inpetu-v02.mv.db`; preserve também `.env.local` e `.secrets/mfa.key`. Sem a chave original não será possível decifrar os segundos fatores existentes.
+O H2 fica em `data/inpetu-v02.mv.db`; preserve também `.env.local` e `.secrets/mfa.key`. A chave continua sendo usada em outras verificações do sistema; o nome do arquivo foi mantido por compatibilidade.
 
 ```sh
 bash maven.sh clean verify

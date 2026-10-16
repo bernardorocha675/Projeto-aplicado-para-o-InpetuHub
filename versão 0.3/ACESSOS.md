@@ -14,7 +14,7 @@ Pare o servidor no terminal com Ctrl+C. Confira se não existe outra execução 
 
 ## 2. Conferir o arquivo privado
 
-Extraia o pacote privado de acessos dentro de **versão 0.3**. O resultado precisa ser `.secrets/accounts.properties`, junto da chave MFA que já existia. Se o pacote se chama V02, ele também serve para a versão 0.3: o formato das contas é o mesmo. **Não substitua a chave MFA existente.** O ZIP de contas entregue contém o arquivo de contas, não uma nova chave MFA.
+Extraia o pacote privado de acessos dentro de **versão 0.3**. O resultado precisa ser `.secrets/accounts.properties`, junto dos demais arquivos privados que já existiam. Se o pacote se chama V02, ele também serve para a versão 0.3: o formato das contas é o mesmo. **Não substitua a chave privada existente em `.secrets/mfa.key`.** O ZIP de contas entregue contém o arquivo de contas, não uma nova chave privada.
 
 Se `.secrets/accounts.properties` já existe e contém o administrador aleatório, guarde antes uma cópia privada fora do repositório. Extraia/substitua apenas o arquivo de contas com o pacote correto. O arquivo pode conter as senhas iniciais em texto; não o envie em prints, issues ou commits.
 
@@ -30,7 +30,7 @@ Se tudo confere, copie o login e a senha exatos do arquivo privado no seu comput
 
 ## 3. Recuperar sem apagar os dados
 
-Use esta etapa **somente se deseja importar contas ausentes e voltar às senhas do arquivo privado**. O responsável pelo computador/banco deve fazê-la. Ela reativa as contas listadas e redefine suas senhas; não altera contas fora do arquivo. Perfis e MFA de contas existentes são preservados. Contas novas recebem o perfil definido no arquivo privado. Sessões antigas das contas afetadas são revogadas quando o site voltar.
+Use esta etapa **somente se deseja importar contas ausentes e voltar às senhas do arquivo privado**. O responsável pelo computador/banco deve fazê-la. Ela reativa as contas listadas e redefine suas senhas; não altera contas fora do arquivo. Perfis e dados antigos de segundo fator são preservados por compatibilidade, mas esta release não exige autenticador. Contas novas recebem o perfil definido no arquivo privado. Sessões antigas das contas afetadas são revogadas quando o site voltar.
 
 Primeiro faça um backup cifrado, com o servidor parado:
 
@@ -51,7 +51,7 @@ Depois rode o comando verificar novamente: deve informar que os acessos conferem
 
 ## 4. Iniciar e entrar
 
-Linux/macOS: `bash iniciar.sh`. Windows: `.\iniciar.bat`. Abra http://localhost:8080/login e use o login/senha do arquivo privado. Os administradores continuam precisando do autenticador; a recuperação não remove MFA nem cria senha mestre. Se o MFA já estava ativo, use o autenticador/código de recuperação existente.
+Linux/macOS: `bash iniciar.sh`. Windows: `.\iniciar.bat`. Abra http://localhost:8080/login e use o login/senha do arquivo privado. A partir da release 0.3.1fix, administradores e colaboradores entram somente com login e senha, mesmo se já tinham autenticador. A recuperação não cria senha mestre.
 
 A operação fica registrada na auditoria como `ACESSO_RECUPERADO_LOCAL`, sem credenciais. O administrador aleatório anterior, caso exista e não esteja no arquivo importado, não é apagado: depois de conferir os acessos, o administrador pode desativá-lo pelo painel.
 

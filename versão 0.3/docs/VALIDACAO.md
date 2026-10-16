@@ -1,5 +1,17 @@
 # Validação da versão 0.3
 
+## Correção 0.3.1fix — 16/10/2026
+
+O segundo fator foi removido do acesso, menu, rotas e redefinição administrativa. Login e senha abrem o painel para ADMIN e COLABORADOR, inclusive contas que já possuíam dados de MFA. As colunas antigas, as migrations, a chave privada e o formato de backup foram preservados. Não houve alteração nas versões 0.1/0.2, nas senhas ou nas regras de reservas.
+
+A rodada local completa aprovou **78 verificações**, incluindo **60 casos JUnit**, sem falhas ou casos ignorados. As novas verificações cobrem acesso por senha com e sem dados antigos de MFA, remoção de GET/POST das rotas antigas, permissões em caminhos normais/codificados e expiração absoluta de sessão para ambos os perfis. HTTP real também confirmou o acesso sem autenticador e a remoção das rotas. O restante do roteiro de logs, persistência, revogação de sessão, backup/restauração e recuperação local de senhas passou.
+
+Foram conferidos: migrations idênticas à base, ausência das credenciais privadas no conteúdo preparado, sintaxe shell/Python e links locais. O pacote público é conferido pelo publicador antes do envio. A CI do commit associado à tag `v0.3.1fix` é a referência da nova rodada em Linux, macOS e Windows; a publicação exige sucesso dos testes e verificações. A remoção do segundo fator reduz a proteção das contas administrativas. As limitações de CodeQL/navegador/produção descritas abaixo continuam válidas.
+
+## Histórico anterior à correção
+
+Os resultados abaixo pertencem aos commits citados e podem descrever segundo fator ainda ativo. Não são usados como comprovação automática da correção 0.3.1fix.
+
 Base: versão 0.2 no commit `f000c23d1fae4f429c3106464fc876b0f9459cde`. Evidências da versão 0.2 permanecem na pasta original; não são usadas como comprovação automática desta versão.
 
 ## Escopo desta rodada

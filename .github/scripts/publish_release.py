@@ -21,8 +21,8 @@ def main():
     args = parser.parse_args()
     os.chdir(run('git', 'rev-parse', '--show-toplevel'))
     version = Path('VERSION').read_text().strip()
-    if not re.fullmatch(r'(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)', version):
-        raise SystemExit('VERSION precisa conter um número como 0.3.0.')
+    if not re.fullmatch(r'(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:fix)?', version):
+        raise SystemExit('VERSION precisa conter um número como 0.3.1 ou 0.3.1fix.')
     major, minor, _ = version.split('.')
     folder = f'versão {major}.{minor}'
     ns = {'m': 'http://maven.apache.org/POM/4.0.0'}

@@ -14,16 +14,6 @@ class SecurityUnitTest {
   @TempDir Path temp;
 
   @Test
-  void totpMatchesRfc6238AndRejectsReplay() {
-    var t = new TotpService();
-    String key = "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ";
-    assertEquals("287082", t.code(key, 1));
-    assertEquals(1, t.verify(key, "287082", 59, -1));
-    assertEquals(-1, t.verify(key, "287082", 59, 1));
-    assertEquals(-1, t.verify(key, "287083", 59, -1));
-  }
-
-  @Test
   void rateLimitDoesNotPermanentlyLockVictim() {
     var c =
         new Clock() {

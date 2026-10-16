@@ -13,7 +13,7 @@ Projeto acadêmico desenvolvido na disciplina de **Projeto Aplicado do UniSENAI*
 
 ## Versão atual
 
-[**Versão 0.3**](vers%C3%A3o%200.3) — logs em arquivo, conferência e recuperação de acessos e botão Mostrar/Ocultar senha.
+[**Versão 0.3.1fix**](vers%C3%A3o%200.3) — remoção do segundo fator; acesso com login e senha.
 
 ## Documentação
 

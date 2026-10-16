@@ -1,6 +1,5 @@
 package br.com.inpetu.hub.security;
 
-import br.com.inpetu.hub.enums.Perfil;
 import br.com.inpetu.hub.repository.ColaboradorRepository;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -42,28 +41,6 @@ public class SessionGuardFilter extends OncePerRequestFilter {
         SecurityContextHolder.clearContext();
         audit.security(p.id(), "SESSAO_REVOGADA", "NEGADO");
         res.sendRedirect("/login?expired");
-        return;
-      }
-      String path = SecurityPaths.path(req);
-      boolean internal =
-          !(path.startsWith("/css/")
-              || path.startsWith("/js/")
-              || path.startsWith("/images/")
-              || java.util.Set.of("/conta/mfa", "/logout", "/error", "/login").contains(path));
-      boolean needs = c.perfil == Perfil.ADMIN || c.mfaSecret != null;
-      boolean verified = Boolean.TRUE.equals(session.getAttribute("mfa.verified"));
-      if (needs && !verified && clock.millis() - started > 300000) {
-        session.invalidate();
-        SecurityContextHolder.clearContext();
-        res.sendRedirect("/login?expired");
-        return;
-      }
-      if (needs && !verified && internal) {
-        if (clock.millis() - started > 300000) {
-          session.invalidate();
-          SecurityContextHolder.clearContext();
-          res.sendRedirect("/login?expired");
-        } else res.sendRedirect("/conta/mfa");
         return;
       }
     }

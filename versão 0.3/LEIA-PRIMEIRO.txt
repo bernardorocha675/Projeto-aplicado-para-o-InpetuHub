@@ -7,7 +7,7 @@ Windows: .\configurar.bat; depois .\iniciar.bat.
 
 Não existe login público padrão. O configurador prepara arquivos privados em .secrets/.
 Para usar contas recebidas em privado, copie accounts.properties para .secrets/ ANTES de configurar e iniciar em um banco novo.
-No primeiro acesso, administradores configuram um aplicativo autenticador.
+Na release 0.3.1fix, o acesso usa somente login e senha, sem aplicativo autenticador.
 As contas, as senhas e os dados não acompanham git clone.
 Não publique .secrets/, .env.local, bancos nem backups.
 

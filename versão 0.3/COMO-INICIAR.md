@@ -64,7 +64,7 @@ dir pom.xml
 
 Aguarde **Configuracao concluida** antes de iniciar. Não precisa de administrador nem alterar a política global de execução. Em Windows ARM64 o download automático usa Java 21; em x64 usa Java 17.
 
-## 6. Acessar e configurar o segundo fator
+## 6. Acessar com login e senha
 
 Aguarde o evento **event=SERVER_READY** no terminal. As linhas de log estão em formato JSON. Abra no mesmo computador:
 
@@ -73,15 +73,13 @@ Aguarde o evento **event=SERVER_READY** no terminal. As linhas de log estão em 
 
 Use sua conta recebida em privado. Não há login público padrão. Se a instalação gerou uma conta própria, abra `.secrets/accounts.properties` apenas no seu computador para consultá-la.
 
-No primeiro acesso administrativo, configure um aplicativo autenticador: adicione uma conta por **chave manual**, selecione **TOTP**, seis dígitos e intervalo de 30 segundos. Digite o código gerado e guarde os oito códigos de recuperação, que só aparecem uma vez. Não publique a chave manual nem os códigos. Mantenha data/hora automáticas no telefone e computador.
-
-Os colaboradores podem configurar o segundo fator pelo menu. Depois de ativado, ele será exigido nos próximos logins.
+A partir da release **0.3.1fix**, administradores e colaboradores entram somente com login e senha. Não há configuração de aplicativo autenticador nem solicitação de código adicional, inclusive para contas que já usavam segundo fator.
 
 ## 7. Parar e usar novamente
 
 Pressione Ctrl+C no terminal do servidor e aguarde encerrar. Para usar de novo, execute somente `bash iniciar.sh` ou `.\iniciar.bat` na pasta versão 0.3. A inicialização recompila o código sem repetir os testes.
 
-O banco, as contas e os registros permanecem em `data/`. A chave MFA está em `.secrets/mfa.key`; não a regenere. Faça backup cifrado antes de atualizar ou migrar.
+O banco, as contas e os registros permanecem em `data/`. A chave privada da instalação está em `.secrets/mfa.key`; ela continua sendo usada em outras verificações. Não a regenere. Faça backup cifrado antes de atualizar ou migrar.
 
 ## 8. Problemas comuns
 
@@ -92,7 +90,6 @@ O banco, as contas e os registros permanecem em `data/`. A chave MFA está em `.
 | Erro de download/checksum | Confira internet, proxy, certificados e acesso ao Adoptium, GitHub e Maven Central; repita. |
 | Porta ocupada | Pare outra execução ou altere `PORT` em `.env.local` e use a nova porta. |
 | Arquivo privado inválido | Não publique o conteúdo. Confira a estrutura do pacote privado e leia o erro sem incluir credenciais. |
-| Segundo fator inválido | Confira relógios, aguarde o próximo código ou use um código de recuperação ainda não utilizado. |
 | Sessão encerrada após edição da conta | Entre novamente; mudanças de conta revogam sessões por segurança. |
 | Muitas tentativas | Aguarde o prazo indicado. Não é um bloqueio permanente. |
 | Solicitação não aparece como ocupada | Somente uma reserva aprovada bloqueia horários. Confira a fila de solicitações e a identidade antes de aprovar. |
@@ -108,8 +105,8 @@ Pare o servidor com Ctrl+C e execute `bash testar.sh` (Linux/macOS) ou `.\testar
 
 Os arquivos ficam em `logs/inpetu.log`, dentro de versão 0.3. Abra esse arquivo no VS Code ou siga o guia [LOGS.md](LOGS.md). O código de identificação de uma requisição aparece no cabeçalho `X-Request-ID`. Os arquivos antigos são compactados automaticamente. Não envie a pasta inteira sem revisão.
 
-Para trazer dados da versão 0.2 mantendo usuários, senhas e MFA, siga o procedimento em [HANDOVER.md](HANDOVER.md). Instalações novas começam com banco vazio; a versão 0.3 não copia dados automaticamente.
+Para trazer dados da versão 0.2 mantendo usuários, senhas e arquivos privados, siga o procedimento em [HANDOVER.md](HANDOVER.md). Instalações novas começam com banco vazio; a versão 0.3 não copia dados automaticamente.
 
 ## Correção de acesso e exibição de senha
 
-A versão 0.3 possui botão Mostrar/Ocultar senha nos formulários de senha. Para login inválido, consulte [ACESSOS.md](ACESSOS.md): os comandos `acessos.sh`/`acessos.bat` conferem o arquivo privado com o banco local e permitem recuperação explícita, com servidor parado e confirmação após backup. Não apagam reservas/cadastros, não imprimem credenciais e preservam perfil/MFA de contas existentes. Reiniciar normalmente continua sem redefinir senhas.
+A versão 0.3 possui botão Mostrar/Ocultar senha nos formulários de senha. Para login inválido, consulte [ACESSOS.md](ACESSOS.md): os comandos `acessos.sh`/`acessos.bat` conferem o arquivo privado com o banco local e permitem recuperação explícita, com servidor parado e confirmação após backup. Não apagam reservas/cadastros, não imprimem credenciais e preservam o perfil e os dados de contas existentes. Reiniciar normalmente continua sem redefinir senhas.

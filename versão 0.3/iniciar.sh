@@ -8,4 +8,4 @@ use_maven || die 'Execute primeiro: bash configurar.sh'
 # Recompila para que alteracoes no codigo aparecam na proxima inicializacao.
 "$MAVEN_CMD" -B -ntp -DskipTests clean package
 echo 'Iniciando InPETU. Abra http://localhost:8080 (ou a PORT de .env.local). Ctrl+C para parar.'
-exec "$JAVA_HOME/bin/java" -jar target/inpetu-hub-0.3.0.jar --spring.profiles.active=local "$@"
+exec "$JAVA_HOME/bin/java" -jar target/inpetu-hub-0.3.1fix.jar --spring.profiles.active=local "$@"

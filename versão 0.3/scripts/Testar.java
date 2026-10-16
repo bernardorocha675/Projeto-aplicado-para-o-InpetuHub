@@ -11,8 +11,6 @@ import java.time.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.*;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.*;
@@ -50,7 +48,7 @@ class Testar {
         JAVA.toString(),
         "-Dfile.encoding=UTF-8",
         "-jar",
-        ROOT.resolve("target/inpetu-hub-0.3.0.jar").toString(),
+        ROOT.resolve("target/inpetu-hub-0.3.1fix.jar").toString(),
         "--" + mode + "-acessos");
   }
 
@@ -207,8 +205,10 @@ class Testar {
     label =
         switch (label) {
           case "previousSessionsAreRevoked" -> "Alteração de conta revoga sessões anteriores";
-          case "adminRequiresEnrollmentAndRecoveryCannotBeReused" ->
-              "MFA obrigatório e recuperação de uso único";
+          case "adminUsesPasswordWithoutSecondFactor" ->
+              "Administrador acessa com senha; rotas de segundo fator removidas";
+          case "legacySecondFactorDoesNotBlockPasswordLogin" ->
+              "Conta com segundo fator antigo acessa com senha";
           case "collaboratorCannotReadOrWriteAdministration" ->
               "Colaborador não acessa administração";
           case "badLoginsAreThrottledWithoutTrustingForwardedIp" ->
@@ -227,14 +227,15 @@ class Testar {
               "Importação única de cinco contas sintéticas";
           case "emailConfirmationHasFiveAttemptLimitAndExpiry" ->
               "Limite e expiração de confirmação por email";
-          case "encodedInternalPathCannotSkipSecondFactor" -> "URL codificada não contorna MFA";
+          case "encodedInternalPathPreservesAdministrationPermissions" ->
+              "URL codificada preserva as permissões administrativas";
           case "encodedLoginCannotSkipThrottle" -> "URL codificada não contorna limite de login";
-          case "totpMatchesRfc6238AndRejectsReplay" -> "Cálculo TOTP e rejeição de repetição";
           case "rateLimitDoesNotPermanentlyLockVictim" ->
               "Limite de tentativas termina após o prazo";
           case "provisioningValidatesAllEntriesWithoutExposingThem" ->
               "Validação das contas sem expor valores";
-          case "expiredSessionsAndPendingMfaAreRevoked" -> "Prazos absolutos de sessão e MFA";
+          case "absoluteSessionExpiryStillAppliesToBothRoles" ->
+              "Prazo absoluto de sessão para ambos os perfis";
           case "expiredIntakeAndReservationCannotBeAccepted" ->
               "Expiração de solicitação e reserva pendente";
           default -> label.replaceAll("([a-zà-ü])([A-ZÀ-Ü])", "$1 $2");
@@ -345,7 +346,7 @@ class Testar {
             JAVA.toString(),
             "-Dfile.encoding=UTF-8",
             "-jar",
-            ROOT.resolve("target/inpetu-hub-0.3.0.jar").toString(),
+            ROOT.resolve("target/inpetu-hub-0.3.1fix.jar").toString(),
             "--spring.profiles.active=local",
             "--server.port=" + port,
             "--spring.config.import=",
@@ -370,32 +371,6 @@ class Testar {
       if (i % 15 == 14) System.out.println("  Aguardando o servidor de testes...");
     }
     throw new IOException("Servidor de testes não ficou pronto.");
-  }
-
-  static String totp(String key) throws Exception {
-    var out = new ByteArrayOutputStream();
-    int value = 0, bits = 0;
-    for (char ch : key.toCharArray()) {
-      int digit = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567".indexOf(ch);
-      require(digit >= 0, "Chave sintética inválida.");
-      value = (value << 5) | digit;
-      bits += 5;
-      if (bits >= 8) {
-        out.write((value >> (bits - 8)) & 255);
-        bits -= 8;
-      }
-    }
-    Mac mac = Mac.getInstance("HmacSHA1");
-    mac.init(new SecretKeySpec(out.toByteArray(), "HmacSHA1"));
-    byte[] hash =
-        mac.doFinal(ByteBuffer.allocate(8).putLong(Instant.now().getEpochSecond() / 30).array());
-    int o = hash[hash.length - 1] & 15;
-    int number =
-        ((hash[o] & 127) << 24)
-            | ((hash[o + 1] & 255) << 16)
-            | ((hash[o + 2] & 255) << 8)
-            | (hash[o + 3] & 255);
-    return String.format(Locale.ROOT, "%06d", number % 1000000);
   }
 
   static boolean webTests() throws Exception {
@@ -465,36 +440,41 @@ class Testar {
                 "Configuração acessível ao colaborador.");
           });
       HttpClient admin = client();
-      if (check(
-          "Administrador precisa do segundo fator, inclusive em URL codificada",
+      check(
+          "Administrador acessa o painel com login e senha, inclusive em URL codificada",
           () -> {
             require(
-                login(admin, adminLogin, password).uri().getPath().equals("/conta/mfa"),
-                "MFA não exigido.");
+                login(admin, adminLogin, password).uri().getPath().equals("/admin"),
+                "Login administrativo não chegou ao painel.");
             require(
-                get(admin, "/%61dmin/config").uri().getPath().equals("/conta/mfa"),
-                "MFA contornado.");
-          })) {
-        check(
-            "Ativação TOTP e códigos de recuperação no servidor real",
-            () -> {
-              String page = get(admin, "/conta/mfa").body();
-              Matcher m = Pattern.compile("<code>([A-Z2-7]{32})</code>").matcher(page);
-              require(m.find(), "Chave não encontrada.");
-              String code = totp(m.group(1));
-              var response = post(admin, "/conta/mfa", Map.of("code", code, "_csrf", csrf(page)));
-              int codes = 0;
-              Matcher recovery = Pattern.compile("<code>[^<]+</code>").matcher(response.body());
-              while (recovery.find()) codes++;
-              require(response.statusCode() == 200 && codes == 8, "Recuperação não confirmada.");
-              require(
-                  get(admin, "/admin/config").statusCode() == 200,
-                  "MFA não liberou administração.");
-              require(
-                  !get(admin, "/conta/mfa").body().contains("Guarde estes códigos"),
-                  "Recuperação foi exibida novamente.");
-            });
-      }
+                get(admin, "/admin/config").statusCode() == 200
+                    && get(admin, "/%61dmin/config").statusCode() == 200,
+                "Administração não disponível após login por senha.");
+            String page = get(admin, "/admin/config").body();
+            require(
+                !page.contains("/conta/mfa") && !page.contains("/admin/config/mfa-reset"),
+                "Interface ainda oferece segundo fator.");
+          });
+      check(
+          "Rotas antigas de segundo fator foram removidas",
+          () -> {
+            require(
+                get(admin, "/conta/mfa").statusCode() == 404,
+                "Tela antiga de segundo fator ainda disponível.");
+            String token = csrf(get(admin, "/admin").body());
+            require(
+                post(admin, "/conta/mfa", Map.of("code", "123456", "_csrf", token)).statusCode()
+                    == 404,
+                "Ativação antiga de segundo fator ainda disponível.");
+            require(
+                post(
+                            admin,
+                            "/admin/config/mfa-reset",
+                            Map.of("id", "1", "current", password, "_csrf", token))
+                        .statusCode()
+                    == 404,
+                "Redefinição antiga de segundo fator ainda disponível.");
+          });
       check(
           "Login codificado respeita o limite de tentativas",
           () -> {
@@ -818,13 +798,13 @@ class Testar {
     }
     String manual =
         "<li>Abra a agenda em navegador de computador e na visualização móvel. Confira filtros,"
-            + " textos, campos, botões e mensagens.</li><li>Confira as cinco contas reais e o"
-            + " aplicativo autenticador do celular. O executor usa somente contas"
-            + " descartáveis.</li><li>Confira os downloads da primeira configuração e a execução em"
-            + " cada sistema usado pela equipe.</li><li>Se houver produção, confira certificado"
-            + " HTTPS, envio real de email e restauração do MySQL no ambiente de"
-            + " destino.</li><li>Confira inatividade real do navegador, mensagens compreensíveis e"
-            + " regras de negócio com o responsável pelo projeto.</li>";
+            + " textos, campos, botões e mensagens.</li><li>Confira o acesso das cinco contas reais"
+            + " com login e senha. O executor usa somente contas descartáveis.</li><li>Confira os"
+            + " downloads da primeira configuração e a execução em cada sistema usado pela"
+            + " equipe.</li><li>Se houver produção, confira certificado HTTPS, envio real de email"
+            + " e restauração do MySQL no ambiente de destino.</li><li>Confira inatividade real do"
+            + " navegador, mensagens compreensíveis e regras de negócio com o responsável pelo"
+            + " projeto.</li>";
     String page =
         "<!doctype html><html lang='pt-BR'><meta charset='utf-8'><meta name='viewport'"
             + " content='width=device-width,initial-scale=1'><title>InPETU -"

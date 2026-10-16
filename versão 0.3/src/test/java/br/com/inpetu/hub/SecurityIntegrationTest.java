@@ -16,6 +16,7 @@ import java.time.*;
 import java.util.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,8 +41,6 @@ class SecurityIntegrationTest {
   @Autowired MockMvc mvc;
   @Autowired ColaboradorRepository users;
   @Autowired PasswordEncoder encoder;
-  @Autowired TotpService totp;
-  @Autowired MfaService mfa;
   @Autowired SecretCrypto crypto;
   @Autowired Clock clock;
   @Autowired PublicRequestService requests;
@@ -101,25 +100,45 @@ class SecurityIntegrationTest {
   }
 
   @Test
-  void adminRequiresEnrollmentAndRecoveryCannotBeReused() throws Exception {
+  void adminUsesPasswordWithoutSecondFactor() throws Exception {
     var c = create(Perfil.ADMIN);
     var session = login(c);
-    mvc.perform(get("/admin/config").session(session)).andExpect(redirectedUrl("/conta/mfa"));
-    mvc.perform(get("/conta/mfa").session(session)).andExpect(status().isOk());
-    String secret = (String) session.getAttribute("mfa.enrollment");
-    String code = totp.code(secret, clock.instant().getEpochSecond() / 30);
-    mvc.perform(post("/conta/mfa").session(session).with(csrf()).param("code", code))
-        .andExpect(redirectedUrl("/conta/mfa"));
-    c = users.findById(c.id).orElseThrow();
-    assertNotEquals(secret, c.mfaSecret);
-    assertEquals(secret, crypto.decrypt(c.mfaSecret));
-    @SuppressWarnings("unchecked")
-    var recovery = (List<String>) session.getAttribute("mfa.recovery");
-    assertEquals(8, recovery.size());
-    mvc.perform(get("/admin/config").session(session)).andExpect(status().isOk());
-    assertFalse(mfa.verify(c.id, code));
-    assertTrue(mfa.verify(c.id, recovery.get(0)));
-    assertFalse(mfa.verify(c.id, recovery.get(0)));
+    mvc.perform(get("/admin").session(session)).andExpect(status().isOk());
+    String html =
+        mvc.perform(get("/admin/config").session(session))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    assertFalse(html.contains("/conta/mfa"));
+    assertFalse(html.contains("/admin/config/mfa-reset"));
+    mvc.perform(get("/conta/mfa").session(session)).andExpect(status().isNotFound());
+    mvc.perform(post("/conta/mfa").session(session).with(csrf()).param("code", "123456"))
+        .andExpect(status().isNotFound());
+    mvc.perform(
+            post("/admin/config/mfa-reset")
+                .session(session)
+                .with(csrf())
+                .param("id", c.id.toString())
+                .param("current", PASSWORD))
+        .andExpect(status().isNotFound());
+  }
+
+  @ParameterizedTest
+  @EnumSource(Perfil.class)
+  void legacySecondFactorDoesNotBlockPasswordLogin(Perfil role) throws Exception {
+    var c = create(role);
+    c.mfaSecret = "legacy-encrypted-fixture";
+    c.mfaRecovery = "legacy-recovery-fixture";
+    c.mfaCounter = 123;
+    users.saveAndFlush(c);
+    var session = login(c);
+    mvc.perform(get("/admin").session(session)).andExpect(status().isOk());
+    mvc.perform(get("/admin/config").session(session))
+        .andExpect(role == Perfil.ADMIN ? status().isOk() : status().isForbidden());
+    assertEquals("legacy-encrypted-fixture", users.findById(c.id).orElseThrow().mfaSecret);
+    assertEquals("legacy-recovery-fixture", users.findById(c.id).orElseThrow().mfaRecovery);
+    assertEquals(123, users.findById(c.id).orElseThrow().mfaCounter);
   }
 
   @Test
@@ -128,7 +147,7 @@ class SecurityIntegrationTest {
     var session = login(c);
     mvc.perform(get("/admin/config/auditoria").session(session)).andExpect(status().isForbidden());
     mvc.perform(
-            post("/admin/config/mfa-reset")
+            post("/admin/config/cadastros/colaboradores/salvar")
                 .session(session)
                 .with(csrf())
                 .param("id", c.id.toString())
@@ -354,7 +373,7 @@ class SecurityIntegrationTest {
   }
 
   @Test
-  void encodedInternalPathCannotSkipSecondFactor() throws Exception {
+  void encodedInternalPathPreservesAdministrationPermissions() throws Exception {
     var c = create(Perfil.ADMIN);
     var session = login(c);
     mvc.perform(
@@ -365,7 +384,17 @@ class SecurityIntegrationTest {
                       return req;
                     })
                 .session(session))
-        .andExpect(redirectedUrl("/conta/mfa"));
+        .andExpect(status().isOk());
+    var employee = login(create(Perfil.COLABORADOR));
+    mvc.perform(
+            get(java.net.URI.create("/%61dmin/config"))
+                .with(
+                    req -> {
+                      req.setServletPath("/admin/config");
+                      return req;
+                    })
+                .session(employee))
+        .andExpect(status().isForbidden());
   }
 
   @Test
@@ -406,16 +435,14 @@ class SecurityIntegrationTest {
         .andExpect(status().isTooManyRequests());
   }
 
-  @Test
-  void expiredSessionsAndPendingMfaAreRevoked() throws Exception {
-    var employee = create(Perfil.COLABORADOR);
-    var old = login(employee);
-    old.setAttribute("auth.started", clock.millis() - 7200001);
-    mvc.perform(get("/admin").session(old)).andExpect(redirectedUrl("/login?expired"));
-    var admin = create(Perfil.ADMIN);
-    var pending = login(admin);
-    pending.setAttribute("auth.started", clock.millis() - 300001);
-    mvc.perform(get("/conta/mfa").session(pending)).andExpect(redirectedUrl("/login?expired"));
+  @ParameterizedTest
+  @EnumSource(Perfil.class)
+  void absoluteSessionExpiryStillAppliesToBothRoles(Perfil role) throws Exception {
+    var session = login(create(role));
+    session.setAttribute("auth.started", clock.millis() - 300001);
+    mvc.perform(get("/admin").session(session)).andExpect(status().isOk());
+    session.setAttribute("auth.started", clock.millis() - 7200001);
+    mvc.perform(get("/admin").session(session)).andExpect(redirectedUrl("/login?expired"));
   }
 
   @Test

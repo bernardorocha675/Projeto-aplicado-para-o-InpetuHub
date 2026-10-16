@@ -44,9 +44,9 @@ Se houver falha ou caso não executado, o comando termina com código de erro. E
 
 ## 4. O que o comando faz
 
-1. Compila o código e executa testes de regras, reservas, preços, cotas, conflitos, autorização, sessões, MFA, confirmação por email e expiração. Usa bancos de teste, sem esperar 24 horas para conferir a lógica de expiração.
+1. Compila o código e executa testes de regras, reservas, preços, cotas, conflitos, autorização, sessões, confirmação por email e expiração. Usa bancos de teste, sem esperar 24 horas para conferir a lógica de expiração.
 2. Cria uma instalação descartável com contas sintéticas e uma porta local livre. Não depende da porta 8080 nem exige que as senhas particulares continuem iguais às iniciais.
-3. Inicia o servidor, consulta a agenda, testa autenticação de administrador e colaborador, permissões, CSRF, MFA, URLs codificadas, limite de tentativas e troca de senha de uma conta sintética.
+3. Inicia o servidor, consulta a agenda, testa autenticação de administrador e colaborador, permissões, CSRF, remoção das rotas de segundo fator, URLs codificadas, limite de tentativas e troca de senha de uma conta sintética.
 4. Reinicia o servidor descartável e confere a persistência. Cria e restaura backup do H2 de teste. Recusa senha incorreta, arquivo adulterado, sobrescrita e backup com o servidor ainda aberto.
 5. Encerra os processos que iniciou, remove os bancos/contas temporários e gera o relatório. O relatório informa separadamente qualquer falha nessa limpeza.
 
@@ -59,13 +59,13 @@ Se interromper com Ctrl+C ou o computador desligar, podem sobrar dados sintétic
 | Testes do PDF | Cobertura do comando | O que ainda conferir pessoalmente |
 |---|---|---|
 | T01-T02: configurar e configurar novamente | Compila e testa a cópia já configurada. A CI repete o comando em seis plataformas. | Instalação limpa, downloads e preservação dos dados no computador de cada pessoa. |
-| T03-T05: contas, MFA e logout | Login sintético, permissões, MFA e proteção de páginas. | Os cinco acessos reais, o autenticador do celular e o comportamento de voltar no navegador. |
+| T03-T05: contas e logout | Login sintético, permissões e proteção de páginas; acesso de contas com segundo fator antigo sem exigir código. | Os cinco acessos reais e o comportamento de voltar no navegador. |
 | T06-T07: erros, agenda e telas | Início do servidor, API, cabeçalhos e renderização de páginas nos testes de integração. | Mensagens claras, cliques, filtros, aparência e tela pequena em navegador real. |
 | T08-T12: solicitações, aprovação, preços e cotas | Regras de serviço, validação de identidade e concorrência no banco de teste. | Confirmar se as regras cadastradas representam a operação desejada pelo responsável. |
 | T13-T14: permissões e tentativas de login | Integração e HTTP real, incluindo caminhos codificados. | Conferência visual das mensagens apresentadas ao usuário. |
 | T15: entradas inválidas e scripts | Há validação de campos nos testes, mas não uma exploração exaustiva de entradas maliciosas. | Faça o cenário de texto malicioso do PDF e confira a exibição no navegador. |
-| T16-T19: CSRF, MFA, senha e revogação | Integração com contas sintéticas; CSRF, MFA e troca de senha também por HTTP real. | Uso do aplicativo autenticador e operação das telas administrativas pela equipe. |
-| T20: duração das sessões | Simula o prazo absoluto de duas horas e o de cinco minutos para MFA pendente. | Inatividade real de 20 minutos e comportamento do navegador durante a espera. |
+| T16-T19: CSRF, senha e revogação | Integração com contas sintéticas; CSRF e troca de senha por HTTP real; rotas antigas de segundo fator indisponíveis. | Operação das telas administrativas pela equipe. |
+| T20: duração das sessões | Simula o prazo absoluto de duas horas para ambos os perfis; não aplica o antigo prazo de MFA pendente. | Inatividade real de 20 minutos e comportamento do navegador durante a espera. |
 | T21: confirmação de email | Testa limites, uso único e expiração do código sem email real. | Entrega SMTP, contato institucional correto e caixa de spam. |
 | T22: expiração em 24 horas | Executa a lógica com datas de teste e recusa aprovação fora do prazo. | Agendamento e passagem do tempo no ambiente em uso. |
 | T23: persistência e auditoria | Reinicia H2 de teste, confere login e cobre auditoria por integração. | Conferência dos registros esperados pelo responsável. |
@@ -92,4 +92,8 @@ O mesmo comando também verifica o arquivo persistente, o identificador gerado p
 
 ## Correção de acesso e exibição de senha
 
-A versão 0.3 possui botão Mostrar/Ocultar senha nos formulários de senha. Para login inválido, consulte [ACESSOS.md](ACESSOS.md): os comandos `acessos.sh`/`acessos.bat` conferem o arquivo privado com o banco local e permitem recuperação explícita, com servidor parado e confirmação após backup. Não apagam reservas/cadastros, não imprimem credenciais e preservam perfil/MFA de contas existentes. Reiniciar normalmente continua sem redefinir senhas.
+A versão 0.3 possui botão Mostrar/Ocultar senha nos formulários de senha. Para login inválido, consulte [ACESSOS.md](ACESSOS.md): os comandos `acessos.sh`/`acessos.bat` conferem o arquivo privado com o banco local e permitem recuperação explícita, com servidor parado e confirmação após backup. Não apagam reservas/cadastros, não imprimem credenciais e preservam o perfil e os dados das contas existentes. Reiniciar normalmente continua sem redefinir senhas.
+
+## Correção 0.3.1fix
+
+Os cenários de segundo fator do PDF anterior deixam de se aplicar nesta release. Confira que o login com senha abre o painel, inclusive em contas que já usavam autenticador, e que o menu não oferece Segundo fator. As demais verificações do roteiro continuam válidas.

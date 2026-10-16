@@ -52,9 +52,9 @@ try:
     data = urllib.parse.urlencode({'username': properties[admin + '.login'], 'password': properties[admin + '.password'], '_csrf': token[1]}).encode()
     with opener.open(base + '/login', data=data) as response:
         assert response.status == 200
-        assert response.url.endswith(('/conta/mfa', '/admin')), 'Login não chegou ao destino interno: ' + urllib.parse.urlparse(response.url).path + ('?error' if 'error' in urllib.parse.urlparse(response.url).query else '')
+        assert response.url.endswith('/admin'), 'Login não chegou ao destino interno: ' + urllib.parse.urlparse(response.url).path + ('?error' if 'error' in urllib.parse.urlparse(response.url).query else '')
     with opener.open(base + '/%61dmin/config') as response:
-        assert response.url.endswith('/conta/mfa'), 'Rota codificada contornou o segundo fator.'
+        assert response.status == 200 and urllib.parse.unquote(response.url).endswith('/admin/config'), 'Administração indisponível após login por senha.'
     with opener.open(base + '/disponibilidade') as response:
         assert response.status == 200
     assert (root / 'data/inpetu-v02.mv.db').is_file()

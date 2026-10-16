@@ -94,7 +94,6 @@ public class SecurityConfig {
                         (req, res, auth) -> {
                           AccountPrincipal p = (AccountPrincipal) auth.getPrincipal();
                           req.getSession().setAttribute("auth.started", clock.millis());
-                          req.getSession().removeAttribute("mfa.verified");
                           audit.security(p.id(), "LOGIN_SENHA", "OK");
                           res.sendRedirect("/admin");
                         })
