@@ -1,0 +1,186 @@
+name: Versão 0.4 — executáveis e compatibilidade
+on:
+  push:
+    branches: ['main', 'release-v0.4']
+    paths: ['versão 0.4/**', '.github/**', '.gitleaks*', 'VERSION', 'RELEASE-NOTES.md', 'RELEASES.md']
+  pull_request:
+    paths: ['versão 0.4/**', '.github/**', '.gitleaks*', 'VERSION', 'RELEASE-NOTES.md', 'RELEASES.md']
+  workflow_dispatch:
+  schedule:
+    - cron: '17 9 * * 1'
+permissions:
+  contents: read
+jobs:
+  native:
+    name: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-24.04, goos: linux, goarch: amd64, javaarch: x64}
+          - {os: ubuntu-24.04-arm, goos: linux, goarch: arm64, javaarch: aarch64}
+          - {os: macos-15, goos: darwin, goarch: arm64, javaarch: aarch64}
+          - {os: macos-15-intel, goos: darwin, goarch: amd64, javaarch: x64}
+          - {os: windows-2025, goos: windows, goarch: amd64, javaarch: x64}
+          - {os: windows-11-arm, goos: windows, goarch: arm64, javaarch: aarch64}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: versão 0.4
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6
+        with:
+          distribution: temurin
+          java-version: '17'
+          architecture: ${{ matrix.javaarch }}
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16
+        with:
+          go-version: '1.27.2'
+          architecture: ${{ matrix.goarch }}
+          cache: false
+      - name: Testar e conferir o iniciador
+        working-directory: versão 0.4/launcher
+        run: |
+          go test -v ./...
+          go vet ./...
+      - name: Configurar Linux e macOS
+        if: runner.os != 'Windows'
+        run: bash configurar.sh
+      - name: Configurar Windows
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: configurar.bat
+      - name: Executar roteiro automático Linux e macOS
+        if: runner.os != 'Windows'
+        run: bash testar.sh
+      - name: Executar roteiro automático Windows
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: testar.bat
+      - name: Gerar executável e runtime privado
+        env:
+          INPETU_GOOS: ${{ matrix.goos }}
+          INPETU_GOARCH: ${{ matrix.goarch }}
+        run: python ../.github/scripts/package_v04.py
+      - name: Testar pacote real sem Java externo nem arquivo de senhas
+        run: python ../.github/scripts/smoke_v04.py
+      - name: Guardar executáveis públicos
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: desktop-v04-${{ matrix.goos }}-${{ matrix.goarch }}
+          compression-level: 0
+          path: |
+            versão 0.4/dist/*.zip
+            versão 0.4/dist/*.exe
+            versão 0.4/dist/*.run
+          if-no-files-found: error
+      - name: Guardar relatório sem credenciais
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: testes-v0.4-${{ matrix.os }}
+          path: |
+            versão 0.4/relatorios-testes/ultimo.html
+            versão 0.4/relatorios-testes/ultimo.txt
+          if-no-files-found: ignore
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verificar exclusão de dados privados
+        run: python 'versão 0.4/scripts/check_secrets.py'
+      - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_COMMENTS: 'false'
+  dependencies:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: versão 0.4
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: mvn -B -ntp dependency:list -DincludeScope=runtime -DoutputFile=target/dependencies.txt
+      - run: python scripts/check_dependencies.py
+  codeql:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: github/codeql-action/init@24c54180a607b1449ed407dd24f251e4e9147c8d
+        with:
+          languages: java-kotlin
+          build-mode: manual
+          queries: security-extended
+      - run: mvn -B -ntp -DskipTests clean package
+        working-directory: versão 0.4
+      - uses: github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d
+        with:
+          category: /language:java-v03
+          output: ${{ github.workspace }}/results
+      - name: Conferir resultados CodeQL
+        run: |
+          python - <<'PYCODE'
+          import json, pathlib
+          paths = list(pathlib.Path('results').glob('*.sarif'))
+          if not paths:
+              raise SystemExit('SARIF ausente: análise não comprovada.')
+          findings = []
+          for path in paths:
+              for run in json.loads(path.read_text()).get('runs', []):
+                  findings.extend(run.get('results', []))
+          for item in findings:
+              print(item.get('ruleId'), item.get('level'), item.get('message', {}).get('text', ''))
+          print('Resultados CodeQL:', len(findings))
+          if findings:
+              raise SystemExit('Revise os resultados CodeQL antes de publicar.')
+          PYCODE
+  release:
+    name: Publicar executáveis 0.4
+    needs: [native, source, dependencies, codeql]
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    concurrency:
+      group: publicar-release
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          pattern: desktop-v04-*
+          path: release-assets
+          merge-multiple: true
+      - name: Conferir e publicar os pacotes testados
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python .github/scripts/publish_v04.py

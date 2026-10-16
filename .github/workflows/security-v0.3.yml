@@ -122,22 +122,3 @@ jobs:
           if findings:
               raise SystemExit('Revise os resultados CodeQL antes de publicar.')
           PYCODE
-  release:
-    name: Publicar release
-    needs: [native, source, dependencies, codeql]
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    permissions:
-      contents: write
-    concurrency:
-      group: publicar-release
-      cancel-in-progress: false
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          persist-credentials: false
-      - name: Empacotar código público e publicar
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python .github/scripts/publish_release.py

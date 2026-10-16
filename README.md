@@ -13,14 +13,14 @@ Projeto acadêmico desenvolvido na disciplina de **Projeto Aplicado do UniSENAI*
 
 ## Versão atual
 
-[**Versão 0.3.3**](vers%C3%A3o%200.3) — atualização automática dos fixes da linha 0.3.x.
+[**Versão 0.4.0**](vers%C3%A3o%200.4) — iniciador executável, configuração automática e atualizações 0.4.x.
 
 ## Documentação
 
-- [Instalação e execução](vers%C3%A3o%200.3/COMO-INICIAR.md)
-- [Guia de testes](vers%C3%A3o%200.3/TESTAR.md)
-- [Acessos e recuperação](vers%C3%A3o%200.3/ACESSOS.md)
-- [Handover técnico — versão 0.3](vers%C3%A3o%200.3/HANDOVER.md)
+- [Instalação e execução](vers%C3%A3o%200.4/COMO-INICIAR.md)
+- [Guia de testes](vers%C3%A3o%200.4/TESTAR.md)
+- [Acessos e recuperação](vers%C3%A3o%200.4/ACESSOS.md)
+- [Handover técnico — versão 0.4](vers%C3%A3o%200.4/HANDOVER.md)
 - [Releases e downloads](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases) · [Como publicamos versões](RELEASES.md)
 
 ---

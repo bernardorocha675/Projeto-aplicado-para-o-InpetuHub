@@ -1,13 +1,22 @@
-# InPETU Hub 0.3.3
+# InPETU Hub 0.4.0
 
-- Atualização automática para o fix estável mais recente da linha 0.3.x ao iniciar.
-- Conferência do pacote e dos arquivos, backup privado e recuperação de troca interrompida.
-- Preservação do banco, contas, senhas, configurações, ferramentas e logs.
+- Iniciador executável para Windows, macOS e Linux, com aplicativo e Java privado.
+- Configuração automática, botões Iniciar/Parar e atualização dos fixes estáveis 0.4.x.
+- Cinco contas criadas automaticamente no banco, sem arquivo de senhas para aplicar.
+- Banco novo para a 0.4, separado da instalação da 0.3. Os próximos reinícios preservam os registros novos.
 
-## Como ativar
+## Baixar e usar
 
-Instale esta release uma vez na pasta **versão 0.3**, com o servidor parado e preservando `data/`, `.env.local` e `.secrets/`. Depois use `bash iniciar.sh` no Linux/macOS ou `.\iniciar.bat` no Windows. As próximas correções 0.3.x serão verificadas nesse comando, antes de abrir o sistema. Não passa para 0.4 nem instala rascunhos ou versões de teste.
+Prefira o ZIP completo do seu sistema/arquitetura. Extraia e abra InPETU-Hub.exe (Windows), InPETU Hub.app (macOS) ou InPETU-Hub (Linux). Aguarde Pronto e clique em Iniciar. Não precisa de VS Code, Java ou Maven externos. Os iniciadores avulsos EXE/RUN precisam de internet na primeira instalação.
 
-Se a consulta ou o download falhar, usa a versão instalada, desde que as ferramentas e dependências já estejam disponíveis. Código local editado ou pacote inválido interrompem a atualização. Consulte **ATUALIZACOES.md** para instalação, funcionamento, desativação e retorno. Os backups automáticos são privados e não devem ser compartilhados.
+| Pessoa | Usuário | Senha |
+|---|---|---|
+| Milena | `milena` | `milena040` |
+| Bernardo (administrador) | `bernardo` | `bernardo040` |
+| João F | `joaof` | `joaof040` |
+| João E | `joaoe` | `joaoe040` |
+| Guilherme | `guilherme` | `guilherme040` |
 
-Somente o mecanismo de atualização e seus testes/guias foram acrescentados. Login, senhas existentes, telas, regras e migrations permanecem iguais à 0.3.2.
+São acessos públicos de demonstração local, restaurados ao iniciar. Não use dados confidenciais nem essas senhas em outros serviços. A pasta da 0.3 permanece intacta; não há importação automática de dados antigos.
+
+Consulte COMO-INICIAR.md, ATUALIZACOES.md e HANDOVER.md na pasta versão 0.4 do código público. Os executáveis não têm certificado comercial/notarização Apple e podem exigir confirmação do sistema. Confira a origem do download e as instruções do seu sistema. Use Parar/Fechar iniciador para encerrar; fechar apenas a aba mantém o iniciador aberto.

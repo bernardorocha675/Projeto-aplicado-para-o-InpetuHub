@@ -6,7 +6,7 @@ updates:
       interval: weekly
     open-pull-requests-limit: 5
   - package-ecosystem: maven
-    directory: "/versão 0.3"
+    directory: "/versão 0.4"
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
