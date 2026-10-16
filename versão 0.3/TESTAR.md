@@ -101,3 +101,9 @@ Os cenários de segundo fator do PDF anterior deixam de se aplicar nesta release
 ## Login básico 0.3.2
 
 O roteiro também verifica usuário com maiúsculas/acentos/espaços, senha de oito caracteres no cadastro e na troca, ausência de bloqueio por erros locais e importação de contas copiadas depois da primeira inicialização. A importação automática é exercitada em um banco H2 real já existente. Contas e senhas reais não são usadas pela CI.
+
+## Atualizador da 0.3.3
+
+O roteiro também executa testes com releases fictícias em um servidor local, sem contas reais nem downloads de fixes do GitHub. Verifica seleção numérica e paginação de 0.3.x, exclusão de outras linhas/rascunhos, download indisponível, checksum e manifesto inválidos, caminhos perigosos, edições locais, preservação de dados e backup, remoção de código antigo, recuperação de troca interrompida, lock e desativação. Um teste executa o comando nativo de iniciar e confirma que o novo comando é relido após atualizar, preservando os argumentos.
+
+Para conferência manual, faça uma cópia de teste da instalação: inicie normalmente, confira o número no `pom.xml` e teste login e uma reserva. Quando houver um fix posterior publicado, repita nessa cópia, confira o backup em `backups/atualizacoes/` e confirme que contas e registros continuam disponíveis. Não publique os backups. O teste automatizado não substitui a validação de migrations futuras com bancos antigos.

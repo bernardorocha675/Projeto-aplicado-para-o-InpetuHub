@@ -13,7 +13,7 @@ Projeto acadêmico desenvolvido na disciplina de **Projeto Aplicado do UniSENAI*
 
 ## Versão atual
 
-[**Versão 0.3.2**](vers%C3%A3o%200.3) — login básico e carregamento automático dos acessos.
+[**Versão 0.3.3**](vers%C3%A3o%200.3) — atualização automática dos fixes da linha 0.3.x.
 
 ## Documentação
 

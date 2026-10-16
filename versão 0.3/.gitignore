@@ -25,3 +25,7 @@ logs/
 # Instalador particular das contas da equipe.
 *ACESSOS-PRIVADOS*/
 *ACESSOS-PRIVADOS*.zip
+
+# Arquivos gerados por verificações Python.
+__pycache__/
+*.pyc

@@ -7,6 +7,7 @@ from pathlib import Path, PurePosixPath
 import re
 import subprocess
 import tempfile
+import sys
 import xml.etree.ElementTree as ET
 import zipfile
 
@@ -29,6 +30,7 @@ def main():
     pom_version = ET.parse(f'{folder}/pom.xml').getroot().findtext('m:version', namespaces=ns)
     if pom_version != version:
         raise SystemExit('VERSION e a versão do projeto no pom.xml precisam coincidir.')
+    subprocess.run([sys.executable, f'{folder}/scripts/update_manifest.py', '--check'], check=True)
     if not Path('RELEASE-NOTES.md').read_text().startswith(f'# InPETU Hub {version}\n'):
         raise SystemExit('Atualize o número e o conteúdo de RELEASE-NOTES.md.')
     paths = [folder, '.gitignore', 'README.md', '.github/SECURITY.md', 'VERSION', 'RELEASE-NOTES.md', 'RELEASES.md']

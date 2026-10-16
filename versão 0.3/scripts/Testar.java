@@ -48,7 +48,7 @@ class Testar {
         JAVA.toString(),
         "-Dfile.encoding=UTF-8",
         "-jar",
-        ROOT.resolve("target/inpetu-hub-0.3.2.jar").toString(),
+        ROOT.resolve("target/inpetu-hub-0.3.3.jar").toString(),
         "--" + mode + "-acessos");
   }
 
@@ -196,14 +196,42 @@ class Testar {
 
   static String friendly(String className, String method) {
     String group =
-        className.contains("Concorrencia")
-            ? "Concorrência"
-            : className.contains("Security")
-                ? "Segurança"
-                : className.contains("Regras") ? "Regras" : "Fluxos";
+        className.contains("AutomaticUpdate")
+            ? "Atualização automática"
+            : className.contains("Concorrencia")
+                ? "Concorrência"
+                : className.contains("Security")
+                    ? "Segurança"
+                    : className.contains("Regras") ? "Regras" : "Fluxos";
     String label = method.replaceAll("\\[.*", "");
     label =
         switch (label) {
+          case "updatesOnlyHighestPatchPreservingPrivateDataAndRemovingObsoleteCode" ->
+              "Fix da mesma linha preserva dados e remove código antigo";
+          case "paginatesReleaseListInsteadOfUsingGlobalLatest" ->
+              "Consulta todas as páginas sem mudar de linha";
+          case "offlineApiAndDownloadUseInstalledVersion" ->
+              "Falha de conexão mantém a versão instalada";
+          case "checksumFailureStopsWithoutChangingInstallation" ->
+              "Pacote corrompido não altera a instalação";
+          case "localChangesAreNotOverwritten" -> "Alterações locais são preservadas";
+          case "unmanagedNewPathCollisionIsNotOverwritten" ->
+              "Arquivo particular em caminho novo não é sobrescrito";
+          case "zipTraversalPrivatePathsAndUnexpectedFilesAreRejected" ->
+              "Pacotes com caminhos perigosos ou arquivos extras são recusados";
+          case "tamperedManifestOrVersionMismatchIsRejected" ->
+              "Manifesto e versão do pacote são conferidos";
+          case "runningServerPreventsUpdateEvenWhenDisabled" ->
+              "Servidor ativo impede troca de código";
+          case "disabledUpdateDoesNotConsultNetworkAndNoDowngradeOccurs" ->
+              "Desativação e prevenção de retorno automático para versão antiga";
+          case "recoversInterruptedCodeReplacementWithoutTouchingCurrentData" ->
+              "Troca interrompida restaura código e preserva dados";
+          case "windowsBatchLineEndingsAreAccepted" -> "Quebras de linha Windows são aceitas";
+          case "nativeStartCommandReloadsUpdatedLauncherAndPreservesArguments" ->
+              "Comando nativo relê a versão nova e mantém os argumentos";
+          case "productionDownloadDestinationsRequireProjectHttpsAssets" ->
+              "Downloads exigem HTTPS e release oficial";
           case "previousSessionsAreRevoked" -> "Alteração de conta revoga sessões anteriores";
           case "adminUsesPasswordWithoutSecondFactor" ->
               "Administrador acessa com senha; rotas de segundo fator removidas";
@@ -347,7 +375,7 @@ class Testar {
             JAVA.toString(),
             "-Dfile.encoding=UTF-8",
             "-jar",
-            ROOT.resolve("target/inpetu-hub-0.3.2.jar").toString(),
+            ROOT.resolve("target/inpetu-hub-0.3.3.jar").toString(),
             "--spring.profiles.active=local",
             "--server.port=" + port,
             "--spring.config.import=",

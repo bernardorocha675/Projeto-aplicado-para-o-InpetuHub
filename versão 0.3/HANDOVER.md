@@ -5,9 +5,9 @@ Documento de referência para a equipe que receberá, executará e manterá o si
 | Identificação | Referência |
 |---|---|
 | Entrega | **Versão 0.3** — pasta `versão 0.3/` |
-| Versão do pacote Java | **0.3.2** — definida em [pom.xml](pom.xml) |
+| Versão do pacote Java | **0.3.3** — definida em [pom.xml](pom.xml) |
 | Data da revisão | 16/10/2026 |
-| Base desta revisão | `4826e26e3cb2cd0fa09700b7de4bb82cfa8fbb9e`; identificação desta entrega pela tag `v0.3.2` |
+| Base desta revisão | `35b86eead418019e0c2eb4b393dfed5eddc6a55c`; identificação desta entrega pela tag `v0.3.3` |
 | Contexto | Disciplina de Projeto Aplicado do UniSENAI, em parceria com o InPETU Hub |
 | Estado da entrega | Projeto acadêmico com execução local e testes automatizados validados; sem implantação em produção realizada nesta entrega |
 
@@ -193,9 +193,11 @@ Para voltar, pare a versão 0.3 e restaure o backup validado em uma instalação
 
 ### Atualizações dentro da versão 0.3
 
+**0.3.3 — atualização automática:** `iniciar.sh`/`iniciar.bat` consultam somente releases estáveis 0.3.x antes do servidor. Validam ZIP e manifesto, recusam código local alterado e guardam código/dados/configuração em backup privado antes da troca. A recuperação de uma troca interrompida restaura somente código; falhas posteriores e migrations exigem retorno acompanhado. Consulte [ATUALIZACOES.md](ATUALIZACOES.md) para instalar o recurso uma vez, desativá-lo, preparar novas releases e restaurar uma cópia. Esta entrega não altera login, telas, regras nem migrations.
+
 **Troca do nome da pasta `versão 03` para `versão 0.3`:** pare o servidor e faça o backup antes de atualizar. O Git renomeia o código rastreado, mas arquivos privados ignorados podem permanecer na pasta antiga. Transfira de forma privada `data/`, `.env.local` e a pasta `.secrets/` completa para a nova pasta, mantendo a chave privada da instalação original. Preserve também os backups e logs anteriores em local privado. Não execute as duas pastas ao mesmo tempo nem inicie a nova com banco vazio se pretende continuar a instalação existente. Após configurar as ferramentas na pasta nova, confira os acessos e os registros antes de descartar qualquer cópia antiga. Não há alteração de estrutura de banco nesta renomeação.
 
-Preserve `data/`, `.env.local` e `.secrets/`; atualize o código com o servidor parado, execute o configurador/testes e inicie novamente. Não substitua toda a instalação por uma pasta vazia nem copie ferramentas/relatórios temporários como se fossem dados do sistema. O JAR desta entrega é `inpetu-hub-0.3.2.jar`. Aplique o novo pacote privado e reinicie o servidor. O usuário passa por normalização de espaços, acentos e caixa; as senhas continuam exatas e aceitam 8–64 caracteres. V1–V3 não mudam; V4 acrescenta somente o controle de importação. Guarde o backup anterior antes de atualizar e restaure-o em uma instalação separada se precisar retornar à versão anterior.
+Preserve `data/`, `.env.local` e `.secrets/`; atualize o código com o servidor parado, execute o configurador/testes e inicie novamente. Não substitua toda a instalação por uma pasta vazia nem copie ferramentas/relatórios temporários como se fossem dados do sistema. O JAR desta entrega é `inpetu-hub-0.3.3.jar`. As contas já instaladas permanecem iguais; não é preciso reaplicar o pacote privado nesta correção. O usuário passa por normalização de espaços, acentos e caixa; as senhas continuam exatas e aceitam 8–64 caracteres. V1–V3 não mudam; V4 acrescenta somente o controle de importação. Guarde o backup anterior antes de atualizar e restaure-o em uma instalação separada se precisar retornar à versão anterior.
 
 ## 10. Testes e evidências de validação
 
@@ -203,6 +205,7 @@ Depois de configurar e com o servidor parado, use `bash testar.sh` ou `.\testar.
 
 | Evidência | Resultado e alcance |
 |---|---|
+| Rodada local 0.3.3 | **100 verificações aprovadas**, incluindo **81 casos JUnit** (14 do atualizador). Pacotes fictícios em loopback, preservação/backup, recuperação, seleção de releases e comando nativo de iniciar. |
 | Rodada local 0.3.2 | **86 verificações aprovadas**, incluindo **67 casos JUnit**. Importação tardia/incremental, usuário normalizado, senha básica, permissões, sessões, regras, logs, backups e recuperação offline. |
 | Acessos desta entrega | Cinco contas privadas aceitas por HTTP em banco novo e após atualizar uma instalação sintética da 0.3.1fix, preservando a conta antiga e a chave; nenhum valor foi exibido. |
 | Histórico local 0.3.1fix | **78 verificações aprovadas**, incluindo **60 casos JUnit**, com login por senha, contas com MFA antigo, permissões, rotas removidas, sessões, regras, logs, backup e recuperação local. |
@@ -215,7 +218,7 @@ Depois de configurar e com o servidor parado, use `bash testar.sh` ou `.\testar.
 
 A automação está no [workflow da versão 0.3](../.github/workflows/security-v0.3.yml); Dependabot acompanha dependências e ações fixadas por SHA. Os relatórios de teste são enviados à CI sem bancos, contas, chaves ou logs privados. O job de Gitleaks também pode gerar seu próprio SARIF.
 
-Consulte [TESTAR.md](TESTAR.md) para a cobertura manual e [docs/VALIDACAO.md](docs/VALIDACAO.md) para o histórico das rodadas. As referências a README vazio nesse histórico descrevem o estado daquela rodada; o README principal foi atualizado posteriormente. A release 0.3.2 só é publicada após a nova rodada de testes da CI. As execuções anteriores acima registram o histórico anterior ao novo carregamento de contas.
+Consulte [TESTAR.md](TESTAR.md) para a cobertura manual e [docs/VALIDACAO.md](docs/VALIDACAO.md) para o histórico das rodadas. As referências a README vazio nesse histórico descrevem o estado daquela rodada; o README principal foi atualizado posteriormente. A release 0.3.3 depende da nova rodada completa da CI, incluindo os testes do atualizador em seis sistemas/arquiteturas. As execuções anteriores acima registram o histórico anterior ao novo carregamento de contas.
 
 ## 11. Produção e integrações
 
@@ -224,7 +227,7 @@ O perfil `prod` existe, mas a implantação real não foi realizada nesta entreg
 Compile o projeto e execute o JAR com a configuração privada de produção disponível:
 
 ```sh
-java -jar target/inpetu-hub-0.3.2.jar --spring.profiles.active=prod
+java -jar target/inpetu-hub-0.3.3.jar --spring.profiles.active=prod
 ```
 
 O perfil exige HTTPS direto, cookie Secure, confirmação de email e SMTP; desabilita demonstração. Não combinar `local` e `prod`. O exemplo MySQL usa verificação de identidade do certificado e precisa corresponder ao servidor real. Valide certificado, entrega de email, permissões do banco, firewall e recuperação no ambiente de destino.
@@ -248,7 +251,7 @@ Não há configuração entregue de serviço do sistema, hospedagem, domínio ou
 
 A equipe recebedora deve executar e registrar esta conferência em ambiente de teste. Os itens abaixo não estão marcados como aceitos por terceiros apenas porque os testes automatizados passaram.
 
-- [ ] Acessar o repositório e identificar a pasta versão 0.3, o pacote 0.3.2 e o commit recebido.
+- [ ] Acessar o repositório e identificar a pasta versão 0.3, o pacote 0.3.3 e o commit recebido.
 - [ ] Preparar uma instalação limpa pelo guia, sem depender de arquivos não documentados do computador de quem desenvolveu.
 - [ ] Receber os arquivos privados por canal autorizado e conferir login por senha e separação entre ADMIN/COLABORADOR.
 - [ ] Percorrer uma solicitação até conferência/aprovação e validar agenda, cota, histórico e valores com o parceiro.

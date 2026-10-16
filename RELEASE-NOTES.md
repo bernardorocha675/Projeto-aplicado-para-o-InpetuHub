@@ -1,19 +1,13 @@
-# InPETU Hub 0.3.2
+# InPETU Hub 0.3.3
 
-- Login básico com usuário e senha, sem segundo fator.
-- Usuários aceitam maiúsculas, acentos e espaços de digitação.
-- Novos acessos do pacote privado são carregados ao iniciar, mesmo em um banco já existente.
-- Erros de senha não bloqueiam temporariamente o modo local.
-- Senhas de acesso aceitam 8–64 caracteres. A senha continua sensível a maiúsculas e minúsculas.
+- Atualização automática para o fix estável mais recente da linha 0.3.x ao iniciar.
+- Conferência do pacote e dos arquivos, backup privado e recuperação de troca interrompida.
+- Preservação do banco, contas, senhas, configurações, ferramentas e logs.
 
-## Como usar os novos acessos
+## Como ativar
 
-Atualize o código da pasta **versão 0.3** e aplique o pacote privado de acessos recebido separadamente. Siga `ACESSOS.md`: o instalador privado copia as contas para o lugar correto e guarda o arquivo anterior. Depois inicie o servidor e entre com os dados novos. O ZIP público não inclui as cinco senhas.
+Instale esta release uma vez na pasta **versão 0.3**, com o servidor parado e preservando `data/`, `.env.local` e `.secrets/`. Depois use `bash iniciar.sh` no Linux/macOS ou `.\iniciar.bat` no Windows. As próximas correções 0.3.x serão verificadas nesse comando, antes de abrir o sistema. Não passa para 0.4 nem instala rascunhos ou versões de teste.
 
-Linux/macOS: `bash configurar.sh` e depois `bash iniciar.sh`. Windows: `.\configurar.bat` e depois `.\iniciar.bat`. Quem já configurou esta cópia pode executar somente o comando de iniciar.
+Se a consulta ou o download falhar, usa a versão instalada, desde que as ferramentas e dependências já estejam disponíveis. Código local editado ou pacote inválido interrompem a atualização. Consulte **ATUALIZACOES.md** para instalação, funcionamento, desativação e retorno. Os backups automáticos são privados e não devem ser compartilhados.
 
-## Instalações existentes
-
-Faça backup com o servidor parado e preserve `data/`, `.env.local` e `.secrets/`. Não é necessário apagar o banco. A migration V4 acrescenta o controle de importação das contas; V1–V3 permanecem intactas. Uma entrada nova ou alterada no arquivo privado é aplicada uma vez. Repetir o mesmo pacote não desfaz uma senha alterada pelo painel; contas fora do pacote não são apagadas em bancos já provisionados.
-
-Reservas, cadastros, perfis, logs e backups continuam disponíveis. A limitação de tentativas de login permanece no perfil de produção; o modo local foi simplificado para os testes da equipe.
+Somente o mecanismo de atualização e seus testes/guias foram acrescentados. Login, senhas existentes, telas, regras e migrations permanecem iguais à 0.3.2.

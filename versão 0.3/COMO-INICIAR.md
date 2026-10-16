@@ -110,3 +110,7 @@ Para trazer dados da versão 0.2 mantendo usuários, senhas e arquivos privados,
 ## Correção de acesso e exibição de senha
 
 A versão 0.3 possui botão Mostrar/Ocultar senha nos formulários de senha. Para login inválido, consulte [ACESSOS.md](ACESSOS.md): os comandos `acessos.sh`/`acessos.bat` conferem o arquivo privado com o banco local e permitem recuperação explícita, com servidor parado e confirmação após backup. Não apagam reservas/cadastros, não imprimem credenciais e preservam o perfil e os dados de contas existentes. Reiniciar normalmente continua sem redefinir senhas.
+
+## Atualização automática a partir da 0.3.3
+
+Instale a 0.3.3 uma vez para ter o atualizador. Depois, o comando normal de iniciar procura o fix mais recente da linha 0.3.x, faz backup e preserva contas, banco e configuração. Não passa para 0.4 automaticamente. Leia [ATUALIZACOES.md](ATUALIZACOES.md), inclusive para instalar o pacote privado antigo em uma cópia nova e para desativar a consulta durante desenvolvimento.

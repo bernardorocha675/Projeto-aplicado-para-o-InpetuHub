@@ -9,7 +9,7 @@ O InPETU Hub busca proteger as informações utilizadas no projeto e manter o ac
 - Registramos ações importantes para ajudar a identificar problemas, sem incluir senhas ou códigos de acesso nos registros técnicos.
 - Realizamos testes, revisões e acompanhamento das ferramentas utilizadas para identificar riscos e aplicar melhorias.
 
-A versão atual é a **versão 0.3.2**. As versões anteriores permanecem no repositório como histórico do desenvolvimento; a versão atual deve ser a referência para uso e acompanhamento das melhorias.
+A versão atual é a **versão 0.3.3**. As versões anteriores permanecem no repositório como histórico do desenvolvimento; a versão atual deve ser a referência para uso e acompanhamento das melhorias.
 
 ## Como comunicar um problema
 

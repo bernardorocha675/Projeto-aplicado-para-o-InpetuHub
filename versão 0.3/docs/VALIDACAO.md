@@ -67,3 +67,11 @@ O botão Mostrar/Ocultar senha usa script local permitido pela CSP, não modific
 ## Padronização da numeração
 
 As referências atuais usam as pastas `versão 0.1`, `versão 0.2` e `versão 0.3`, com pacotes Java `0.1.0`, `0.2.0` e `0.3.0`. Os registros de CI acima correspondem aos commits históricos citados, anteriores à renomeação; o resultado da nova rodada está no workflow do commit de publicação. Os nomes dos bancos e o conteúdo das migrations não foram alterados.
+
+## 16/10/2026 — fix 0.3.3: atualização automática
+
+O roteiro local aprovou **100 verificações**, incluindo **81 casos JUnit**, no Java 17/Linux x64. Os 14 casos novos usam releases fictícias em loopback: seleção numérica/paginação da linha 0.3.x, exclusão de rascunhos e outras linhas, indisponibilidade, integridade/manifesto, caminhos inválidos, edições locais, preservação, backup privado, recuperação e comando nativo de iniciar com releitura e argumentos. A consulta real pelo atualizador também identificou a release oficial vigente 0.3.2. O ZIP público e seu manifesto foram conferidos; a varredura Gitleaks não encontrou segredos.
+
+A primeira rodada completa teve uma falha na verificação existente de eventos/correlação de logs. A repetição completa passou sem alterar o código ou o teste de logs; a causa da ocorrência isolada não foi confirmada. Código funcional de login, regras, telas e migrations permaneceu byte a byte igual à 0.3.2. As verificações nativas de seis sistemas/arquiteturas são exigidas pela CI antes da publicação da 0.3.3; o resultado local não as substitui.
+
+Os testes não simulam falta física de disco/energia nem garantem reversão de migrations futuras. A recuperação automática cobre troca de código interrompida, e o retorno após iniciar uma nova versão exige o procedimento de ATUALIZACOES.md. O backup automático cobre somente arquivos locais; MySQL externo exige backup próprio.

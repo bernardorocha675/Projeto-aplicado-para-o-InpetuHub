@@ -1,6 +1,6 @@
 # InPETU Hub — versão 0.3
 
-**Pacote Java: 0.3.2.** Entrega acadêmica com execução local validada, logs persistentes, diagnóstico/recuperação local de acessos e botão Mostrar/Ocultar senha. A implantação em produção permanece pendente.
+**Pacote Java: 0.3.3.** Entrega acadêmica com execução local validada, logs persistentes, diagnóstico/recuperação local de acessos e botão Mostrar/Ocultar senha. A implantação em produção permanece pendente.
 
 Agenda pública e CRM em Java 17/21, Spring Boot 4.1.1, Spring Security, Thymeleaf, JPA e Flyway. O modo local usa H2 em arquivo. O perfil `prod` usa MySQL e exige HTTPS direto e SMTP.
 
@@ -16,6 +16,8 @@ Abra **versão 0.3** no VS Code e use o terminal dessa pasta.
 | Windows PowerShell/CMD | `.\configurar.bat` | `.\iniciar.bat` |
 
 Os scripts preparam Java e Maven, verificam downloads, criam configuração privada, executam os testes e iniciam o sistema em `http://localhost:8080`. Não é necessário instalar MySQL para a apresentação local. As tarefas do VS Code também funcionam quando a pasta aberta é versão 0.3.
+
+Ao iniciar, o sistema procura automaticamente o fix mais recente da linha **0.3.x**, faz uma cópia de segurança e preserva os arquivos privados. Quem está na 0.3.2 precisa instalar este recurso uma vez. Consulte [ATUALIZACOES.md](ATUALIZACOES.md) para funcionamento, retorno e desativação.
 
 Aplique o pacote privado conforme [ACESSOS.md](ACESSOS.md), ou copie seu arquivo de contas para `.secrets/accounts.properties`. Se ele não existir, o configurador cria um único administrador com login e senha aleatórios, guardados somente nesse arquivo local. Os valores não são impressos no terminal. Leia-os localmente e guarde-os em um gerenciador de senhas.
 
