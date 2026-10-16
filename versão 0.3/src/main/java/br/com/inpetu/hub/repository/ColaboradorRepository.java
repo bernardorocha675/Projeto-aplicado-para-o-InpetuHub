@@ -11,6 +11,8 @@ import org.springframework.data.repository.query.Param;
 public interface ColaboradorRepository extends JpaRepository<Colaborador, Long> {
   Optional<Colaborador> findByLogin(String login);
 
+  Optional<Colaborador> findByLoginIgnoreCase(String login);
+
   @Lock(LockModeType.PESSIMISTIC_WRITE)
   @Query("select c from Colaborador c where c.id=:id")
   Optional<Colaborador> locked(@Param("id") Long id);

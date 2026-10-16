@@ -68,8 +68,8 @@ class PrepareLocal {
     System.out.println(
         generatedAccount
             ? "Sem pacote privado: foi criado um administrador aleatório para este computador. As"
-                  + " contas da equipe não vêm do GitHub. Leia ACESSOS.md antes do primeiro início."
-            : "Arquivo privado de contas preservado. Em banco já iniciado, copiar este arquivo não"
-                  + " troca as senhas automaticamente; consulte ACESSOS.md.");
+                + " contas da equipe não vêm do GitHub. Leia ACESSOS.md antes do primeiro início."
+            : "Arquivo privado de contas preservado. Ao iniciar, contas novas ou alteradas nesse"
+                + " arquivo serão carregadas automaticamente, sem apagar os dados.");
   }
 }

@@ -21,3 +21,7 @@ relatorios-testes/
 
 # Logs técnicos locais, inclusive arquivos rotacionados.
 logs/
+
+# Instalador particular das contas da equipe.
+*ACESSOS-PRIVADOS*/
+*ACESSOS-PRIVADOS*.zip

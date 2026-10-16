@@ -43,6 +43,22 @@ class SecurityUnitTest {
   }
 
   @Test
+  void productionLoginStillLimitsAttempts() throws Exception {
+    var crypto = new SecretCrypto("unused", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    var filter = new AbuseFilter(new RateLimits(Clock.systemUTC()), crypto, true, () -> true);
+    for (int i = 0; i < 11; i++) {
+      var req = new org.springframework.mock.web.MockHttpServletRequest("POST", "/login");
+      req.setSecure(true);
+      req.setServletPath("/login");
+      req.setRemoteAddr("198.51.100.55");
+      req.addParameter("username", "áluno teste");
+      var res = new org.springframework.mock.web.MockHttpServletResponse();
+      filter.doFilter(req, res, (request, response) -> {});
+      assertEquals(i < 10 ? 200 : 429, res.getStatus());
+    }
+  }
+
+  @Test
   void provisioningValidatesAllEntriesWithoutExposingThem() throws Exception {
     var file = temp.resolve("accounts.properties");
     String base =

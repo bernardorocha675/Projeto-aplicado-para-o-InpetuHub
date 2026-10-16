@@ -1,5 +1,17 @@
 # Validação da versão 0.3
 
+## Login básico 0.3.2 — 16/10/2026
+
+O carregamento das contas foi refeito: a migration V4 registra uma assinatura por entrada do arquivo privado. Contas novas ou alteradas são aplicadas ao iniciar, inclusive em banco já provisionado; entradas idênticas não desfazem senhas alteradas no painel. Usuários aceitam normalização de caixa, acentos e espaços. Senhas de acesso aceitam 8–64 caracteres no arquivo, no cadastro e na troca. Erros de senha não bloqueiam temporariamente o modo local; produção mantém sua limitação.
+
+A rodada local final aprovou **86 verificações**, incluindo **67 casos JUnit**, sem falhas ou casos ignorados. Os cenários novos cobrem cinco contas copiadas tardiamente, importação incremental, preservação de contas/dados, pacote inválido sem alterações parciais, normalização do usuário, senhas de oito caracteres e repetição de tentativas locais. Um servidor H2 real confirmou a importação tardia sem apagar o banco; o restante do roteiro de regras, perfis, sessões, logs, backups e recuperação offline também passou.
+
+As cinco credenciais reais da entrega foram aceitas por HTTP em banco novo e após atualizar um banco real de teste criado com o JAR 0.3.1fix. Antes da atualização, a rejeição dos cinco novos acessos por ignorar o arquivo tardio foi reproduzida no JAR anterior. Foram conferidos dez logins e dez verificações de perfil, sem imprimir valores nem alterar banco de uso. A conta sintética antiga e a chave da instalação foram preservadas.
+
+O instalador privado Linux/macOS foi verificado com dados sintéticos para cópia, backup do arquivo anterior, caminhos com espaços/acentos e recusa de código antigo. O instalador PowerShell recebeu revisão de código; não houve execução local de PowerShell. As senhas e o pacote privado não integram o repositório, o ZIP público nem os artefatos da CI.
+
+V1–V3 e as versões 0.1/0.2 foram preservadas. V4 acrescenta somente `importacao_conta`. A CI do commit da tag `v0.3.2` é a referência da rodada nativa em Linux, macOS e Windows; a publicação depende de sucesso dos testes e verificações. Permanecem as limitações anteriores de navegador, CodeQL e produção.
+
 ## Correção 0.3.1fix — 16/10/2026
 
 O segundo fator foi removido do acesso, menu, rotas e redefinição administrativa. Login e senha abrem o painel para ADMIN e COLABORADOR, inclusive contas que já possuíam dados de MFA. As colunas antigas, as migrations, a chave privada e o formato de backup foram preservados. Não houve alteração nas versões 0.1/0.2, nas senhas ou nas regras de reservas.

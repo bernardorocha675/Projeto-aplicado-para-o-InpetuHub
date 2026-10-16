@@ -1,58 +1,41 @@
-# Login ou senha inválidos — versão 0.3
+# Entrar no sistema — versão 0.3.2
 
-As contas não vêm do GitHub. Elas estão no pacote privado de acessos entregue ao responsável. Cada computador tem seu próprio banco. **O login é o código do arquivo privado, não o nome da pessoa.** A senha distingue maiúsculas/minúsculas; não acrescente espaços. O botão Mostrar senha permite conferir a digitação e volta a ocultar ao enviar, trocar de aba ou sair da página. Ele também aparece nos formulários de alteração de senha.
+O acesso usa somente **usuário e senha**, sem aplicativo autenticador. Os novos acessos foram entregues em privado. Use as credenciais desta entrega; o ZIP público do GitHub não contém as cinco contas.
 
-## Por que pode acontecer
+## 1. Atualizar o código
 
-Se o sistema foi configurado/iniciado sem o pacote privado, ele gerou outro administrador aleatório. Copiar o pacote depois não troca as contas do banco: a importação inicial é feita uma vez. Também pode haver senha já alterada, conta desativada, erro de cópia ou terminal em outra versão. A mensagem do site é genérica e não distingue essas situações para quem está fora.
+Pare o servidor com Ctrl+C e use a release **0.3.2**, na pasta **versão 0.3**. Ela contém `pom.xml`, `configurar.sh`, `configurar.bat`, `iniciar.sh` e `iniciar.bat`. Preserve `data/`, `.env.local` e `.secrets/`, incluindo `.secrets/mfa.key`. Não apague o banco.
 
-## 1. Usar a pasta que contém os dados
+## 2. Aplicar o pacote privado
 
-Atualize o código e abra **versão 0.3** no VS Code. Preserve `data/`, `.env.local` e `.secrets/mfa.key` da instalação em uso. Não substitua a pasta inteira por um ZIP vazio e não apague o banco.
+Extraia o ZIP privado dentro de **versão 0.3**. Será criada a pasta visível `ACESSOS-PRIVADOS`.
 
-Pare o servidor no terminal com Ctrl+C. Confira se não existe outra execução aberta. Os comandos abaixo só funcionam com o H2 local e o servidor parado; não iniciam o site nem expõem uma rota de recuperação na internet.
+- **Windows:** abra essa pasta e dê dois cliques em `APLICAR.bat`.
+- **Linux/macOS:** no terminal da pasta versão 0.3, execute `bash ACESSOS-PRIVADOS/APLICAR.sh`.
 
-## 2. Conferir o arquivo privado
+Se o instalador não encontrar o projeto, informe o caminho da pasta que contém `pom.xml`. Ele recusa versões antigas, guarda uma cópia do arquivo anterior e copia as contas para `.secrets/accounts.properties`. Não substitui banco, chave privada ou configuração. Os scripts do pacote não iniciam nem atualizam o código automaticamente.
 
-Extraia o pacote privado de acessos dentro de **versão 0.3**. O resultado precisa ser `.secrets/accounts.properties`, junto dos demais arquivos privados que já existiam. Se o pacote se chama V02, ele também serve para a versão 0.3: o formato das contas é o mesmo. **Não substitua a chave privada existente em `.secrets/mfa.key`.** O ZIP de contas entregue contém o arquivo de contas, não uma nova chave privada.
+Se já tem apenas o arquivo de contas, é possível copiá-lo manualmente para `.secrets/accounts.properties`, preservando antes uma cópia privada do anterior. Use um arquivo UTF-8 válido com ao menos um administrador.
 
-Se `.secrets/accounts.properties` já existe e contém o administrador aleatório, guarde antes uma cópia privada fora do repositório. Extraia/substitua apenas o arquivo de contas com o pacote correto. O arquivo pode conter as senhas iniciais em texto; não o envie em prints, issues ou commits.
+## 3. Iniciar e entrar
 
-Se ainda faltarem ferramentas/dependências, execute `bash configurar.sh` ou `.\configurar.bat`. Em seguida, confira:
+Se esta cópia ainda não foi configurada, execute `bash configurar.sh` em Linux/macOS ou `.\configurar.bat` no Windows. Depois execute `bash iniciar.sh` ou `.\iniciar.bat`. Espere o servidor ficar pronto e abra http://localhost:8080/login.
 
-| Linux/macOS | Windows PowerShell/CMD |
-|---|---|
-| `bash acessos.sh verificar` | `.\acessos.bat verificar` |
+Digite o usuário e a senha recebidos. O usuário não diferencia maiúsculas, acentos ou espaços de digitação. A senha diferencia maiúsculas e minúsculas e deve ser copiada exatamente; o botão Mostrar senha ajuda a conferir. No modo local, erros de senha não bloqueiam temporariamente novas tentativas.
 
-O comando mostra apenas quantidades: contas no arquivo, ausentes no banco, inativas e senhas diferentes. Não imprime nomes, logins, senhas, hashes ou MFA. Conferir não redefine senhas. Saída 0: confere; 2: existe diferença; 1: não conseguiu conferir (pasta, arquivo, senha do banco, banco em uso ou estrutura incompatível).
+## Como as contas são carregadas
 
-Se tudo confere, copie o login e a senha exatos do arquivo privado no seu computador e tente novamente usando Mostrar senha. Se já alterou sua senha pelo painel, a diferença para a senha inicial pode ser normal: use a senha atual. Aguarde o prazo de bloqueio temporário se houve muitas tentativas. Não use a recuperação apenas para conferir.
+A partir da versão 0.3.2, o sistema importa contas novas ou alteradas ao iniciar, inclusive se o banco já foi usado. Isso corrige o caso em que o pacote era copiado depois da primeira execução e ficava ignorado. Não é preciso apagar dados ou executar recuperação manual para importar o pacote novo.
 
-## 3. Recuperar sem apagar os dados
+Uma entrada idêntica já aplicada não redefine senhas trocadas pelo painel nem reativa uma conta desativada pelo administrador. Alterar explicitamente os dados daquela conta no arquivo e reiniciar aplica a mudança somente a ela; contas não listadas e os registros de negócio são preservados em bancos já provisionados. Uma instalação antiga ainda não provisionada mantém a etapa inicial de desativação das contas legadas antes de importar as privadas.
 
-Use esta etapa **somente se deseja importar contas ausentes e voltar às senhas do arquivo privado**. O responsável pelo computador/banco deve fazê-la. Ela reativa as contas listadas e redefine suas senhas; não altera contas fora do arquivo. Perfis e dados antigos de segundo fator são preservados por compatibilidade, mas esta release não exige autenticador. Contas novas recebem o perfil definido no arquivo privado. Sessões antigas das contas afetadas são revogadas quando o site voltar.
+## Se ainda não entrar
 
-Primeiro faça um backup cifrado, com o servidor parado:
+1. Confirme que o código é **0.3.2** e que o servidor foi reiniciado depois de aplicar o pacote.
+2. Confira se existe `.secrets/accounts.properties` na mesma instalação que está executando o site. Cada computador pode ter um banco independente.
+3. Use as novas credenciais. Se você mesmo trocou a senha pelo painel, use a senha atual.
+4. Se um administrador desativou a conta, peça a ele para reativá-la.
 
-```sh
-# Linux/macOS; escolha uma senha forte quando o terminal solicitar.
-bash backup.sh backup .secrets/antes-recuperar.inpetu
-```
+Os comandos offline `acessos.sh verificar` / `acessos.bat verificar` continuam disponíveis para diagnóstico com o servidor parado. O modo `recuperar` continua sendo uma opção explícita para voltar às senhas do arquivo: faça backup antes, execute `acessos.sh recuperar` / `acessos.bat recuperar` e confirme `RECUPERAR COM BACKUP`. Ele não inicia o site, não imprime credenciais e mantém perfis/dados antigos de MFA de contas já existentes. Atende somente o H2 local.
 
-No Windows: `.\backup.bat backup .secrets\antes-recuperar.inpetu`. A pasta `.secrets` já existe e fica fora do Git. Guarde também uma cópia do backup em outro local privado e a senha separadamente. Se esse nome já existe, escolha outro: o comando não sobrescreve backups. Não coloque a senha na linha de comando. Confirme que o backup terminou antes de continuar.
-
-| Linux/macOS | Windows PowerShell/CMD |
-|---|---|
-| `bash acessos.sh recuperar` | `.\acessos.bat recuperar` |
-
-O programa mostra o resumo e solicita confirmação. Depois de fazer o backup, digite exatamente **RECUPERAR COM BACKUP** e pressione Enter. Qualquer outra resposta cancela. Essa confirmação declara que você fez o backup; o comando não gera um backup automaticamente. As alterações de contas e a auditoria acontecem na mesma transação. Falha cancela a transação. O histórico de reservas/cadastros não é apagado.
-
-Depois rode o comando verificar novamente: deve informar que os acessos conferem.
-
-## 4. Iniciar e entrar
-
-Linux/macOS: `bash iniciar.sh`. Windows: `.\iniciar.bat`. Abra http://localhost:8080/login e use o login/senha do arquivo privado. A partir da release 0.3.1fix, administradores e colaboradores entram somente com login e senha, mesmo se já tinham autenticador. A recuperação não cria senha mestre.
-
-A operação fica registrada na auditoria como `ACESSO_RECUPERADO_LOCAL`, sem credenciais. O administrador aleatório anterior, caso exista e não esteja no arquivo importado, não é apagado: depois de conferir os acessos, o administrador pode desativá-lo pelo painel.
-
-Se a conferência não abrir o banco, não troque a senha em `.env.local` por chute. Use a configuração original que abriu esse banco. Para MySQL/produção, faça a manutenção pelo administrador e pelo procedimento do servidor; este comando atende somente H2 local.
+O pacote contém senhas em texto para a configuração inicial. Guarde-o em privado; não envie os arquivos ou suas capturas de tela ao repositório.

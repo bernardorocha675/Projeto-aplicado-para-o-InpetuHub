@@ -1,14 +1,19 @@
-# InPETU Hub 0.3.1fix
+# InPETU Hub 0.3.2
 
-- Removido o segundo fator do login, do menu e da recuperação administrativa.
-- Administradores e colaboradores acessam com login e senha, inclusive contas que já tinham autenticador configurado.
+- Login básico com usuário e senha, sem segundo fator.
+- Usuários aceitam maiúsculas, acentos e espaços de digitação.
+- Novos acessos do pacote privado são carregados ao iniciar, mesmo em um banco já existente.
+- Erros de senha não bloqueiam temporariamente o modo local.
+- Senhas de acesso aceitam 8–64 caracteres. A senha continua sensível a maiúsculas e minúsculas.
 
-As demais funções permanecem: perfis e permissões, proteção de sessão, limite de tentativas, CSRF, logs, backups e recuperação local de senhas. A remoção do segundo fator reduz a proteção das contas administrativas.
+## Como usar os novos acessos
 
-## Atualizar e iniciar
+Atualize o código da pasta **versão 0.3** e aplique o pacote privado de acessos recebido separadamente. Siga `ACESSOS.md`: o instalador privado copia as contas para o lugar correto e guarda o arquivo anterior. Depois inicie o servidor e entre com os dados novos. O ZIP público não inclui as cinco senhas.
 
-Pare o servidor e faça backup antes de atualizar o código da pasta **versão 0.3**. Preserve `data/`, `.env.local` e `.secrets/`, incluindo a chave privada existente: ela continua sendo usada em outras verificações do sistema. As senhas não são redefinidas por esta atualização. Não há nova migration de banco; dados antigos de segundo fator permanecem no banco para compatibilidade, mas não são utilizados no acesso desta release.
+Linux/macOS: `bash configurar.sh` e depois `bash iniciar.sh`. Windows: `.\configurar.bat` e depois `.\iniciar.bat`. Quem já configurou esta cópia pode executar somente o comando de iniciar.
 
-Baixe e extraia `inpetu-hub-v0.3.1fix.zip`. Siga `COMO-INICIAR.md`: em Linux/macOS, execute `bash configurar.sh` e depois `bash iniciar.sh`; no Windows, execute `.\configurar.bat` e depois `.\iniciar.bat`. Entre novamente com seu login e senha; não será pedido código de autenticador.
+## Instalações existentes
 
-O pacote público não inclui contas reais, senhas, chaves ou bancos. O arquivo `SHA256SUMS.txt` permite conferir a integridade do ZIP. A primeira configuração precisa de conexão com a internet.
+Faça backup com o servidor parado e preserve `data/`, `.env.local` e `.secrets/`. Não é necessário apagar o banco. A migration V4 acrescenta o controle de importação das contas; V1–V3 permanecem intactas. Uma entrada nova ou alterada no arquivo privado é aplicada uma vez. Repetir o mesmo pacote não desfaz uma senha alterada pelo painel; contas fora do pacote não são apagadas em bancos já provisionados.
+
+Reservas, cadastros, perfis, logs e backups continuam disponíveis. A limitação de tentativas de login permanece no perfil de produção; o modo local foi simplificado para os testes da equipe.

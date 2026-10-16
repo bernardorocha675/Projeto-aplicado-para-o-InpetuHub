@@ -4,7 +4,6 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Locale;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class AbuseFilter extends OncePerRequestFilter {
@@ -45,12 +44,13 @@ public class AbuseFilter extends OncePerRequestFilter {
         res.sendError(400);
         return;
       }
-      allowed =
-          limits.allow("login-ip:" + ip, 60, Duration.ofMinutes(15))
-              && limits.allow(
-                  "login-account:" + crypto.fingerprint(login.trim().toLowerCase(Locale.ROOT)),
-                  10,
-                  Duration.ofMinutes(15));
+      if (prod)
+        allowed =
+            limits.allow("login-ip:" + ip, 60, Duration.ofMinutes(15))
+                && limits.allow(
+                    "login-account:" + crypto.fingerprint(LoginNames.normalize(login)),
+                    10,
+                    Duration.ofMinutes(15));
     } else if (path.startsWith("/reservas/") || path.equals("/solicitacoes/confirmar"))
       allowed =
           limits.allow((post ? "submit:" : "read:") + ip, post ? 15 : 120, Duration.ofMinutes(15));

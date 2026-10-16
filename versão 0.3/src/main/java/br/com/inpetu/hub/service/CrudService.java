@@ -4,6 +4,7 @@ import br.com.inpetu.hub.entity.*;
 import br.com.inpetu.hub.enums.*;
 import br.com.inpetu.hub.exception.RegraException;
 import br.com.inpetu.hub.repository.*;
+import br.com.inpetu.hub.security.LoginNames;
 import jakarta.persistence.EntityManager;
 import java.lang.reflect.*;
 import java.math.*;
@@ -158,7 +159,7 @@ public class CrudService {
                   campo("nome", "Nome", "text"),
                   opcional("email", "Email", "email"),
                   campo("login", "Login", "text"),
-                  opcional("senha", "Senha de 16–64 caracteres (vazia mantém a atual)", "password"),
+                  opcional("senha", "Senha de 8–64 caracteres (vazia mantém a atual)", "password"),
                   escolha(
                       "perfil", "Perfil", Map.of("ADMIN", "Admin", "COLABORADOR", "Colaborador")),
                   campo("ativo", "Ativo", "checkbox")));
@@ -256,10 +257,10 @@ public class CrudService {
           throw new RegraException("Opção inválida: " + campo.rotulo);
         if (campo.nome.equals("senha")) {
           if (raw.isBlank() && id != null) continue;
-          if (raw.length() < 16
+          if (raw.length() < 8
               || raw.length() > 64
               || raw.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 72)
-            throw new RegraException("A senha deve ter de 16 a 64 caracteres (até 72 bytes).");
+            throw new RegraException("A senha deve ter de 8 a 64 caracteres (até 72 bytes).");
           f.set(o, encoder.encode(raw));
           continue;
         }
@@ -275,6 +276,9 @@ public class CrudService {
         f.set(o, v);
       }
       if (o instanceof Colaborador c) {
+        c.login = LoginNames.normalize(c.login);
+        if (!c.login.matches("[a-z0-9._@+-]{4,120}"))
+          throw new RegraException("Use um usuário com 4–120 letras, números ou . _ @ + -.");
         if (id != null
             && id.equals(actorId)
             && actorAdmin

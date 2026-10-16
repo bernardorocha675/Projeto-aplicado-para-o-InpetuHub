@@ -22,7 +22,7 @@ public class SecurityConfig {
   @Bean
   UserDetailsService users(ColaboradorRepository repo) {
     return login ->
-        repo.findByLogin(login)
+        repo.findByLoginIgnoreCase(LoginNames.normalize(login))
             .map(AccountPrincipal::new)
             .orElseThrow(() -> new UsernameNotFoundException("Login inválido"));
   }

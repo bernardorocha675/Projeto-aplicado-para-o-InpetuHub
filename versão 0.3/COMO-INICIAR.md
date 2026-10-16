@@ -14,11 +14,11 @@ No VS Code, use Arquivo → Abrir Pasta → **versão 0.3**. Abra Terminal → N
 
 ## 2. Preparar as contas privadas
 
-Se recebeu um pacote privado de acessos, extraia a pasta `.secrets` dele **dentro de versão 0.3**, antes de iniciar o sistema pela primeira vez. O resultado deve ser `.secrets/accounts.properties`. Não coloque o ZIP no repositório nem envie todas as contas a terceiros. O arquivo contém as senhas iniciais em texto: guarde-o em local privado, não em capturas de tela.
+Para os acessos da equipe, atualize para a release **0.3.2**, extraia o pacote privado **dentro da pasta versão 0.3** e aplique-o conforme [ACESSOS.md](ACESSOS.md). No Windows, abra `ACESSOS-PRIVADOS/APLICAR.bat`. Em Linux/macOS, execute `bash ACESSOS-PRIVADOS/APLICAR.sh` no terminal da pasta versão 0.3. O instalador guarda o arquivo de contas anterior e copia o novo para `.secrets/accounts.properties`, sem apagar o banco ou trocar a chave privada.
 
-Sem esse arquivo, o configurador cria apenas uma conta administrativa aleatória para a instalação atual. O código não conhece as contas particulares de outras instalações. O configurador não imprime nenhuma credencial.
+O ZIP público contém apenas o código. Sem pacote privado, o configurador gera um administrador aleatório para aquele computador, guardado no arquivo local de contas; ele não conhece as cinco contas entregues separadamente.
 
-Se já iniciou este banco com outras contas, substituir o arquivo não troca usuários ou senhas. Para um primeiro teste sem dados importantes, use uma instalação nova; para preservar dados, siga a migração no handover. Nunca apague um banco que contenha registros necessários.
+Ao iniciar a versão 0.3.2, contas novas ou alteradas no arquivo são carregadas mesmo se o banco já existia. Não apague o banco para corrigir login. Um pacote idêntico não desfaz uma senha trocada pelo painel. Não publique o pacote privado, suas senhas nem a pasta `.secrets`.
 
 ## 3. Linux/Ubuntu
 
@@ -73,7 +73,7 @@ Aguarde o evento **event=SERVER_READY** no terminal. As linhas de log estão em 
 
 Use sua conta recebida em privado. Não há login público padrão. Se a instalação gerou uma conta própria, abra `.secrets/accounts.properties` apenas no seu computador para consultá-la.
 
-A partir da release **0.3.1fix**, administradores e colaboradores entram somente com login e senha. Não há configuração de aplicativo autenticador nem solicitação de código adicional, inclusive para contas que já usavam segundo fator.
+Na release **0.3.2**, administradores e colaboradores entram somente com login e senha. O usuário aceita maiúsculas, acentos e espaços de digitação; a senha deve ser copiada exatamente. Não há aplicativo autenticador nem solicitação de código adicional.
 
 ## 7. Parar e usar novamente
 
@@ -91,7 +91,7 @@ O banco, as contas e os registros permanecem em `data/`. A chave privada da inst
 | Porta ocupada | Pare outra execução ou altere `PORT` em `.env.local` e use a nova porta. |
 | Arquivo privado inválido | Não publique o conteúdo. Confira a estrutura do pacote privado e leia o erro sem incluir credenciais. |
 | Sessão encerrada após edição da conta | Entre novamente; mudanças de conta revogam sessões por segurança. |
-| Muitas tentativas | Aguarde o prazo indicado. Não é um bloqueio permanente. |
+| Muitas tentativas | O modo local 0.3.2 não bloqueia por erros de senha. Se ainda aparecer esta mensagem, confira a versão executada; em produção, aguarde o prazo indicado. |
 | Solicitação não aparece como ocupada | Somente uma reserva aprovada bloqueia horários. Confira a fila de solicitações e a identidade antes de aprovar. |
 | Código por email não chegou | Confira SMTP, contato institucional e spam. Sem SMTP, o modo local usa conferência manual da equipe. |
 

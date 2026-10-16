@@ -16,6 +16,9 @@ if private.is_file():
             if key.endswith(('.login', '.password')) and value:
                 private_values.append(value)
 for name in filter(None, tracked):
+    if any('ACESSOS-PRIVADOS' in part for part in pathlib.PurePosixPath(name).parts):
+        errors.append((name, 'pacote privado de acessos versionado'))
+        continue
     if not (name.startswith('versão 0.3/') or name.startswith('.github/')):
         continue
     p = pathlib.PurePosixPath(name)

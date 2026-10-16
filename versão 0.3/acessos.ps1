@@ -7,5 +7,5 @@ if (-not (Use-Java)) { throw 'Execute primeiro: .\configurar.bat' }
 if (-not (Use-Maven)) { throw 'Execute primeiro: .\configurar.bat' }
 & $script:MavenCmd -B -ntp -DskipTests clean package
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-& "$env:JAVA_HOME\bin\java.exe" -jar target/inpetu-hub-0.3.1fix.jar $accessMode
+& "$env:JAVA_HOME\bin\java.exe" -jar target/inpetu-hub-0.3.2.jar $accessMode
 exit $LASTEXITCODE

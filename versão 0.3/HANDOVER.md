@@ -5,9 +5,9 @@ Documento de referência para a equipe que receberá, executará e manterá o si
 | Identificação | Referência |
 |---|---|
 | Entrega | **Versão 0.3** — pasta `versão 0.3/` |
-| Versão do pacote Java | **0.3.1fix** — definida em [pom.xml](pom.xml) |
+| Versão do pacote Java | **0.3.2** — definida em [pom.xml](pom.xml) |
 | Data da revisão | 16/10/2026 |
-| Base desta revisão | `d9320a8abc529c4f349c06021b6cb08189366a53`; identificação desta correção pela tag `v0.3.1fix` |
+| Base desta revisão | `4826e26e3cb2cd0fa09700b7de4bb82cfa8fbb9e`; identificação desta entrega pela tag `v0.3.2` |
 | Contexto | Disciplina de Projeto Aplicado do UniSENAI, em parceria com o InPETU Hub |
 | Estado da entrega | Projeto acadêmico com execução local e testes automatizados validados; sem implantação em produção realizada nesta entrega |
 
@@ -30,7 +30,7 @@ O sistema oferece agenda pública de espaços e uma área interna para reservas 
 | Agenda pública | Consulta de disponibilidade e envio de solicitações de reserva. |
 | Conferência de solicitações | Fila interna para verificar identidade e vínculo institucional antes de encaminhar o pedido para reserva. |
 | Gestão interna | Cadastros, reservas, histórico de relacionamento, cotas e registro manual de pagamentos. |
-| Autenticação | Contas privadas, BCrypt, perfis ADMIN/COLABORADOR e sessões com expiração; acesso somente por login e senha em 0.3.1fix. |
+| Autenticação | Contas privadas, BCrypt, perfis ADMIN/COLABORADOR e sessões com expiração; acesso somente por login e senha em 0.3.2. |
 | Auditoria | Registro transacional de autenticação e operações de negócio no banco. |
 | Diagnóstico | Logs em arquivo, correlação por requisição e relatórios de testes. |
 | Recuperação local | Backup/restauração H2 cifrados e conferência/recuperação explícita das contas de um arquivo privado. |
@@ -57,7 +57,7 @@ A aplicação é um monólito Java com páginas renderizadas pelo servidor. O na
 | Banco local | H2 em arquivo; dispensa instalar um servidor MySQL para apresentação local. |
 | Perfil de produção | MySQL, HTTPS direto e SMTP; a infraestrutura real ainda precisa ser configurada e validada. |
 | Interface | `src/main/resources/templates/` e `src/main/resources/static/`; scripts e estilos locais. |
-| Estrutura do banco | `src/main/resources/db/migration/`; migrations V1, V2 e V3. Não editar migrations já aplicadas. |
+| Estrutura do banco | `src/main/resources/db/migration/`; migrations V1–V4. Não editar migrations já aplicadas. |
 | Entrada da aplicação | `src/main/java/br/com/inpetu/hub/InpetuApplication.java`; mantém o lock da instalação e separa os modos offline de acesso da inicialização do servidor. |
 
 Os pacotes abaixo ficam em `src/main/java/br/com/inpetu/hub/`:
@@ -124,13 +124,13 @@ Preserve juntos o banco e sua configuração, além da chave privada da instala�
 
 Não existe login público padrão. As senhas são armazenadas com BCrypt, custo 12. As sessões têm 20 minutos de inatividade e limite absoluto de duas horas. Não há etapa de segundo fator nesta release. Mudança de senha, login, perfil, situação ou versão de segurança revoga sessões anteriores.
 
-O segundo fator, suas telas e sua redefinição administrativa foram removidos em **0.3.1fix**. Contas com MFA antigo também entram com login e senha. As colunas antigas permanecem no banco por compatibilidade; não há nova migration nem redefinição de senhas. A chave privada continua necessária para outras verificações do sistema e deve ser preservada. Essa remoção reduz a proteção das contas administrativas.
+O segundo fator, suas telas e sua redefinição administrativa foram removidos em **0.3.1fix** e continuam ausentes na **0.3.2**. Contas com MFA antigo também entram com login e senha. As colunas antigas de MFA permanecem por compatibilidade. A 0.3.2 acrescenta somente a migration V4 para importação incremental de contas; uma entrada nova ou alterada no arquivo privado aplica a senha ali definida, sem apagar reservas ou cadastros. A chave privada continua necessária para outras verificações do sistema e deve ser preservada. Essa remoção reduz a proteção das contas administrativas.
 
-CSRF, escape HTML, consultas parametrizadas, CSP e cabeçalhos de segurança permanecem ativos. O login admite até dez tentativas por conta e sessenta por origem em janela de quinze minutos; há limites adicionais por fluxo. A limitação fica na memória de uma instância. Múltiplas instâncias e uso de proxy reverso exigem revisão de infraestrutura; cabeçalhos X-Forwarded-* não são confiados pela configuração entregue.
+CSRF, escape HTML, consultas parametrizadas, CSP e cabeçalhos de segurança permanecem ativos. No modo local, erros de senha não bloqueiam novas tentativas. No perfil de produção, o login mantém até dez tentativas por conta e sessenta por origem em quinze minutos; há limites adicionais nos demais fluxos. A limitação fica na memória de uma instância. Múltiplas instâncias e uso de proxy reverso exigem revisão de infraestrutura; cabeçalhos X-Forwarded-* não são confiados pela configuração entregue.
 
 ### Login recusado ou pacote importado depois do primeiro início
 
-Siga [ACESSOS.md](ACESSOS.md). A importação inicial é feita uma vez: substituir o arquivo de contas depois disso não redefine automaticamente as senhas.
+Siga [ACESSOS.md](ACESSOS.md). A versão 0.3.2 importa automaticamente as entradas novas ou alteradas do arquivo privado ao iniciar, mesmo com `bootstrap_seguro.concluido=true`. A migration V4 cria `importacao_conta(login,assinatura)`, com fingerprint HMAC por entrada. Uma entrada idêntica não é reaplicada; isso preserva a senha alterada no painel e a desativação manual. Contas fora do arquivo não são apagadas em bancos já provisionados. A migração inicial de uma base antiga ainda não provisionada continua revogando as contas legadas antes de importar as privadas.
 
 Com o servidor parado, o comando `acessos.sh verificar` / `acessos.bat verificar` compara o arquivo privado com o banco e informa apenas quantidades, sem credenciais. Se for necessário recuperar, faça backup primeiro e execute `acessos.sh recuperar` / `acessos.bat recuperar`. A confirmação exata é `RECUPERAR COM BACKUP`.
 
@@ -181,11 +181,11 @@ A ferramenta verifica a autenticidade do arquivo e as entradas antes da cópia, 
 
 ### Da versão 0.2 para a versão 0.3
 
-Não há nova migration de banco na versão 0.3: ela mantém V1–V3, o nome H2 e o formato de backup da versão 0.2.
+A versão 0.3.2 mantém V1–V3 e acrescenta V4 para o controle de importação das contas. O nome H2 e o formato de backup permanecem compatíveis. Ao iniciar pela primeira vez esta atualização, as entradas válidas do arquivo privado são aplicadas ao banco; confira o arquivo desejado antes de iniciar.
 
 1. Registre o commit em uso e pare a versão 0.2. Faça e confira o backup cifrado.
 2. Restaure primeiro em uma instalação separada da versão 0.3 conforme a seção anterior. Não renomeie `inpetu-v02.mv.db`.
-3. Configure e inicie essa cópia. O banco restaurado conserva usuários, senhas atuais, dados antigos de MFA e marcador de importação; não reimporte contas nem regenere a chave.
+3. Configure e inicie essa cópia. O banco restaurado conserva usuários, dados antigos de MFA e controle de importação. Na primeira atualização para 0.3.2, as entradas do arquivo privado são aplicadas e registradas em V4; confira o pacote correto antes de iniciar e não regenere a chave.
 4. Confira agenda, reservas, cotas, permissões e logs. Defina a janela de troca com o responsável pelos dados e evite novas gravações durante a migração final.
 5. Mantenha a instalação/backup anteriores para retorno. Não execute as duas versões simultaneamente sobre o mesmo banco.
 
@@ -195,7 +195,7 @@ Para voltar, pare a versão 0.3 e restaure o backup validado em uma instalação
 
 **Troca do nome da pasta `versão 03` para `versão 0.3`:** pare o servidor e faça o backup antes de atualizar. O Git renomeia o código rastreado, mas arquivos privados ignorados podem permanecer na pasta antiga. Transfira de forma privada `data/`, `.env.local` e a pasta `.secrets/` completa para a nova pasta, mantendo a chave privada da instalação original. Preserve também os backups e logs anteriores em local privado. Não execute as duas pastas ao mesmo tempo nem inicie a nova com banco vazio se pretende continuar a instalação existente. Após configurar as ferramentas na pasta nova, confira os acessos e os registros antes de descartar qualquer cópia antiga. Não há alteração de estrutura de banco nesta renomeação.
 
-Preserve `data/`, `.env.local` e `.secrets/`; atualize o código com o servidor parado, execute o configurador/testes e inicie novamente. Não substitua toda a instalação por uma pasta vazia nem copie ferramentas/relatórios temporários como se fossem dados do sistema. O JAR desta correção é `inpetu-hub-0.3.1fix.jar`. Entre novamente com login e senha; contas antigas não precisam de código do autenticador.
+Preserve `data/`, `.env.local` e `.secrets/`; atualize o código com o servidor parado, execute o configurador/testes e inicie novamente. Não substitua toda a instalação por uma pasta vazia nem copie ferramentas/relatórios temporários como se fossem dados do sistema. O JAR desta entrega é `inpetu-hub-0.3.2.jar`. Aplique o novo pacote privado e reinicie o servidor. O usuário passa por normalização de espaços, acentos e caixa; as senhas continuam exatas e aceitam 8–64 caracteres. V1–V3 não mudam; V4 acrescenta somente o controle de importação. Guarde o backup anterior antes de atualizar e restaure-o em uma instalação separada se precisar retornar à versão anterior.
 
 ## 10. Testes e evidências de validação
 
@@ -203,7 +203,9 @@ Depois de configurar e com o servidor parado, use `bash testar.sh` ou `.\testar.
 
 | Evidência | Resultado e alcance |
 |---|---|
-| Rodada local 0.3.1fix | **78 verificações aprovadas**, incluindo **60 casos JUnit**, com login por senha, contas com MFA antigo, permissões, rotas removidas, sessões, regras, logs, backup e recuperação local. |
+| Rodada local 0.3.2 | **86 verificações aprovadas**, incluindo **67 casos JUnit**. Importação tardia/incremental, usuário normalizado, senha básica, permissões, sessões, regras, logs, backups e recuperação offline. |
+| Acessos desta entrega | Cinco contas privadas aceitas por HTTP em banco novo e após atualizar uma instalação sintética da 0.3.1fix, preservando a conta antiga e a chave; nenhum valor foi exibido. |
+| Histórico local 0.3.1fix | **78 verificações aprovadas**, incluindo **60 casos JUnit**, com login por senha, contas com MFA antigo, permissões, rotas removidas, sessões, regras, logs, backup e recuperação local. |
 | Base histórica anterior | A entrega anterior aprovou 76 verificações, incluindo 58 casos JUnit, com o segundo fator ainda ativo. Essa contagem não comprova a correção 0.3.1fix; consulte as novas evidências em `docs/VALIDACAO.md`. |
 | Compatibilidade nativa | [Execução 38792529766](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/38792529766), no código `a73bcc421699db4f99a7971bd29ea76a0de500cc`: nove jobs aprovados. Ubuntu x64/ARM64, macOS Apple Silicon/Intel e Windows x64/ARM64 executaram o configurador e o roteiro completo, incluindo os modos de acesso via JAR. |
 | Acessos privados | As cinco credenciais entregues foram aceitas por HTTP em banco novo e isolado da versão 0.3, sem expor valores ou alterar o banco de trabalho. Isso não diagnostica automaticamente a instalação de outro computador. |
@@ -213,7 +215,7 @@ Depois de configurar e com o servidor parado, use `bash testar.sh` ou `.\testar.
 
 A automação está no [workflow da versão 0.3](../.github/workflows/security-v0.3.yml); Dependabot acompanha dependências e ações fixadas por SHA. Os relatórios de teste são enviados à CI sem bancos, contas, chaves ou logs privados. O job de Gitleaks também pode gerar seu próprio SARIF.
 
-Consulte [TESTAR.md](TESTAR.md) para a cobertura manual e [docs/VALIDACAO.md](docs/VALIDACAO.md) para o histórico das rodadas. As referências a README vazio nesse histórico descrevem o estado daquela rodada; o README principal foi atualizado posteriormente. A release 0.3.1fix só é publicada após a nova rodada de testes da CI. As execuções anteriores acima registram o histórico anterior à remoção do segundo fator.
+Consulte [TESTAR.md](TESTAR.md) para a cobertura manual e [docs/VALIDACAO.md](docs/VALIDACAO.md) para o histórico das rodadas. As referências a README vazio nesse histórico descrevem o estado daquela rodada; o README principal foi atualizado posteriormente. A release 0.3.2 só é publicada após a nova rodada de testes da CI. As execuções anteriores acima registram o histórico anterior ao novo carregamento de contas.
 
 ## 11. Produção e integrações
 
@@ -222,7 +224,7 @@ O perfil `prod` existe, mas a implantação real não foi realizada nesta entreg
 Compile o projeto e execute o JAR com a configuração privada de produção disponível:
 
 ```sh
-java -jar target/inpetu-hub-0.3.1fix.jar --spring.profiles.active=prod
+java -jar target/inpetu-hub-0.3.2.jar --spring.profiles.active=prod
 ```
 
 O perfil exige HTTPS direto, cookie Secure, confirmação de email e SMTP; desabilita demonstração. Não combinar `local` e `prod`. O exemplo MySQL usa verificação de identidade do certificado e precisa corresponder ao servidor real. Valide certificado, entrega de email, permissões do banco, firewall e recuperação no ambiente de destino.
@@ -246,7 +248,7 @@ Não há configuração entregue de serviço do sistema, hospedagem, domínio ou
 
 A equipe recebedora deve executar e registrar esta conferência em ambiente de teste. Os itens abaixo não estão marcados como aceitos por terceiros apenas porque os testes automatizados passaram.
 
-- [ ] Acessar o repositório e identificar a pasta versão 0.3, o pacote 0.3.1fix e o commit recebido.
+- [ ] Acessar o repositório e identificar a pasta versão 0.3, o pacote 0.3.2 e o commit recebido.
 - [ ] Preparar uma instalação limpa pelo guia, sem depender de arquivos não documentados do computador de quem desenvolveu.
 - [ ] Receber os arquivos privados por canal autorizado e conferir login por senha e separação entre ADMIN/COLABORADOR.
 - [ ] Percorrer uma solicitação até conferência/aprovação e validar agenda, cota, histórico e valores com o parceiro.

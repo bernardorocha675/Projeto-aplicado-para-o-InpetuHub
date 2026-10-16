@@ -43,11 +43,11 @@ public class AccountController {
       HttpServletRequest req) {
     var c = users.locked(user(a).id).orElseThrow();
     if (!encoder.matches(current, c.senha)) throw new RegraException("Credencial atual inválida.");
-    if (replacement.length() < 16
+    if (replacement.length() < 8
         || replacement.length() > 64
         || replacement.getBytes(StandardCharsets.UTF_8).length > 72
         || encoder.matches(replacement, c.senha))
-      throw new RegraException("Use uma nova senha de 16–64 caracteres (até 72 bytes).");
+      throw new RegraException("Use uma nova senha de 8–64 caracteres (até 72 bytes).");
     c.senha = encoder.encode(replacement);
     c.securityVersion++;
     audit.record(c.id, "SENHA_ALTERADA", "colaboradores", c.id, "OK", null);

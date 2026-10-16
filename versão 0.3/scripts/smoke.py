@@ -35,14 +35,9 @@ try:
     token = re.search(r'name="_csrf"[^>]*value="([^"]+)"', html)
     assert token, 'Token CSRF ausente.'
     fake = urllib.parse.urlencode({'username': 'compatibility-probe', 'password': 'ficticio', '_csrf': token[1]}).encode()
-    for attempt in range(10):
+    for attempt in range(12):
         with opener.open(base + '/l%6fgin', data=fake) as response:
             assert response.url.endswith('/login?error')
-    try:
-        opener.open(base + '/l%6fgin', data=fake)
-        raise AssertionError('Login codificado contornou o limite de tentativas.')
-    except urllib.error.HTTPError as error:
-        assert error.code == 429
     properties = {}
     for line in (root / '.secrets/accounts.properties').read_text().splitlines():
         if '=' in line and not line.startswith('#'):

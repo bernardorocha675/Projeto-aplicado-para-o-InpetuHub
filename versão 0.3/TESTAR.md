@@ -46,7 +46,7 @@ Se houver falha ou caso não executado, o comando termina com código de erro. E
 
 1. Compila o código e executa testes de regras, reservas, preços, cotas, conflitos, autorização, sessões, confirmação por email e expiração. Usa bancos de teste, sem esperar 24 horas para conferir a lógica de expiração.
 2. Cria uma instalação descartável com contas sintéticas e uma porta local livre. Não depende da porta 8080 nem exige que as senhas particulares continuem iguais às iniciais.
-3. Inicia o servidor, consulta a agenda, testa autenticação de administrador e colaborador, permissões, CSRF, remoção das rotas de segundo fator, URLs codificadas, limite de tentativas e troca de senha de uma conta sintética.
+3. Inicia o servidor, consulta a agenda, testa autenticação de administrador e colaborador, permissões, CSRF, remoção das rotas de segundo fator, URLs codificadas, repetição de erros locais e troca de senha de uma conta sintética.
 4. Reinicia o servidor descartável e confere a persistência. Cria e restaura backup do H2 de teste. Recusa senha incorreta, arquivo adulterado, sobrescrita e backup com o servidor ainda aberto.
 5. Encerra os processos que iniciou, remove os bancos/contas temporários e gera o relatório. O relatório informa separadamente qualquer falha nessa limpeza.
 
@@ -62,7 +62,7 @@ Se interromper com Ctrl+C ou o computador desligar, podem sobrar dados sintétic
 | T03-T05: contas e logout | Login sintético, permissões e proteção de páginas; acesso de contas com segundo fator antigo sem exigir código. | Os cinco acessos reais e o comportamento de voltar no navegador. |
 | T06-T07: erros, agenda e telas | Início do servidor, API, cabeçalhos e renderização de páginas nos testes de integração. | Mensagens claras, cliques, filtros, aparência e tela pequena em navegador real. |
 | T08-T12: solicitações, aprovação, preços e cotas | Regras de serviço, validação de identidade e concorrência no banco de teste. | Confirmar se as regras cadastradas representam a operação desejada pelo responsável. |
-| T13-T14: permissões e tentativas de login | Integração e HTTP real, incluindo caminhos codificados. | Conferência visual das mensagens apresentadas ao usuário. |
+| T13-T14: permissões e tentativas de login | Integração e HTTP real, incluindo caminhos codificados e ausência de bloqueio temporário no modo local. | Conferência visual das mensagens apresentadas ao usuário. |
 | T15: entradas inválidas e scripts | Há validação de campos nos testes, mas não uma exploração exaustiva de entradas maliciosas. | Faça o cenário de texto malicioso do PDF e confira a exibição no navegador. |
 | T16-T19: CSRF, senha e revogação | Integração com contas sintéticas; CSRF e troca de senha por HTTP real; rotas antigas de segundo fator indisponíveis. | Operação das telas administrativas pela equipe. |
 | T20: duração das sessões | Simula o prazo absoluto de duas horas para ambos os perfis; não aplica o antigo prazo de MFA pendente. | Inatividade real de 20 minutos e comportamento do navegador durante a espera. |
@@ -97,3 +97,7 @@ A versão 0.3 possui botão Mostrar/Ocultar senha nos formulários de senha. Par
 ## Correção 0.3.1fix
 
 Os cenários de segundo fator do PDF anterior deixam de se aplicar nesta release. Confira que o login com senha abre o painel, inclusive em contas que já usavam autenticador, e que o menu não oferece Segundo fator. As demais verificações do roteiro continuam válidas.
+
+## Login básico 0.3.2
+
+O roteiro também verifica usuário com maiúsculas/acentos/espaços, senha de oito caracteres no cadastro e na troca, ausência de bloqueio por erros locais e importação de contas copiadas depois da primeira inicialização. A importação automática é exercitada em um banco H2 real já existente. Contas e senhas reais não são usadas pela CI.

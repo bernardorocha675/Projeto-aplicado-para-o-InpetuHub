@@ -31,7 +31,7 @@ def main():
         raise SystemExit('VERSION e a versão do projeto no pom.xml precisam coincidir.')
     if not Path('RELEASE-NOTES.md').read_text().startswith(f'# InPETU Hub {version}\n'):
         raise SystemExit('Atualize o número e o conteúdo de RELEASE-NOTES.md.')
-    paths = [folder, 'README.md', '.github/SECURITY.md', 'VERSION', 'RELEASE-NOTES.md', 'RELEASES.md']
+    paths = [folder, '.gitignore', 'README.md', '.github/SECURITY.md', 'VERSION', 'RELEASE-NOTES.md', 'RELEASES.md']
     subprocess.run(['git', 'diff', '--exit-code', 'HEAD', '--', *paths], check=True)
     tracked = list(filter(None, run('git', 'ls-files', '-z', '--', *paths).split('\0')))
     forbidden = {'.secrets', '.tools', 'data', 'backups', 'target', 'logs', 'relatorios-testes'}

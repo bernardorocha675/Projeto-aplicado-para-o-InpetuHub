@@ -48,7 +48,7 @@ class Testar {
         JAVA.toString(),
         "-Dfile.encoding=UTF-8",
         "-jar",
-        ROOT.resolve("target/inpetu-hub-0.3.1fix.jar").toString(),
+        ROOT.resolve("target/inpetu-hub-0.3.2.jar").toString(),
         "--" + mode + "-acessos");
   }
 
@@ -211,8 +211,8 @@ class Testar {
               "Conta com segundo fator antigo acessa com senha";
           case "collaboratorCannotReadOrWriteAdministration" ->
               "Colaborador não acessa administração";
-          case "badLoginsAreThrottledWithoutTrustingForwardedIp" ->
-              "Limite de login e proteção contra IP forjado";
+          case "basicLocalLoginRemainsAvailableAfterPasswordMistakes" ->
+              "Erros de senha não bloqueiam o login local";
           case "publicIntakeDoesNotPoisonCrmOrReserveQuotaAndIsIdempotent" ->
               "Solicitação pública não altera CRM nem cota";
           case "confirmedStaffReviewAndApprovalRemainFunctional" ->
@@ -229,7 +229,8 @@ class Testar {
               "Limite e expiração de confirmação por email";
           case "encodedInternalPathPreservesAdministrationPermissions" ->
               "URL codificada preserva as permissões administrativas";
-          case "encodedLoginCannotSkipThrottle" -> "URL codificada não contorna limite de login";
+          case "encodedLoginAcceptsBasicCredentials" ->
+              "Login básico também funciona no caminho codificado";
           case "rateLimitDoesNotPermanentlyLockVictim" ->
               "Limite de tentativas termina após o prazo";
           case "provisioningValidatesAllEntriesWithoutExposingThem" ->
@@ -346,7 +347,7 @@ class Testar {
             JAVA.toString(),
             "-Dfile.encoding=UTF-8",
             "-jar",
-            ROOT.resolve("target/inpetu-hub-0.3.1fix.jar").toString(),
+            ROOT.resolve("target/inpetu-hub-0.3.2.jar").toString(),
             "--spring.profiles.active=local",
             "--server.port=" + port,
             "--spring.config.import=",
@@ -476,29 +477,35 @@ class Testar {
                 "Redefinição antiga de segundo fator ainda disponível.");
           });
       check(
-          "Login codificado respeita o limite de tentativas",
+          "Login básico aceita nomes sem diferenciar maiúsculas e não bloqueia erros locais",
           () -> {
             HttpClient bad = client();
             String token = csrf(get(bad, "/login").body());
-            String unknown = "inexistente-" + random(9);
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 12; i++)
               require(
                   post(
                           bad,
                           "/l%6fgin",
-                          Map.of("username", unknown, "password", "incorreta", "_csrf", token))
+                          Map.of("username", adminLogin, "password", "incorreta", "_csrf", token))
                       .uri()
                       .getQuery()
                       .contains("error"),
-                  "Falha inesperada de login.");
+                  "Erro local de senha bloqueou novas tentativas.");
             require(
                 post(
-                            bad,
-                            "/l%6fgin",
-                            Map.of("username", unknown, "password", "incorreta", "_csrf", token))
-                        .statusCode()
-                    == 429,
-                "Limite não aplicado.");
+                        bad,
+                        "/l%6fgin",
+                        Map.of(
+                            "username",
+                            "  " + adminLogin.toUpperCase(Locale.ROOT) + "  ",
+                            "password",
+                            password,
+                            "_csrf",
+                            token))
+                    .uri()
+                    .getPath()
+                    .equals("/admin"),
+                "Login básico não aceitou as credenciais corretas após os erros.");
           });
       check(
           "Troca de senha da conta descartável revoga outra sessão",
@@ -613,6 +620,35 @@ class Testar {
         });
   }
 
+  static void automaticAccountTests() throws Exception {
+    check(
+        "Pacote de contas copiado depois do primeiro início funciona sem apagar o banco",
+        () -> {
+          String account = "nova-" + random(9), password = "NovaSenha" + random(8);
+          Path file = isolated.resolve(".secrets/accounts.properties");
+          String previous = Files.readString(file);
+          accessFixture =
+              previous
+                  + "\naccount.3.name=Pessoa de teste\naccount.3.login="
+                  + account
+                  + "\naccount.3.password="
+                  + password
+                  + "\naccount.3.role=COLABORADOR\n";
+          write(file, accessFixture);
+          try {
+            startServer(isolated);
+            require(
+                login(client(), account, password).uri().getPath().equals("/admin"),
+                "Arquivo copiado depois do primeiro início foi ignorado.");
+            String text = Files.readString(isolated.resolve("logs/inpetu.log"));
+            require(!text.contains(account) && !text.contains(password), "Acesso vazou no log.");
+          } finally {
+            stop(server);
+            server = null;
+          }
+        });
+  }
+
   static void accessTests() throws Exception {
     check(
         "Conferência e recuperação de contas importadas depois do primeiro início",
@@ -623,11 +659,11 @@ class Testar {
           write(
               accounts,
               accessFixture
-                  + "\naccount.3.name=Pessoa sintética\naccount.3.login="
+                  + "\naccount.4.name=Pessoa sintética\naccount.4.login="
                   + login
-                  + "\naccount.3.password="
+                  + "\naccount.4.password="
                   + password
-                  + "\naccount.3.role=COLABORADOR\n");
+                  + "\naccount.4.role=COLABORADOR\n");
           long databaseSize = Files.size(isolated.resolve("data/inpetu-v02.mv.db"));
           require(
               command(accessCommand("verificar"), isolated, null, 120) == 2,
@@ -906,6 +942,7 @@ class Testar {
         // Todos os arquivos sensíveis ficam sob temporarios, excluídos ao encerrar.
         if (webTests()) {
           backupTests();
+          automaticAccountTests();
           accessTests();
         }
       } else

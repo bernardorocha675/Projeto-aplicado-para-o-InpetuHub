@@ -156,33 +156,88 @@ class SecurityIntegrationTest {
   }
 
   @Test
-  void badLoginsAreThrottledWithoutTrustingForwardedIp() throws Exception {
+  void basicLocalLoginRemainsAvailableAfterPasswordMistakes() throws Exception {
     var c = create(Perfil.COLABORADOR);
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 12; i++)
       mvc.perform(
               post("/login")
                   .with(csrf())
                   .param("username", c.login)
                   .param("password", "wrong")
-                  .header("X-Forwarded-For", "203.0.113." + i)
-                  .with(
-                      req -> {
-                        req.setRemoteAddr("198.51.100.44");
-                        return req;
-                      }))
-          .andExpect(status().is3xxRedirection());
+                  .header("X-Forwarded-For", "203.0.113." + i))
+          .andExpect(redirectedUrl("/login?error"));
+    var session = login(c);
+    mvc.perform(get("/admin").session(session)).andExpect(status().isOk());
+  }
+
+  @ParameterizedTest
+  @EnumSource(Perfil.class)
+  void basicLoginAcceptsCaseAccentsAndPastedSpaces(Perfil role) throws Exception {
+    var c = create(role);
+    c.login = "aluno-" + UUID.randomUUID();
+    users.saveAndFlush(c);
+    var session =
+        (MockHttpSession)
+            mvc.perform(
+                    post("/login")
+                        .with(csrf())
+                        .param(
+                            "username",
+                            "  "
+                                + c.login.toUpperCase(Locale.ROOT).replace("ALUNO", "ÁLUNÓ")
+                                + "\u00a0")
+                        .param("password", PASSWORD))
+                .andExpect(redirectedUrl("/admin"))
+                .andReturn()
+                .getRequest()
+                .getSession(false);
+    mvc.perform(get("/admin").session(session)).andExpect(status().isOk());
+  }
+
+  @Test
+  void administrationCreatesBasicAccountWithEightCharacterPassword() throws Exception {
+    var actor = users.findByLogin("fixture-admin").orElseThrow();
+    crud.salvar(
+        "colaboradores",
+        null,
+        Map.of(
+            "nome",
+            "Pessoa básica",
+            "login",
+            "ÁLUNO Básico",
+            "email",
+            "",
+            "senha",
+            "Teste123",
+            "perfil",
+            "COLABORADOR",
+            "ativo",
+            "on"),
+        actor);
+    var c = users.findByLogin("alunobasico").orElseThrow();
+    assertTrue(encoder.matches("Teste123", c.senha));
     mvc.perform(
             post("/login")
                 .with(csrf())
-                .param("username", c.login)
-                .param("password", "wrong")
-                .header("X-Forwarded-For", "203.0.113.200")
-                .with(
-                    req -> {
-                      req.setRemoteAddr("198.51.100.44");
-                      return req;
-                    }))
-        .andExpect(status().isTooManyRequests());
+                .param("username", "ÁLUNO Básico")
+                .param("password", "Teste123"))
+        .andExpect(redirectedUrl("/admin"));
+  }
+
+  @Test
+  void passwordChangeAcceptsBasicEightCharacterPassword() throws Exception {
+    var c = create(Perfil.COLABORADOR);
+    var session = login(c);
+    mvc.perform(
+            post("/conta/senha")
+                .session(session)
+                .with(csrf())
+                .param("current", PASSWORD)
+                .param("replacement", "Nova1234"))
+        .andExpect(redirectedUrl("/login?changed"));
+    mvc.perform(
+            post("/login").with(csrf()).param("username", c.login).param("password", "Nova1234"))
+        .andExpect(redirectedUrl("/admin"));
   }
 
   ReservaForm form() {
@@ -340,7 +395,7 @@ class SecurityIntegrationTest {
     java.nio.file.Files.writeString(file, data);
     var initializer =
         new br.com.inpetu.hub.config.PrivateAccountInitializer(
-            users, config, jdbc, encoder, auditService, file.toString());
+            users, config, jdbc, encoder, auditService, crypto, file.toString());
     initializer.run(new org.springframework.boot.DefaultApplicationArguments());
     assertFalse(old.ativo);
     for (int i = 1; i <= 5; i++) {
@@ -355,6 +410,101 @@ class SecurityIntegrationTest {
     initializer.run(new org.springframework.boot.DefaultApplicationArguments());
     assertFalse(first.ativo);
     assertEquals(hash, users.findByLogin("private-fixture-1").orElseThrow().senha);
+  }
+
+  @Test
+  void latePrivatePackageAddsFiveAccountsAndOnlyChangedEntriesAreApplied() throws Exception {
+    var old = create(Perfil.ADMIN);
+    long spacesBefore = spaces.count(), peopleBefore = people.count();
+    jdbc.update("update bootstrap_seguro set concluido=true where id=1");
+    var file = temp.resolve("late-accounts.properties");
+    var data = new StringBuilder();
+    for (int i = 1; i <= 5; i++)
+      data.append(
+          "account."
+              + i
+              + ".name=Pessoa sintética "
+              + i
+              + "\naccount."
+              + i
+              + ".login=aluno-pacote-"
+              + i
+              + "\naccount."
+              + i
+              + ".password=TesteBasico"
+              + i
+              + "\naccount."
+              + i
+              + ".role="
+              + (i == 1 ? "ADMIN" : "COLABORADOR")
+              + "\n");
+    java.nio.file.Files.writeString(file, data);
+    var initializer =
+        new br.com.inpetu.hub.config.PrivateAccountInitializer(
+            users, config, jdbc, encoder, auditService, crypto, file.toString());
+    initializer.run(new org.springframework.boot.DefaultApplicationArguments());
+    for (int i = 1; i <= 5; i++) {
+      var c = users.findByLogin("aluno-pacote-" + i).orElseThrow();
+      assertTrue(c.ativo);
+      mvc.perform(
+              post("/login")
+                  .with(csrf())
+                  .param("username", c.login)
+                  .param("password", "TesteBasico" + i))
+          .andExpect(redirectedUrl("/admin"));
+    }
+    assertTrue(users.findById(old.id).orElseThrow().ativo);
+    var changedInPanel = users.findByLogin("aluno-pacote-1").orElseThrow();
+    changedInPanel.senha = encoder.encode("SenhaDoPainel!");
+    users.saveAndFlush(changedInPanel);
+    String preservedHash = changedInPanel.senha;
+    java.nio.file.Files.writeString(
+        file,
+        data.toString().replace("password=TesteBasico2", "password=SenhaNovaArquivo2")
+            + "\n"
+            + "account.6.name=Pessoa nova\n"
+            + "account.6.login=aluno-pacote-6\n"
+            + "account.6.password=TesteBasico6\n"
+            + "account.6.role=COLABORADOR\n");
+    initializer.run(new org.springframework.boot.DefaultApplicationArguments());
+    assertEquals(preservedHash, users.findByLogin("aluno-pacote-1").orElseThrow().senha);
+    assertTrue(
+        encoder.matches(
+            "SenhaNovaArquivo2", users.findByLogin("aluno-pacote-2").orElseThrow().senha));
+    assertTrue(users.findByLogin("aluno-pacote-6").orElseThrow().ativo);
+    assertEquals(spacesBefore, spaces.count());
+    assertEquals(peopleBefore, people.count());
+    java.nio.file.Files.delete(file);
+    initializer.run(new org.springframework.boot.DefaultApplicationArguments());
+    assertEquals(preservedHash, users.findByLogin("aluno-pacote-1").orElseThrow().senha);
+  }
+
+  @Test
+  void invalidUpdatedPackageDoesNotPartiallyChangeAccounts() throws Exception {
+    var c = create(Perfil.ADMIN);
+    String hash = c.senha;
+    long count = users.count();
+    jdbc.update("update bootstrap_seguro set concluido=true where id=1");
+    var file = temp.resolve("invalid-update.properties");
+    java.nio.file.Files.writeString(
+        file,
+        "account.1.name=Teste\naccount.1.login="
+            + c.login
+            + "\n"
+            + "account.1.password=NovaSenhaTeste1\n"
+            + "account.1.role=ADMIN\n"
+            + "account.2.name=Inválido\n"
+            + "account.2.login=outra-pessoa\n"
+            + "account.2.password=curta\n"
+            + "account.2.role=COLABORADOR\n");
+    var initializer =
+        new br.com.inpetu.hub.config.PrivateAccountInitializer(
+            users, config, jdbc, encoder, auditService, crypto, file.toString());
+    assertThrows(
+        IllegalStateException.class,
+        () -> initializer.run(new org.springframework.boot.DefaultApplicationArguments()));
+    assertEquals(hash, users.findById(c.id).orElseThrow().senha);
+    assertEquals(count, users.count());
   }
 
   @Test
@@ -398,25 +548,8 @@ class SecurityIntegrationTest {
   }
 
   @Test
-  void encodedLoginCannotSkipThrottle() throws Exception {
+  void encodedLoginAcceptsBasicCredentials() throws Exception {
     var c = create(Perfil.COLABORADOR);
-    for (int i = 0; i < 10; i++)
-      mvc.perform(
-              post(java.net.URI.create("/l%6fgin"))
-                  .with(
-                      req -> {
-                        req.setServletPath("/login");
-                        return req;
-                      })
-                  .with(csrf())
-                  .param("username", c.login)
-                  .param("password", "wrong")
-                  .with(
-                      req -> {
-                        req.setRemoteAddr("198.51.100.71");
-                        return req;
-                      }))
-          .andExpect(status().is3xxRedirection());
     mvc.perform(
             post(java.net.URI.create("/l%6fgin"))
                 .with(
@@ -425,14 +558,9 @@ class SecurityIntegrationTest {
                       return req;
                     })
                 .with(csrf())
-                .param("username", c.login)
-                .param("password", "wrong")
-                .with(
-                    req -> {
-                      req.setRemoteAddr("198.51.100.71");
-                      return req;
-                    }))
-        .andExpect(status().isTooManyRequests());
+                .param("username", " " + c.login.toUpperCase(Locale.ROOT) + " ")
+                .param("password", PASSWORD))
+        .andExpect(redirectedUrl("/admin"));
   }
 
   @ParameterizedTest

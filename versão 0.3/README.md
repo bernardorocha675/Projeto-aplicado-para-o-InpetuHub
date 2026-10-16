@@ -1,6 +1,6 @@
 # InPETU Hub — versão 0.3
 
-**Pacote Java: 0.3.1fix.** Entrega acadêmica com execução local validada, logs persistentes, diagnóstico/recuperação local de acessos e botão Mostrar/Ocultar senha. A implantação em produção permanece pendente.
+**Pacote Java: 0.3.2.** Entrega acadêmica com execução local validada, logs persistentes, diagnóstico/recuperação local de acessos e botão Mostrar/Ocultar senha. A implantação em produção permanece pendente.
 
 Agenda pública e CRM em Java 17/21, Spring Boot 4.1.1, Spring Security, Thymeleaf, JPA e Flyway. O modo local usa H2 em arquivo. O perfil `prod` usa MySQL e exige HTTPS direto e SMTP.
 
@@ -17,17 +17,17 @@ Abra **versão 0.3** no VS Code e use o terminal dessa pasta.
 
 Os scripts preparam Java e Maven, verificam downloads, criam configuração privada, executam os testes e iniciam o sistema em `http://localhost:8080`. Não é necessário instalar MySQL para a apresentação local. As tarefas do VS Code também funcionam quando a pasta aberta é versão 0.3.
 
-Antes da primeira inicialização, copie o arquivo de contas recebido em privado para `.secrets/accounts.properties`. Se ele não existir, o configurador cria um único administrador com login e senha aleatórios, guardados somente nesse arquivo local. Os valores não são impressos no terminal. Leia-os localmente e guarde-os em um gerenciador de senhas.
+Aplique o pacote privado conforme [ACESSOS.md](ACESSOS.md), ou copie seu arquivo de contas para `.secrets/accounts.properties`. Se ele não existir, o configurador cria um único administrador com login e senha aleatórios, guardados somente nesse arquivo local. Os valores não são impressos no terminal. Leia-os localmente e guarde-os em um gerenciador de senhas.
 
-Cada banco é provisionado uma vez. Repetir o configurador não troca senhas nem reativa contas existentes. A instalação de outra pessoa possui um banco independente; clonar o código não copia contas ou registros.
+Ao iniciar, contas novas ou alteradas no arquivo privado são importadas, inclusive em bancos já existentes. Cada entrada é aplicada uma vez; arquivo idêntico não redefine uma senha trocada pelo painel nem reativa contas desativadas manualmente. Cada computador mantém seu próprio banco; o ZIP público contém código, sem contas reais.
 
 ## Segurança desta versão
 
-- Senhas BCrypt, mínimo de 16 e máximo de 64 caracteres, com limite de 72 bytes.
+- Senhas BCrypt, mínimo de 8 e máximo de 64 caracteres, com limite de 72 bytes.
 - Sem credenciais padrão no código, exemplos ou documentação desta versão.
-- Login e senha para administradores e colaboradores. O segundo fator foi removido nesta correção, inclusive para contas já configuradas; essa mudança reduz a proteção das contas administrativas.
+- Login e senha para administradores e colaboradores. O segundo fator permanece removido, inclusive para contas já configuradas; essa mudança reduz a proteção das contas administrativas.
 - Desativação, mudança de login, senha ou perfil revogam sessões anteriores na próxima requisição. Sessões expiram por inatividade e têm limite absoluto de duas horas.
-- Limites para login, consultas e solicitações; endereços encaminhados pelo cliente não são confiados.
+- No modo local, erros de senha não bloqueiam o login. Produção mantém limites de login; consultas e solicitações continuam limitadas. Endereços encaminhados pelo cliente não são confiados.
 - CSRF, escape HTML, consultas parametrizadas, CSP, Referrer-Policy e restrições de recursos do navegador.
 - Auditoria de autenticação, contas, cadastros, disponibilidade e operações privilegiadas; nenhum valor de senha ou token é registrado.
 - Backup local cifrado, com exclusão mútua entre servidor e cópia/restauração.

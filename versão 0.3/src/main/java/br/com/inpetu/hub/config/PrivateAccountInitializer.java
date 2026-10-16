@@ -27,6 +27,7 @@ public class PrivateAccountInitializer implements ApplicationRunner {
   private final PasswordEncoder encoder;
   private final AuditService audit;
   private final String file;
+  private final SecretCrypto crypto;
 
   public PrivateAccountInitializer(
       ColaboradorRepository users,
@@ -34,6 +35,7 @@ public class PrivateAccountInitializer implements ApplicationRunner {
       JdbcTemplate jdbc,
       PasswordEncoder encoder,
       AuditService audit,
+      SecretCrypto crypto,
       @Value("${app.accounts-file:.secrets/accounts.properties}") String file) {
     this.users = users;
     this.config = config;
@@ -41,9 +43,12 @@ public class PrivateAccountInitializer implements ApplicationRunner {
     this.encoder = encoder;
     this.audit = audit;
     this.file = file;
+    this.crypto = crypto;
   }
 
-  public static List<Colaborador> read(Path file, PasswordEncoder encoder) {
+  private record PrivateAccount(String name, String login, String password, Perfil role) {}
+
+  private static List<PrivateAccount> load(Path file) {
     try {
       if (!Files.isRegularFile(file, LinkOption.NOFOLLOW_LINKS) || Files.size(file) > 65536)
         throw new IllegalArgumentException();
@@ -51,76 +56,114 @@ public class PrivateAccountInitializer implements ApplicationRunner {
       try (var reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
         p.load(reader);
       }
-      var result = new ArrayList<Colaborador>();
+      var result = new ArrayList<PrivateAccount>();
       var logins = new HashSet<String>();
       Set<String> consumed = new HashSet<>();
       for (int i = 1; i <= 100 && p.containsKey("account." + i + ".login"); i++) {
         String prefix = "account." + i + ".";
-        Colaborador c = new Colaborador();
-        c.nome = p.getProperty(prefix + "name", "").trim();
-        c.login = p.getProperty(prefix + "login", "").trim();
+        String name = p.getProperty(prefix + "name", "").trim();
+        String login = LoginNames.normalize(p.getProperty(prefix + "login", ""));
         String password = p.getProperty(prefix + "password", "");
-        c.perfil = Perfil.valueOf(p.getProperty(prefix + "role", ""));
-        if (!c.login.matches("[A-Za-z0-9._@+-]{4,120}")
-            || !logins.add(c.login.toLowerCase(Locale.ROOT))
-            || c.nome.isBlank()
-            || c.nome.length() > 120
-            || password.length() < 16
+        Perfil role = Perfil.valueOf(p.getProperty(prefix + "role", "").trim());
+        if (!login.matches("[a-z0-9._@+-]{4,120}")
+            || !logins.add(login)
+            || name.isBlank()
+            || name.length() > 120
+            || password.length() < 8
             || password.length() > 64
             || password.getBytes(StandardCharsets.UTF_8).length > 72)
           throw new IllegalArgumentException();
-        c.senha = encoder.encode(password);
-        c.email = "";
-        c.ativo = true;
-        c.securityVersion = 1;
-        result.add(c);
+        result.add(new PrivateAccount(name, login, password, role));
         for (String key : List.of("name", "login", "password", "role")) consumed.add(prefix + key);
       }
       if (result.isEmpty()
-          || result.stream().noneMatch(c -> c.perfil == Perfil.ADMIN)
+          || result.stream().noneMatch(c -> c.role == Perfil.ADMIN)
           || !consumed.containsAll(p.stringPropertyNames())) throw new IllegalArgumentException();
       return result;
     } catch (Exception ex) {
       throw new IllegalStateException(
-          "Arquivo privado de contas inválido. Use nomes, logins únicos, senhas de 16–64 caracteres"
+          "Arquivo privado de contas inválido. Use nomes, logins únicos, senhas de 8–64 caracteres"
               + " e ao menos um ADMIN. Valores não foram registrados.");
     }
+  }
+
+  /** Mantém o formato público usado pelos comandos offline de conferência e recuperação. */
+  public static List<Colaborador> read(Path file, PasswordEncoder encoder) {
+    return load(file).stream()
+        .map(
+            item -> {
+              var c = new Colaborador();
+              c.nome = item.name;
+              c.login = item.login;
+              c.senha = encoder.encode(item.password);
+              c.perfil = item.role;
+              c.email = "";
+              c.ativo = true;
+              c.securityVersion = 1;
+              return c;
+            })
+        .toList();
   }
 
   @Override
   @Transactional
   public void run(ApplicationArguments args) {
     config.bloquear();
-    if (Boolean.TRUE.equals(
-        jdbc.queryForObject("select concluido from bootstrap_seguro where id=1", Boolean.class)))
-      return;
-    List<Colaborador> input = read(Path.of(file), encoder); // validar tudo antes de escrever.
-    // Em migração, revogar todas as contas antigas; ativar somente as provisionadas em privado.
-    for (Colaborador old : users.findAll()) {
-      old.ativo = false;
-      old.securityVersion++;
+    boolean first =
+        !Boolean.TRUE.equals(
+            jdbc.queryForObject(
+                "select concluido from bootstrap_seguro where id=1", Boolean.class));
+    Path source = Path.of(file);
+    if (!first && !Files.exists(source, LinkOption.NOFOLLOW_LINKS)) return;
+    List<PrivateAccount> input = load(source); // Validar tudo antes de alterar o banco.
+    if (first) {
+      for (Colaborador old : users.findAll()) {
+        old.ativo = false;
+        old.securityVersion++;
+      }
     }
-    for (Colaborador item : input) {
-      Colaborador c = users.findByLogin(item.login).orElseGet(Colaborador::new);
-      c.nome = item.nome;
+    int changed = 0;
+    for (PrivateAccount item : input) {
+      String signature =
+          crypto.fingerprint(
+              "basic-account:"
+                  + item.login
+                  + "\0"
+                  + item.name
+                  + "\0"
+                  + item.password
+                  + "\0"
+                  + item.role.name());
+      var imported =
+          jdbc.queryForList(
+              "select assinatura from importacao_conta where login=?", String.class, item.login);
+      var existing = users.findByLoginIgnoreCase(item.login);
+      if (!first && existing.isPresent() && imported.contains(signature)) continue;
+      Colaborador c = existing.orElseGet(Colaborador::new);
+      c.nome = item.name;
       c.login = item.login;
-      c.email = "";
-      c.senha = item.senha;
-      c.perfil = item.perfil;
+      if (c.email == null) c.email = "";
+      c.senha = encoder.encode(item.password);
+      c.perfil = item.role;
       c.ativo = true;
       c.securityVersion++;
-      c.mfaSecret = null;
-      c.mfaRecovery = null;
-      c.mfaCounter = -1;
-      users.save(c);
+      users.saveAndFlush(c);
+      if (imported.isEmpty())
+        jdbc.update(
+            "insert into importacao_conta(login,assinatura) values(?,?)", item.login, signature);
+      else
+        jdbc.update(
+            "update importacao_conta set assinatura=? where login=?", signature, item.login);
+      changed++;
     }
     jdbc.update("update bootstrap_seguro set concluido=true where id=1");
-    audit.record(
-        null,
-        "PROVISIONAMENTO",
-        "contas",
-        null,
-        "OK",
-        "Contas importadas de arquivo privado; contas anteriores revogadas.");
+    if (changed > 0)
+      audit.record(
+          null,
+          first ? "PROVISIONAMENTO" : "CONTAS_ATUALIZADAS",
+          "contas",
+          null,
+          "OK",
+          "Contas do arquivo privado atualizadas: " + changed + ".");
   }
 }
