@@ -171,7 +171,9 @@ func TestInterruptedDownloadKeepsInstalledVersion(t *testing.T){
 
 func TestNewInstalledLauncherIsSelectedBeforeStartingTheBackend(t *testing.T){
  m:=testManager(t);m.offline=true
- root:=filepath.Join(m.home,"installed","0.4.1");b:=fixtureBundle(t,root,"0.4.1");if e:=m.ready(root,b);e!=nil{t.Fatal(e)}
+ current,e:=patch(buildVersion);if e!=nil{t.Fatal(e)}
+ next:=fmt.Sprintf("0.4.%d",current+1)
+ root:=filepath.Join(m.home,"installed",next);b:=fixtureBundle(t,root,next);if e:=m.ready(root,b);e!=nil{t.Fatal(e)}
  called:=""
  m.onHandoff=func(path string)error{called=path;return nil}
  if e:=m.start();e!=nil{t.Fatal(e)}
