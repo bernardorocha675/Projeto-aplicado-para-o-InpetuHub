@@ -1,0 +1,3 @@
+# Valor exclusivamente sintético do teste de atualização de contas.
+# Exceção restrita ao commit, arquivo, regra e linha; não cobre credenciais reais.
+4c5a7666a762ca4e323588fba5d436ffa6164cb3:versão 0.3/src/test/java/br/com/inpetu/hub/SecurityIntegrationTest.java:generic-api-key:463

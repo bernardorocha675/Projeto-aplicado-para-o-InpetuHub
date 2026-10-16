@@ -10,6 +10,8 @@ As cinco credenciais reais da entrega foram aceitas por HTTP em banco novo e ap�
 
 O instalador privado Linux/macOS foi verificado com dados sintéticos para cópia, backup do arquivo anterior, caminhos com espaços/acentos e recusa de código antigo. O instalador PowerShell recebeu revisão de código; não houve execução local de PowerShell. As senhas e o pacote privado não integram o repositório, o ZIP público nem os artefatos da CI.
 
+A primeira rodada de CI identificou como possível segredo um valor exclusivamente sintético do teste de atualização de contas. Foi conferido que ele não corresponde às credenciais reais. A exceção em `.gitleaksignore` cobre somente o fingerprint daquele commit/arquivo/regra/linha; as regras gerais e as verificações de credenciais privadas permanecem ativas. Mudanças na configuração do verificador também passam a disparar a CI.
+
 V1–V3 e as versões 0.1/0.2 foram preservadas. V4 acrescenta somente `importacao_conta`. A CI do commit da tag `v0.3.2` é a referência da rodada nativa em Linux, macOS e Windows; a publicação depende de sucesso dos testes e verificações. Permanecem as limitações anteriores de navegador, CodeQL e produção.
 
 ## Correção 0.3.1fix — 16/10/2026

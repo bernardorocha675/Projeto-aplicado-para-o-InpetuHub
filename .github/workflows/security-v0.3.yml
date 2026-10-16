@@ -2,9 +2,9 @@ name: Segurança e compatibilidade da versão 0.3
 on:
   push:
     branches: ['main', 'release-v0.3']
-    paths: ['versão 0.3/**', '.github/**', 'VERSION', 'RELEASE-NOTES.md', 'RELEASES.md']
+    paths: ['versão 0.3/**', '.github/**', '.gitleaks*', 'VERSION', 'RELEASE-NOTES.md', 'RELEASES.md']
   pull_request:
-    paths: ['versão 0.3/**', '.github/**', 'VERSION', 'RELEASE-NOTES.md', 'RELEASES.md']
+    paths: ['versão 0.3/**', '.github/**', '.gitleaks*', 'VERSION', 'RELEASE-NOTES.md', 'RELEASES.md']
   workflow_dispatch:
   schedule:
     - cron: '17 9 * * 1'
