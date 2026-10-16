@@ -2,7 +2,7 @@
 
 A CI executa os testes do iniciador Go, os testes Java do aplicativo e o roteiro HTTP existente. Depois compila o binário, cria o Java privado e roda o pacote real em um diretório temporário.
 
-O smoke do executável instala sem Java externo nem arquivo de senhas, confere os cinco logins e perfis, cria um espaço, para e inicia novamente, confere persistência/chave e encerra. Nenhuma conta real ou banco da equipe é utilizado. Os testes do atualizador usam releases fictícias em loopback para conferir família/paginação, SHA-256, extração segura, preservação de dados, snapshot, offline, origem/token e lock.
+O smoke do executável instala sem Java externo nem arquivo de senhas, confere os cinco logins e perfis, cria um espaço, para e inicia novamente e simula a troca real para o iniciador do fix seguinte. São quinze autenticações; cadastro, chave e banco precisam permanecer. Depois encerra os processos. Nenhuma conta real ou banco da equipe é utilizado. Os testes do atualizador usam releases fictícias em loopback para conferir família/paginação, SHA-256, extração segura, preservação de dados, snapshot, offline, origem/token e lock.
 
 A matriz cobre Ubuntu 24.04 x64/ARM64, macOS 15 Apple Silicon/Intel, Windows Server 2025 x64 e Windows 11 ARM64. O resultado está em Actions, no commit da release. O teste automatizado não verifica visualmente SmartScreen, Gatekeeper nem o navegador padrão de todos os ambientes.
 

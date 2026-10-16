@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import tempfile
 import time
@@ -107,15 +108,58 @@ with tempfile.TemporaryDirectory(prefix='inpetu-desktop-smoke-') as temp:
         with get(admin,base+'/admin/cadastros/espacos') as response:
             assert 'Sala persistente desktop' in response.read().decode()
         assert (home/'.secrets/mfa.key').read_bytes()==before
-        api('close')
+        # Simula um fix seguinte somente no diretorio descartavel, sem publicar release falsa.
+        api('stop')
+        wait_for(lambda: not api()['Running'] and not api()['Busy'])
+        previous_version=state['Version']
+        pieces=previous_version.split('.')
+        future_version='.'.join(pieces[:2]+[str(int(pieces[2])+1)])
+        next_root=home/'installed'/future_version
+        shutil.copytree(home/'installed'/previous_version,next_root)
+        manifest=json.loads((next_root/'bundle.json').read_text())
+        manifest['Version']=future_version
+        (next_root/'bundle.json').write_text(json.dumps(manifest),encoding='utf-8')
+        flags='-s -w -X main.buildVersion='+future_version
+        if manifest['GOOS']=='windows':
+            flags+=' -H=windowsgui'
+        build_env=dict(os.environ,CGO_ENABLED='0',GOOS=manifest['GOOS'],GOARCH=manifest['GOARCH'])
+        subprocess.run(['go','build','-trimpath','-ldflags',flags,'-o',str(next_root/manifest['Launcher']),'.'],
+                       cwd=project/'launcher',env=build_env,check=True)
+        (home/'current.json').write_text(json.dumps({'Version':future_version}),encoding='utf-8')
+        old_control=control
+        api('start')
         process.wait(timeout=40)
-        assert process.returncode==0
-        print('EXECUTAVEL APROVADO: configuracao sem arquivo de senhas, 10 logins, permissoes, cadastro, reinicio, chave e banco preservados, encerramento.')
+        assert process.returncode==0, 'O iniciador antigo nao encerrou corretamente'
+        control=wait_for(lambda: (value if (value:=connection())!=old_control else None),timeout=60)
+        parsed=urllib.parse.urlsplit(control)
+        control_base=urllib.parse.urlunsplit((parsed.scheme,parsed.netloc,'','',''))
+        token=parsed.fragment
+        handed=wait_for(lambda: (s if (s:=api())['Running'] and not s['Busy'] else None))
+        assert handed['Version']==future_version
+        base=handed['AppURL']
+        for login,password in accounts:
+            user=browser()
+            with post(user,base+'/login',{'username':login,'password':password,'_csrf':csrf(user,base)}) as response:
+                assert urllib.parse.urlsplit(response.url).path=='/admin'
+            if login=='bernardo':
+                admin=user
+        with get(admin,base+'/admin/cadastros/espacos') as response:
+            assert 'Sala persistente desktop' in response.read().decode()
+        assert (home/'.secrets/mfa.key').read_bytes()==before
+        api('close')
+        wait_for(lambda: not (home/'running.json').exists(),timeout=40)
+        print('EXECUTAVEL APROVADO: configuracao sem arquivo de senhas, 15 logins, permissoes, cadastro, reinicio, troca real do iniciador, chave/banco preservados e encerramento.')
     finally:
-        if process.poll() is None:
-            try:
+        try:
+            if (home/'running.json').exists():
+                latest_control=connection()
+                parsed=urllib.parse.urlsplit(latest_control)
+                control_base=urllib.parse.urlunsplit((parsed.scheme,parsed.netloc,'','',''))
+                token=parsed.fragment
                 api('close')
-                process.wait(timeout=30)
-            except Exception:
-                process.kill()
-                process.wait(timeout=10)
+                wait_for(lambda: not (home/'running.json').exists(),timeout=30)
+        except Exception:
+            pass
+        if process.poll() is None:
+            process.kill()
+            process.wait(timeout=10)

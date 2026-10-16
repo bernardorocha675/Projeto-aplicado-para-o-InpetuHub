@@ -168,3 +168,12 @@ func TestInterruptedDownloadKeepsInstalledVersion(t *testing.T){
  if e:=m.installLatest();e!=nil{t.Fatal(e)}
  if m.state().Version!="0.4.0"||!m.state().Ready{t.Fatal(m.state())}
 }
+
+func TestNewInstalledLauncherIsSelectedBeforeStartingTheBackend(t *testing.T){
+ m:=testManager(t);m.offline=true
+ root:=filepath.Join(m.home,"installed","0.4.1");b:=fixtureBundle(t,root,"0.4.1");if e:=m.ready(root,b);e!=nil{t.Fatal(e)}
+ called:=""
+ m.onHandoff=func(path string)error{called=path;return nil}
+ if e:=m.start();e!=nil{t.Fatal(e)}
+ if called!=filepath.Join(root,b.Launcher)||m.state().Running{t.Fatal("iniciador novo nao selecionado",called)}
+}
