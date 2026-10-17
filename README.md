@@ -32,6 +32,7 @@ Baixe o pacote completo do seu sistema em [Releases](https://github.com/bernardo
 
 | Pasta | Conteúdo |
 | --- | --- |
+| `android/` | Aplicativo Android experimental independente e testes no emulador. |
 | `aplicativo/` | Aplicativo Java e testes de regras, segurança e integração. |
 | `iniciador/` | Código Go do executável de instalação, atualização e início. |
 | `receptor/` | Serviço auxiliar de recebimento dos relatórios. |
