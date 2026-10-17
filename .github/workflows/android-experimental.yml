@@ -48,6 +48,7 @@ jobs:
         run: |
           export PATH="$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
           echo no | "$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager" create avd --force --name inpetu --package 'system-images;android-35;google_apis;x86_64' --device pixel_4
+          adb start-server
           emulator -avd inpetu -no-window -no-audio -no-snapshot -no-boot-anim -gpu swiftshader_indirect -memory 2048 > /tmp/inpetu-emulator.log 2>&1 &
           python - <<'PY'
           import subprocess,time
@@ -56,7 +57,10 @@ jobs:
               r=subprocess.run(['adb','shell','getprop','sys.boot_completed'],text=True,capture_output=True,timeout=10)
               if r.stdout.strip()=='1':break
               time.sleep(2)
-          else:raise SystemExit('Emulador não iniciou no prazo.')
+          else:
+              from pathlib import Path
+              print(Path('/tmp/inpetu-emulator.log').read_text()[-24000:])
+              raise SystemExit('Emulador não iniciou no prazo.')
           PY
           adb shell settings put global window_animation_scale 0
           adb shell settings put global transition_animation_scale 0
@@ -66,7 +70,7 @@ jobs:
           adb shell svc data disable
           adb install android/dist/InPETU-Hub-Android-*.apk
           adb install android/dist/inpetu-android-test.apk
-          adb shell am instrument -w br.com.inpetu.hub.experimental.test/br.com.inpetu.android.TestRunner | tee android/dist/TESTE-ANDROID.txt
+          timeout 300 adb shell am instrument -w br.com.inpetu.hub.experimental.test/br.com.inpetu.android.TestRunner | tee android/dist/TESTE-ANDROID.txt
           python - <<'PY'
           from pathlib import Path
           text=Path('android/dist/TESTE-ANDROID.txt').read_text()
