@@ -1,0 +1,20 @@
+InPETU Hub — sessão 1
+ID: cd75edd45e15a789a30634896b159d6c
+Versões do aplicativo: 0.4.3
+Versões do iniciador: 0.4.3
+Sistema: linux/amd64
+Início: 2026-10-17T09:21:38Z
+Fim: 2026-10-17T09:29:57.126Z
+Resultado: FALHA
+Eventos omitidos por limite: 0
+Origem: relatório de execução; identificação do dispositivo não atestada.
+
+2026-10-17T09:23:09Z [INFO] app=0.4.3 iniciador=0.4.3 launcher CI_JOB_FINISHED {"action":"CODEQL","result":"SUCCESS"}
+2026-10-17T09:25:02Z [INFO] app=0.4.3 iniciador=0.4.3 launcher CI_JOB_FINISHED {"action":"UBUNTU_24_04_ARM","result":"SUCCESS"}
+2026-10-17T09:26:17Z [INFO] app=0.4.3 iniciador=0.4.3 launcher CI_JOB_FINISHED {"action":"MACOS_15","result":"SUCCESS"}
+2026-10-17T09:22:33Z [ERROR] app=0.4.3 iniciador=0.4.3 launcher CI_JOB_FINISHED {"action":"WINDOWS_2025","result":"FAILED"}
+2026-10-17T09:21:54Z [INFO] app=0.4.3 iniciador=0.4.3 launcher CI_JOB_FINISHED {"action":"DEPENDENCIES","result":"SUCCESS"}
+2026-10-17T09:21:44Z [INFO] app=0.4.3 iniciador=0.4.3 launcher CI_JOB_FINISHED {"action":"SOURCE","result":"SUCCESS"}
+2026-10-17T09:29:51Z [INFO] app=0.4.3 iniciador=0.4.3 launcher CI_JOB_FINISHED {"action":"MACOS_15_INTEL","result":"SUCCESS"}
+2026-10-17T09:23:23Z [ERROR] app=0.4.3 iniciador=0.4.3 launcher CI_JOB_FINISHED {"action":"WINDOWS_11_ARM","result":"FAILED"}
+2026-10-17T09:24:46Z [INFO] app=0.4.3 iniciador=0.4.3 launcher CI_JOB_FINISHED {"action":"UBUNTU_24_04","result":"SUCCESS"}
