@@ -24,7 +24,7 @@ def compile_app(test=False):
  run(*args)
  sources=list((ROOT/('test' if test else 'src')).rglob('*.java'))+list((work/'gen').rglob('*.java'))
  cp=str(platform)+(os.pathsep+str(OUT/'app/classes') if test else '')
- run(java/'javac','-encoding','UTF-8','-source','8','-target','8','-bootclasspath',platform,'-classpath',cp,'-d',work/'classes',*sources)
+ run(java/'javac','-encoding','UTF-8','--release','8','-classpath',cp,'-d',work/'classes',*sources)
  jar=work/'classes.jar'
  with zipfile.ZipFile(jar,'w') as z:
   for p in sorted((work/'classes').rglob('*.class')):z.write(p,p.relative_to(work/'classes'))

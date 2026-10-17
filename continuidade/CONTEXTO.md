@@ -66,3 +66,7 @@ Detalhes de limites, formatos e operação estão em `docs/RELATORIOS.md`, `docs
 ## Forma de continuidade a partir da reorganização
 
 O usuário determinou uso somente pelo executável, uma etapa de trabalho por vez e nova release para cada entrega funcional. Backup foi a primeira etapa e está concluído; a reorganização foi autorizada em seguida. Depois da release 0.4.3, parar e aguardar autorização. Não aproveitar a etapa para ativar Render, redesenhar autenticação ou migrar dados. Os comandos de código e os testes continuam necessários ao desenvolvimento do executável.
+
+## Android experimental independente — 17/10/2026
+
+O usuário escolheu que o Android funcione sozinho. O código fica em `android/`, com SQLite próprio e linha `0.1.0-experimental.1`, separada da estável desktop `0.4.5`. Os dados não são sincronizados. A primeira entrega inclui os fluxos principais de espaços/agenda/reservas e logs locais; não promete paridade integral, atualização automática nem envio ao GitHub. Consulte `docs/ANDROID.md` e `docs/HANDOVER-ANDROID.md`. Publicar como prerelease, sem substituir a release estável ou seus assets. A assinatura Android deve ser preservada nas próximas versões; a chave privada de recuperação permanece fora do Git.

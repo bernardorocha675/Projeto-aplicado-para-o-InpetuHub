@@ -17,3 +17,7 @@ O publicador só aceita os artefatos do mesmo run: seis ZIPs completos, dois EXE
 Uma release publicada não é substituída. Correções exigem novo número; não mover tags, excluir releases antigas ou trocar assets para reorganizar o repositório. Os fontes antigos podem ser consultados nas tags; sua retirada da árvore principal não apaga o histórico.
 
 O iniciador instala somente fixes estáveis da própria família 0.4.x, preservando dados no perfil do usuário. A reorganização do código não muda a pasta `InPETU-Hub/0.4`, não redefine contas e não importa instalações da 0.3. Detalhes em [docs/ATUALIZACOES.md](docs/ATUALIZACOES.md).
+
+## Linha Android experimental
+
+A linha Android é independente da versão desktop. Versão em `android/VERSION`, fontes em `android/` e workflow `.github/workflows/android-experimental.yml`. A primeira tag é `android-v0.1.0-experimental.1`; publicar como prerelease com `latest=false`, após compilação, verificação da assinatura e testes em emulador. Não alterar VERSION/POM/iniciador da linha desktop para publicar Android. Reutilizar a assinatura nas próximas versões, configurar os secrets de manutenção e consultar `docs/HANDOVER-ANDROID.md`. O publicador não substitui uma release existente.
