@@ -6,7 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {createReceiver,verifyClaims} from './server.mjs';
 import {AUDIENCE,REPOSITORY,REPOSITORY_ID,WORKFLOW,normalizeReport,renderLog,reportDigest} from './schema.mjs';
-import {storeReports} from '../../.github/scripts/collect-reports.mjs';
+import {storeReports,ciReport} from '../../.github/scripts/collect-reports.mjs';
 
 function report(id='a'.repeat(32)){
  return {schema:1,id,sequence:1,startedAt:'2026-10-16T21:00:00Z',endedAt:'2026-10-16T21:01:00Z',outcome:'CONCLUIDO',os:'linux',arch:'amd64',launcherVersions:['0.4.2'],appVersions:['0.4.2'],dropped:0,
@@ -22,6 +22,14 @@ test('recusa estrutura livre, travessia de caminhos, versões falsas e limites e
  for(const change of [{id:'../outside'},{schema:2},{launcherVersions:['password-secret']},{sequence:-1},{endedAt:'2026-01-01T00:00:00Z'},{password:'private'},{events:Array(5001).fill(report().events[0])}])assert.throws(()=>normalizeReport({...report(),...change}));
  const raw=report();raw.events[0].fields.frames=['/home/user/private.key:1','Type.method:2'];
  assert.deepEqual(normalizeReport(raw).events[0].fields.frames,['Type.method:2']);
+});
+test('o resumo publicado preserva os nomes dos nove testes da CI, inclusive Linux',()=>{
+ const names=['ubuntu-24.04','ubuntu-24.04-arm','macos-15','macos-15-intel','windows-2025','windows-11-arm','source','dependencies','codeql'];
+ const jobs=names.map(name=>({name,status:'completed',conclusion:'success',started_at:'2026-10-16T21:00:00Z',completed_at:'2026-10-16T21:01:00Z'}));
+ const normalized=normalizeReport(ciReport('0.4.2',jobs));
+ assert.equal(new Set(normalized.events.map(e=>e.fields.action)).size,9);
+ assert.deepEqual(normalized.events.slice(0,2).map(e=>e.fields.action),['UBUNTU_24_04','UBUNTU_24_04_ARM']);
+ assert.throws(()=>ciReport('0.4.2',jobs.slice(1)));
 });
 test('cria pasta numerada com data, mantém versão e evita duplicação',()=>{
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'inpetu-ledger-'));

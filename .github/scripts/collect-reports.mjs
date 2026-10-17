@@ -32,13 +32,13 @@ async function jsonRequest(url,options={},limit=10<<20){
  let total=0;const chunks=[];for await(const chunk of response.body){total+=chunk.length;if(total>limit)throw new Error('Resposta excede o limite.');chunks.push(Buffer.from(chunk));}
  return JSON.parse(Buffer.concat(chunks).toString('utf8'));
 }
-function ciReport(version,jobs){
+export function ciReport(version,jobs){
  const names=new Set(['ubuntu-24.04','ubuntu-24.04-arm','macos-15','macos-15-intel','windows-2025','windows-11-arm','source','dependencies','codeql']);
  const selected=jobs.filter(j=>names.has(j.name));if(selected.length!==9||selected.some(j=>j.status!=='completed'))throw new Error('Matriz da CI incompleta.');
  const id=createHash('sha256').update('ci:'+process.env.GITHUB_RUN_ID+':'+process.env.GITHUB_RUN_ATTEMPT).digest('hex').slice(0,32);
  const startedAt=selected.map(j=>j.started_at).sort()[0];const endedAt=new Date().toISOString();
  return {schema:1,id,sequence:Number(process.env.GITHUB_RUN_ATTEMPT||1),startedAt,endedAt,outcome:selected.every(j=>j.conclusion==='success')?'CONCLUIDO':'FALHA',os:'linux',arch:'amd64',launcherVersions:[version],appVersions:[version],dropped:0,
-  events:selected.map(j=>({time:j.completed_at,level:j.conclusion==='success'?'INFO':'ERROR',component:'launcher',event:'CI_JOB_FINISHED',appVersion:version,launcherVersion:version,sessionId:id,fields:{action:j.name.toUpperCase().replaceAll('-','_'),result:j.conclusion==='success'?'SUCCESS':'FAILED'}}))};
+  events:selected.map(j=>({time:j.completed_at,level:j.conclusion==='success'?'INFO':'ERROR',component:'launcher',event:'CI_JOB_FINISHED',appVersion:version,launcherVersion:version,sessionId:id,fields:{action:j.name.toUpperCase().replace(/[^A-Z0-9_]/g,'_'),result:j.conclusion==='success'?'SUCCESS':'FAILED'}}))};
 }
 function git(root,args,env=process.env){return execFileSync('git',args,{cwd:root,env,encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();}
 export async function main(){
