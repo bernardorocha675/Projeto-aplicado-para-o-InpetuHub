@@ -43,7 +43,7 @@ Na raiz, com JDK/Maven configurados:
 mvn -B -ntp -f "aplicativo/pom.xml" test
 ```
 
-Para o roteiro de integração, com JDK 21 e Maven no PATH, entre em `aplicativo` e execute `java -Dfile.encoding=UTF-8 --source 17 scripts/Testar.java`. Ele usa dados descartáveis, recompila e testa HTTP/backup/contas. A CI prepara Maven com `.github/scripts/setup_maven.py` e confere o checksum oficial. Os antigos scripts configurar/iniciar/testar por sistema foram retirados. Veja `docs/ESTRUTURA.md` para o procedimento atualizado.
+Para o roteiro de integração, com JDK 21 e Maven no PATH, entre em `aplicativo` e execute `java "-Dfile.encoding=UTF-8" --source 17 scripts/Testar.java`. Ele usa dados descartáveis, recompila e testa HTTP/backup/contas. A CI prepara Maven com `.github/scripts/setup_maven.py` e confere o checksum oficial. Os antigos scripts configurar/iniciar/testar por sistema foram retirados. Veja `docs/ESTRUTURA.md` para o procedimento atualizado.
 
 Empacotamento requer o JAR já gerado, Go, JDK com jlink e INPETU_GOOS/INPETU_GOARCH coerentes com o host. Use a matriz em `.github/workflows/release-v0.4.yml` como referência: gerar um pacote em um host não comprova seu funcionamento em outro. O smoke roda o executável real em diretório temporário, simula um fix futuro sem publicar release falsa e verifica banco/chave/logins/sessões.
 

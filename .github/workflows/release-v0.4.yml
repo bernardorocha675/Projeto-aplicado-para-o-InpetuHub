@@ -50,7 +50,7 @@ jobs:
       - name: Preparar Maven para compilação e testes
         run: python ../.github/scripts/setup_maven.py
       - name: Executar testes de regras, HTTP e backup
-        run: java -Dfile.encoding=UTF-8 --source 17 scripts/Testar.java
+        run: java "-Dfile.encoding=UTF-8" --source 17 scripts/Testar.java
       - name: Gerar executável e runtime privado
         env:
           INPETU_GOOS: ${{ matrix.goos }}

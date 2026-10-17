@@ -35,7 +35,7 @@ mvn -B -ntp -f aplicativo/pom.xml test
 O roteiro completo, executado **dentro de aplicativo**, usa JDK e Maven no PATH:
 
 ```sh
-java -Dfile.encoding=UTF-8 --source 17 scripts/Testar.java
+java "-Dfile.encoding=UTF-8" --source 17 scripts/Testar.java
 ```
 
 A CI usa `python .github/scripts/setup_maven.py` para baixar Maven 3.9.9 em `aplicativo/.tools`, conferindo o SHA-512 oficial. Fora de Actions, o script imprime o caminho; acrescente o diretório bin correspondente ao PATH do terminal de desenvolvimento. Não há instalação global nem preparação do computador do usuário final.
