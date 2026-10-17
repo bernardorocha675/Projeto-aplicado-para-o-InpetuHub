@@ -79,14 +79,15 @@ jobs:
           adb install android/dist/InPETU-Hub-Android-*.apk
           adb install android/dist/inpetu-android-test.apk
           timeout 300 adb shell am instrument -w br.com.inpetu.hub.experimental.test/br.com.inpetu.android.TestRunner | tee android/dist/TESTE-ANDROID.txt
+          mkdir -p android/dist/screenshots
+          adb pull /sdcard/Android/data/br.com.inpetu.hub.experimental/files/ android/dist/screenshots/ || true
+          adb logcat -d -s AndroidRuntime Inpetu > android/dist/screenshots/runtime.txt
           python - <<'PY'
           from pathlib import Path
           text=Path('android/dist/TESTE-ANDROID.txt').read_text()
           assert 'TESTES ANDROID APROVADOS: 16' in text,text
           assert 'TESTES ANDROID FALHARAM' not in text,text
           PY
-          mkdir -p android/dist/screenshots
-          adb pull /sdcard/Android/data/br.com.inpetu.hub.experimental/files/ android/dist/screenshots/
           adb shell am force-stop br.com.inpetu.hub.experimental
           adb shell am start -W -n br.com.inpetu.hub.experimental/br.com.inpetu.android.MainActivity
       - name: Guardar evidências e APK de teste
