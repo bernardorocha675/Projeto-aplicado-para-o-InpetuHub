@@ -21,6 +21,7 @@ Projeto acadêmico desenvolvido na disciplina de **Projeto Aplicado do UniSENAI*
 - [Guia de testes](vers%C3%A3o%200.4/TESTAR.md)
 - [Acessos e recuperação](vers%C3%A3o%200.4/ACESSOS.md)
 - [Handover técnico — versão 0.4](vers%C3%A3o%200.4/HANDOVER.md)
+- [Continuidade do projeto e migração para o Claude Code](continuidade/README.md)
 - [Releases e downloads](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases) · [Como publicamos versões](RELEASES.md)
 
 ---
