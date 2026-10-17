@@ -36,3 +36,5 @@ Ao concluir uma tarefa, atualize `continuidade/ESTADO-ATUAL.md` com: mudança, e
 As conexões do ChatGPT não são transferidas ao Claude Code. Verifique as integrações disponíveis na nova ferramenta; nunca registre credenciais nestes documentos.
 
 Backup e reorganização foram concluídos na 0.4.3. O relatório caçabugs_0.1_Joaoe.docx.PDF foi analisado e a parte 1 (cadastro de espaços) foi concluída na release 0.4.4, publicada e verificada. Consulte docs/BUGS.md e continuidade/ESTADO-ATUAL.md. Pare e aguarde nova autorização para outra parte. O Render não está incluído nesta etapa.
+
+Novo pedido: fix 0.4.5 dedicado aos logs, sem avançar automaticamente as outras partes do PDF. Consulte o estado atual e o handover. A integração Render exige a identificação explícita do workspace; a descoberta desta sessão não permite selecionar My Workspace sem a resposta do usuário. Concluir código/testes/release e parar para essa confirmação.

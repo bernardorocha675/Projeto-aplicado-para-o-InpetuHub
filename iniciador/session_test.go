@@ -229,3 +229,113 @@ func TestSessionLimitIsExplicitAndDoesNotCreateInvalidJSON(t *testing.T) {
 		t.Fatal("relatorio invalido apos limite", e)
 	}
 }
+
+func TestFailedFinalizationIsRecoveredAndCannotBeUploadedEarly(t *testing.T) {
+	home := t.TempDir()
+	s, e := beginSession(home, "")
+	if e != nil {
+		t.Fatal(e)
+	}
+	s.setAppVersion("0.4.5")
+	blocked := filepath.Join(s.folder, "log.txt")
+	if e = os.Mkdir(blocked, 0700); e != nil {
+		t.Fatal(e)
+	}
+	if e = os.WriteFile(filepath.Join(blocked, "block"), []byte("fixture"), 0600); e != nil {
+		t.Fatal(e)
+	}
+	if e = s.finish("CONCLUIDO"); e == nil {
+		t.Fatal("finalizacao incompleta aceita")
+	}
+	var meta SessionReport
+	data, _ := os.ReadFile(filepath.Join(s.folder, "sessao.json"))
+	_ = json.Unmarshal(data, &meta)
+	if meta.Outcome != "EM_ANDAMENTO" {
+		t.Fatal("estado final confirmado antes dos arquivos")
+	}
+	calls := 0
+	server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { calls++; w.WriteHeader(202) }))
+	defer server.Close()
+	if count, e := sendPendingReports(home, reportingConfig{Enabled: true, Endpoint: server.URL}, server.Client()); e != nil || count != 0 || calls != 0 {
+		t.Fatal("enviou finalizacao incompleta", count, e, calls)
+	}
+	if e = os.RemoveAll(blocked); e != nil {
+		t.Fatal(e)
+	}
+	next, e := beginSession(home, "")
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer next.finish("CONCLUIDO")
+	recovered := readSessionReport(t, s)
+	if recovered.ID != s.report.ID || recovered.Outcome != "INTERROMPIDO" {
+		t.Fatal("nao recuperou a sessao")
+	}
+	if _, e = os.Stat(blocked); e != nil {
+		t.Fatal(e)
+	}
+}
+
+func TestRepairOfLegacyFinalizedSessionPreservesTheReportDigest(t *testing.T) {
+	home := t.TempDir()
+	s := finishedSession(t, home)
+	before, e := os.ReadFile(filepath.Join(s.folder, "relatorio.json"))
+	if e != nil {
+		t.Fatal(e)
+	}
+	if e = os.Remove(filepath.Join(s.folder, "relatorio.json")); e != nil {
+		t.Fatal(e)
+	}
+	next, e := beginSession(home, "")
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer next.finish("CONCLUIDO")
+	after, e := os.ReadFile(filepath.Join(s.folder, "relatorio.json"))
+	if e != nil {
+		t.Fatal(e)
+	}
+	if string(before) != string(after) {
+		t.Fatal("reparo alterou conteudo de sessao finalizada")
+	}
+}
+
+func TestPendingReportsAndConfigFailuresRemainDiagnosable(t *testing.T) {
+	home := t.TempDir()
+	finishedSession(t, home)
+	active, e := beginSession(home, "")
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer active.finish("CONCLUIDO")
+	server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(202)
+		_, _ = w.Write([]byte(`{"state":"QUEUED"}`))
+	}))
+	defer server.Close()
+	if e = privateDir(filepath.Join(home, ".secrets")); e != nil {
+		t.Fatal(e)
+	}
+	// Cliente injetado somente no teste de transporte; flushReports usa o HTTPS publico padrao.
+	if count, e := sendPendingReports(home, reportingConfig{Enabled: true, Endpoint: server.URL}, server.Client()); e != nil || count != 0 {
+		t.Fatal(count, e)
+	}
+	if pendingReportCount(home) != 1 {
+		t.Fatal("fila nao identificada")
+	}
+	m := &Manager{home: home, session: active}
+	if e = os.WriteFile(filepath.Join(home, ".secrets", "reporting.json"), []byte(`{"enabled":true,"endpoint":"https://user:synthetic-secret@example.com/v1/reports"}`), 0600); e != nil {
+		t.Fatal(e)
+	}
+	m.flushReports()
+	if !strings.Contains(m.state().ReportStatus, "pendente") {
+		t.Fatal("falha escondida")
+	}
+	if e = active.finish("CONCLUIDO"); e != nil {
+		t.Fatal(e)
+	}
+	data, _ := os.ReadFile(filepath.Join(active.folder, "relatorio.json"))
+	if !strings.Contains(string(data), "REPORT_CONFIG_FAILED") || strings.Contains(string(data), "synthetic-secret") {
+		t.Fatal("diagnostico ausente ou vazou segredo")
+	}
+}

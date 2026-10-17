@@ -76,6 +76,15 @@ with tempfile.TemporaryDirectory(prefix='inpetu-desktop-smoke-') as temp:
         with get(browser(),base+'/disponibilidade') as response:
             fresh_calendar=json.loads(response.read())
         assert fresh_calendar['dias'] and all(d['estado']=='SEM_ESPACOS' and not d['espacos'] for d in fresh_calendar['dias']), 'Banco sem espacos nao pode indicar ocupacao'
+        requester=browser()
+        try:
+            post(requester,base+'/reservas/resumo',{'data':'invalid-private-date','_csrf':csrf(requester,base,'/reserva')})
+            raise AssertionError('Formulario invalido foi aceito')
+        except urllib.error.HTTPError as error:
+            assert error.code==400
+            request_id=error.headers['X-Request-ID']
+            body=error.read().decode()
+            assert 'Failed to convert' not in body and 'java.time' not in body
         admin = None
         for index, (login,password) in enumerate(accounts):
             user = browser()
@@ -163,7 +172,9 @@ with tempfile.TemporaryDirectory(prefix='inpetu-desktop-smoke-') as temp:
         assert all(e['launcherVersion'] in report['launcherVersions'] and e['appVersion'] in report['appVersions']+['unknown'] for e in report['events'])
         assert any(e['component']=='app' and e['event']=='HTTP' and e.get('fields',{}).get('route')=='/login' for e in report['events'])
         assert any(e['event']=='AUDIT' and e.get('fields',{}).get('target')=='espacos' for e in report['events'])
+        assert any(e['event']=='VALIDATION_REJECTED' and e.get('fields',{}).get('requestId')==request_id for e in report['events']), 'Erro tratado nao chegou ao relatorio da sessao'
         public_text=sessions[0].read_text(encoding='utf-8')
+        assert 'invalid-private-date' not in public_text, 'Formulario nao pode aparecer no relatorio'
         for login,password in accounts:
             assert password not in public_text, 'Senha nao pode estar no relatorio'
         assert not (sessions[0].parent/'enviado.json').exists(), 'Offline nao pode indicar envio confirmado'

@@ -1,4 +1,4 @@
-# Receptor de relatórios — 0.4.4
+# Receptor de relatórios — 0.4.5
 
 Serviço Node sem dependências externas. O processo não possui credencial de escrita do GitHub. Recebe diagnósticos estruturados em POST /v1/reports, valida tamanho/campos e responde 202 enquanto a cópia estiver somente na fila temporária.
 

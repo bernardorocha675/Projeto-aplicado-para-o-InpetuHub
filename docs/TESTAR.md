@@ -1,4 +1,4 @@
-# Testar a entrega 0.4.4
+# Testar a entrega 0.4.5
 
 ## Conferência da equipe pelo executável
 
@@ -8,7 +8,7 @@
 4. Pare e inicie novamente: cadastros, reservas e acessos devem permanecer.
 5. Feche só a aba e reabra o executável: a instância existente deve reaparecer. Use **Fechar iniciador** para encerrar de verdade e confira `logs/sessoes/.../log.txt`, com as versões em cada evento.
 6. Depois da primeira configuração, teste o pacote instalado sem internet. Relatórios devem permanecer pendentes, sem falsa confirmação de envio.
-7. Numa cópia de teste da 0.4.3, confira a atualização para 0.4.4 e a preservação de banco, chave e contas. A família 0.5 não deve ser instalada automaticamente.
+7. Numa cópia de teste da 0.4.4, confira a atualização para 0.4.5 e a preservação de banco, chave e contas. A família 0.5 não deve ser instalada automaticamente.
 
 Registre sistema, arquitetura, versão, passos, esperado e observado ao relatar um bug. Revise os logs; não compartilhe banco, chaves ou backups.
 
@@ -30,3 +30,14 @@ Comandos de desenvolvimento e ferramentas necessárias estão em [ESTRUTURA.md](
 4. Edite o espaço, altere o nome/capacidade e salve. Confira que alterou somente esse registro.
 5. Para simular validação no servidor, o teste automatizado envia diretamente dados inválidos: a mesma tela retorna com mensagem simples, valores e opções preservados. Corrigir e reenviar deve funcionar; o banco mantém a versão anterior até salvar dados válidos.
 6. Confira o registro CADASTRO_INVALIDO/NEGADO nos logs locais da sessão para rejeições do servidor. Uma tentativa bloqueada apenas pelo navegador não chega ao servidor.
+
+## Logs — fix 0.4.5
+
+1. Abra o executável, inicie o aplicativo e faça login. As ações já devem estar sendo registradas, sem iniciar teste manual.
+2. Envie uma reserva de teste com campos obrigatórios em branco ou data inválida. O navegador pode impedir o envio; se o pedido chegar ao servidor, ele deve registrar VALIDATION_REJECTED com HTTP 400 e mostrar orientação simples.
+3. Uma recusa de regra gera REQUEST_REJECTED (WARN); uma falha inesperada gera REQUEST_FAILED (ERROR) com tipo de erro e pontos do código no log. A tela não deve exibir detalhes técnicos; a referência para suporte coincide com X-Request-ID e com o log.
+4. Feche pelo botão Fechar iniciador. Confira log.txt e relatorio.json em logs/sessoes. Ambos precisam ter as versões e os eventos HTTP/AUDIT/validação. Não confundir CONCLUIDO com ausência de erros.
+5. Abra novamente após uma sessão interrompida. A sessão anterior deve ser recuperada sem apagar dados. Falhas de gravação são simuladas pelos testes automáticos em uma pasta descartável; não altere permissões nem encha o disco da instalação real para testar.
+6. Quando o receptor estiver ativo, uma resposta de fila deve manter o envio pendente. Somente o recibo final do GitHub cria enviado.json. Sem receptor configurado, deve aparecer explicitamente que o envio aguarda configuração, e os registros ficam locais.
+
+Falhas de SMTP são testadas com serviço simulado, sem enviar emails reais. Não publique senhas, formulários ou logs operacionais brutos.

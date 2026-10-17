@@ -13,7 +13,7 @@ Projeto acadêmico desenvolvido na disciplina de **Projeto Aplicado do UniSENAI*
 
 ## Versão atual
 
-[**Versão 0.4.4**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.4) — corrige a capacidade dos espaços e permite ajustar e salvar o cadastro após um erro.
+[**Versão 0.4.5**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.5) — amplia os logs de erros e melhora a recuperação e o acompanhamento dos relatórios.
 
 ## Usar o aplicativo
 

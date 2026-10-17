@@ -1,4 +1,4 @@
-# Registros automáticos — 0.4.4
+# Registros automáticos — 0.4.5
 
 Abrir o executável começa uma sessão automaticamente, sem botão de iniciar teste. Reabrir a janela de uma instância já em execução mantém a mesma sessão. Cada evento inclui data/hora, versão do aplicativo e versão do iniciador. Antes de selecionar o pacote, a versão do aplicativo aparece como unknown; a do iniciador já é conhecida.
 
@@ -13,3 +13,11 @@ O Render recebe a cópia temporária e o GitHub Actions publica uma pasta numera
 Cada relatório público tem limite de 5.000 eventos/2 MiB. Qualquer omissão aparece no resumo. CONCLUIDO indica encerramento normal, não ausência de bugs: confira os eventos ERROR/WARN e a contagem de erros. Os logs operacionais privados continuam em logs/inpetu.log e logs/launcher-java.log.
 
 Não apague os dados locais enquanto houver envios pendentes. Não compartilhe banco, chaves ou backups para relatar bugs. A equipe deve revisar os registros públicos e acompanhar armazenamento/disponibilidade. Detalhes do receptor e do coletor: [RECEPTOR.md](RECEPTOR.md) e [Testes/README.md](../Testes/README.md).
+
+## Cobertura complementada na 0.4.5
+
+Erros tratados nas telas passam a ter REQUEST_REJECTED (WARN) ou REQUEST_FAILED (ERROR), com método, rota normalizada, status e tipo/pontos da exceção. Validação de reserva gera VALIDATION_REJECTED. EMAIL_FAILED identifica falha no SMTP sem destinatário ou código. X-Request-ID liga o evento HTTP ao diagnóstico; a referência também aparece nas telas de erro geral.
+
+Uma gravação incompleta não é marcada como finalizada nem enviada. Na próxima abertura, o iniciador tenta reconstruir os relatórios a partir dos eventos preservados. Reparo de uma sessão antiga já terminada mantém o mesmo conteúdo. O disco precisa estar disponível: não é possível garantir registro de um evento se o sistema não permite gravar.
+
+Tentativas barradas pelo próprio navegador não chegam ao servidor. O registro acompanha requisições e ações instrumentadas; não grava teclas, formulários ou toda falha interna do navegador. Logs locais e testes de transporte não comprovam envio real: Testes/configuracao.json ainda está desativado, aguardando confirmação do workspace Render e implantação.

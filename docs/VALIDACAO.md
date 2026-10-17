@@ -1,13 +1,13 @@
-# Validação — 0.4.4
+# Validação — 0.4.5
 
-Primeira parte do relatório concluída: cadastro de espaços. [Release 0.4.4](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.4) publicada após aprovação dos 11 jobs no [run 39025880429](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39025880429). Tag e código testado: `fbe03611991e1ce2678eab93615594e3e90223b1`. Os 12 arquivos carregados foram conferidos, e as oito releases anteriores mantiveram seus IDs e arquivos, tamanhos e digests.
+Fix de logs em preparação para publicação. Só declarar release concluída após conferir CI, tag e assets.
 
-Validação local: passaram 91 testes Java (12 novos), 27 testes Go e go vet, cinco testes Node da agenda, dois do formulário administrativo e sete do receptor/coletor. O roteiro completo HTTP/perfis/contas/backup e o pacote Linux real com runtime privado passaram em dados descartáveis: quinze logins, reinício, atualização simulada, logs/versões e preservação de banco/chave/sessão.
+Validação local aprovada: 99 testes Java (97 no roteiro completo, mais dois de SMTP simulados), 30 testes Go e go vet, cinco testes Node da agenda, dois da interface administrativa e sete do receptor/coletor. Passaram o roteiro completo HTTP/perfis/contas/backup, empacotamento e smoke do executável Linux real.
 
-Novas regressões: capacidade zero, negativa, decimal com ponto/vírgula, letras, vazio e estouro numérico; erro preserva campos/checkboxes; correção cria/edita registro sem perder o estado; edição inválida não altera o banco; log sanitizado registra rejeição; capacidade tem limites no HTML e valores financeiros continuam decimais; JavaScript permite reenviar.
+Regressões novas cobrem erro inesperado com página simples/requestId/tipo/pontos no log sem mensagem livre; regras e integridade retornando 400/409; data inválida registrada sem mostrar erro de conversão; parâmetro ausente 400, recurso ausente 404 e autorização 403. SMTP é simulado, sem envio real. Go cobre gravação final incompleta sem upload prematuro, recuperação na abertura, reparo de sessão legada preservando conteúdo e diagnóstico de envio sem segredo. O smoke cria um erro controlado na reserva do executável real e confere sua presença no relatório sanitizado.
 
-A matriz passou em Ubuntu 24.04 x64/ARM64, macOS 15 Intel/Apple Silicon, Windows Server 2025 x64 e Windows 11 ARM64, com JDK 21. Também passaram código, segredos, dependências, CodeQL, relatório de CI e publicação. Inclui regras Java, iniciador, roteiro HTTP/backup e smoke do executável real. A validação local usou JDK 17 compatível com o alvo do POM.
+A matriz exige seis ambientes: Ubuntu 24.04 x64/ARM64, macOS 15 Intel/Apple Silicon, Windows Server 2025 x64 e Windows 11 ARM64, além dos gates de fonte/segredos/dependências/CodeQL/relatório/publicação. Mantém JDK 21 no pacote, alvo Java 17 e Go 1.27.2.
 
-Não há comprovação de todas as distribuições/edições ou navegadores, teste visual automatizado de SmartScreen/Gatekeeper ou implantação MySQL/SMTP/TLS. Mantém-se a limitação conhecida da interpretação de uma consulta CodeQL de CSRF. Os demais itens do PDF não foram corrigidos nesta parte.
+O transporte e recibos são testados com servidor simulado. Nenhum workspace Render foi selecionado, serviço criado ou endpoint ativado. O envio real dos PCs não foi comprovado e continua pendente da confirmação do workspace.
 
-Este registro final acompanha main depois da publicação. Os documentos dentro do ZIP de código são o instantâneo anterior à CI; a evidência final é o run da tag acima. A release imutável não foi alterada para atualizar documentos.
+Os testes não comprovam todos os navegadores/edições, queda física de energia/disco ou cada falha interna do navegador. Não há implantação MySQL/SMTP/TLS de produção. Mantém-se a limitação conhecida de interpretação de consulta CSRF no CodeQL. Outros itens do PDF permanecem pendentes.

@@ -17,3 +17,7 @@ Somente o cadastro de espaços recebe a nova recuperação da validação. A cap
 Após falha de regra, a transação é revertida e a tela é renderizada novamente com HTTP 400, mensagem simples e campos preservados; não há retorno à página genérica de erro. Ao voltar pelo cache do navegador, o JavaScript reabilita o envio somente no formulário de espaços. O log registra a rejeição de servidor sem formulário ou mensagem livre. Tentativas barradas pelo navegador não chegam ao log do servidor.
 
 Sem migrations, reset do banco, mudança de contas ou ativação do receptor. Os itens das próximas partes continuam pendentes. Testes manuais: TESTAR.md. Evidências da entrega: VALIDACAO.md e Actions da tag.
+
+## Atualização de logs na 0.4.5
+
+O novo pedido priorizou logs antes das demais partes. Mensagens técnicas de conversão na reserva foram substituídas por orientação simples; a validação, recusas tratadas e falhas inesperadas ganham diagnóstico sanitizado. Isso atende a parcela de mensagem/log da página 2, mas não conclui a parte de datas: janela de anos, preservação e preenchimento agenda → reserva continuam pendentes. Também não conclui os demais itens do PDF. Envio real ao GitHub ainda aguarda configuração do receptor.

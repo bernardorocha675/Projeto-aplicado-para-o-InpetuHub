@@ -19,7 +19,7 @@ import (
  "sync"
 )
 
-var buildVersion = "0.4.4"
+var buildVersion = "0.4.5"
 const repository = "bernardorocha675/Projeto-aplicado-para-o-InpetuHub"
 const family = "0.4"
 var versionPattern = regexp.MustCompile("^v?0[.]4[.](0|[1-9][0-9]*)$")

@@ -1,7 +1,6 @@
 package br.com.inpetu.hub.service;
 
 import br.com.inpetu.hub.entity.Reserva;
-import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.*;
 import org.springframework.stereotype.Service;
@@ -10,7 +9,7 @@ import org.springframework.web.util.HtmlUtils;
 
 @Service
 public class EmailService {
-  private static final Logger log = LoggerFactory.getLogger(EmailService.class);
+
   private final JavaMailSender sender;
   private final String usuario, senha;
 
@@ -28,7 +27,10 @@ public class EmailService {
   }
 
   public void confirmacaoDepoisCommit(String destino, String code) {
-    if (!configurado()) return;
+    if (!configurado()) {
+      br.com.inpetu.hub.observability.OperationalEvents.mailNotConfigured();
+      return;
+    }
     org.springframework.transaction.support.TransactionSynchronizationManager
         .registerSynchronization(
             new org.springframework.transaction.support.TransactionSynchronization() {
@@ -47,10 +49,9 @@ public class EmailService {
                           + " solicitou, ignore esta mensagem.",
                       false);
                   sender.send(msg);
+                  br.com.inpetu.hub.observability.OperationalEvents.mail("CONFIRMATION", null);
                 } catch (Exception ex) {
-                  log.warn(
-                      "Confirmação não enviada; confira a configuração SMTP. Nenhuma reserva foi"
-                          + " criada.");
+                  br.com.inpetu.hub.observability.OperationalEvents.mail("CONFIRMATION", ex);
                 }
               }
             });
@@ -96,7 +97,7 @@ public class EmailService {
     Runnable task =
         () -> {
           if (usuario.isBlank() || senha.isBlank()) {
-            log.info("Envio de email não configurado; reserva #{}: {}", r.id, acao);
+            br.com.inpetu.hub.observability.OperationalEvents.mailNotConfigured();
             return;
           }
           try {
@@ -107,8 +108,9 @@ public class EmailService {
             helper.setSubject(titulo);
             helper.setText(body, true);
             sender.send(msg);
+            br.com.inpetu.hub.observability.OperationalEvents.mail("RESERVATION", null);
           } catch (Exception ex) {
-            log.warn("Falha no envio de email da reserva #{}. Verifique configuração SMTP.", r.id);
+            br.com.inpetu.hub.observability.OperationalEvents.mail("RESERVATION", ex);
           }
         };
     if (TransactionSynchronizationManager.isSynchronizationActive())

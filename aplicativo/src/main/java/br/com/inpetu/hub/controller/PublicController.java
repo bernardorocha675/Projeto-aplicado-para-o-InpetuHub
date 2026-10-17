@@ -84,9 +84,16 @@ public class PublicController {
       @Valid @ModelAttribute("form") ReservaForm f,
       BindingResult erros,
       Model m,
-      HttpSession session) {
+      HttpSession session,
+      jakarta.servlet.http.HttpServletResponse response) {
     formModel(m, f);
-    if (erros.hasErrors()) return "public/reserva-form";
+    if (erros.hasErrors()) {
+      response.setStatus(400);
+      br.com.inpetu.hub.observability.OperationalEvents.validation("/reservas/resumo",
+          erros.getFieldErrors().stream().anyMatch(e -> e.isBindingFailure()));
+      m.addAttribute("erro", "Confira os campos obrigatórios, as datas e os números informados.");
+      return "public/reserva-form";
+    }
     try {
       Orcamento o = service.estimar(f);
       m.addAttribute("orcamento", o);
@@ -96,6 +103,8 @@ public class PublicController {
       session.setAttribute("solicitacao.key", java.util.UUID.randomUUID().toString());
       return "public/reserva-resumo";
     } catch (RegraException ex) {
+      response.setStatus(400);
+      br.com.inpetu.hub.observability.OperationalEvents.problem("POST", "/reservas/resumo", 400, ex);
       m.addAttribute("erro", ex.getMessage());
       return "public/reserva-form";
     }

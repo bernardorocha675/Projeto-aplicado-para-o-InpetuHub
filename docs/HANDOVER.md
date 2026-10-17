@@ -1,6 +1,20 @@
-# Handover técnico — InPETU Hub 0.4.4
+# Handover técnico — InPETU Hub 0.4.5
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
+
+## Fix 0.4.5 — logs e finalização de relatórios
+
+Base: c27ad98da17796b92ad1d05819b05bf0218c9f1a, após 0.4.4. O pedido atual é um fix dedicado aos logs; não autoriza continuar automaticamente as demais partes do PDF.
+
+GlobalExceptionHandler registra exceções tratadas com códigos, rota normalizada, tipo/pontos da exceção e requestId, sem mensagem livre. Regras retornam 400, conflitos de integridade 409 e falhas inesperadas 500; ErrorResponse do Spring preserva o código original, e exceções de autenticação/autorização seguem com o Spring Security. A tela de erro mostra referência de suporte; o evento HTTP e o diagnóstico compartilham o identificador. A validação capturada em PublicController gera VALIDATION_REJECTED/HTTP 400; o formulário mostra orientação simples em vez do texto de conversão do framework. Não foram alteradas regras de nome, telefone ou janela de datas nesta etapa.
+
+EmailService emite EMAIL_FAILED com fase/tipo/pontos, sem destinatário, código ou credenciais, e distingue envio concluído/configuração ausente. Não há SMTP real de produção ativado.
+
+No Go, finish grava relatorio.json/log.txt antes de confirmar o estado terminal em sessao.json, e verifica erros de sync/fechamento. A recuperação refaz sessões incompletas; para registros antigos já terminados, preserva resultado, horário final e eventos para manter o mesmo conteúdo. Envio exige metadados e log final coerentes antes de postar. A interface informa quando existem relatórios aguardando confirmação; falhas de configuração/envio geram eventos sanitizados. O esquema público de relatórios permanece 1, sem campos livres novos.
+
+Novos testes: erros MVC/segurança, falha de SMTP simulada, finalização com erro de escrita, reparo antigo sem alteração do conteúdo, diagnóstico de envio e erro controlado no smoke real. Consulte VALIDACAO.md para resultados efetivos; a publicação depende dos seis ambientes e gates.
+
+O envio real continua desativado. Nesta retomada, a integração Render retornou que nenhum workspace está selecionado e exige escolha explícita do usuário. My Workspace foi listado; não foi selecionado nem usado para criar serviços. O responsável precisa confirmar o workspace antes de criar o receptor gratuito, validar HTTPS/OIDC/recibo e habilitar Testes/configuracao.json. Não declarar os relatórios da CI como se fossem envios dos PCs. O serviço planejado continua em docs/RECEPTOR.md. Depois desta entrega, parar para essa confirmação ou nova tarefa.
 
 ## Fix 0.4.4 — primeira parte do relatório
 

@@ -38,6 +38,32 @@ public final class OperationalEvents {
     else LOG.info(event);
   }
 
+  public static void problem(String method, String path, int status, Throwable failure) {
+    String safeMethod = switch (method) {
+      case "GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS" -> method;
+      default -> "OTHER";
+    };
+    String event = "event=" + (status >= 500 ? "REQUEST_FAILED" : "REQUEST_REJECTED")
+        + " method=" + safeMethod + " route=" + SafeRoutes.canonical(path) + " status=" + status;
+    if (status >= 500) LOG.error(event, failure);
+    else LOG.warn(event, failure);
+  }
+
+  public static void validation(String path, boolean conversion) {
+    LOG.warn("event=VALIDATION_REJECTED route={} phase={} result=NEGADO",
+        SafeRoutes.canonical(path), conversion ? "CONVERSION" : "FORM");
+  }
+
+  public static void mail(String phase, Throwable failure) {
+    if (!java.util.Set.of("CONFIRMATION", "RESERVATION").contains(phase)) phase = "OTHER";
+    if (failure != null) LOG.error("event=EMAIL_FAILED phase={}", phase, failure);
+    else LOG.info("event=EMAIL_SENT phase={}", phase);
+  }
+
+  public static void mailNotConfigured() {
+    LOG.info("event=EMAIL_NOT_CONFIGURED");
+  }
+
   public static void audit(Long actor, String event, String target, Long targetId, String result) {
     // Códigos vêm do código-fonte; recusar dados livres mesmo se um chamador futuro errar.
     if (event == null || !event.matches("[A-Z_]{1,64}")) event = "OTHER";

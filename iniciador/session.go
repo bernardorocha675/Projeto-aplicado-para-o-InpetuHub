@@ -199,17 +199,24 @@ func beginSession(home, resume string) (*Session, error) {
 		if old.Sequence > sequence {
 			sequence = old.Sequence
 		}
-		if old.Outcome == "EM_ANDAMENTO" {
+		_, reportErr := os.Stat(filepath.Join(folder, "relatorio.json"))
+		_, logErr := os.Stat(filepath.Join(folder, "log.txt"))
+		incomplete := os.IsNotExist(reportErr) || os.IsNotExist(logErr)
+		if old.Outcome == "EM_ANDAMENTO" || (incomplete && (old.Outcome == "CONCLUIDO" || old.Outcome == "FALHA" || old.Outcome == "INTERROMPIDO")) {
 			recovered, e := openSessionFile(folder, old)
 			if e != nil {
 				return nil, e
 			}
-			if resume != "" && old.ID == resume {
+			if resume != "" && old.ID == resume && old.Outcome == "EM_ANDAMENTO" {
 				recovered.record("INFO", "launcher", "SESSION_RESUMED", nil)
 				return recovered, nil
 			}
-			recovered.record("WARN", "launcher", "SESSION_INTERRUPTED", nil)
-			if e = recovered.finish("INTERROMPIDO"); e != nil {
+			outcome := old.Outcome
+			if old.Outcome == "EM_ANDAMENTO" {
+				recovered.record("WARN", "launcher", "SESSION_INTERRUPTED", nil)
+				outcome = "INTERROMPIDO"
+			}
+			if e = recovered.finish(outcome); e != nil {
 				return nil, e
 			}
 		}
@@ -291,27 +298,35 @@ func (s *Session) finish(outcome string) error {
 	if s == nil {
 		return nil
 	}
-	s.record("INFO", "launcher", "SESSION_FINISHED", map[string]any{"result": outcome})
+	if s.report.Outcome == "EM_ANDAMENTO" {
+		s.record("INFO", "launcher", "SESSION_FINISHED", map[string]any{"result": outcome})
+	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if s.closed {
 		return nil
 	}
-	s.closed = true
 	if s.file != nil {
-		_ = s.file.Sync()
-		_ = s.file.Close()
+		syncErr := s.file.Sync()
+		closeErr := s.file.Close()
 		s.file = nil
+		if syncErr != nil {
+			return syncErr
+		}
+		if closeErr != nil {
+			return closeErr
+		}
 	}
 	s.report.Outcome = outcome
 	ended := time.Now().UTC()
 	if began, e := time.Parse(time.RFC3339Nano, s.report.StartedAt); e == nil && ended.Before(began) {
 		ended = began
 	}
-	s.report.EndedAt = ended.Format(time.RFC3339Nano)
-	if e := atomicJSON(filepath.Join(s.folder, "sessao.json"), s.report); e != nil {
-		return e
+	if s.report.EndedAt == "" {
+		s.report.EndedAt = ended.Format(time.RFC3339Nano)
 	}
+	// sessao.json só recebe o estado final depois de os dois relatórios existirem.
+	// Se faltar espaço/permissão, a próxima abertura pode reconstruí-los do JSONL.
 	f, e := os.Open(filepath.Join(s.folder, "eventos.jsonl"))
 	if e != nil {
 		return e
@@ -341,7 +356,14 @@ func (s *Session) finish(outcome string) error {
 		fields, _ := json.Marshal(event.Fields)
 		fmt.Fprintf(&text, "%s [%s] app=%s iniciador=%s %s %s %s\n", event.Time, event.Level, event.AppVersion, event.LauncherVersion, event.Component, event.Event, fields)
 	}
-	return atomicWrite(filepath.Join(s.folder, "log.txt"), []byte(text.String()), 0600)
+	if e = atomicWrite(filepath.Join(s.folder, "log.txt"), []byte(text.String()), 0600); e != nil {
+		return e
+	}
+	if e = atomicJSON(filepath.Join(s.folder, "sessao.json"), s.report); e != nil {
+		return e
+	}
+	s.closed = true
+	return nil
 }
 func (m *Manager) record(level, event string, fields map[string]any) {
 	if m.session != nil {

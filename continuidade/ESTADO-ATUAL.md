@@ -1,3 +1,15 @@
+# Etapa atual — logs 0.4.5
+
+Pedido de 17/10/2026: criar novo fix terminando a questão dos logs. Base c27ad98da17796b92ad1d05819b05bf0218c9f1a, release anterior 0.4.4. Esta etapa prioriza logs e não autoriza automaticamente outras partes do PDF.
+
+Em preparação: eventos para erros tratados/inesperados/validação/SMTP, respostas HTTP adequadas e referência de suporte, recuperação de finalização incompleta, preservação de conteúdo em reparo legado e acompanhamento claro de recibos pendentes. Testes detalhados em docs/VALIDACAO.md; conferir resultados antes de declarar publicada.
+
+O Render foi consultado: nenhum workspace selecionado. A integração exige perguntar ao usuário qual workspace usar; My Workspace foi listado, mas não selecionado. Testes/configuracao.json continua enabled=false/endpoint vazio. Não criar recurso nem ativar destino sem essa confirmação explícita. Após preparar e publicar o fix, solicitar a confirmação concreta de My Workspace para um único receptor Node gratuito, com auto-deploy desativado. Os testes de transporte são simulados, não uma implantação real. Não declarar envio de PCs como concluído.
+
+Sem reset, migrations, mudança de contas/senhas ou dados. Referências históricas abaixo registram 0.4.4; o estado inicial desta seção prevalece para a tarefa atual. Depois da entrega, aguardar autorização/confirmacão; não continuar outro item do PDF.
+
+---
+
 # Estado atual e ponto de retomada
 
 Registro de 17/10/2026. Repositório: bernardorocha675/Projeto-aplicado-para-o-InpetuHub, branch main. Confira o HEAD, Actions e Releases ao retomar.

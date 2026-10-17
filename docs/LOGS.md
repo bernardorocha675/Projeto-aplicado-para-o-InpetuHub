@@ -1,4 +1,4 @@
-# Consultar os logs — 0.4.4
+# Consultar os logs — 0.4.5
 
 Os registros começam automaticamente ao abrir o executável. Não é necessário abrir VS Code nem iniciar um teste manual. Cada evento da sessão informa data/hora e as versões do aplicativo e do iniciador.
 
@@ -33,3 +33,5 @@ Se precisar correlacionar uma requisição, copie apenas o cabeçalho de respost
 Revise os trechos antes de compartilhar. Não envie banco, chave, ambiente ou backups. Os logs locais têm rotação própria; os relatórios de sessão têm limites e informam eventos omitidos. Veja [RELATORIOS.md](RELATORIOS.md) para formatos, limites e envio.
 
 O envio dos computadores depende do receptor ativado em `Testes/configuracao.json`. Registros de CI já publicados não significam que esse envio esteja ativo. A cópia local permanece até confirmação final no GitHub.
+
+Na 0.4.5, REQUEST_REJECTED identifica recusa tratada e REQUEST_FAILED identifica falha inesperada. VALIDATION_REJECTED corresponde a formulário inválido; EMAIL_FAILED a falha de email. Use a referência de suporte mostrada na tela para localizar o mesmo requestId no log. REPORT_CONFIG_FAILED e REPORT_UPLOAD_FAILED indicam tentativa de envio pendente; REPORTS_CONFIRMED indica recibos finais recebidos. Uma resposta de fila não é confirmação final.

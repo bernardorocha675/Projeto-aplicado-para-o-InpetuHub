@@ -175,6 +175,14 @@ func sendPendingReports(home string, config reportingConfig, client *http.Client
 		if json.Unmarshal(data, &report) != nil {
 			continue
 		}
+		var meta SessionReport
+		metaData, metaErr := os.ReadFile(filepath.Join(folder, "sessao.json"))
+		logInfo, logErr := os.Lstat(filepath.Join(folder, "log.txt"))
+		if metaErr != nil || json.Unmarshal(metaData, &meta) != nil || meta.ID != report.ID ||
+			meta.Outcome == "EM_ANDAMENTO" || meta.Outcome != report.Outcome ||
+			meta.EndedAt != report.EndedAt || logErr != nil || !logInfo.Mode().IsRegular() {
+			continue // Nunca enviar uma finalização ainda incompleta.
+		}
 		report, e = cleanReport(report)
 		if e != nil {
 			continue
@@ -218,6 +226,25 @@ func sendPendingReports(home string, config reportingConfig, client *http.Client
 	}
 	return sent, nil
 }
+func pendingReportCount(home string) int {
+	entries, _ := os.ReadDir(filepath.Join(home, "logs", "sessoes"))
+	count := 0
+	for _, entry := range entries {
+		if !entry.IsDir() {
+			continue
+		}
+		folder := filepath.Join(home, "logs", "sessoes", entry.Name())
+		report, e := os.Lstat(filepath.Join(folder, "relatorio.json"))
+		if e != nil || !report.Mode().IsRegular() {
+			continue
+		}
+		if _, e = os.Lstat(filepath.Join(folder, "enviado.json")); os.IsNotExist(e) {
+			count++
+		}
+	}
+	return count
+}
+
 func (m *Manager) reportingStatus(text string) {
 	m.mu.Lock()
 	m.status.ReportStatus = text
@@ -233,6 +260,7 @@ func (m *Manager) flushReports() {
 	client := reportingHTTPClient()
 	config, e := loadReportingConfig(m.home, client)
 	if e != nil {
+		m.record("WARN", "REPORT_CONFIG_FAILED", map[string]any{"phase": "CONFIG", "result": "NEGADO"})
 		m.reportingStatus("Envio pendente; registros preservados neste computador.")
 		return
 	}
@@ -242,10 +270,14 @@ func (m *Manager) flushReports() {
 	}
 	count, e := sendPendingReports(m.home, config, client)
 	if e != nil {
-		m.reportingStatus("Envio pendente; nova tentativa automática na próxima abertura.")
+		m.record("WARN", "REPORT_UPLOAD_FAILED", map[string]any{"phase": "UPLOAD", "result": "NEGADO"})
+		m.reportingStatus("Envio pendente; nova tentativa automática durante o uso ou na próxima abertura.")
 		return
 	}
-	if count > 0 {
+	if pendingReportCount(m.home) > 0 {
+		m.reportingStatus("Relatórios aguardando confirmação de publicação no GitHub; cópias locais preservadas.")
+	} else if count > 0 {
+		m.record("INFO", "REPORTS_CONFIRMED", map[string]any{"result": "OK"})
 		m.reportingStatus("Relatórios enviados ao GitHub; registros locais preservados.")
 	} else {
 		m.reportingStatus("Registros ativos. A sessão será enviada ao encerrar; a publicação no GitHub ocorre em segundo plano.")
