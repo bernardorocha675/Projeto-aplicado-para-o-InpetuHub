@@ -19,13 +19,14 @@ import java.util.*;
 
 public final class MainActivity extends Activity {
  private Store store;
+ private Thread.UncaughtExceptionHandler crashHandler,previousCrashHandler;
  private LinearLayout page;
  private LocalDate selected=LocalDate.now();
  private String exportText="";
  private static final int BLUE=0xff087fc5,INK=0xff203449,MUTED=0xff61758a;
  private final NumberFormat money=NumberFormat.getCurrencyInstance(new Locale("pt","BR"));
  @Override public void onCreate(Bundle saved){super.onCreate(saved);showLoading();new Thread(()->{try{Store ready=new Store(this);runOnUiThread(()->{if(isFinishing()||isDestroyed()){ready.close();return;}store=ready;store.event("INFO","APP_STARTED",0,null);installCrashHandler();loginPage();});}catch(Exception e){runOnUiThread(()->new AlertDialog.Builder(this).setTitle("Não foi possível abrir").setMessage("Se já houver dados neste celular, não desinstale. O banco foi preservado. Procure a equipe do projeto.").setPositiveButton("Fechar",(d,w)->finish()).show());}},"inpetu-db").start();}
- private void installCrashHandler(){Thread.UncaughtExceptionHandler original=Thread.getDefaultUncaughtExceptionHandler();Thread.setDefaultUncaughtExceptionHandler((t,e)->{try{store.event("ERROR","UNCAUGHT_FAILURE",0,e);}catch(Exception ignored){}if(original!=null)original.uncaughtException(t,e);});}
+ private void installCrashHandler(){previousCrashHandler=Thread.getDefaultUncaughtExceptionHandler();crashHandler=(t,e)->{try{store.event("ERROR","UNCAUGHT_FAILURE",0,e);}catch(Exception ignored){}if(previousCrashHandler!=null)previousCrashHandler.uncaughtException(t,e);};Thread.setDefaultUncaughtExceptionHandler(crashHandler);}
  private int dp(int n){return Math.round(getResources().getDisplayMetrics().density*n);}
  private void showLoading(){TextView t=new TextView(this);t.setText("InPETU Hub\nPreparando o aplicativo experimental…");t.setTextSize(24);t.setGravity(Gravity.CENTER);setContentView(t);}
  private GradientDrawable bg(int color){GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(dp(12));return d;}
@@ -68,5 +69,6 @@ public final class MainActivity extends Activity {
  private void export(String filename,String text){exportText=text;Intent intent=new Intent(Intent.ACTION_CREATE_DOCUMENT);intent.addCategory(Intent.CATEGORY_OPENABLE);intent.setType(filename.endsWith(".json")?"application/json":"text/plain");intent.putExtra(Intent.EXTRA_TITLE,filename);startActivityForResult(intent,11);}
  @Override protected void onActivityResult(int request,int result,Intent data){super.onActivityResult(request,result,data);if(result!=RESULT_OK||data==null||data.getData()==null)return;attempt(()->{try{if(request==11){Rules.require(!exportText.isEmpty(),"Exportação interrompida. Entre novamente e gere o arquivo.");try(OutputStream out=getContentResolver().openOutputStream(data.getData(),"wt")){if(out==null)throw new IOException();out.write(exportText.getBytes(StandardCharsets.UTF_8));}exportText="";Toast.makeText(this,"Arquivo salvo",Toast.LENGTH_LONG).show();}else if(request==12){ByteArrayOutputStream bytes=new ByteArrayOutputStream();try(InputStream input=getContentResolver().openInputStream(data.getData())){if(input==null)throw new IOException();byte[] block=new byte[8192];int n;while((n=input.read(block))!=-1){Rules.require(bytes.size()+n<=8*1024*1024,"Backup excede 8 MiB.");bytes.write(block,0,n);}}store.restore(new String(bytes.toByteArray(),StandardCharsets.UTF_8));menu();}}catch(IOException e){throw new IllegalStateException("Falha no arquivo",e);}});}
  @Override protected void onStop(){super.onStop();if(store!=null)try{store.event("INFO","APP_PAUSED",0,null);}catch(Exception ignored){}}
+ @Override protected void onDestroy(){if(crashHandler!=null&&Thread.getDefaultUncaughtExceptionHandler()==crashHandler)Thread.setDefaultUncaughtExceptionHandler(previousCrashHandler);if(store!=null)store.close();super.onDestroy();}
  @Override public void onBackPressed(){if(store!=null&&store.logged())agenda();else super.onBackPressed();}
 }

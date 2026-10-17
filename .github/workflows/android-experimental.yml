@@ -47,13 +47,21 @@ jobs:
       - name: Validar instalação, banco e interface no Android 15
         run: |
           export PATH="$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
+          export ANDROID_USER_HOME="$RUNNER_TEMP/inpetu-android-home"
+          export ANDROID_AVD_HOME="$ANDROID_USER_HOME/avd"
+          mkdir -p "$ANDROID_AVD_HOME"
           echo no | "$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager" create avd --force --name inpetu --package 'system-images;android-35;google_apis;x86_64' --device pixel_4
           adb start-server
-          emulator -avd inpetu -no-window -no-audio -no-snapshot -no-boot-anim -gpu swiftshader_indirect -memory 2048 > /tmp/inpetu-emulator.log 2>&1 &
           python - <<'PY'
-          import subprocess,time
+          import subprocess,time,os
+          from pathlib import Path
+          log=Path('/tmp/inpetu-emulator.log')
+          emulator=subprocess.Popen(['emulator','-avd','inpetu','-no-window','-no-audio','-no-snapshot','-no-boot-anim','-gpu','swiftshader','-memory','2048'],stdout=log.open('w'),stderr=subprocess.STDOUT)
           end=time.monotonic()+240
           while time.monotonic()<end:
+              if emulator.poll() is not None:
+                  print(log.read_text()[-24000:])
+                  raise SystemExit('Emulador encerrou antes do boot.')
               r=subprocess.run(['adb','shell','getprop','sys.boot_completed'],text=True,capture_output=True,timeout=10)
               if r.stdout.strip()=='1':break
               time.sleep(2)
