@@ -19,7 +19,7 @@ import (
  "sync"
 )
 
-var buildVersion = "0.4.1"
+var buildVersion = "0.4.2"
 const repository = "bernardorocha675/Projeto-aplicado-para-o-InpetuHub"
 const family = "0.4"
 var versionPattern = regexp.MustCompile("^v?0[.]4[.](0|[1-9][0-9]*)$")
@@ -43,6 +43,7 @@ type Status struct {
  Busy bool
  AppURL string
  LogPath string
+ ReportStatus string
 }
 type Manager struct {
  home string
@@ -56,6 +57,8 @@ type Manager struct {
  process *runningProcess
  onHandoff func(string) error
  stoppedCheck func(string,Bundle) error
+ session *Session
+ reportMu sync.Mutex
 }
 type runningProcess struct { cmd commandProcess; done chan struct{} }
 type commandProcess interface { Kill() error }
@@ -161,6 +164,8 @@ func (m *Manager) ready(root string,b Bundle) error {
  if e:=m.prepareConfig();e!=nil{return e}
  if e:=atomicJSON(filepath.Join(m.home,"current.json"),installState{b.Version});e!=nil{return e}
  m.mu.Lock();m.status.Ready=true;m.status.Version=b.Version;m.mu.Unlock()
+ if m.session!=nil{m.session.setAppVersion(b.Version)}
+ m.record("INFO","PACKAGE_READY",nil)
  m.message("Pronto","Tudo configurado. Clique em Iniciar.")
  return nil
 }

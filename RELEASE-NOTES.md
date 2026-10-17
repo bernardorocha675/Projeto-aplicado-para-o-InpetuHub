@@ -1,19 +1,17 @@
-# InPETU Hub 0.4.1
+# InPETU Hub 0.4.2
 
-- Corrige a agenda que mostrava todos os dias ocupados quando não havia espaços cadastrados ou habilitados para reservas.
-- Exibe **Sem espaços** e orienta a equipe a cadastrar ou habilitar os espaços. Dias livres, parcialmente ocupados e lotados continuam respeitando as reservas aprovadas.
-- Preserva o banco, os cadastros, as reservas e os cinco acessos da 0.4.0. Não é necessário resetar o banco.
+- Registro automático de sessões ao abrir o executável, sem botão de iniciar teste.
+- Versões do aplicativo e do iniciador em cada evento, com ações, navegação, configuração, atualização e erros.
+- Relatórios locais, recuperação após interrupção e continuidade durante a troca automática de iniciador.
+- Fila de envio para Testes/testeNN-data-id no GitHub, com log.txt e resumo.json; nenhum login ou token do GitHub nos computadores do time.
+- Resumo automático dos testes da CI publicado em Testes antes da release.
 
-## Atualizar
+## Usar
 
-Pare o aplicativo e abra novamente o iniciador da 0.4, ou use **Configurar / atualizar**. O fix estável 0.4.1 é instalado automaticamente. Depois clique em **Iniciar** e atualize a página da agenda.
+Atualize pelo iniciador da linha 0.4 ou baixe o ZIP completo do seu sistema/arquitetura. Abra o executável e use normalmente. Fechar iniciador finaliza a sessão; fechar só a aba mantém o processo e os registros ativos.
 
-Também é possível baixar o ZIP completo do seu sistema/arquitetura, extrair e abrir InPETU-Hub.exe (Windows), InPETU Hub.app (macOS) ou InPETU-Hub (Linux). Os pacotes incluem Java; não exigem VS Code ou arquivo de senhas.
+Os arquivos ficam em logs/sessoes na pasta de dados do usuário. O envio exige receptor online e enabled=true em Testes/configuracao.json. Enquanto estiver desativado ou indisponível, os registros ficam no computador e a interface informa a pendência. A ativação posterior não exige reinstalação. A publicação no GitHub ocorre em segundo plano e pode levar alguns minutos.
 
-## Habilitar a agenda no primeiro uso
+Não são enviados senhas, tokens, cookies, formulários ou banco. Os relatórios usam códigos de ações, IDs locais, tipos de erro e pontos do código. Limites e condições estão em RELATORIOS.md e Testes/README.md. CONCLUIDO representa encerramento normal; erros individuais constam no log e no resumo.
 
-Na área da equipe, abra **Cadastros → Espaços → Novo cadastro**. Informe nome e capacidade, marque **Ativo** e **Disponível para reservas** e salve. Se o espaço já existir, edite o cadastro. Sem reservas aprovadas, ele aparecerá livre. O aviso da agenda inclui um link para essa tela.
-
-Sem espaços cadastrados, não existem horários que possam ser reservados. A correção deixa essa situação explícita; não cria salas fictícias nem remove reservas reais. As contas e senhas de demonstração permanecem iguais às da 0.4.0; consulte ACESSOS.md.
-
-Testes da agenda, do iniciador e dos pacotes integram a publicação em Windows, macOS e Linux, x64/ARM64. Consulte o handover e o guia de testes na pasta versão 0.4. Os executáveis continuam sem assinatura comercial/notarização Apple.
+Banco, reservas, contas e senhas da 0.4.1 são preservados. Mantidos os pacotes Windows, macOS e Linux x64/ARM64 e a correção da agenda. O handover explica instalação e operação do receptor.

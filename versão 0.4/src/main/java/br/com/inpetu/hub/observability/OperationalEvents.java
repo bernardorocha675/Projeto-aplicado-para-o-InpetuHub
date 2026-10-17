@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Somente campos controlados: nunca recebe URI, formulário, login, senha ou mensagem de exceção.
+ * Somente campos controlados: nunca serializa URI livre, formulário, login, senha ou mensagem de exceção.
  */
 public final class OperationalEvents {
   private static final Logger LOG = LoggerFactory.getLogger(OperationalEvents.class);
@@ -20,13 +20,18 @@ public final class OperationalEvents {
   }
 
   public static void request(String method, int status, long millis, Throwable failure) {
+    request(method, "OTHER", status, millis, failure);
+  }
+
+  public static void request(String method, String path, int status, long millis, Throwable failure) {
     String safeMethod =
         switch (method) {
           case "GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS" -> method;
           default -> "OTHER";
         };
     String event =
-        "event=HTTP method=" + safeMethod + " status=" + status + " durationMs=" + millis;
+        "event=HTTP method=" + safeMethod + " route=" + SafeRoutes.canonical(path)
+            + " status=" + status + " durationMs=" + millis;
     if (failure != null) LOG.error(event, failure);
     else if (status >= 500) LOG.error(event);
     else if (status >= 400 || millis >= 1000) LOG.warn(event);

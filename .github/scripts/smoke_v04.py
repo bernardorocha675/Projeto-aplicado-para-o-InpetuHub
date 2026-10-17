@@ -154,7 +154,21 @@ with tempfile.TemporaryDirectory(prefix='inpetu-desktop-smoke-') as temp:
         assert (home/'.secrets/mfa.key').read_bytes()==before
         api('close')
         wait_for(lambda: not (home/'running.json').exists(),timeout=40)
-        print('EXECUTAVEL APROVADO: configuracao sem arquivo de senhas, 15 logins, permissoes, agenda vazia/livre, cadastro, reinicio, troca real do iniciador, chave/banco preservados e encerramento.')
+        sessions=list((home/'logs/sessoes').glob('*/relatorio.json'))
+        assert len(sessions)==1, 'A troca de iniciador deve preservar uma unica sessao'
+        report=json.loads(sessions[0].read_text(encoding='utf-8'))
+        assert report['outcome']=='CONCLUIDO'
+        assert report['launcherVersions']==[previous_version,future_version]
+        assert report['appVersions']==[previous_version,future_version]
+        assert all(e['launcherVersion'] in report['launcherVersions'] and e['appVersion'] in report['appVersions']+['unknown'] for e in report['events'])
+        assert any(e['component']=='app' and e['event']=='HTTP' and e.get('fields',{}).get('route')=='/login' for e in report['events'])
+        assert any(e['event']=='AUDIT' and e.get('fields',{}).get('target')=='espacos' for e in report['events'])
+        public_text=sessions[0].read_text(encoding='utf-8')
+        for login,password in accounts:
+            assert password not in public_text, 'Senha nao pode estar no relatorio'
+        assert not (sessions[0].parent/'enviado.json').exists(), 'Offline nao pode indicar envio confirmado'
+        assert (sessions[0].parent/'log.txt').is_file()
+        print('EXECUTAVEL APROVADO: configuracao sem arquivo de senhas, 15 logins, permissoes, agenda vazia/livre, logs de sessao e versoes, cadastro, reinicio, troca real do iniciador, chave/banco preservados e encerramento.')
     finally:
         try:
             if (home/'running.json').exists():

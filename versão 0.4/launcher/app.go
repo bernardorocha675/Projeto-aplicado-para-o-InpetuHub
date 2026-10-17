@@ -3,6 +3,7 @@ package main
 import (
  "errors"
  "fmt"
+ "io"
  "net"
  "net/http"
  "os"
@@ -60,17 +61,25 @@ func (m *Manager) startBundle(root string,b Bundle) error {
  command:=exec.Command(filepath.Join(root,filepath.FromSlash(b.Java)),"-jar",filepath.Join(root,b.Jar),
   "--spring.profiles.active=local","--server.address=127.0.0.1",fmt.Sprintf("--server.port=%d",port),
   "--app.launcher.enabled=true","--app.public-demo-accounts=true","--app.seed-demo=false")
+ if m.session!=nil{
+  m.session.setAppVersion(b.Version)
+  command=exec.Command(filepath.Join(root,filepath.FromSlash(b.Java)),"-Dinpetu.app.version="+b.Version,"-Dinpetu.launcher.version="+buildVersion,"-Dinpetu.session.id="+m.session.report.ID,"-jar",filepath.Join(root,b.Jar),
+   "--spring.profiles.active=local","--server.address=127.0.0.1",fmt.Sprintf("--server.port=%d",port),"--app.launcher.enabled=true","--app.public-demo-accounts=true","--app.seed-demo=false")
+ }
  command.Dir=m.home
  // Configuracoes de outro projeto nao devem direcionar o aplicativo para outro banco.
  command.Env=cleanEnvironment(os.Environ())
  command.Stdout=log;command.Stderr=log;quietCommand(command)
+ if m.session!=nil{sink:=&javaSessionSink{session:m.session};command.Stdout=io.MultiWriter(log,sink);command.Stderr=command.Stdout}
  if e=command.Start();e!=nil{log.Close();return e}
+ m.record("INFO","APP_PROCESS_STARTED",nil)
  process:=&runningProcess{cmd:processHandle{command.Process},done:make(chan struct{})}
  appURL:=fmt.Sprintf("http://127.0.0.1:%d",port)
  m.mu.Lock();m.process=process;m.status.Running=true;m.status.AppURL=appURL;m.mu.Unlock()
  m.message("Iniciando","Abrindo o sistema...")
  go func(){
-  _=command.Wait();_ = log.Close()
+  result:=command.Wait();_ = log.Close()
+  if result!=nil{m.record("ERROR","APP_PROCESS_FAILED",map[string]any{"errorType":fmt.Sprintf("%T",result),"exitCode":command.ProcessState.ExitCode()})}else{m.record("INFO","APP_PROCESS_STOPPED",map[string]any{"exitCode":0})}
   m.mu.Lock()
   if m.process==process {m.process=nil;m.status.Running=false;m.status.AppURL="";if !m.status.Busy{m.status.Phase="Parado";m.status.Message="Sistema encerrado. Os dados foram preservados."}}
   m.mu.Unlock()
@@ -81,6 +90,7 @@ func (m *Manager) startBundle(root string,b Bundle) error {
   select{case <-process.done:return errors.New("o aplicativo nao iniciou; consulte os logs locais");default:}
   response,e:=probe.Get(appURL+"/login")
   if e==nil{response.Body.Close();if response.StatusCode==200{
+   m.record("INFO","APP_READY",nil)
    m.message("Em execucao","Sistema pronto. Use Abrir sistema para acessar.")
    if !m.headless{openBrowser(appURL)}
    return nil
@@ -108,6 +118,7 @@ func (m *Manager) stop() error {
  select{
  case <-process.done:
  case <-time.After(20*time.Second):
+  m.record("WARN","APP_FORCE_STOP",nil)
   _=process.cmd.Kill()
   select{case <-process.done:case <-time.After(5*time.Second):return errors.New("nao foi possivel encerrar o processo")}
  }

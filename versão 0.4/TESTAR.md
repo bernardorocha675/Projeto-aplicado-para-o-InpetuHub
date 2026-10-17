@@ -18,3 +18,5 @@ A matriz cobre Ubuntu 24.04 x64/ARM64, macOS 15 Apple Silicon/Intel, Windows Ser
 Ao relatar um bug, informe sistema/arquitetura, versão, passos, esperado e observado. Revise os logs locais antes de compartilhar e não envie banco, chave ou backups.
 
 Para desenvolvimento, com JDK/Maven/Go, execute `go test ./...` dentro de launcher e `bash testar.sh` ou `testar.bat` na pasta da versão. O usuário final usa somente o executável.
+
+A 0.4.2 exige uma única sessão durante a troca de iniciador, versões antiga/nova nos metadados e eventos HTTP/auditoria do Java. Conferir também o relatório automático em logs/sessoes, sem as senhas. Testes Go cobrem interrupção, recibo, duplicação, campos privados e limites; os testes Node validam receptor, identidade e publicação.

@@ -10,5 +10,5 @@ if (-not (Test-Path '.env.local') -or -not (Test-Path '.tools\ready')) {
 & $script:MavenCmd -B -ntp -DskipTests clean package
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 Write-Host 'Iniciando InPETU. Abra http://localhost:8080 (ou a PORT de .env.local). Ctrl+C para parar.'
-& "$env:JAVA_HOME\bin\java.exe" -jar target/inpetu-hub-0.4.1.jar --spring.profiles.active=local @args
+& "$env:JAVA_HOME\bin\java.exe" -jar target/inpetu-hub-0.4.2.jar --spring.profiles.active=local @args
 exit $LASTEXITCODE

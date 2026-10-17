@@ -34,6 +34,7 @@ public class RequestLogFilter extends OncePerRequestFilter {
       try {
         OperationalEvents.request(
             request.getMethod(),
+            request.getRequestURI(),
             failure == null ? response.getStatus() : 500,
             (System.nanoTime() - start) / 1_000_000,
             failure);

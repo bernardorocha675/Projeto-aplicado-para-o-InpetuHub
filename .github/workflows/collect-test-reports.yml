@@ -1,0 +1,33 @@
+name: Recolher relatórios dos executáveis
+on:
+  push:
+    branches: ['main']
+    paths: ['.github/workflows/collect-test-reports.yml', '.github/scripts/collect-reports.mjs', '.github/scripts/verify-collector-identity.mjs', 'versão 0.4/receiver/**', 'Testes/configuracao.json']
+  schedule:
+    - cron: '2-57/5 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  collect:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    permissions:
+      contents: write
+      id-token: write
+    concurrency:
+      group: publicar-relatorios-testes
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Recolher, validar e publicar relatórios
+        run: node .github/scripts/verify-collector-identity.mjs
+      - name: Publicar relatórios pendentes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node .github/scripts/collect-reports.mjs

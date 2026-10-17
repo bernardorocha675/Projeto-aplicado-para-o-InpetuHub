@@ -13,7 +13,7 @@ Projeto acadêmico desenvolvido na disciplina de **Projeto Aplicado do UniSENAI*
 
 ## Versão atual
 
-[**Versão 0.4.1**](vers%C3%A3o%200.4) — corrige a indicação de ocupação na agenda sem espaços cadastrados.
+[**Versão 0.4.2**](vers%C3%A3o%200.4) — registros automáticos de sessões, ações, erros e versões, com fila de relatórios.
 
 ## Documentação
 

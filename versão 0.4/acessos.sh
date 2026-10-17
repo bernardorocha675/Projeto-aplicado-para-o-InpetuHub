@@ -11,4 +11,4 @@ esac
 use_java || die 'Execute primeiro: bash configurar.sh'
 use_maven || die 'Execute primeiro: bash configurar.sh'
 "$MAVEN_CMD" -B -ntp -DskipTests clean package
-exec "$JAVA_HOME/bin/java" -jar target/inpetu-hub-0.4.1.jar "$access_mode"
+exec "$JAVA_HOME/bin/java" -jar target/inpetu-hub-0.4.2.jar "$access_mode"

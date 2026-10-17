@@ -8,6 +8,9 @@ import java.time.Instant;
 
 /** JSON por linha. Mensagens livres de bibliotecas e de exceções nunca são serializadas. */
 public class SafeLogEncoder extends EncoderBase<ILoggingEvent> {
+  private static String version(String value) {
+    return value != null && value.matches("0\\.4\\.(0|[1-9][0-9]*)") ? value : "unknown";
+  }
   @Override
   public byte[] headerBytes() {
     return null;
@@ -46,6 +49,14 @@ public class SafeLogEncoder extends EncoderBase<ILoggingEvent> {
     StringBuilder out =
         new StringBuilder("{\"time\":")
             .append(quote(Instant.ofEpochMilli(e.getTimeStamp()).toString()))
+            .append(",\"appVersion\":")
+            .append(quote(version(System.getProperty("inpetu.app.version",
+                SafeLogEncoder.class.getPackage().getImplementationVersion()))))
+            .append(",\"launcherVersion\":")
+            .append(quote(version(System.getProperty("inpetu.launcher.version"))))
+            .append(",\"sessionId\":")
+            .append(quote(System.getProperty("inpetu.session.id", "").matches("[a-f0-9]{32}")
+                ? System.getProperty("inpetu.session.id") : "standalone"))
             .append(",\"level\":")
             .append(quote(e.getLevel().toString()))
             .append(",\"logger\":")

@@ -13,6 +13,7 @@ import (
  "os"
  "os/exec"
  "path/filepath"
+ "runtime"
  "strings"
  "time"
 )
@@ -60,25 +61,29 @@ func (c *controller) perform(action string){
  m:=c.manager
  m.mu.Lock();m.status.Busy=true;m.mu.Unlock()
  var err error
+ operation:=strings.ToUpper(strings.TrimPrefix(action,"/api/"))
+ m.record("INFO","ACTION_STARTED",map[string]any{"action":operation})
  switch action{
  case "/api/install":err=m.installLatest()
  case "/api/start":err=m.start()
  case "/api/stop":err=m.stop()
- case "/api/close":err=m.stop();if err==nil{go c.server.Shutdown(context.Background())}
+ case "/api/close":err=m.stop()
  }
  m.mu.Lock();m.status.Busy=false;m.mu.Unlock()
  <-m.operation
- if err!=nil{m.message("Precisa de atencao",err.Error())}
+ if err!=nil{m.record("ERROR","ACTION_FAILED",map[string]any{"action":operation,"errorType":fmt.Sprintf("%T",err)});m.message("Precisa de atencao",err.Error())}else{m.record("INFO","ACTION_FINISHED",map[string]any{"action":operation})}
+ if action=="/api/close"&&err==nil{go c.server.Shutdown(context.Background())}
 }
 func safeLocalURL(address string)bool{
  u,e:=url.Parse(address);return e==nil && u.Scheme=="http" && u.Hostname()=="127.0.0.1" && u.Port()!=""
 }
-func run() error{
- var home string;var offline,headless,start bool
+func run() (runErr error){
+ var home,resume string;var offline,headless,start bool
  flag.StringVar(&home,"home","","Pasta de dados (padrao: perfil do usuario)")
  flag.BoolVar(&offline,"offline",false,"Usar somente pacote local ja completo")
  flag.BoolVar(&headless,"headless",false,"Nao abrir navegador automaticamente")
  flag.BoolVar(&start,"start",false,"Iniciar apos preparar")
+ flag.StringVar(&resume,"resume-session","","Continuidade interna de uma sessao apos atualizar")
  flag.Parse()
  if flag.NArg()!=0{return errors.New("argumento desconhecido")}
  if home==""{var e error;home,e=defaultHome();if e!=nil{return e}}
@@ -90,13 +95,25 @@ func run() error{
   return errors.New("outra instancia esta aberta; aguarde e tente novamente")
  }
  defer lock.Close()
+ ownsRunning:=true
+ defer func(){if ownsRunning{_ = os.Remove(filepath.Join(m.home,"running.json"))}}()
+ session,e:=beginSession(m.home,resume);if e!=nil{return e};m.session=session
+ handedOff:=false
+ defer func(){
+  if value:=recover();value!=nil{
+   frames:=[]string{};pcs:=make([]uintptr,20);n:=runtime.Callers(3,pcs);iterator:=runtime.CallersFrames(pcs[:n])
+   for{frame,more:=iterator.Next();name:=frame.Function;if pos:=strings.LastIndex(name,"/");pos>=0{name=name[pos+1:]};frames=append(frames,fmt.Sprintf("%s:%d",name,frame.Line));if !more{break}}
+   session.record("ERROR","launcher","LAUNCHER_PANIC",map[string]any{"errorType":fmt.Sprintf("%T",value),"frames":frames});_ = session.finish("FALHA");m.flushReports();panic(value)
+  }
+  if !handedOff{outcome:="CONCLUIDO";if runErr!=nil{outcome="FALHA";session.record("ERROR","launcher","LAUNCHER_FAILED",map[string]any{"errorType":fmt.Sprintf("%T",runErr)})};_ = session.finish(outcome);m.flushReports()}
+ }()
+ reportDone:=make(chan struct{});defer close(reportDone)
+ go func(){m.flushReports();ticker:=time.NewTicker(time.Minute);defer ticker.Stop();for{select{case <-reportDone:return;case <-ticker.C:m.flushReports()}}}()
  listener,e:=net.Listen("tcp4","127.0.0.1:0");if e!=nil{return e}
  c:=&controller{manager:m,token:randomText(32),base:"http://"+listener.Addr().String()}
  c.server=&http.Server{Handler:http.HandlerFunc(c.handle),ReadHeaderTimeout:5*time.Second,ReadTimeout:10*time.Second,WriteTimeout:10*time.Second,IdleTimeout:30*time.Second}
  address:=c.base+"/#"+c.token
  if e=atomicJSON(filepath.Join(m.home,"running.json"),struct{URL string}{address});e!=nil{listener.Close();return e}
- ownsRunning:=true
- defer func(){if ownsRunning{_ = os.Remove(filepath.Join(m.home,"running.json"))}}()
  m.onHandoff=func(path string)error{
   m.mu.Lock();c.handoff=path;m.mu.Unlock()
   m.message("Atualizado","Abrindo o iniciador da nova versao...")
@@ -113,9 +130,11 @@ func run() error{
  if handoff!=""{
   // Libere o lock antes de abrir o iniciador novo, sem sobrescrever o executavel atual.
   _=lock.Close();_ = os.Remove(filepath.Join(m.home,"running.json"));ownsRunning=false
-  args:=[]string{"--home",m.home,"--start"};if headless{args=append(args,"--headless")};if offline{args=append(args,"--offline")}
+  session.record("INFO","launcher","LAUNCHER_HANDOFF",nil);session.detach()
+  args:=[]string{"--home",m.home,"--start","--resume-session",session.report.ID};if headless{args=append(args,"--headless")};if offline{args=append(args,"--offline")}
   command:=exec.Command(handoff,args...);quietCommand(command)
   if e=command.Start();e!=nil{return e}
+  handedOff=true
  }
  return nil
 }

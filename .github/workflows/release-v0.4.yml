@@ -97,6 +97,8 @@ jobs:
           persist-credentials: false
       - name: Testar apresentação da agenda
         run: node .github/scripts/test_agenda_ui.cjs
+      - name: Testar receptor, identidade e publicação dos relatórios
+        run: node --test 'versão 0.4/receiver/test.mjs'
       - name: Verificar exclusão de dados privados
         run: python 'versão 0.4/scripts/check_secrets.py'
       - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e
@@ -162,9 +164,30 @@ jobs:
           if findings:
               raise SystemExit('Revise os resultados CodeQL antes de publicar.')
           PYCODE
+  ci-report:
+    name: Publicar relatório da CI
+    needs: [native, source, dependencies, codeql]
+    if: always() && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    permissions:
+      contents: write
+      actions: read
+    concurrency:
+      group: publicar-relatorios-testes
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Publicar versão e resultado dos ambientes testados
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node .github/scripts/collect-reports.mjs --ci
   release:
     name: Publicar executáveis 0.4
-    needs: [native, source, dependencies, codeql]
+    needs: [native, source, dependencies, codeql, ci-report]
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-24.04
     timeout-minutes: 15

@@ -6,6 +6,7 @@ Baixe o pacote do seu sistema em [Releases](https://github.com/bernardorocha675/
 
 A 0.4 cria um banco novo no perfil do usuário. Não apaga nem importa automaticamente a instalação da 0.3. A estrutura e as regras de reservas continuam baseadas nas mesmas migrations V1–V4. Cadastros e reservas começam vazios; referências de configuração e as cinco contas são criadas automaticamente.
 
+- [Registros automáticos e envio](RELATORIOS.md)
 - [Como instalar e usar](COMO-INICIAR.md)
 - [Cinco acessos de demonstração](ACESSOS.md)
 - [Atualizações e backup](ATUALIZACOES.md)

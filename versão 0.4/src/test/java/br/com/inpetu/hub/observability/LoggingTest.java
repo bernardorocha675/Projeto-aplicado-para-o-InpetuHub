@@ -24,6 +24,51 @@ class LoggingTest {
   final JsonMapper json = JsonMapper.builder().build();
 
   @Test
+  void everyLogLineCarriesVersionsAndOnlyAValidSessionIdentifier() {
+    String[] names = {"inpetu.app.version", "inpetu.launcher.version", "inpetu.session.id"};
+    String[] old = Arrays.stream(names).map(System::getProperty).toArray(String[]::new);
+    try {
+      System.setProperty(names[0], "0.4.2");
+      System.setProperty(names[1], "0.4.2");
+      System.setProperty(names[2], "a".repeat(32));
+      var event = new LoggingEvent();
+      event.setTimeStamp(0);
+      event.setLevel(Level.ERROR);
+      event.setLoggerName("org.example.Framework");
+      event.setMessage("never-copy-this-secret");
+      event.setMDCPropertyMap(Map.of());
+      var encoded = json.readTree(new SafeLogEncoder().encode(event));
+      assertEquals("0.4.2", encoded.get("appVersion").asString());
+      assertEquals("0.4.2", encoded.get("launcherVersion").asString());
+      assertEquals("a".repeat(32), encoded.get("sessionId").asString());
+      System.setProperty(names[0], "invalid-version-secret");
+      System.setProperty(names[2], "invalid-session-secret");
+      String line = new String(new SafeLogEncoder().encode(event), StandardCharsets.UTF_8);
+      assertEquals("unknown", json.readTree(line).get("appVersion").asString());
+      assertEquals("standalone", json.readTree(line).get("sessionId").asString());
+      assertFalse(line.contains("invalid-version-secret"));
+      assertFalse(line.contains("invalid-session-secret"));
+      assertFalse(line.contains("never-copy-this-secret"));
+    } finally {
+      for (int i = 0; i < names.length; i++) {
+        if (old[i] == null) System.clearProperty(names[i]);
+        else System.setProperty(names[i], old[i]);
+      }
+    }
+  }
+
+  @Test
+  void actionRoutesPreserveTheOperationWithoutIDsOrQueryData() {
+    assertEquals("/login", SafeRoutes.canonical("/login"));
+    assertEquals("/admin/reservas/{id}/aprovar", SafeRoutes.canonical("/admin/reservas/123/aprovar"));
+    assertEquals("/admin/cadastros/espacos/{id}/excluir", SafeRoutes.canonical("/admin/cadastros/espacos/19/excluir"));
+    assertEquals("/admin/solicitacoes/{id}/aceitar", SafeRoutes.canonical("/admin/solicitacoes/22/aceitar"));
+    assertEquals("ASSET", SafeRoutes.canonical("/js/anything-secret.js"));
+    assertEquals("OTHER", SafeRoutes.canonical("/private-email@example.com"));
+    assertEquals("OTHER", SafeRoutes.canonical("/login?password=private-secret"));
+  }
+
+  @Test
   void retentionKeepsRecentArchivesAndDeletesOnlyExpiredOrExcessFiles() throws Exception {
     var now = java.time.Instant.parse("2026-10-15T18:00:00Z");
     var clock = java.time.Clock.fixed(now, java.time.ZoneOffset.UTC);
@@ -50,8 +95,11 @@ class LoggingTest {
   @Test
   void logDirectoryIsPrivateAndRejectsUnexpectedPaths() throws Exception {
     Path logs = temp.resolve("logs");
+    Path session = Files.createDirectories(logs.resolve("sessoes/teste01"));
+    Path events = Files.writeString(session.resolve("eventos.jsonl"), "preserve");
     PrivateLogDirectory.prepare(logs);
     assertTrue(Files.isRegularFile(logs.resolve("inpetu.log")));
+    assertEquals("preserve", Files.readString(events));
     if (Files.getFileAttributeView(logs, java.nio.file.attribute.PosixFileAttributeView.class)
         != null) {
       assertEquals(
@@ -60,6 +108,12 @@ class LoggingTest {
       assertEquals(
           java.nio.file.attribute.PosixFilePermissions.fromString("rw-------"),
           Files.getPosixFilePermissions(logs.resolve("inpetu.log")));
+      assertEquals(
+          java.nio.file.attribute.PosixFilePermissions.fromString("rwx------"),
+          Files.getPosixFilePermissions(session));
+      assertEquals(
+          java.nio.file.attribute.PosixFilePermissions.fromString("rw-------"),
+          Files.getPosixFilePermissions(events));
       Path outside = Files.writeString(temp.resolve("outside"), "preserve");
       Files.createSymbolicLink(logs.resolve("unexpected.log"), outside);
       assertThrows(IllegalStateException.class, () -> PrivateLogDirectory.prepare(logs));

@@ -1,12 +1,22 @@
-# Handover técnico — InPETU Hub 0.4.1
+# Handover técnico — InPETU Hub 0.4.2
 
-Base da correção: `ec65d6a0e1499df1b4a88fd8508ced48bd6f41ac` (0.4.0). Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
+Base desta entrega: `0d3f2a22c920b69675401ca401da8770b22eb0a9` (0.4.1). Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
 
 ## Correção 0.4.1
 
 A ausência de espaços ativos/disponíveis deixava `temLivre=false` na consulta pública, classificando todos os dias como indisponíveis. O endpoint `/disponibilidade` agora retorna `SEM_ESPACOS` nessa situação, inclusive para filtros sem resultado. O JavaScript mostra um estado neutro e orienta o cadastro/habilitação de espaços. Dias livres, parciais e efetivamente ocupados mantêm as regras anteriores. Não há migration, limpeza do banco, ativação forçada de espaços nem alteração das cinco contas.
 
 A regressão é coberta por testes Java para banco novo, espaços inativos/desabilitados, filtro vazio, reservas parciais/integrais, cancelamento e mais de uma sala. Os testes da interface executam o JavaScript real em Node; o smoke do pacote verifica a transição de banco sem espaços para agenda livre após o cadastro.
+
+## Sessões e relatórios 0.4.2
+
+launcher/session.go cria a sessão após adquirir o lock, grava JSONL incremental e metadados de versão em cada evento, mantém o ID durante handoff e recupera interrupções. launcher/reporting.go consulta o destino público e retém os arquivos até confirmação final. SafeLogEncoder adiciona appVersion/launcherVersion/sessionId; SafeRoutes registra tipos de tela/ação sem parâmetros nem IDs na URI. Auditoria e autenticação mantêm códigos e IDs locais. O leitor do iniciador aceita somente campos permitidos da saída JSON do Java. PrivateLogDirectory aceita e protege as subpastas de sessões sem seguir links simbólicos; a regressão cobre as permissões e a preservação dos arquivos.
+
+O receptor Node guarda fila temporária e não tem token de escrita do GitHub. O coletor autentica por OIDC com repositório, ID, main, workflow e audiência fixos. O GITHUB_TOKEN existe só no job e grava Testes/testeNN-data-id/log.txt e resumo.json. O índice recebidos.json mantém numeração global e deduplicação. Nunca executar conteúdo recebido como comando. A CI também publica sua versão e conclusão dos nove ambientes/gates antes da release.
+
+A hospedagem requer confirmar o workspace no Render, publicar o receptor e ativar a URL real em Testes/configuracao.json. O arquivo público contém apenas enabled/endpoint, sem segredo. A ativação não exige reinstalar o executável. Sem receptor ativo, funcionam registros locais e relatórios de CI. Reinícios do servidor podem perder sua fila; a cópia local pendente permite reenvio na próxima abertura. Relatórios não atestam identidade do dispositivo.
+
+Não houve migration, reset do banco nem troca de contas. Detalhes e limites: RELATORIOS.md, receiver/README.md e Testes/README.md. Validar sessões, versões, ausência de senhas, interrupção, fila offline, confirmação e handoff com o smoke do pacote. Testes Node cobrem receptor/coletor; o workflow confirma um token OIDC real. Não publicar logs operacionais brutos ou dados do perfil do usuário.
 
 ## Entrega
 

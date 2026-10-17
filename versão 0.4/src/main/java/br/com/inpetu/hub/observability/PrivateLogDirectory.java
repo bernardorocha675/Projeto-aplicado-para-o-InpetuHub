@@ -44,9 +44,26 @@ public final class PrivateLogDirectory {
       else Files.createDirectory(folder);
     }
     protect(folder, true);
-    try (var files = Files.list(folder)) {
-      for (Path p : files.toList()) protect(p, false);
-    }
+    // As sessões do iniciador usam subpastas; proteja toda a árvore sem seguir links.
+    Files.walkFileTree(folder, new SimpleFileVisitor<Path>() {
+      @Override
+      public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+          throws java.io.IOException {
+        try { protect(dir, true); }
+        catch (RuntimeException e) { throw e; }
+        catch (Exception e) { throw new java.io.IOException(e); }
+        return FileVisitResult.CONTINUE;
+      }
+
+      @Override
+      public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+          throws java.io.IOException {
+        try { protect(file, false); }
+        catch (RuntimeException e) { throw e; }
+        catch (Exception e) { throw new java.io.IOException(e); }
+        return FileVisitResult.CONTINUE;
+      }
+    });
     Path active = folder.resolve("inpetu.log");
     if (!Files.exists(active, LinkOption.NOFOLLOW_LINKS)) Files.createFile(active);
     protect(active, false);
