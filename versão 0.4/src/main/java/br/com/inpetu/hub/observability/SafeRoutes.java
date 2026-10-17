@@ -14,7 +14,7 @@ public final class SafeRoutes {
 
   public static String canonical(String path) {
     if (path == null || path.length() > 200) return "OTHER";
-    if (PUBLIC.contains(path)) return path;
+    for (String route : PUBLIC) if (route.equals(path)) return route;
     if (path.startsWith("/js/") || path.startsWith("/css/") || path.startsWith("/img/")
         || path.equals("/favicon.ico")) return "ASSET";
     if (path.matches("/admin/empreendedores/[0-9]{1,19}")) return "/admin/empreendedores/{id}";
@@ -29,8 +29,8 @@ public final class SafeRoutes {
       for (String type : Set.of("espacos", "empreendedores", "visitas", "atendimentos",
           "personas", "precos", "feriados", "colaboradores", "configuracao")) {
         String base = prefix + type;
-        if (path.equals(base) || path.equals(base + "/editar") || path.equals(base + "/salvar"))
-          return path;
+        for (String suffix : Set.of("", "/editar", "/salvar"))
+          if (path.equals(base + suffix)) return base + suffix;
         if (path.matches(base + "/[0-9]{1,19}/excluir")) return base + "/{id}/excluir";
       }
     return "OTHER";
