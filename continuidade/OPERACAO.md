@@ -27,6 +27,7 @@ Na raiz, com Node disponível (receptor exige Node >=22; hospedagem planejada us
 
 ```sh
 node .github/scripts/test_agenda_ui.cjs
+node .github/scripts/test_admin_ui.cjs
 node --test "receptor/test.mjs"
 ```
 

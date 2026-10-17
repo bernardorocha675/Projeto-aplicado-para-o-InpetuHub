@@ -70,10 +70,35 @@ public class CrudController {
       @RequestParam Map<String, String> dados,
       jakarta.servlet.http.HttpServletRequest req,
       Authentication a,
+      Model m,
+      jakarta.servlet.http.HttpServletResponse response,
       RedirectAttributes f) {
     boolean admin = req.getRequestURI().startsWith("/admin/config/");
     permitido(tipo, admin);
-    service.salvar(tipo, id, dados, colaboradores.findByLogin(a.getName()).orElseThrow());
+    var autor = colaboradores.findByLogin(a.getName()).orElseThrow();
+    try {
+      service.salvar(tipo, id, dados, autor);
+    } catch (RegraException ex) {
+      if (!tipo.equals("espacos")) throw ex;
+      br.com.inpetu.hub.observability.OperationalEvents.audit(
+          autor.id, "CADASTRO_INVALIDO", "espacos", id, "NEGADO");
+      // Reapresentar os valores enviados, inclusive as opções desmarcadas.
+      editar(tipo, id, req, m);
+      m.addAttribute(
+          "registro",
+          Map.of(
+              "nomeEspaco", dados.getOrDefault("nomeEspaco", ""),
+              "capacidade", dados.getOrDefault("capacidade", ""),
+              "disponibilidade",
+                  String.valueOf(Set.of("on", "true")
+                      .contains(dados.getOrDefault("disponibilidade", ""))),
+              "ativo",
+                  String.valueOf(Set.of("on", "true")
+                      .contains(dados.getOrDefault("ativo", "")))));
+      m.addAttribute("erro", ex.getMessage());
+      response.setStatus(400);
+      return "admin/crud/form";
+    }
     f.addFlashAttribute("sucesso", "Cadastro salvo.");
     return "redirect:" + (admin ? "/admin/config/cadastros/" : "/admin/cadastros/") + tipo;
   }

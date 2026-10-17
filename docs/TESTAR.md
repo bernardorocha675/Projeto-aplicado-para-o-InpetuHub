@@ -1,4 +1,4 @@
-# Testar a entrega 0.4.3
+# Testar a entrega 0.4.4
 
 ## Conferência da equipe pelo executável
 
@@ -8,7 +8,7 @@
 4. Pare e inicie novamente: cadastros, reservas e acessos devem permanecer.
 5. Feche só a aba e reabra o executável: a instância existente deve reaparecer. Use **Fechar iniciador** para encerrar de verdade e confira `logs/sessoes/.../log.txt`, com as versões em cada evento.
 6. Depois da primeira configuração, teste o pacote instalado sem internet. Relatórios devem permanecer pendentes, sem falsa confirmação de envio.
-7. Numa cópia de teste da 0.4.2, confira a atualização para 0.4.3 e a preservação de banco, chave e contas. A família 0.5 não deve ser instalada automaticamente.
+7. Numa cópia de teste da 0.4.3, confira a atualização para 0.4.4 e a preservação de banco, chave e contas. A família 0.5 não deve ser instalada automaticamente.
 
 Registre sistema, arquitetura, versão, passos, esperado e observado ao relatar um bug. Revise os logs; não compartilhe banco, chaves ou backups.
 
@@ -21,3 +21,12 @@ Depois, o smoke executa o próprio binário com seu Java privado: instalação, 
 A matriz cobre Ubuntu 24.04 x64/ARM64, macOS 15 Intel/Apple Silicon, Windows Server 2025 x64 e Windows 11 ARM64. Esses testes não comprovam todas as distribuições/edições nem substituem conferência visual de navegador, SmartScreen e Gatekeeper.
 
 Comandos de desenvolvimento e ferramentas necessárias estão em [ESTRUTURA.md](ESTRUTURA.md). O usuário final usa somente o executável.
+
+## Cadastro de espaços — fix 0.4.4
+
+1. Entre na área interna e abra Espaços → Novo cadastro.
+2. Informe nome, capacidade 0 e tente salvar. O navegador deve orientar que o mínimo é 1. Tente também -1 e 1,5: capacidade precisa ser inteira e positiva.
+3. Corrija para 25 e salve. O cadastro deve aparecer na lista, sem precisar reabrir a tela.
+4. Edite o espaço, altere o nome/capacidade e salve. Confira que alterou somente esse registro.
+5. Para simular validação no servidor, o teste automatizado envia diretamente dados inválidos: a mesma tela retorna com mensagem simples, valores e opções preservados. Corrigir e reenviar deve funcionar; o banco mantém a versão anterior até salvar dados válidos.
+6. Confira o registro CADASTRO_INVALIDO/NEGADO nos logs locais da sessão para rejeições do servidor. Uma tentativa bloqueada apenas pelo navegador não chega ao servidor.

@@ -1,4 +1,4 @@
-# Acessos locais — 0.4.3
+# Acessos locais — 0.4.4
 
 Os acessos abaixo são **públicos de demonstração**, por solicitação da equipe. O aplicativo cria essas contas automaticamente no banco: não existe pacote privado nem arquivo de senhas para aplicar.
 

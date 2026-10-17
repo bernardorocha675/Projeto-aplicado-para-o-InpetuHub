@@ -1,7 +1,11 @@
-# Validação — 0.4.3
+# Validação — 0.4.4
 
-A release 0.4.3 foi publicada após aprovação de todos os gates no [run 39020936011](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39020936011), no commit b06fcf9d89161a6c512d4e4f3c97c6c28f20ac54. Foram aprovados Ubuntu x64/ARM64, macOS Intel/Apple Silicon e Windows x64/ARM64, além de código, segredos, dependências, CodeQL e relatório de CI. Os 12 arquivos da release foram conferidos; as sete releases anteriores foram preservadas.
+Primeira parte do relatório: cadastro de espaços. Publicação ainda depende da conclusão dos testes e de todos os gates da matriz. Não usar o resultado da 0.4.3 como evidência desta correção.
 
-A matriz compila e testa Go/Java, executa o roteiro HTTP/backup e valida o executável junto do runtime privado: configuração sem arquivo de senhas, quinze autenticações (início, reinício e troca do iniciador), perfis, persistência de cadastro/banco/chave e encerramento. Os testes do atualizador usam um serviço fictício local, sem publicar releases falsas.
+Validação local: passaram 91 testes Java (12 novos), 27 testes Go e go vet, cinco testes Node da agenda, dois do formulário administrativo e sete do receptor/coletor. O roteiro completo HTTP/perfis/contas/backup e o pacote Linux real com runtime privado passaram em dados descartáveis: quinze logins, reinício, atualização simulada, logs/versões e preservação de banco/chave/sessão.
 
-Consulte o run associado ao commit/tag v0.4.3 em Actions para o resultado concreto. Não há validação visual automatizada de Gatekeeper/SmartScreen, navegadores de todos os sistemas, quedas físicas de energia/disco ou migrações futuras. Não foi realizada implantação real em MySQL/SMTP/TLS.
+Novas regressões: capacidade zero, negativa, decimal com ponto/vírgula, letras, vazio e estouro numérico; erro preserva campos/checkboxes; correção cria/edita registro sem perder o estado; edição inválida não altera o banco; log sanitizado registra rejeição; capacidade tem limites no HTML e valores financeiros continuam decimais; JavaScript permite reenviar.
+
+A matriz deve testar Ubuntu x64/ARM64, macOS Intel/Apple Silicon e Windows x64/ARM64, além de código, segredos, dependências, CodeQL, relatório de CI e publicação. Inclui regras Java, iniciador, roteiro HTTP/backup e smoke do executável real. Resultado final no run associado à tag.
+
+Não há comprovação de todas as distribuições/edições ou navegadores, teste visual automatizado de SmartScreen/Gatekeeper ou implantação MySQL/SMTP/TLS. Mantém-se a limitação conhecida da interpretação de uma consulta CodeQL de CSRF. Os demais itens do PDF não foram corrigidos nesta parte.

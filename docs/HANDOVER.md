@@ -1,6 +1,16 @@
-# Handover técnico — InPETU Hub 0.4.3
+# Handover técnico — InPETU Hub 0.4.4
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
+
+## Fix 0.4.4 — primeira parte do relatório
+
+Base: main a5cfdd9f603674baf7ea67991a4ecb3edecb604f, após release 0.4.3. O PDF de bugs de seis páginas foi analisado; a divisão e pendências estão em BUGS.md. Nesta parte, somente o cadastro de espaços foi corrigido.
+
+CrudService valida capacidade inteira positiva antes de persistir; form.html oferece min=1/step=1 e máximo compatível com Integer. CrudController captura RegraException somente para espaços, registra CADASTRO_INVALIDO/NEGADO e retorna o formulário com HTTP 400 e os valores enviados, incluindo checkboxes desligados. A transação de serviço já terminou e foi revertida antes dessa resposta. admin.js reabilita o envio desse formulário no evento pageshow para permitir a correção ao voltar pelo cache; a proteção contra cliques repetidos durante o envio é preservada.
+
+EspacosCadastroIntegrationTest usa banco descartável próprio e requisições sem transação externa: verifica rejeições, rollback da edição, correção e persistência em outra requisição, limites na tela e log sem dados livres. test_admin_ui.cjs executa o JavaScript real e confere que o botão continua utilizável. Valores decimais financeiros são preservados.
+
+Não há migration, limpeza, alteração de credenciais ou do diretório de dados. Render e envio automático do time continuam pendentes. A validação da nova entrega deve ser conferida em VALIDACAO.md e no run da tag; o resultado histórico da 0.4.3 abaixo não comprova a 0.4.4. Ao publicar este fix, parar e aguardar autorização antes da próxima parte.
 
 ## Reorganização 0.4.3
 

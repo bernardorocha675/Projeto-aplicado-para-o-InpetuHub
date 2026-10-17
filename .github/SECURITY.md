@@ -4,12 +4,12 @@ O InPETU Hub busca proteger as informações utilizadas no projeto e manter o ac
 
 ## Nossos cuidados
 
-- Contas, senhas e arquivos de ambientes reais devem permanecer privados. A aplicativo inclui cinco acessos públicos apenas para demonstração local; essa instalação não deve receber informações confidenciais.
+- Contas, senhas e arquivos de ambientes reais devem permanecer privados. O aplicativo inclui cinco acessos públicos apenas para demonstração local; essa instalação não deve receber informações confidenciais.
 - Limitamos o acesso de cada usuário às funções permitidas para seu perfil.
 - Registramos ações importantes para ajudar a identificar problemas, sem incluir senhas ou códigos de acesso nos registros técnicos.
 - Realizamos testes, revisões e acompanhamento das ferramentas utilizadas para identificar riscos e aplicar melhorias.
 
-A versão atual é a **aplicativo.2**. As versões anteriores permanecem no repositório como histórico do desenvolvimento; a versão atual deve ser a referência para uso e acompanhamento das melhorias.
+A versão atual é a **0.4.4**. As versões anteriores permanecem no repositório como histórico do desenvolvimento; a versão atual deve ser a referência para uso e acompanhamento das melhorias.
 
 Os relatórios de testes publicados contêm somente informações de funcionamento e diagnóstico, com versão e tipos de ação. Senhas, códigos de acesso, formulários e banco de dados não fazem parte desses documentos. Os registros enviados por computadores de teste devem ser revisados pela equipe.
 

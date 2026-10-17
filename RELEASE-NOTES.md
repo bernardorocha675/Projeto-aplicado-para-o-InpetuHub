@@ -1,17 +1,17 @@
-# InPETU Hub 0.4.3
+# InPETU Hub 0.4.4
 
-- Repositório reorganizado para a entrega pelo executável: aplicativo Java em aplicativo/, iniciador Go em iniciador/ e receptor de relatórios em receptor/.
-- Documentação atual reunida em docs/, com instalação, acessos, logs, testes, estrutura e handover.
-- Retiradas as cópias antigas de versões, configurações de VS Code e scripts de início/configuração por terminal da árvore principal. As entregas anteriores continuam nas releases e no histórico Git.
-- Compilação, empacotamento, testes, dependências e coletor de relatórios ajustados aos novos caminhos.
-- Contexto do Claude Code e continuidade atualizados para a nova organização.
+Primeira parte do relatório de bugs: cadastro de espaços.
+
+- Capacidade aceita somente número inteiro positivo, com validação no navegador e no servidor.
+- Dados inválidos retornam ao mesmo formulário com mensagem simples, mantendo nome, capacidade e opções marcadas/desmarcadas.
+- Corrigir um erro permite salvar sem precisar reabrir o cadastro; o botão não fica bloqueado após a tentativa.
+- Rejeições no servidor geram evento de log CADASTRO_INVALIDO/NEGADO sem copiar os dados do formulário.
+- Testes de regressão cobrem criação, edição, preservação do banco após falha e novo envio após correção.
 
 ## Usar
 
-Baixe o ZIP completo do seu sistema/arquitetura, extraia e abra o iniciador. As instalações da linha 0.4 podem atualizar pelo próprio executável. O pacote inclui aplicativo e Java privado.
+Baixe o pacote completo do seu sistema em Releases e abra o iniciador. Instalações 0.4.x podem atualizar pelo próprio executável. Banco, reservas, contas e configurações são preservados; não há migration ou reset.
 
-Banco, cadastros, reservas, contas, senhas e a pasta de dados da linha 0.4 são preservados. A agenda sem espaços e os logs automáticos com versão continuam funcionando. A mudança organiza os fontes; não acrescenta uma migração de dados.
+As demais partes do relatório ainda não foram corrigidas. O acompanhamento está em docs/BUGS.md; a próxima etapa depende de nova autorização.
 
-O envio dos computadores do time ao GitHub continua dependendo da ativação do receptor. Enquanto Testes/configuracao.json estiver desativado, os registros permanecem locais. A reorganização não cria serviços no Render nem altera essa configuração.
-
-Instruções e limitações: docs/COMO-INICIAR.md, docs/HANDOVER.md e docs/VALIDACAO.md no código da release. As releases anteriores e seus arquivos foram preservados.
+Os logs locais continuam automáticos. O envio do time ao GitHub permanece desativado até a configuração do receptor, como na versão anterior.

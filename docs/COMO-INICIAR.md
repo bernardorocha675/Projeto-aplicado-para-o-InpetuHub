@@ -2,16 +2,16 @@
 
 ## Escolher o download
 
-Abra a release **v0.4.3** e escolha o pacote completo do seu sistema. Os arquivos de código-fonte são para desenvolvimento.
+Abra a release **v0.4.4** e escolha o pacote completo do seu sistema. Os arquivos de código-fonte são para desenvolvimento.
 
 | Computador | Pacote |
 |---|---|
-| Windows Intel/AMD | InPETU-Hub-Windows-x64-v0.4.3.zip |
-| Windows ARM | InPETU-Hub-Windows-ARM64-v0.4.3.zip |
-| Mac com Apple Silicon (M1 ou mais recente) | InPETU-Hub-macOS-ARM64-v0.4.3.zip |
-| Mac Intel | InPETU-Hub-macOS-x64-v0.4.3.zip |
-| Linux Intel/AMD | InPETU-Hub-Linux-x64-v0.4.3.zip |
-| Linux ARM64 | InPETU-Hub-Linux-ARM64-v0.4.3.zip |
+| Windows Intel/AMD | InPETU-Hub-Windows-x64-v0.4.4.zip |
+| Windows ARM | InPETU-Hub-Windows-ARM64-v0.4.4.zip |
+| Mac com Apple Silicon (M1 ou mais recente) | InPETU-Hub-macOS-ARM64-v0.4.4.zip |
+| Mac Intel | InPETU-Hub-macOS-x64-v0.4.4.zip |
+| Linux Intel/AMD | InPETU-Hub-Linux-x64-v0.4.4.zip |
+| Linux ARM64 | InPETU-Hub-Linux-ARM64-v0.4.4.zip |
 
 Os pacotes completos já incluem Java e o aplicativo. Você também pode baixar somente o iniciador `.exe` no Windows ou `.run` no Linux; nesse caso, a primeira instalação precisa de internet para baixar o pacote completo.
 

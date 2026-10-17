@@ -204,6 +204,7 @@ public class CrudService {
 
   public String valor(Object o, String campo) {
     if (o == null || campo.equals("senha")) return "";
+    if (o instanceof Map<?, ?> dados) return String.valueOf(dados.get(campo));
     try {
       Object v = o.getClass().getField(campo).get(o);
       if (v == null) return "";
@@ -267,7 +268,15 @@ public class CrudService {
         Object v;
         if (t == boolean.class) v = raw.equals("on") || raw.equals("true");
         else if (t == String.class) v = raw;
-        else if (t == int.class) v = Integer.valueOf(raw);
+        else if (t == int.class && o instanceof Espaco && campo.nome.equals("capacidade")) {
+          try {
+            if (!raw.matches("[0-9]+")) throw new NumberFormatException();
+            v = Integer.valueOf(raw);
+            if ((Integer) v < 1) throw new NumberFormatException();
+          } catch (NumberFormatException ex) {
+            throw new RegraException("Capacidade deve ser um número inteiro positivo.");
+          }
+        } else if (t == int.class) v = Integer.valueOf(raw);
         else if (t == BigDecimal.class) v = raw.isBlank() ? null : new BigDecimal(raw);
         else if (t == LocalDate.class) v = LocalDate.parse(raw);
         else if (t == LocalTime.class) v = LocalTime.parse(raw);

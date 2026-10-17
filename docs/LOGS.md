@@ -1,4 +1,4 @@
-# Consultar os logs — 0.4.3
+# Consultar os logs — 0.4.4
 
 Os registros começam automaticamente ao abrir o executável. Não é necessário abrir VS Code nem iniciar um teste manual. Cada evento da sessão informa data/hora e as versões do aplicativo e do iniciador.
 
