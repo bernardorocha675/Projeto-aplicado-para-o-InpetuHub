@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="br.com.inpetu.hub.experimental.test" android:versionCode="1" android:versionName="1">
+<uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35"/>
+<application android:label="InPETU Android tests"/>
+<instrumentation android:name="br.com.inpetu.android.TestRunner" android:targetPackage="br.com.inpetu.hub.experimental" android:label="Testes offline"/>
+</manifest>

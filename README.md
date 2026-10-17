@@ -15,6 +15,10 @@ Projeto acadêmico desenvolvido na disciplina de **Projeto Aplicado do UniSENAI*
 
 [**Versão 0.4.5**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.5) — amplia os logs de erros e melhora a recuperação e o acompanhamento dos relatórios.
 
+## Android experimental
+
+[Android 0.1.0-experimental.1](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/android-v0.1.0-experimental.1) — APK independente, com banco no celular e uso offline. Recursos e limitações no [guia Android](docs/ANDROID.md).
+
 ## Usar o aplicativo
 
 Baixe o pacote completo do seu sistema em [Releases](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/latest), extraia e abra o iniciador. O pacote inclui o aplicativo e o Java necessário.

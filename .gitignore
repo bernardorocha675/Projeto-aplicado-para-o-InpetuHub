@@ -28,3 +28,9 @@ relatorios-testes/
 *.run
 *ACESSOS-PRIVADOS*/
 *ACESSOS-PRIVADOS*.zip
+
+# Produtos e configuração local do Android.
+*.apk
+*.idsig
+*.p7m
+local.properties

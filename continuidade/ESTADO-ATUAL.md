@@ -1,3 +1,15 @@
+# Etapa atual — Android independente experimental
+
+Em 17/10/2026, usuário pediu executável Android com identificação experimental e confirmou a opção Funcionar sozinho. Retomou com Continue. Base main c4f26fba976bcb7f917d7096fb2f36298abae155, desktop 0.4.5.
+
+Implementação em android/: APK Java/SQLite offline, cinco acessos locais, espaços/agenda/reservas/cotas/valores/configuração/pagamento, logs automáticos e backup privado. Sem permissão de rede ou servidor. Funcionalidades e diferenças no guia docs/ANDROID.md; não declarar paridade total com desktop.
+
+Versão Android 0.1.0-experimental.1, tag própria android-v0.1.0-experimental.1 e prerelease/latest=false. Desktop e releases existentes preservados. Compilação, teste em emulador e publicação ainda precisam ser comprovados. Atualizar este início com commit/run/asset após conclusão. O trabalho deve parar após esta entrega, sem iniciar outras partes do PDF ou ativar Render.
+
+Assinatura privada Android gerada na primeira CI e backup cifrado para certificado público do responsável. A chave privada de recuperação foi salva e entregue separadamente em InPETU-Android-recuperacao-assinatura.zip; nunca copiá-la ao repositório. Futuras releases exigem restaurar assinatura e configurar secrets, conforme HANDOVER-ANDROID.md. O código recusa gerar outra identidade depois de publicada a primeira release.
+
+---
+
 # Etapa entregue — logs 0.4.5; ativação do receptor pendente
 
 Pedido de 17/10/2026: criar novo fix terminando a questão dos logs. Base c27ad98da17796b92ad1d05819b05bf0218c9f1a, release anterior 0.4.4. Esta etapa prioriza logs e não autoriza automaticamente outras partes do PDF.
