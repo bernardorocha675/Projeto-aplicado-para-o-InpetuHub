@@ -35,4 +35,4 @@ Ao concluir uma tarefa, atualize `continuidade/ESTADO-ATUAL.md` com: mudança, e
 
 As conexões do ChatGPT não são transferidas ao Claude Code. Verifique as integrações disponíveis na nova ferramenta; nunca registre credenciais nestes documentos.
 
-Backup e reorganização foram concluídos na 0.4.3. A tarefa atual é corrigir por partes o relatório caçabugs_0.1_Joaoe.docx.PDF. Esta etapa trata somente do cadastro de espaços no fix 0.4.4; consulte docs/BUGS.md e continuidade/ESTADO-ATUAL.md. Após publicar a parte 1, pare e aguarde nova autorização para outra parte. O Render não está incluído nesta etapa.
+Backup e reorganização foram concluídos na 0.4.3. O relatório caçabugs_0.1_Joaoe.docx.PDF foi analisado e a parte 1 (cadastro de espaços) foi concluída na release 0.4.4, publicada e verificada. Consulte docs/BUGS.md e continuidade/ESTADO-ATUAL.md. Pare e aguarde nova autorização para outra parte. O Render não está incluído nesta etapa.

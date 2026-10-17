@@ -10,7 +10,7 @@ CrudService valida capacidade inteira positiva antes de persistir; form.html ofe
 
 EspacosCadastroIntegrationTest usa banco descartável próprio e requisições sem transação externa: verifica rejeições, rollback da edição, correção e persistência em outra requisição, limites na tela e log sem dados livres. test_admin_ui.cjs executa o JavaScript real e confere que o botão continua utilizável. Valores decimais financeiros são preservados.
 
-Não há migration, limpeza, alteração de credenciais ou do diretório de dados. Render e envio automático do time continuam pendentes. A validação da nova entrega deve ser conferida em VALIDACAO.md e no run da tag; o resultado histórico da 0.4.3 abaixo não comprova a 0.4.4. Ao publicar este fix, parar e aguardar autorização antes da próxima parte.
+Não há migration, limpeza, alteração de credenciais ou do diretório de dados. Render e envio automático do time continuam pendentes. A [0.4.4](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.4) foi publicada pelo [run 39025880429](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39025880429), com os 11 jobs aprovados e tag em `fbe03611991e1ce2678eab93615594e3e90223b1`. Foram conferidos os 12 arquivos e a preservação das oito releases anteriores. Passaram 91 testes Java (12 novos), 27 Go/go vet, cinco Node da agenda, dois da interface administrativa e sete do receptor, além do roteiro HTTP/backup e smoke nos seis ambientes. Detalhes e limites em VALIDACAO.md. Esta parte está concluída: parar e aguardar autorização para a próxima.
 
 ## Reorganização 0.4.3
 
@@ -64,7 +64,7 @@ Somente releases estáveis 0.4.x são elegíveis. Os ZIPs incluem runtime e apli
 
 Antes da troca, é guardado um snapshot privado dos dados/configuração. Não é cifrado e não substitui um plano de backup. Não há rollback automático de migrations após falhas: pare, preserve o estado atual e restaure backup completo numa cópia da versão anterior. Uma restauração perde alterações posteriores. Não compartilhar backups, chaves ou logs sem revisão.
 
-## Validação e limitações
+## Histórico de validação e limites
 
 A entrega 0.4.3 passou nos seis runners e foi publicada pelo [run 39020936011](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39020936011), commit b06fcf9d89161a6c512d4e4f3c97c6c28f20ac54. Foram conferidos os 12 arquivos publicados e a preservação das sete releases anteriores. O comando Java do roteiro tem o argumento de codificação entre aspas para funcionar também no PowerShell. A publicação exige testes Go, testes Java e o roteiro completo de regras/HTTP/backup, empacotamento e smoke do executável em seis runners nativos. Fonte, segredos, dependências e CodeQL são gates separados. O resultado de cada entrega fica em Actions; um teste local isolado não substitui a matriz.
 

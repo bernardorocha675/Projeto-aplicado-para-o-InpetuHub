@@ -4,7 +4,7 @@ Fonte: caçabugs_0.1_Joaoe.docx.PDF, seis páginas, recebido em 17/10/2026. O PD
 
 | Parte | Itens do documento | Análise e estado |
 | --- | --- | --- |
-| 1 — Espaços | Capacidade 0, decimais e impossibilidade de salvar após corrigir (p. 2) | Correção preparada para 0.4.4; validar CI/release antes de declarar publicada. |
+| 1 — Espaços | Capacidade 0, decimais e impossibilidade de salvar após corrigir (p. 2) | Corrigido e publicado na [0.4.4](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.4); seis ambientes nativos aprovados. |
 | 2 — Dados de contato | Nome com números, email sem domínio completo e telefone com letras (p. 1) | Pendente. ReservaForm exige nome/telefone, mas ainda não valida seus formatos. CRUD já tem validação de domínio no email; diferenciar os fluxos antes de mudar. Não é possível comprovar existência de uma caixa de email apenas pelo formato. |
 | 3 — Datas e erros da reserva | Ano atual e próximo, mensagem técnica, perda da data, data da agenda preenchida na reserva (p. 1–3) | Pendente. Há limite mínimo no JavaScript, sem limite máximo. A captura da mensagem de conversão é da reserva, apesar de o texto dizer login. PublicController já recebe a data na URL: ainda conferir a renderização e a ida/volta do formulário. |
 | 4 — Confirmação | Código de confirmação não encontrado (p. 4) | Pendente. Código só é gerado/enviado com email configurado; modo local prevê conferência manual, mas a tela ainda oferece código mesmo nesse caso. Corrigir a orientação/fluxo sem inventar código nem desativar controles de produção. |

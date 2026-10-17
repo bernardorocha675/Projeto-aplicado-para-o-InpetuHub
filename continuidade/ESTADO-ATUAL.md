@@ -6,9 +6,9 @@ Registro de 17/10/2026. Repositório: bernardorocha675/Projeto-aplicado-para-o-I
 
 O usuário enviou caçabugs_0.1_Joaoe.docx.PDF e pediu analisar e corrigir por partes, concluir uma parte e publicar novo fix antes de parar. O PDF completo e suas imagens foram lidos. A divisão dos itens está em docs/BUGS.md. A primeira parte é somente o cadastro de espaços; as partes seguintes dependem de nova autorização.
 
-## Entrega em preparação: 0.4.4
+## Entrega publicada: 0.4.4
 
-Base: a5cfdd9f603674baf7ea67991a4ecb3edecb604f, após v0.4.3 publicada no commit b06fcf9d89161a6c512d4e4f3c97c6c28f20ac54. A nova release só estará concluída depois de todos os gates, tag e 12 arquivos verificados.
+Base: a5cfdd9f603674baf7ea67991a4ecb3edecb604f, após v0.4.3. A [v0.4.4](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.4) foi publicada e verificada. Código testado e tag: `fbe03611991e1ce2678eab93615594e3e90223b1`. [Run 39025880429](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39025880429): 11 jobs aprovados, incluindo os seis ambientes nativos. Os 12 arquivos foram conferidos; as oito releases anteriores mantêm seus IDs e arquivos/tamanhos/digests. HEAD após relatório da CI, antes deste fechamento documental: `6829e3e7a89d619479244149e5245c6607f3ae53`.
 
 - Capacidade de espaços inteira positiva no navegador e no servidor; zero, negativos, frações e estouro são rejeitados.
 - Erro de regra retorna HTTP 400 no mesmo formulário, com nome, capacidade e checkboxes preservados. A transação inválida é revertida antes da resposta.
@@ -18,7 +18,9 @@ Base: a5cfdd9f603674baf7ea67991a4ecb3edecb604f, após v0.4.3 publicada no commit
 
 Sem reset, migration, mudança de senhas/contas/permissões ou diretório de dados. Demais formulários e valores financeiros mantêm as regras anteriores. Handovers e versões dos componentes/pacotes foram atualizados.
 
-Validação efetiva da 0.4.4: conferir docs/VALIDACAO.md e o run associado à tag. Não confundir a CI aprovada da 0.4.3 com evidência do novo fix.
+Validação efetiva da 0.4.4: 91 testes Java (12 novos), 27 Go e go vet, cinco Node da agenda, dois da interface administrativa e sete do receptor/coletor; roteiro HTTP/perfis/contas/backup e smoke do executável real. Passaram os seis ambientes com JDK 21, além de fonte/segredos/dependências/CodeQL/relatório/publicação. Testes locais também passaram com JDK 17. Detalhes: docs/VALIDACAO.md. O ZIP de código contém o instantâneo anterior à CI; este fechamento acompanha main sem substituir os assets imutáveis.
+
+**Parte 1 concluída. Parar aqui e aguardar nova autorização antes da parte 2 ou de qualquer outra etapa.**
 
 ## Próximas partes — parar antes de iniciar
 
