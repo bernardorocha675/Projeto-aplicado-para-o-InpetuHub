@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "next": 6,
+  "next": 7,
   "receipts": {
     "4e86cb7dd2dca51fc52654ff509d00d9": {
       "folder": "Testes/teste01-2026-10-16_21-33-17-4e86cb7d",
@@ -21,6 +21,10 @@
     "40e0b030b5c38eb3be5edcb795755ff6": {
       "folder": "Testes/teste05-2026-10-17_06-23-25-40e0b030",
       "digest": "f53662fe1a45a2b07fc0d3a31f2b661abd0c5ae79cca875001205017e6c861b6"
+    },
+    "2086e34990cdfdd6d0750cff09724c58": {
+      "folder": "Testes/teste06-2026-10-17_07-41-50-2086e349",
+      "digest": "3f218274b191aaecd4d460498a8364b8feb9da324ddd885e797070fa65904b51"
     }
   }
 }
