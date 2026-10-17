@@ -35,4 +35,4 @@ Ao concluir uma tarefa, atualize `continuidade/ESTADO-ATUAL.md` com: mudança, e
 
 As conexões do ChatGPT não são transferidas ao Claude Code. Verifique as integrações disponíveis na nova ferramenta; nunca registre credenciais nestes documentos.
 
-A etapa de backup foi concluída. O usuário autorizou a reorganização com release 0.4.3 e pediu uma etapa por vez: após concluir esta entrega, pare e aguarde autorização para outra tarefa. A migração de uso é exclusivamente pelo executável; comandos de código são internos ao desenvolvimento/CI.
+A etapa de backup e a reorganização foram concluídas; a release 0.4.3 foi publicada e validada. O usuário pediu uma etapa por vez: pare e aguarde um novo pedido/autorização antes de outra tarefa. A migração de uso é exclusivamente pelo executável; comandos de código são internos ao desenvolvimento/CI.
