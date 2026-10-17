@@ -1,13 +1,16 @@
-# Etapa atual — Android independente experimental
+# Etapa entregue — Android experimental independente
 
-Em 17/10/2026, usuário pediu executável Android com identificação experimental e confirmou a opção Funcionar sozinho. Retomou com Continue. Base main c4f26fba976bcb7f917d7096fb2f36298abae155, desktop 0.4.5.
+Pedido de 17/10/2026: criar executável Android identificado como experimental. O usuário confirmou a opção Funcionar sozinho e retomou com Continue. Base desktop c4f26fba976bcb7f917d7096fb2f36298abae155; desktop permanece 0.4.5.
 
-Implementação em android/: APK Java/SQLite offline, cinco acessos locais, espaços/agenda/reservas/cotas/valores/configuração/pagamento, logs automáticos e backup privado. Sem permissão de rede ou servidor. Funcionalidades e diferenças no guia docs/ANDROID.md; não declarar paridade total com desktop.
+[Android 0.1.0-experimental.1](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/android-v0.1.0-experimental.1) publicado como prerelease, latest=false. Tag/código testado: `6c0606e59a9afc78084a1592591d8b163605a4cd`. [Run de publicação 39059503298](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39059503298): build, assinatura, instalação, 16 cenários de instrumentação e publicação aprovados. O mesmo código passou primeiro na branch de validação pelo run 39059231093. Conferidos cinco assets, tag e preservação dos dez releases anteriores, incluindo IDs/arquivos/tamanhos/digests. Latest estável continua v0.4.5.
 
-Versão Android 0.1.0-experimental.1, tag própria android-v0.1.0-experimental.1 e prerelease/latest=false. Desktop e releases existentes preservados. Compilação, teste em emulador e publicação ainda precisam ser comprovados. Atualizar este início com commit/run/asset após conclusão. O trabalho deve parar após esta entrega, sem iniciar outras partes do PDF ou ativar Render.
+Entregue em android/: APK Java/SQLite offline, cinco acessos de demonstração, mostrar senha, espaços, agenda, reservas/cotas/valores/configuração/pagamento, logs automáticos com versão e backup privado. Sem permissão de rede ou servidor; dados próprios no celular. Guia docs/ANDROID.md, arquitetura/assinatura em docs/HANDOVER-ANDROID.md e evidências em docs/VALIDACAO-ANDROID.md. Não declarar paridade total com o desktop.
 
-Assinatura privada Android gerada na primeira CI e backup cifrado para certificado público do responsável. A chave privada de recuperação foi salva e entregue separadamente em InPETU-Android-recuperacao-assinatura.zip; nunca copiá-la ao repositório. Futuras releases exigem restaurar assinatura e configurar secrets, conforme HANDOVER-ANDROID.md. O código recusa gerar outra identidade depois de publicada a primeira release.
+A recuperação do backup cifrado da assinatura publicada foi testada e o certificado confere com o APK. Chave privada de recuperação entregue fora do Git em InPETU-Android-recuperacao-assinatura.zip. Certificado público no repositório; keystore/senha apenas no backup criptografado da release. Antes da próxima publicação, restaurar essa assinatura e configurar ANDROID_KEYSTORE_B64 e ANDROID_KEYSTORE_PASSWORD; o build recusa criar identidade nova se já existe release Android. Não contornar a proteção ou desinstalar para atualizar.
 
+Limites reais: testes em emulador Android 15 x86_64; Android 8.0 mínimo declarado, versões anteriores/ARM/aparelhos físicos ainda precisam de validação. Sem sincronização, CRM, SMTP, edição de reservas, atualização automática ou envio Android ao GitHub. Formulários não salvos podem ser perdidos na recriação da atividade; registros salvos persistem. Cota recalculada com limite atual, diferente do histórico mensal desktop. Roteiro humano no guia.
+
+A matriz desktop foi acionada pela inclusão do workflow e continua disponível no run 39059503236; ela não publica uma nova versão desktop nem substitui v0.4.5. Não confundir seus resultados com testes do APK ou com envio real de PCs. Render e demais partes do PDF permanecem fora desta entrega. Trabalho Android concluído; parar e aguardar nova autorização.
 ---
 
 # Etapa entregue — logs 0.4.5; ativação do receptor pendente

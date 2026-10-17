@@ -2,6 +2,10 @@
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
 
+## Android experimental independente
+
+A linha Android 0.1.0-experimental.1 foi publicada separadamente, sem alterar a versão estável desktop 0.4.5 ou seus dados. Fontes em android/, uso em [ANDROID.md](ANDROID.md), arquitetura/assinatura em [HANDOVER-ANDROID.md](HANDOVER-ANDROID.md) e evidências de publicação/testes em [VALIDACAO-ANDROID.md](VALIDACAO-ANDROID.md). Não importar H2 nem presumir sincronização ou equivalência completa. A validação Android usa emulador próprio e não substitui a matriz de computadores.
+
 ## Fix 0.4.5 — logs e finalização de relatórios
 
 Base: c27ad98da17796b92ad1d05819b05bf0218c9f1a, após 0.4.4. O pedido atual é um fix dedicado aos logs; não autoriza continuar automaticamente as demais partes do PDF.

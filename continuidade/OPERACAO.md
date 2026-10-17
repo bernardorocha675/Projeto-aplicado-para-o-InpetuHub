@@ -6,6 +6,7 @@ Os caminhos abaixo partem da raiz do repositório. Os fontes ativos estão em ap
 
 | Área | Caminhos principais |
 | --- | --- |
+| Android experimental | `android/`, `.github/workflows/android-experimental.yml`; guias `docs/ANDROID.md`, `HANDOVER-ANDROID.md` e `VALIDACAO-ANDROID.md` |
 | Entrada Java | `aplicativo/src/main/java/br/com/inpetu/hub/InpetuApplication.java` |
 | Contas locais | `aplicativo/src/main/java/br/com/inpetu/hub/config/LocalAccounts.java`, `PrivateAccountInitializer.java` no mesmo diretório |
 | Regras e agenda | `aplicativo/src/main/java/br/com/inpetu/hub/service/`, especialmente DisponibilidadeService e ReservaService |
