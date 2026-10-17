@@ -18,7 +18,7 @@ def main():
     if not re.fullmatch(r'0\.4\.(0|[1-9]\d*)',version):
         raise SystemExit('Publicador limitado a releases numericas 0.4.x.')
     ns={'m':'http://maven.apache.org/POM/4.0.0'}
-    if ET.parse('versão 0.4/pom.xml').getroot().findtext('m:version',namespaces=ns)!=version:
+    if ET.parse('aplicativo/pom.xml').getroot().findtext('m:version',namespaces=ns)!=version:
         raise SystemExit('VERSION e pom.xml divergem.')
     if not Path('RELEASE-NOTES.md').read_text().startswith(f'# InPETU Hub {version}\n'):
         raise SystemExit('Atualize RELEASE-NOTES.md.')
@@ -43,11 +43,10 @@ def main():
                 parts=PurePosixPath(name).parts
                 if {'data','.secrets','backups','logs','.env.local','.env'}.intersection(parts):
                     raise SystemExit('Dados privados no pacote nativo.')
-    paths=['versão 0.4','README.md','.gitignore','.gitleaks.toml','.gitleaksignore',
-           '.github/SECURITY.md','.github/workflows/release-v0.4.yml',
-           '.github/scripts/package_v04.py','.github/scripts/smoke_v04.py','.github/scripts/publish_v04.py',
-           '.github/scripts/test_agenda_ui.cjs','.github/scripts/collect-reports.mjs',
-           '.github/scripts/verify-collector-identity.mjs','.github/workflows/collect-test-reports.yml',
+    paths=['aplicativo','iniciador','receptor','docs','continuidade','CLAUDE.md',
+           'README.md','.gitignore','.gitattributes','.gitleaks.toml','.gitleaksignore',
+           '.github/SECURITY.md','.github/dependabot.yml',
+           '.github/workflows','.github/scripts',
            'Testes/README.md','Testes/configuracao.json',
            'VERSION','RELEASE-NOTES.md','RELEASES.md']
     tracked=list(filter(None,run('git','ls-files','-z','--',*paths).split('\0')))

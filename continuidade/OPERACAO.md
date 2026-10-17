@@ -2,22 +2,22 @@
 
 ## Arquivos de referência
 
-Os caminhos abaixo partem da raiz do repositório. A pasta ativa possui espaço e acento: use aspas nos comandos.
+Os caminhos abaixo partem da raiz do repositório. Os fontes ativos estão em aplicativo/, iniciador/ e receptor/. Caminhos de dados do usuário podem ter espaços e acentos: use aspas nos comandos.
 
 | Área | Caminhos principais |
 | --- | --- |
-| Entrada Java | `versão 0.4/src/main/java/br/com/inpetu/hub/InpetuApplication.java` |
-| Contas locais | `versão 0.4/src/main/java/br/com/inpetu/hub/config/LocalAccounts.java`, `PrivateAccountInitializer.java` no mesmo diretório |
-| Regras e agenda | `versão 0.4/src/main/java/br/com/inpetu/hub/service/`, especialmente DisponibilidadeService e ReservaService |
-| Rotas e telas | `versão 0.4/src/main/java/br/com/inpetu/hub/controller/`, `versão 0.4/src/main/resources/templates/` |
-| Segurança e logs Java | `versão 0.4/src/main/java/br/com/inpetu/hub/security/` e `observability/` |
-| Instalação/processo/atualização | `versão 0.4/launcher/main.go`, `model.go`, `app.go`, `update.go`, `ui.html` |
-| Sessão e envio local | `versão 0.4/launcher/session.go`, `reporting.go`, `session_test.go` |
-| Recepção/validação | `versão 0.4/receiver/server.mjs`, `schema.mjs`, `test.mjs` |
+| Entrada Java | `aplicativo/src/main/java/br/com/inpetu/hub/InpetuApplication.java` |
+| Contas locais | `aplicativo/src/main/java/br/com/inpetu/hub/config/LocalAccounts.java`, `PrivateAccountInitializer.java` no mesmo diretório |
+| Regras e agenda | `aplicativo/src/main/java/br/com/inpetu/hub/service/`, especialmente DisponibilidadeService e ReservaService |
+| Rotas e telas | `aplicativo/src/main/java/br/com/inpetu/hub/controller/`, `aplicativo/src/main/resources/templates/` |
+| Segurança e logs Java | `aplicativo/src/main/java/br/com/inpetu/hub/security/` e `observability/` |
+| Instalação/processo/atualização | `iniciador/main.go`, `model.go`, `app.go`, `update.go`, `ui.html` |
+| Sessão e envio local | `iniciador/session.go`, `reporting.go`, `session_test.go` |
+| Recepção/validação | `receptor/server.mjs`, `schema.mjs`, `test.mjs` |
 | Coletor e identidade | `.github/scripts/collect-reports.mjs`, `verify-collector-identity.mjs`, `.github/workflows/collect-test-reports.yml` |
 | Empacotamento e smoke | `.github/scripts/package_v04.py`, `smoke_v04.py` |
 | Publicação | `.github/workflows/release-v0.4.yml`, `.github/scripts/publish_v04.py`, `VERSION`, `RELEASE-NOTES.md`, `RELEASES.md` |
-| Guias para pessoas | `versão 0.4/COMO-INICIAR.md`, `TESTAR.md`, `ACESSOS.md`, `ATUALIZACOES.md`, `HANDOVER.md` |
+| Guias para pessoas | `docs/COMO-INICIAR.md`, `TESTAR.md`, `ACESSOS.md`, `ATUALIZACOES.md`, `HANDOVER.md` |
 
 ## Comandos de desenvolvimento
 
@@ -27,10 +27,10 @@ Na raiz, com Node disponível (receptor exige Node >=22; hospedagem planejada us
 
 ```sh
 node .github/scripts/test_agenda_ui.cjs
-node --test "versão 0.4/receiver/test.mjs"
+node --test "receptor/test.mjs"
 ```
 
-Dentro de `versão 0.4/launcher`, com Go compatível com o pin da CI:
+Dentro de `iniciador`, com Go compatível com o pin da CI:
 
 ```sh
 go test ./...
@@ -40,12 +40,10 @@ go vet ./...
 Na raiz, com JDK/Maven configurados:
 
 ```sh
-mvn -B -ntp -f "versão 0.4/pom.xml" test
+mvn -B -ntp -f "aplicativo/pom.xml" test
 ```
 
-Para o roteiro de integração existente, entre em `versão 0.4`. Linux/macOS usam `bash configurar.sh` e depois `bash testar.sh`; Windows usa `configurar.bat` e depois `testar.bat`. A configuração prepara ferramentas locais quando necessário, compila e testa. Os scripts usam dados de teste próprios; leia `TESTAR.md` e o código do roteiro antes de executá-los.
-
-As ferramentas baixadas em `.tools` não ficam automaticamente no PATH de todos os terminais. Se o comando direto de Java/Maven não for encontrado, utilize os scripts de configuração/runtime ou configure explicitamente o ambiente, sem alterar o sistema desnecessariamente.
+Para o roteiro de integração, com JDK 21 e Maven no PATH, entre em `aplicativo` e execute `java -Dfile.encoding=UTF-8 --source 17 scripts/Testar.java`. Ele usa dados descartáveis, recompila e testa HTTP/backup/contas. A CI prepara Maven com `.github/scripts/setup_maven.py` e confere o checksum oficial. Os antigos scripts configurar/iniciar/testar por sistema foram retirados. Veja `docs/ESTRUTURA.md` para o procedimento atualizado.
 
 Empacotamento requer o JAR já gerado, Go, JDK com jlink e INPETU_GOOS/INPETU_GOARCH coerentes com o host. Use a matriz em `.github/workflows/release-v0.4.yml` como referência: gerar um pacote em um host não comprova seu funcionamento em outro. O smoke roda o executável real em diretório temporário, simula um fix futuro sem publicar release falsa e verifica banco/chave/logins/sessões.
 
@@ -67,7 +65,7 @@ Quando houver autorização e acesso:
 
 1. Conferir `Testes/configuracao.json` e serviços existentes. Se o envio já tiver sido ativado depois deste registro, investigar o estado real antes de mudar.
 2. Publicar somente o receptor Node no workspace confirmado, plano Free, branch main, com auto-deploy desativado. Não implantar o aplicativo Java, banco ou outros serviços como parte disso.
-3. Usar NODE_VERSION=24. Build: `node --check 'versão 0.4/receiver/server.mjs'`. Start: `node 'versão 0.4/receiver/server.mjs'`. O serviço escuta em `0.0.0.0:$PORT`.
+3. Usar NODE_VERSION=24. Build: `node --check 'receptor/server.mjs'`. Start: `node 'receptor/server.mjs'`. O serviço escuta em `0.0.0.0:$PORT`.
 4. Confirmar deploy saudável e GET `/healthz` com versão correta. GET `/v1/pending` e POST `/v1/ack` sem identidade válida devem ser negados. Nunca registrar JWTs nos documentos/logs públicos.
 5. Registrar a URL HTTPS real terminada em `/v1/reports` e `enabled: true` no arquivo público de configuração. Não inventar URL nem adicionar tokens. O iniciador consulta essa configuração; não é necessária reinstalação apenas para ativar o destino.
 6. Abrir/usar/fechar uma instalação de demonstração, aguardar coleta pelo Actions e conferir a nova pasta `Testes/testeNN-data-id`, `log.txt`, `resumo.json` e versões por evento. Testar erro controlado e revisar ausência de dados privados.

@@ -13,16 +13,33 @@ Projeto acadêmico desenvolvido na disciplina de **Projeto Aplicado do UniSENAI*
 
 ## Versão atual
 
-[**Versão 0.4.2**](vers%C3%A3o%200.4) — registros automáticos de sessões, ações, erros e versões, com fila de relatórios.
+[**Versão 0.4.3**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.3) — repositório organizado para o executável, com fontes atuais e documentação unificada.
 
-## Documentação
+## Usar o aplicativo
 
-- [Instalação e execução](vers%C3%A3o%200.4/COMO-INICIAR.md)
-- [Guia de testes](vers%C3%A3o%200.4/TESTAR.md)
-- [Acessos e recuperação](vers%C3%A3o%200.4/ACESSOS.md)
-- [Handover técnico — versão 0.4](vers%C3%A3o%200.4/HANDOVER.md)
-- [Continuidade do projeto e migração para o Claude Code](continuidade/README.md)
-- [Releases e downloads](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases) · [Como publicamos versões](RELEASES.md)
+Baixe o pacote completo do seu sistema em [Releases](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/latest), extraia e abra o iniciador. O pacote inclui o aplicativo e o Java necessário.
+
+- [Instalação e execução](docs/COMO-INICIAR.md)
+- [Acessos de demonstração](docs/ACESSOS.md)
+- [Atualizações e dados](docs/ATUALIZACOES.md)
+- [Logs e relatórios](docs/RELATORIOS.md)
+
+## Organização do repositório
+
+| Pasta | Conteúdo |
+| --- | --- |
+| `aplicativo/` | Aplicativo Java e testes de regras, segurança e integração. |
+| `iniciador/` | Código Go do executável de instalação, atualização e início. |
+| `receptor/` | Serviço auxiliar de recebimento dos relatórios. |
+| `docs/` | Guias, testes e handover da entrega atual. |
+| `Testes/` | Relatórios publicados e configuração de envio. |
+| `continuidade/` | Contexto e decisões para continuidade com o Claude Code. |
+
+As versões anteriores permanecem nas [releases](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases) e no histórico Git. O código atual reúne os componentes necessários ao executável e ao seu ciclo de testes/publicação.
+
+- [Handover técnico](docs/HANDOVER.md) · [Estrutura e desenvolvimento](docs/ESTRUTURA.md)
+- [Guia de testes](docs/TESTAR.md) · [Publicação de versões](RELEASES.md)
+- [Continuidade e migração para o Claude Code](continuidade/README.md)
 
 ---
 

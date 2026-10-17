@@ -1,6 +1,6 @@
 # Estado atual e ponto de retomada
 
-Registro conferido em **16/10/2026, horário de Brasília**. É uma fotografia do estado do projeto; confirme novamente os fatos que mudam com o tempo.
+Registro conferido em **17/10/2026, horário de Brasília**. É uma fotografia do estado do projeto; confirme novamente os fatos que mudam com o tempo.
 
 ## Referências verificadas
 
@@ -8,15 +8,29 @@ Registro conferido em **16/10/2026, horário de Brasília**. É uma fotografia d
 | --- | --- |
 | Repositório | `bernardorocha675/Projeto-aplicado-para-o-InpetuHub` |
 | Branch de referência | `main` |
-| HEAD antes desta documentação | `a651932dd3b02361f418dd6d384e57056ed75dde` |
-| Versão em VERSION e no POM | `0.4.2` |
+| HEAD antes da reorganização | `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` |
+| Versão em preparação/validação | `0.4.3` |
 | Release publicada | [v0.4.2](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.2) |
 | Commit da tag/release | `c9a63fd60ff8583edcceb30287eefc1ca494209f` |
-| Pasta ativa | `versão 0.4/` |
+| Fontes ativos | `aplicativo/`, `iniciador/`, `receptor/` |
+| Guias | `docs/` |
 
-Esta tarefa acrescenta documentação de continuidade. Não altera versão, aplicativo, banco, autenticação, atualização, workflows ou configuração de hospedagem.
+## Etapa atual: reorganização autorizada
 
-## Concluído
+O usuário recebeu o ZIP InPETU-Hub-backup-2026-10-17.zip com todas as versões, histórico completo, sete branches e sete tags; restauração e integridade foram verificadas. Os binários antigos não estão nesse ZIP e continuam nas releases. Depois ele autorizou organizar o repositório, usar somente o executável, preservar releases e criar uma release por entrega. A versão desta etapa é 0.4.3.
+
+Os fontes foram separados em aplicativo/, iniciador/ e receptor/, e os guias em docs/. As cópias antigas de versões, configuração de VS Code e scripts de início/configuração por terminal foram retirados da árvore principal. Testes, empacotamento, dependências e coletor foram ajustados. Banco, contas, senhas, regras e o destino desativado do receptor foram preservados.
+
+A publicação da 0.4.3 depende dos testes e do workflow. Até a confirmação da tag, assets e run, a última release comprovada nesta preparação é 0.4.2. Consultar Actions/release antes de afirmar que a nova entrega está publicada. Ao finalizar esta etapa, **parar e aguardar nova autorização do usuário**. Render não está autorizado nesta etapa.
+
+## Evidências da preparação 0.4.3
+
+Passaram nesta preparação: cinco testes Node da agenda, sete do receptor/coletor, 27 testes Go e go vet, 79 testes Java e o roteiro completo de HTTP/perfis/contas/backup com dados descartáveis. O pacote Linux x64 foi gerado na nova estrutura e passou no smoke real com quinze logins, reinício, troca do iniciador e preservação de banco/chave/sessão. Java de produção e seus testes foram comparados ao conteúdo anterior e permanecem iguais; as adaptações estão nos caminhos e ferramentas. Links locais, YAML, sintaxe dos scripts e verificação de segredos também passaram.
+
+A verificação local usou JDK 17 compatível com o alvo do POM. A publicação usa a matriz com JDK 21 nos seis ambientes nativos. Os resultados de CI e a publicação devem ser conferidos antes do aceite; registrar o run efetivo ao concluir, sem apresentar resultados da 0.4.2 como se fossem da 0.4.3.
+
+
+## Concluído antes desta reorganização
 
 - Iniciador nativo instala/configura o aplicativo, oferece iniciar/parar e verifica fixes da família 0.4.x.
 - A 0.4.1 corrigiu a agenda de banco sem espaços: mostra `SEM_ESPACOS`, sem classificar tudo como ocupado. Espaços e reservas reais mantêm suas regras.

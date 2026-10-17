@@ -4,7 +4,7 @@
 
 O InPETU Hub é um projeto acadêmico da disciplina de Projeto Aplicado do UniSENAI, em parceria com o InPETU Hub. O sistema oferece agenda pública de espaços e área interna para reservas e relacionamento. A equipe apresentada no README é Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista.
 
-As pessoas previstas para os cinco acessos de demonstração são Milena, Bernardo, João F, João E e Guilherme. Nomes de login e instruções de acesso estão em `versão 0.4/ACESSOS.md`; não duplicar senhas nesta área. Apenas a conta de Bernardo tem as funções administrativas previstas na demonstração atual.
+As pessoas previstas para os cinco acessos de demonstração são Milena, Bernardo, João F, João E e Guilherme. Nomes de login e instruções de acesso estão em `docs/ACESSOS.md`; não duplicar senhas nesta área. Apenas a conta de Bernardo tem as funções administrativas previstas na demonstração atual.
 
 ## Evolução resumida
 
@@ -17,6 +17,7 @@ As pessoas previstas para os cinco acessos de demonstração são Milena, Bernar
 | 0.4.0 | Trocar a instalação do usuário por VS Code/terminal por um iniciador nativo, com aplicativo e Java privado, configuração local e atualização automática de fixes da própria linha. |
 | 0.4.1 | Corrigir a agenda que parecia totalmente ocupada quando não havia espaços ativos/disponíveis cadastrados. |
 | 0.4.2 | Registrar automaticamente sessões, ações, erros e versões; preparar envio sem login GitHub do time e publicar resultados da CI em Testes. A hospedagem do receptor continua pendente. |
+| 0.4.3 | Após backup autorizado e validado, manter uma única árvore de fontes ativos em aplicativo/, iniciador/ e receptor/, com guias em docs/. Retirar versões antigas e caminhos de início por terminal da árvore principal, preservando releases e histórico. |
 
 A tabela resume decisões e motivação, não reproduz todo o chat nem comprova cada pedido como entregue. Versões e detalhes verificáveis estão nas tags, nos handovers e nas execuções de CI. O pedido antigo de senhas privadas foi posteriormente substituído pela autorização de acessos públicos de demonstração; isso não autoriza publicar segredos reais.
 
@@ -60,4 +61,8 @@ A cópia local permanece até confirmação final de publicação. HTTP 202 sign
 
 Os relatórios públicos omitem dados livres e incluem códigos, IDs locais, tipos de erro e pontos do código. Não atestam identidade/integridade do dispositivo. Há limites de eventos/tamanho/fila; eventos omitidos por limite são contados. CONCLUIDO significa encerramento normal; erros individuais precisam ser conferidos.
 
-Detalhes de limites, formatos e operação estão em `versão 0.4/RELATORIOS.md`, `versão 0.4/receiver/README.md` e `Testes/README.md`.
+Detalhes de limites, formatos e operação estão em `docs/RELATORIOS.md`, `docs/RECEPTOR.md` e `Testes/README.md`.
+
+## Forma de continuidade a partir da reorganização
+
+O usuário determinou uso somente pelo executável, uma etapa de trabalho por vez e nova release para cada entrega funcional. Backup foi a primeira etapa e está concluído; a reorganização foi autorizada em seguida. Depois da release 0.4.3, parar e aguardar autorização. Não aproveitar a etapa para ativar Render, redesenhar autenticação ou migrar dados. Os comandos de código e os testes continuam necessários ao desenvolvimento do executável.

@@ -2,9 +2,9 @@ name: Versão 0.4 — executáveis e compatibilidade
 on:
   push:
     branches: ['main', 'release-v0.4']
-    paths: ['versão 0.4/**', '.github/**', '.gitleaks*', 'VERSION', 'RELEASE-NOTES.md', 'RELEASES.md']
+    paths: ['aplicativo/**', 'iniciador/**', 'receptor/**', '.github/**', '.gitleaks*', 'VERSION', 'RELEASE-NOTES.md', 'RELEASES.md']
   pull_request:
-    paths: ['versão 0.4/**', '.github/**', '.gitleaks*', 'VERSION', 'RELEASE-NOTES.md', 'RELEASES.md']
+    paths: ['aplicativo/**', 'iniciador/**', 'receptor/**', '.github/**', '.gitleaks*', 'VERSION', 'RELEASE-NOTES.md', 'RELEASES.md']
   workflow_dispatch:
   schedule:
     - cron: '17 9 * * 1'
@@ -27,7 +27,7 @@ jobs:
     timeout-minutes: 35
     defaults:
       run:
-        working-directory: versão 0.4
+        working-directory: aplicativo
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -43,24 +43,14 @@ jobs:
           architecture: ${{ matrix.goarch }}
           cache: false
       - name: Testar e conferir o iniciador
-        working-directory: versão 0.4/launcher
+        working-directory: iniciador
         run: |
           go test -v ./...
           go vet ./...
-      - name: Configurar Linux e macOS
-        if: runner.os != 'Windows'
-        run: bash configurar.sh
-      - name: Configurar Windows
-        if: runner.os == 'Windows'
-        shell: cmd
-        run: configurar.bat
-      - name: Executar roteiro automático Linux e macOS
-        if: runner.os != 'Windows'
-        run: bash testar.sh
-      - name: Executar roteiro automático Windows
-        if: runner.os == 'Windows'
-        shell: cmd
-        run: testar.bat
+      - name: Preparar Maven para compilação e testes
+        run: python ../.github/scripts/setup_maven.py
+      - name: Executar testes de regras, HTTP e backup
+        run: java -Dfile.encoding=UTF-8 --source 17 scripts/Testar.java
       - name: Gerar executável e runtime privado
         env:
           INPETU_GOOS: ${{ matrix.goos }}
@@ -74,9 +64,9 @@ jobs:
           name: desktop-v04-${{ matrix.goos }}-${{ matrix.goarch }}
           compression-level: 0
           path: |
-            versão 0.4/dist/*.zip
-            versão 0.4/dist/*.exe
-            versão 0.4/dist/*.run
+            aplicativo/dist/*.zip
+            aplicativo/dist/*.exe
+            aplicativo/dist/*.run
           if-no-files-found: error
       - name: Guardar relatório sem credenciais
         if: always()
@@ -84,8 +74,8 @@ jobs:
         with:
           name: testes-v0.4-${{ matrix.os }}
           path: |
-            versão 0.4/relatorios-testes/ultimo.html
-            versão 0.4/relatorios-testes/ultimo.txt
+            aplicativo/relatorios-testes/ultimo.html
+            aplicativo/relatorios-testes/ultimo.txt
           if-no-files-found: ignore
   source:
     runs-on: ubuntu-24.04
@@ -98,9 +88,9 @@ jobs:
       - name: Testar apresentação da agenda
         run: node .github/scripts/test_agenda_ui.cjs
       - name: Testar receptor, identidade e publicação dos relatórios
-        run: node --test 'versão 0.4/receiver/test.mjs'
+        run: node --test 'receptor/test.mjs'
       - name: Verificar exclusão de dados privados
-        run: python 'versão 0.4/scripts/check_secrets.py'
+        run: python 'aplicativo/scripts/check_secrets.py'
       - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -110,7 +100,7 @@ jobs:
     timeout-minutes: 20
     defaults:
       run:
-        working-directory: versão 0.4
+        working-directory: aplicativo
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -142,7 +132,7 @@ jobs:
           build-mode: manual
           queries: security-extended
       - run: mvn -B -ntp -DskipTests clean package
-        working-directory: versão 0.4
+        working-directory: aplicativo
       - uses: github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d
         with:
           category: /language:java-v03

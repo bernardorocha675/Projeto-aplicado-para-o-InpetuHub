@@ -1,5 +1,5 @@
-import {verifyClaims} from '../../versão 0.4/receiver/server.mjs';
-import {AUDIENCE} from '../../versão 0.4/receiver/schema.mjs';
+import {verifyClaims} from '../../receptor/server.mjs';
+import {AUDIENCE} from '../../receptor/schema.mjs';
 
 async function main(){
  const url=new URL(process.env.ACTIONS_ID_TOKEN_REQUEST_URL);url.searchParams.set('audience',AUDIENCE);

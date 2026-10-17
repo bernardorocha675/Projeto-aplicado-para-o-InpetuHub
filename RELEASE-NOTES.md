@@ -1,17 +1,17 @@
-# InPETU Hub 0.4.2
+# InPETU Hub 0.4.3
 
-- Registro automático de sessões ao abrir o executável, sem botão de iniciar teste.
-- Versões do aplicativo e do iniciador em cada evento, com ações, navegação, configuração, atualização e erros.
-- Relatórios locais, recuperação após interrupção e continuidade durante a troca automática de iniciador.
-- Fila de envio para Testes/testeNN-data-id no GitHub, com log.txt e resumo.json; nenhum login ou token do GitHub nos computadores do time.
-- Resumo automático dos testes da CI publicado em Testes antes da release.
+- Repositório reorganizado para a entrega pelo executável: aplicativo Java em aplicativo/, iniciador Go em iniciador/ e receptor de relatórios em receptor/.
+- Documentação atual reunida em docs/, com instalação, acessos, logs, testes, estrutura e handover.
+- Retiradas as cópias antigas de versões, configurações de VS Code e scripts de início/configuração por terminal da árvore principal. As entregas anteriores continuam nas releases e no histórico Git.
+- Compilação, empacotamento, testes, dependências e coletor de relatórios ajustados aos novos caminhos.
+- Contexto do Claude Code e continuidade atualizados para a nova organização.
 
 ## Usar
 
-Atualize pelo iniciador da linha 0.4 ou baixe o ZIP completo do seu sistema/arquitetura. Abra o executável e use normalmente. Fechar iniciador finaliza a sessão; fechar só a aba mantém o processo e os registros ativos.
+Baixe o ZIP completo do seu sistema/arquitetura, extraia e abra o iniciador. As instalações da linha 0.4 podem atualizar pelo próprio executável. O pacote inclui aplicativo e Java privado.
 
-Os arquivos ficam em logs/sessoes na pasta de dados do usuário. O envio exige receptor online e enabled=true em Testes/configuracao.json. Enquanto estiver desativado ou indisponível, os registros ficam no computador e a interface informa a pendência. A ativação posterior não exige reinstalação. A publicação no GitHub ocorre em segundo plano e pode levar alguns minutos.
+Banco, cadastros, reservas, contas, senhas e a pasta de dados da linha 0.4 são preservados. A agenda sem espaços e os logs automáticos com versão continuam funcionando. A mudança organiza os fontes; não acrescenta uma migração de dados.
 
-Não são enviados senhas, tokens, cookies, formulários ou banco. Os relatórios usam códigos de ações, IDs locais, tipos de erro e pontos do código. Limites e condições estão em RELATORIOS.md e Testes/README.md. CONCLUIDO representa encerramento normal; erros individuais constam no log e no resumo.
+O envio dos computadores do time ao GitHub continua dependendo da ativação do receptor. Enquanto Testes/configuracao.json estiver desativado, os registros permanecem locais. A reorganização não cria serviços no Render nem altera essa configuração.
 
-Banco, reservas, contas e senhas da 0.4.1 são preservados. Mantidos os pacotes Windows, macOS e Linux x64/ARM64 e a correção da agenda. O handover explica instalação e operação do receptor.
+Instruções e limitações: docs/COMO-INICIAR.md, docs/HANDOVER.md e docs/VALIDACAO.md no código da release. As releases anteriores e seus arquivos foram preservados.

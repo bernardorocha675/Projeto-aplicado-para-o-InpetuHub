@@ -8,15 +8,15 @@ Este repositório é o projeto acadêmico de Projeto Aplicado do UniSENAI, em pa
 
 ## Antes de alterar código
 
-1. Leia `continuidade/CONTEXTO.md` e `continuidade/OPERACAO.md`; para detalhes da entrega, consulte `versão 0.4/HANDOVER.md`.
+1. Leia `continuidade/CONTEXTO.md` e `continuidade/OPERACAO.md`; para detalhes da entrega, consulte `docs/HANDOVER.md`.
 2. Confira `git status`, `VERSION`, a release mais recente e os resultados de Actions. Este contexto tem data e pode ficar desatualizado; o código e as evidências atuais prevalecem sobre o resumo.
-3. Trabalhe na linha ativa, `versão 0.4/`. As pastas `versão 0.1/`, `versão 0.2/` e `versão 0.3/` são históricas. Não copie uma versão antiga por cima da atual.
+3. Trabalhe nos fontes ativos: `aplicativo/` (Java), `iniciador/` (Go) e `receptor/` (Node). Os guias ficam em `docs/`. Versões antigas estão nas tags/releases e no backup; não recrie pastas de versões na raiz.
 4. Preserve mudanças de outras pessoas e limite as alterações ao pedido. Quando o pedido for somente analisar, não edite, faça commit, merge ou deploy.
 
 ## Decisões que devem ser preservadas
 
 - O usuário final usa o executável; VS Code, Maven, Go e Java externo são ferramentas de desenvolvimento, não requisitos de uso da release.
-- Mantenha Windows, macOS e Linux, nas arquiteturas x64/ARM64. Caminhos possuem espaços e acentos; sempre use aspas nos comandos.
+- Mantenha Windows, macOS e Linux, nas arquiteturas x64/ARM64. A instalação e os dados do usuário podem ter espaços e acentos; sempre use aspas nos comandos.
 - Os fixes automáticos ficam na mesma família `0.4.x`; não migre automaticamente para `0.5`.
 - Preserve banco, reservas, chave, ambiente e backups. Não redefina dados nem contas para corrigir um bug sem autorização específica para esse reset.
 - Existem cinco contas públicas de demonstração local. A decisão de simplificar o login não autoriza remover proteções dos outros perfis. Não reintroduza MFA obrigatório na demonstração sem novo pedido.
@@ -34,3 +34,5 @@ Mudanças funcionais são entregues em GitHub Releases após a matriz da CI. Nã
 Ao concluir uma tarefa, atualize `continuidade/ESTADO-ATUAL.md` com: mudança, evidência dos testes, commit/release de referência e pendências reais. Atualize `CONTEXTO.md` apenas quando uma decisão duradoura mudar. Não marque algo como feito apenas porque foi solicitado no histórico.
 
 As conexões do ChatGPT não são transferidas ao Claude Code. Verifique as integrações disponíveis na nova ferramenta; nunca registre credenciais nestes documentos.
+
+A etapa de backup foi concluída. O usuário autorizou a reorganização com release 0.4.3 e pediu uma etapa por vez: após concluir esta entrega, pare e aguarde autorização para outra tarefa. A migração de uso é exclusivamente pelo executável; comandos de código são internos ao desenvolvimento/CI.

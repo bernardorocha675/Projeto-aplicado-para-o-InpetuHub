@@ -3,7 +3,7 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {pathToFileURL} from 'node:url';
-import {REPOSITORY,AUDIENCE,normalizeReport,reportDigest,renderLog,summarize,validID,validFolder} from '../../versão 0.4/receiver/schema.mjs';
+import {REPOSITORY,AUDIENCE,normalizeReport,reportDigest,renderLog,summarize,validID,validFolder} from '../../receptor/schema.mjs';
 
 export function storeReports(root,input){
  const directory=path.join(root,'Testes');fs.mkdirSync(directory,{recursive:true});if(!fs.lstatSync(directory).isDirectory()||fs.lstatSync(directory).isSymbolicLink())throw new Error('Diretório Testes inválido.');

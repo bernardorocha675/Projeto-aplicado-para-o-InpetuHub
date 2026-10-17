@@ -20,7 +20,7 @@ Esta área permite que outra pessoa ou ferramenta continue o InPETU Hub sem depe
 | [ESTADO-ATUAL.md](ESTADO-ATUAL.md) | Entrega verificada, evidências, bloqueios e próximo passo. |
 | [CONTEXTO.md](CONTEXTO.md) | Produto, histórico resumido, arquitetura e decisões do projeto. |
 | [OPERACAO.md](OPERACAO.md) | Mapa do código, comandos de teste, publicação e retomada do envio. |
-| [Handover da linha 0.4](../vers%C3%A3o%200.4/HANDOVER.md) | Detalhes técnicos e limitações da versão. |
+| [Handover da linha 0.4](../docs/HANDOVER.md) | Detalhes técnicos e limitações da versão. |
 
 ## Limites da transferência
 

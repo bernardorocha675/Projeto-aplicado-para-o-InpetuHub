@@ -28,7 +28,7 @@ class Element {
   querySelectorAll(selector) { return this.children.filter(c => c.classList.contains(selector.slice(1))); }
 }
 
-const source = fs.readFileSync(path.resolve(__dirname, '../../versão 0.4/src/main/resources/static/js/agenda.js'), 'utf8');
+const source = fs.readFileSync(path.resolve(__dirname, '../../aplicativo/src/main/resources/static/js/agenda.js'), 'utf8');
 async function calendar(state) {
   const nodes = Object.fromEntries(['calendario', 'mes-titulo', 'detalhe-dia', 'filtro-espaco', 'agenda-aviso', 'mes-anterior', 'mes-proximo'].map(id => [id, new Element()]));
   let current = state;

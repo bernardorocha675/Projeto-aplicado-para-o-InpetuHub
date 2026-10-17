@@ -13,7 +13,7 @@ import urllib.parse
 import urllib.request
 
 root = Path(__file__).resolve().parents[2]
-project = root / 'versão 0.4'
+project = root / 'aplicativo'
 package = json.loads((project / 'dist/smoke.json').read_text())
 accounts = [('milena','milena040'),('bernardo','bernardo040'),('joaof','joaof040'),
             ('joaoe','joaoe040'),('guilherme','guilherme040')]
@@ -130,7 +130,7 @@ with tempfile.TemporaryDirectory(prefix='inpetu-desktop-smoke-') as temp:
             flags+=' -H=windowsgui'
         build_env=dict(os.environ,CGO_ENABLED='0',GOOS=manifest['GOOS'],GOARCH=manifest['GOARCH'])
         subprocess.run(['go','build','-trimpath','-ldflags',flags,'-o',str(next_root/manifest['Launcher']),'.'],
-                       cwd=project/'launcher',env=build_env,check=True)
+                       cwd=root/'iniciador',env=build_env,check=True)
         (home/'current.json').write_text(json.dumps({'Version':future_version}),encoding='utf-8')
         old_control=control
         api('start')

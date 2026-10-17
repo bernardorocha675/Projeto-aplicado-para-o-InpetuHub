@@ -2,7 +2,7 @@ name: Recolher relatórios dos executáveis
 on:
   push:
     branches: ['main']
-    paths: ['.github/workflows/collect-test-reports.yml', '.github/scripts/collect-reports.mjs', '.github/scripts/verify-collector-identity.mjs', 'versão 0.4/receiver/**', 'Testes/configuracao.json']
+    paths: ['.github/workflows/collect-test-reports.yml', '.github/scripts/collect-reports.mjs', '.github/scripts/verify-collector-identity.mjs', 'receptor/**', 'Testes/configuracao.json']
   schedule:
     - cron: '2-57/5 * * * *'
   workflow_dispatch:

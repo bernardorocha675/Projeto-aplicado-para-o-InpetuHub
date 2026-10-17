@@ -1,3 +1,30 @@
-# Pacotes particulares de acesso distribuídos separadamente do código.
+# Arquivos locais e produtos de compilação.
+.tools/
+target/
+dist/
+release-assets/
+__pycache__/
+*.pyc
+.DS_Store
+
+# Dados, configurações e cópias particulares.
+.env
+.env.local
+.secrets/
+data/
+backups/
+logs/
+relatorios-testes/
+*.log
+*.db
+*.db.*
+*.key
+*.pem
+*.p12
+*.jks
+*.inpetu
+*.zip
+*.exe
+*.run
 *ACESSOS-PRIVADOS*/
 *ACESSOS-PRIVADOS*.zip
