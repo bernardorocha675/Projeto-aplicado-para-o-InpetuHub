@@ -1,12 +1,14 @@
-# Etapa atual — logs 0.4.5
+# Etapa entregue — logs 0.4.5; ativação do receptor pendente
 
 Pedido de 17/10/2026: criar novo fix terminando a questão dos logs. Base c27ad98da17796b92ad1d05819b05bf0218c9f1a, release anterior 0.4.4. Esta etapa prioriza logs e não autoriza automaticamente outras partes do PDF.
 
-Em preparação: eventos para erros tratados/inesperados/validação/SMTP, respostas HTTP adequadas e referência de suporte, recuperação de finalização incompleta, preservação de conteúdo em reparo legado e acompanhamento claro de recibos pendentes. Testes detalhados em docs/VALIDACAO.md; conferir resultados antes de declarar publicada.
+[Release 0.4.5](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.5) publicada e verificada. Tag e código testado: `1fac5b0bf5f432db48f85f63181c037859817f23`. [Run 39028486594](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39028486594): 11 jobs aprovados, incluindo seis ambientes. Foram conferidos os 12 arquivos e a preservação das nove releases anteriores. HEAD após o relatório da CI, antes deste fechamento: `528dae27959475511ebc363b5e0c9ab6ecb34ed6`.
 
-O Render foi consultado: nenhum workspace selecionado. A integração exige perguntar ao usuário qual workspace usar; My Workspace foi listado, mas não selecionado. Testes/configuracao.json continua enabled=false/endpoint vazio. Não criar recurso nem ativar destino sem essa confirmação explícita. Após preparar e publicar o fix, solicitar a confirmação concreta de My Workspace para um único receptor Node gratuito, com auto-deploy desativado. Os testes de transporte são simulados, não uma implantação real. Não declarar envio de PCs como concluído.
+Entregue: eventos para erros tratados/inesperados/validação/SMTP, respostas HTTP adequadas e referência de suporte, recuperação de finalização incompleta, preservação de conteúdo em reparo legado e acompanhamento claro de recibos pendentes. Passaram 99 testes Java, 30 Go e go vet, cinco Node da agenda, dois da interface administrativa e sete do receptor/coletor; roteiro HTTP/perfis/contas/backup e smoke com erro controlado nos seis executáveis. Evidências e limites: docs/VALIDACAO.md. O ZIP de código contém o instantâneo anterior à CI; este registro final acompanha main sem alterar assets publicados.
 
-Sem reset, migrations, mudança de contas/senhas ou dados. Referências históricas abaixo registram 0.4.4; o estado inicial desta seção prevalece para a tarefa atual. Depois da entrega, aguardar autorização/confirmacão; não continuar outro item do PDF.
+O Render foi consultado: nenhum workspace selecionado. A integração exige perguntar ao usuário qual workspace usar; My Workspace foi listado, mas não selecionado. Testes/configuracao.json continua enabled=false/endpoint vazio. Não criar recurso nem ativar destino sem essa confirmação explícita. O fix está publicado; solicitar a confirmação concreta de My Workspace para um único receptor Node gratuito, com auto-deploy desativado. Os testes de transporte são simulados, não uma implantação real. Não declarar envio de PCs como concluído.
+
+Sem reset, migrations, mudança de contas/senhas ou dados. Referências históricas abaixo registram 0.4.4; o estado inicial desta seção prevalece para a tarefa atual. A entrega de código está concluída; aguardar autorização/confirmação; não continuar outro item do PDF.
 
 ---
 
