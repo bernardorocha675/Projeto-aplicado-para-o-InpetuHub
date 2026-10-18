@@ -8,7 +8,9 @@ Por decisão do responsável em 18/10/2026, Android saiu do produto ativo. Fonte
 
 O iniciador verifica a configuração antes de gerar arquivos: se há dados e falta chave ou ambiente, interrompe e orienta recuperar o conjunto original. Instalação nova continua automática. Download interrompido mantém a versão íntegra instalada utilizável; integridade e erros de disco continuam bloqueando a troca. Duas regressões reproduziram as falhas antes das correções. Detalhes e suspeitas em [REVISAO-DESKTOP.md](REVISAO-DESKTOP.md).
 
-Versão de trabalho 0.4.6, publicação condicionada aos gates de RELEASES.md. Situação concreta em continuidade/ESTADO-ATUAL.md. Sem reset, migration, mudança de contas/regras/dependências. Encerrar após este lote.
+A [0.4.6](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.6) foi publicada pelo [run 39150431777](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39150431777), com os 11 jobs aprovados, incluindo os seis ambientes nativos. Tag no commit `5d6e2df8b3d46da9041df97df9504627a0e891cb`; 12 assets conferidos, SHA256SUMS coerente com os digests públicos. As 11 tags/releases anteriores mantêm seus arquivos e digests, inclusive Android. Relatório da CI incorporado em `2a03ed6`. Este fechamento documental acompanha main, sem substituir o código ZIP anterior à CI.
+
+Passaram 99 testes Java, 33 Go/go vet/detector de concorrência local, 14 Node, roteiro HTTP/backup e smoke do executável; compilação cruzada local para os outros cinco alvos e execução nativa pela matriz. Sem reset, migration, mudança de contas/regras/dependências ou ativação externa. Lote concluído: parar e aguardar nova autorização.
 
 ## Fix 0.4.5 — logs e finalização de relatórios
 

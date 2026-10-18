@@ -13,7 +13,7 @@ Projeto acadêmico desenvolvido na disciplina de **Projeto Aplicado do UniSENAI*
 
 ## Versão atual
 
-Versão publicada: [**0.4.5**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.5). A próxima correção **0.4.6** protege a configuração de instalações existentes e a recuperação de downloads; publicação depende da CI.
+[**Versão 0.4.6**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.6) — protege a configuração de instalações existentes e a recuperação de downloads, com foco nos executáveis desktop.
 
 ## Usar o aplicativo
 

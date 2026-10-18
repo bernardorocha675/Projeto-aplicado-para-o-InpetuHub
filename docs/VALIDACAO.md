@@ -1,15 +1,17 @@
 # Validação do primeiro lote 0.4.6
 
-Execução local em Linux x64, 18/10/2026: JDK 21 completo, Go 1.27.2, Maven 3.9.9 e Node 24.19.0. Versão 0.4.6 preparada; publicação e demais sistemas dependem da CI obrigatória no commit enviado.
+Execução local em Linux x64, 18/10/2026: JDK 21 completo, Go 1.27.2, Maven 3.9.9 e Node 24.19.0. Release [0.4.6](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.6) publicada pelo [run 39150431777](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39150431777), 11 jobs aprovados. Tag no commit `5d6e2df8b3d46da9041df97df9504627a0e891cb`. Confirmados 12 assets e SHA256SUMS contra digests públicos. As 11 tags anteriores e os links/digests dos arquivos das 11 releases anteriores permanecem iguais ao inventário registrado antes da publicação.
+
+A matriz executou com sucesso Ubuntu 24.04 x64/ARM64, macOS 15 Apple Silicon/Intel, Windows Server 2025 x64 e Windows 11 ARM64. Cada runner executou testes Go/Java, roteiro HTTP/backup, empacotamento e smoke do binário real; fonte/segredos, dependências, CodeQL, relatório e publicação também passaram. Evidência pública resumida em `Testes/teste09-2026-10-18_14-37-21-affaf8f1/log.txt`.
 
 - 99 testes Java: zero falhas, erros ou ignorados. `java -Dfile.encoding=UTF-8 --source 17 scripts/Testar.java` terminou com VERIFICAÇÕES AUTOMÁTICAS APROVADAS, incluindo HTTP/perfis, contas, persistência, backup real/restauração e limpeza dos dados descartáveis.
 - 33 testes Go (mais dois subcasos da configuração), zero falhas; `go test -race ./...` e `go vet ./...` aprovados. As duas regressões principais falharam antes do patch. Teste adicional distingue erro de disco de erro de leitura da rede.
 - Node: cinco testes da agenda, dois da interface administrativa e sete do receptor/coletor aprovados.
 - Empacotamento Linux x64 criou o ZIP 0.4.6 com Java privado. Smoke do binário real aprovado: configuração, 15 logins, permissões, agenda vazia/livre, cadastro, reinício, troca real do iniciador, preservação da chave/banco e encerramento. Sem Java externo no processo do usuário.
 - Links Markdown locais conferidos sem referências quebradas; YAML dos workflows remanescentes interpretado; `git diff --check` aprovado. Nenhum APK rastreado. Nenhum guia ativo oferece Android.
-- Consulta de dependências: Maven resolveu a lista, mas o check OSV não conseguiu consultar a API pela rede deste ambiente e retornou erro. Não é aprovação nem prova de ausência de vulnerabilidades. CodeQL e Gitleaks remoto aguardam a CI; não foram substituídos por checks triviais.
+- Consulta de dependências: Maven resolveu a lista, mas o check OSV não conseguiu consultar a API pela rede deste ambiente e retornou erro. Não é aprovação nem prova de ausência de vulnerabilidades. O gate de dependências consultou OSV com sucesso na CI; CodeQL e fonte/Gitleaks também foram aprovados. Não foram substituídos por checks triviais.
 
-Windows, macOS e ARM64 não foram executados localmente. Nenhum teste local comprova esses alvos, outras distribuições, políticas corporativas, assinatura comercial ou notarização. Não foram ativados Render, SMTP ou envio externo. Situação da publicação e commit em continuidade/ESTADO-ATUAL.md.
+Compilação cruzada do iniciador também aprovada localmente para os outros cinco alvos. Windows, macOS e ARM64 foram executados somente nos runners nativos da CI. Nenhum teste local comprova esses alvos, outras distribuições, políticas corporativas, assinatura comercial ou notarização. Não foram ativados Render, SMTP ou envio externo. Situação da publicação e commit em continuidade/ESTADO-ATUAL.md.
 
 ---
 
