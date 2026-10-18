@@ -1,6 +1,6 @@
 # Validação do relatório caçabugs — 0.4.7
 
-Base `efe162a1ff9b1296a22b8ab4fff61174ca70af19`. Versão de trabalho 0.4.7; publicação aguarda a CI obrigatória. Escopo autorizado: todos os itens restantes do DOCX. Detalhes em [CORRECOES-RELATORIO.md](CORRECOES-RELATORIO.md).
+Base `efe162a1ff9b1296a22b8ab4fff61174ca70af19`. Release [0.4.7](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.7) publicada pelo [run 39152880226](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39152880226), com 11 jobs aprovados. Tag no commit `992168e3ceb39f196b2153aa5e291fbae0e2f196`. Foram conferidos os 12 assets e SHA256SUMS contra os digests públicos; as 12 tags/releases anteriores mantêm os arquivos e digests registrados antes da publicação. Escopo autorizado: todos os itens restantes do DOCX. Detalhes em [CORRECOES-RELATORIO.md](CORRECOES-RELATORIO.md).
 
 Execução local Linux x64 em 18/10/2026:
 
@@ -8,7 +8,7 @@ Execução local Linux x64 em 18/10/2026:
 - Roteiro Testar.java aprovado: regras, segurança, concorrência, HTTP, contas, persistência, backup cifrado/restauração e limpeza de dados descartáveis. O JAR final também foi conferido contra os recursos CSS atuais após o ajuste visual.
 - 33 testes Go com detector de concorrência e go vet aprovados. Node: sete agenda, dois administração e sete receptor/coletor, todos aprovados. O teste da agenda usa relógio fixo para não depender do dia de execução.
 - Chromium 154, locale pt-BR e fuso America/Sao_Paulo: fluxo real de login/cadastro de espaço, agenda → reserva, rejeição dos exemplos de contato, limites HTML de data, erro de horário/correção sem perda de data/contatos, revisão/edição, conferência manual sem campo de código e indicação dos obrigatórios. Repetido no JAR final; zero erros JavaScript. Verificados desktop 1440px e largura 390px, incluindo limites visíveis da grade e dos textos após corrigir o corte observado na primeira captura.
-- Pacote final Linux x64 com Java privado e smoke do executável real aprovados: 15 logins, permissões, agenda vazia/livre, cadastro, reinício, troca real do iniciador e banco/chave preservados. Os checks de fonte/segredos, dependências, CodeQL e os seis alvos nativos permanecem obrigatórios na CI.
+- Pacote final Linux x64 com Java privado e smoke do executável real aprovados: 15 logins, permissões, agenda vazia/livre, cadastro, reinício, troca real do iniciador e banco/chave preservados. A CI aprovou fonte/segredos, dependências e CodeQL, além de Ubuntu 24.04 x64/ARM64, macOS 15 Apple Silicon/Intel, Windows Server 2025 x64 e Windows 11 ARM64. Cada alvo executou o roteiro de testes, empacotamento e smoke nativo. Evidência pública em Testes/teste10-2026-10-18_15-09-45-adeb027e/log.txt.
 
 Sem migrations, reset, alteração de contas/senhas/preços/cotas, dependências, Android ou ativação externa. SMTP real e outros navegadores/dispositivos não foram testados; contatos são validados por formato, não por existência. Os preços de anos futuros continuam dependendo de cadastro do gestor. O rascunho de edição dura enquanto a sessão for válida.
 

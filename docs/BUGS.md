@@ -2,7 +2,7 @@
 
 Fonte atual: `caçabugs_0.1_Joaoe.docx`, recebido em 18/10/2026, com 12 capturas. O conteúdo corresponde aos sintomas antes acompanhados pelo PDF. O responsável autorizou **todos os itens restantes** nesta entrega. Documento original mantido fora do Git.
 
-| Parte | Estado na versão de trabalho 0.4.7 |
+| Parte | Estado da entrega 0.4.7 |
 | --- | --- |
 | Espaços/capacidade | Correção 0.4.4 preservada; regressões mantidas. |
 | Nome/email/telefone | Corrigidos no formulário público e cadastro interno, com rejeição amigável e correção/reenvio. |
@@ -10,7 +10,7 @@ Fonte atual: `caçabugs_0.1_Joaoe.docx`, recebido em 18/10/2026, com 12 capturas
 | Confirmação | Campo de código aparece somente para solicitação com código ativo; modo local explica conferência manual. |
 | Agenda e clareza | Consulta por dia, filtro com capacidades, rótulos/cores de disponibilidade, grade estreita e asteriscos nos obrigatórios. |
 
-Causas, arquivos, evidências e limites em [CORRECOES-RELATORIO.md](CORRECOES-RELATORIO.md). Publicação condicionada à CI obrigatória; consultar o estado real em continuidade/ESTADO-ATUAL.md. Não significa ativação de SMTP/Render nem confirmação da existência de emails/telefones.
+Causas, arquivos, evidências e limites em [CORRECOES-RELATORIO.md](CORRECOES-RELATORIO.md). Publicada na [0.4.7](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.7) com os 11 jobs da [CI](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39152880226) aprovados, incluindo seis alvos nativos. Não significa ativação de SMTP/Render nem confirmação da existência de emails/telefones.
 
 ## Histórico das entregas anteriores
 
