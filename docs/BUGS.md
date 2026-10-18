@@ -1,14 +1,18 @@
 # Acompanhamento do relatório de bugs
 
-Fonte: caçabugs_0.1_Joaoe.docx.PDF, seis páginas, recebido em 17/10/2026. O PDF completo e suas imagens foram lidos. Cada parte será entregue em fix separado e encerrada antes da próxima autorização. O documento original não foi copiado para o repositório.
+Fonte atual: `caçabugs_0.1_Joaoe.docx`, recebido em 18/10/2026, com 12 capturas. O conteúdo corresponde aos sintomas antes acompanhados pelo PDF. O responsável autorizou **todos os itens restantes** nesta entrega. Documento original mantido fora do Git.
 
-| Parte | Itens do documento | Análise e estado |
-| --- | --- | --- |
-| 1 — Espaços | Capacidade 0, decimais e impossibilidade de salvar após corrigir (p. 2) | Corrigido e publicado na [0.4.4](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.4); seis ambientes nativos aprovados. |
-| 2 — Dados de contato | Nome com números, email sem domínio completo e telefone com letras (p. 1) | Pendente. ReservaForm exige nome/telefone, mas ainda não valida seus formatos. CRUD já tem validação de domínio no email; diferenciar os fluxos antes de mudar. Não é possível comprovar existência de uma caixa de email apenas pelo formato. |
-| 3 — Datas e erros da reserva | Ano atual e próximo, mensagem técnica, perda da data, data da agenda preenchida na reserva (p. 1–3) | Pendente. Há limite mínimo no JavaScript, sem limite máximo. A captura da mensagem de conversão é da reserva, apesar de o texto dizer login. PublicController já recebe a data na URL: ainda conferir a renderização e a ida/volta do formulário. |
-| 4 — Confirmação | Código de confirmação não encontrado (p. 4) | Pendente. Código só é gerado/enviado com email configurado; modo local prevê conferência manual, mas a tela ainda oferece código mesmo nesse caso. Corrigir a orientação/fluxo sem inventar código nem desativar controles de produção. |
-| 5 — Agenda e clareza | Lista de espaços/capacidades por dia, visual livre/ocupado e asteriscos nos campos obrigatórios (p. 3, 5–6) | Pendente. Comparar com o comportamento atual e a referência visual antes de implementar. |
+| Parte | Estado na versão de trabalho 0.4.7 |
+| --- | --- |
+| Espaços/capacidade | Correção 0.4.4 preservada; regressões mantidas. |
+| Nome/email/telefone | Corrigidos no formulário público e cadastro interno, com rejeição amigável e correção/reenvio. |
+| Datas e erros | ISO, preservação da seleção, edição do rascunho, limites até 31/12 do próximo ano e mensagens sem detalhes técnicos. |
+| Confirmação | Campo de código aparece somente para solicitação com código ativo; modo local explica conferência manual. |
+| Agenda e clareza | Consulta por dia, filtro com capacidades, rótulos/cores de disponibilidade, grade estreita e asteriscos nos obrigatórios. |
+
+Causas, arquivos, evidências e limites em [CORRECOES-RELATORIO.md](CORRECOES-RELATORIO.md). Publicação condicionada à CI obrigatória; consultar o estado real em continuidade/ESTADO-ATUAL.md. Não significa ativação de SMTP/Render nem confirmação da existência de emails/telefones.
+
+## Histórico das entregas anteriores
 
 ## Escopo da parte 1
 

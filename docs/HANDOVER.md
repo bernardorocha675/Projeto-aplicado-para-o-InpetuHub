@@ -1,6 +1,14 @@
-# Handover técnico — InPETU Hub 0.4.6
+# Handover técnico — InPETU Hub 0.4.7
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
+
+## Correções do relatório — 0.4.7
+
+O responsável autorizou todos os itens restantes do DOCX em 18/10/2026. ContactRules compartilha formatos entre entrada pública e cadastro; o DTO usa grupo de validação de entrada para preservar a persistência de registros históricos. Cadastro inválido reapresenta campos após rollback, incluindo edições. DateTimeFormat ISO corrige valores incompatíveis com input date em português; o resumo retorna ao rascunho da sessão sem depender de history.back.
+
+ReservationDates fornece fim do ano seguinte no Clock/fuso da aplicação; DisponibilidadeService valida a janela também no servidor. Não são alterados preços/cotas; o gestor deve cadastrar tabela do ano futuro. A tela de confirmação deriva o estado da solicitação da sessão e só pede código ativo; modo manual não altera os requisitos de produção. A agenda inclui seletor de dia, capacidades, visual de disponibilidade e ajuste para sete colunas em largura estreita. Obrigatórios indicados por asteriscos.
+
+Detalhes e regressões: [CORRECOES-RELATORIO.md](CORRECOES-RELATORIO.md). A versão de trabalho 0.4.7 aguarda validação final/publicação obrigatória. Sem migrations, reset, mudança de contas/dependências ou ativação externa. Android continua retirado.
 
 ## Primeiro lote 0.4.6 — foco desktop e confiabilidade
 

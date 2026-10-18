@@ -14,7 +14,7 @@ Registre sistema, arquitetura, versão, passos, esperado e observado ao relatar 
 
 ## Validação automática do código
 
-A CI executa cinco testes da agenda em Node, sete testes Node do receptor/coletor, testes Go do iniciador e testes Java do aplicativo. O roteiro Java valida HTTP, segurança, perfis, contas, persistência e backup com dados descartáveis. Os números são a referência desta reorganização; confira Actions para o resultado efetivo.
+A CI executa testes Node das interfaces da agenda/cadastros e do receptor/coletor, testes Go do iniciador e testes Java do aplicativo. O roteiro Java valida HTTP, segurança, perfis, contas, persistência e backup com dados descartáveis. Os números são a referência desta reorganização; confira Actions para o resultado efetivo.
 
 Depois, o smoke executa o próprio binário com seu Java privado: instalação, quinze logins, agenda vazia/livre, cadastro, reinício, troca real do iniciador e preservação de banco/chave. A sessão deve continuar única durante a troca, registrar as versões antiga/nova e conter eventos HTTP/auditoria sem senhas. As simulações usam rede local e não publicam releases falsas.
 
@@ -41,3 +41,14 @@ Comandos de desenvolvimento e ferramentas necessárias estão em [ESTRUTURA.md](
 6. Quando o receptor estiver ativo, uma resposta de fila deve manter o envio pendente. Somente o recibo final do GitHub cria enviado.json. Sem receptor configurado, deve aparecer explicitamente que o envio aguarda configuração, e os registros ficam locais.
 
 Falhas de SMTP são testadas com serviço simulado, sem enviar emails reais. Não publique senhas, formulários ou logs operacionais brutos.
+
+## Relatório caçabugs — 0.4.7
+
+1. Selecione um dia na agenda, confira nomes/capacidades e escolha um horário. A reserva deve trazer data ISO e espaço/horários preenchidos.
+2. Tente nome `João 123`, email `11231231@a` e telefone com letras: devem ser rejeitados. Corrija para nome com acentos/hífen/apóstrofo, email completo e telefone com DDD; números do evento/empresa continuam permitidos.
+3. Informe hora final anterior à inicial e envie: a mensagem deve ser simples e a data/contatos devem permanecer. Corrija e revise; use Voltar para editar, altere outro campo e confira que data e horários permanecem.
+4. Confira mínimo hoje e máximo 31/12 do próximo ano. Uma data do ano posterior deve ser recusada também pelo servidor. Preços do ano escolhido precisam estar cadastrados pelo gestor; não são inventados automaticamente.
+5. Sem SMTP, confirme a solicitação: a tela deve explicar conferência manual e não pedir código. Isso não aprova nem bloqueia horário. Com SMTP configurado, código ativo deve manter oito dígitos, expiração e limite de tentativas; teste SMTP real exige configuração separada.
+6. Todos os campos obrigatórios devem ter `*`. Confira agenda com dia livre/parcial/ocupado e em janela estreita; os sete dias da semana devem ficar visíveis.
+
+Evidências e limites: [CORRECOES-RELATORIO.md](CORRECOES-RELATORIO.md).

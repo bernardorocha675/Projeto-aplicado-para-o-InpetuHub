@@ -2,17 +2,21 @@ package br.com.inpetu.hub.dto;
 
 import jakarta.validation.constraints.*;
 import java.time.*;
+import br.com.inpetu.hub.validation.ContactRules;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @jakarta.persistence.Embeddable
 public class ReservaForm {
   @NotNull public Long espacoId;
   @NotNull public Long personaId;
-  @NotNull @FutureOrPresent public LocalDate data;
-  @NotNull public LocalTime horaInicio;
-  @NotNull public LocalTime horaFim;
+  @NotNull @FutureOrPresent
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) public LocalDate data;
+  @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) public LocalTime horaInicio;
+  @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) public LocalTime horaFim;
 
   @NotBlank
   @Size(max = 255)
+  @Pattern(groups = ContactRules.Input.class, regexp = ContactRules.NAME, message = "Informe um nome com letras, sem números.")
   public String nome;
 
   @NotBlank
@@ -22,10 +26,12 @@ public class ReservaForm {
   @NotBlank
   @Email
   @Size(max = 255)
+  @Pattern(groups = ContactRules.Input.class, regexp = ContactRules.EMAIL, message = "Informe um email completo, como nome@instituicao.com.br.")
   public String email;
 
   @NotBlank
   @Size(max = 255)
+  @Pattern(groups = ContactRules.Input.class, regexp = ContactRules.PHONE, message = "Informe de 10 a 15 dígitos no telefone, incluindo DDD, sem letras.")
   public String telefone;
 
   @NotBlank

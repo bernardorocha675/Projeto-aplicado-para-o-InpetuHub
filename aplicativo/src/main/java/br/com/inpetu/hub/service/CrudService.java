@@ -331,6 +331,7 @@ public class CrudService {
 
   private void validar(Object o, Colaborador autor) {
     if (o instanceof Empreendedor e) {
+      br.com.inpetu.hub.validation.ContactRules.validate(e.nome,e.email,e.telefone);
       if (!e.cnpj.matches("[0-9]{14}")) throw new RegraException("CNPJ deve conter 14 dígitos.");
       long duplicados =
           em.createQuery(

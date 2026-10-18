@@ -37,6 +37,7 @@ public class CrudController {
     boolean admin = req.getRequestURI().startsWith("/admin/config/");
     permitido(tipo, admin);
     String rota = admin ? "/admin/config/cadastros/" : "/admin/cadastros/";
+    m.addAttribute("contactPatterns", br.com.inpetu.hub.validation.ContactRules.patterns());
     m.addAttribute("secao", service.secao(tipo));
     m.addAttribute("tipo", tipo);
     m.addAttribute("rota", rota + tipo);
@@ -54,6 +55,7 @@ public class CrudController {
       Model m) {
     boolean admin = req.getRequestURI().startsWith("/admin/config/");
     permitido(tipo, admin);
+    m.addAttribute("contactPatterns", br.com.inpetu.hub.validation.ContactRules.patterns());
     m.addAttribute("secao", service.secao(tipo));
     m.addAttribute("tipo", tipo);
     m.addAttribute("id", id);
@@ -79,22 +81,18 @@ public class CrudController {
     try {
       service.salvar(tipo, id, dados, autor);
     } catch (RegraException ex) {
-      if (!tipo.equals("espacos")) throw ex;
+      if (!Set.of("espacos","empreendedores").contains(tipo)) throw ex;
       br.com.inpetu.hub.observability.OperationalEvents.audit(
-          autor.id, "CADASTRO_INVALIDO", "espacos", id, "NEGADO");
+          autor.id, "CADASTRO_INVALIDO", tipo, id, "NEGADO");
       // Reapresentar os valores enviados, inclusive as opções desmarcadas.
       editar(tipo, id, req, m);
-      m.addAttribute(
-          "registro",
-          Map.of(
-              "nomeEspaco", dados.getOrDefault("nomeEspaco", ""),
-              "capacidade", dados.getOrDefault("capacidade", ""),
-              "disponibilidade",
-                  String.valueOf(Set.of("on", "true")
-                      .contains(dados.getOrDefault("disponibilidade", ""))),
-              "ativo",
-                  String.valueOf(Set.of("on", "true")
-                      .contains(dados.getOrDefault("ativo", "")))));
+      Map<String,String> values = new LinkedHashMap<>();
+      for (var field : service.secao(tipo).campos()) {
+        String value=dados.getOrDefault(field.nome(), "");
+        values.put(field.nome(),field.tipo().equals("checkbox")
+            ? String.valueOf(Set.of("on","true").contains(value)) : value);
+      }
+      m.addAttribute("registro",values);
       m.addAttribute("erro", ex.getMessage());
       response.setStatus(400);
       return "admin/crud/form";

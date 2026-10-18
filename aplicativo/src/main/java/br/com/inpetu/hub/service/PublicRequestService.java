@@ -84,6 +84,22 @@ public class PublicRequestService {
     return s;
   }
 
+  public enum ConfirmationMode { NONE, MANUAL, CODE, EXPIRED, CONFIRMED }
+
+  @Transactional(readOnly = true)
+  public ConfirmationMode confirmationMode(String reference) {
+    if (reference == null) return ConfirmationMode.NONE;
+    var found=repo.findByReferencia(reference);
+    if (found.isEmpty()) return ConfirmationMode.NONE;
+    var s=found.get();
+    if(s.emailConfirmado) return ConfirmationMode.CONFIRMED;
+    if(!"RECEBIDA".equals(s.estado) || !s.expiraEm.isAfter(LocalDateTime.now(clock)))
+      return ConfirmationMode.EXPIRED;
+    if(s.codigoHash==null) return emailRequired ? ConfirmationMode.EXPIRED : ConfirmationMode.MANUAL;
+    return s.tentativas>=5 || s.codigoExpiraEm==null || !s.codigoExpiraEm.isAfter(LocalDateTime.now(clock))
+        ? ConfirmationMode.EXPIRED : ConfirmationMode.CODE;
+  }
+
   @Transactional
   public boolean confirm(String reference, String code) {
     config.bloquear();

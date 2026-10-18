@@ -1,3 +1,21 @@
+# Validação do relatório caçabugs — 0.4.7
+
+Base `efe162a1ff9b1296a22b8ab4fff61174ca70af19`. Versão de trabalho 0.4.7; publicação aguarda a CI obrigatória. Escopo autorizado: todos os itens restantes do DOCX. Detalhes em [CORRECOES-RELATORIO.md](CORRECOES-RELATORIO.md).
+
+Execução local Linux x64 em 18/10/2026:
+
+- 117 testes Java, zero falhas/erros/ignorados; 18 novos cobrem contatos, ISO em pt-BR, agenda → reserva, erro/correção, resumo/edição, código ativo/expirado/manual/ausente, rollback de edição, registros históricos e limites de data/virada anual. A execução inicial dos primeiros 13 regressores teve 12 falhas antes do patch; o teste de erro técnico já passava.
+- Roteiro Testar.java aprovado: regras, segurança, concorrência, HTTP, contas, persistência, backup cifrado/restauração e limpeza de dados descartáveis. O JAR final também foi conferido contra os recursos CSS atuais após o ajuste visual.
+- 33 testes Go com detector de concorrência e go vet aprovados. Node: sete agenda, dois administração e sete receptor/coletor, todos aprovados. O teste da agenda usa relógio fixo para não depender do dia de execução.
+- Chromium 154, locale pt-BR e fuso America/Sao_Paulo: fluxo real de login/cadastro de espaço, agenda → reserva, rejeição dos exemplos de contato, limites HTML de data, erro de horário/correção sem perda de data/contatos, revisão/edição, conferência manual sem campo de código e indicação dos obrigatórios. Repetido no JAR final; zero erros JavaScript. Verificados desktop 1440px e largura 390px, incluindo limites visíveis da grade e dos textos após corrigir o corte observado na primeira captura.
+- Pacote final Linux x64 com Java privado e smoke do executável real aprovados: 15 logins, permissões, agenda vazia/livre, cadastro, reinício, troca real do iniciador e banco/chave preservados. Os checks de fonte/segredos, dependências, CodeQL e os seis alvos nativos permanecem obrigatórios na CI.
+
+Sem migrations, reset, alteração de contas/senhas/preços/cotas, dependências, Android ou ativação externa. SMTP real e outros navegadores/dispositivos não foram testados; contatos são validados por formato, não por existência. Os preços de anos futuros continuam dependendo de cadastro do gestor. O rascunho de edição dura enquanto a sessão for válida.
+
+---
+
+## Histórico da 0.4.6
+
 # Validação do primeiro lote 0.4.6
 
 Execução local em Linux x64, 18/10/2026: JDK 21 completo, Go 1.27.2, Maven 3.9.9 e Node 24.19.0. Release [0.4.6](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.6) publicada pelo [run 39150431777](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39150431777), 11 jobs aprovados. Tag no commit `5d6e2df8b3d46da9041df97df9504627a0e891cb`. Confirmados 12 assets e SHA256SUMS contra digests públicos. As 11 tags anteriores e os links/digests dos arquivos das 11 releases anteriores permanecem iguais ao inventário registrado antes da publicação.

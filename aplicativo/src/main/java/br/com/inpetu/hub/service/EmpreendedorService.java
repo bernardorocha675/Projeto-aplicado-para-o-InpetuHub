@@ -14,6 +14,7 @@ public class EmpreendedorService {
   }
 
   public Empreendedor vincular(ReservaForm f) {
+    br.com.inpetu.hub.validation.ContactRules.validate(f.nome,f.email,f.telefone);
     return repo.findByCnpj(f.cnpj)
         .orElseGet(
             () -> {

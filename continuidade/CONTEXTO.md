@@ -70,3 +70,7 @@ O usuário determinou uso somente pelo executável, uma etapa de trabalho por ve
 ## Foco desktop — decisão de 18/10/2026
 
 Por decisão do responsável, o suporte Android foi retirado da árvore atual. O produto ativo atende os executáveis Windows, macOS e Linux, x64/ARM64. Fontes, testes, workflow e guias exclusivos do Android foram retirados; o histórico Git e a prerelease android-v0.1.0-experimental.1 permanecem como registro histórico. Chaves privadas e backups de recuperação não foram publicados nem excluídos. Não desenvolver ou republicar Android sem nova autorização.
+
+## Reservas e contatos — autorização de 18/10/2026
+
+O responsável autorizou todos os itens restantes do relatório caçabugs em uma entrega. A janela de novas reservas passa a hoje até 31/12 do ano seguinte, atualizada pelo Clock no fuso da aplicação. Isso substitui o limite móvel de 365 dias; não cria preços para anos futuros nem altera cotas. Entrada de contatos exige nome sem números, domínio completo e telefone de 10–15 dígitos sem letras, preservando formatos usuais. Registros históricos permanecem preservados e a confirmação local sem SMTP continua manual; produção mantém confirmação obrigatória.

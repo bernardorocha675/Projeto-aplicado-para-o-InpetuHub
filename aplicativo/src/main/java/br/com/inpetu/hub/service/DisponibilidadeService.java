@@ -34,8 +34,8 @@ public class DisponibilidadeService {
       throw new RegraException("O horário final deve ser posterior ao inicial.");
     if (LocalDateTime.of(data, inicio).isBefore(LocalDateTime.now(clock)))
       throw new RegraException("Não é possível reservar no passado.");
-    if (data.isAfter(LocalDate.now(clock).plusDays(365)))
-      throw new RegraException("Reservas limitadas aos próximos 365 dias.");
+    if (data.isAfter(br.com.inpetu.hub.validation.ReservationDates.lastDay(clock)))
+      throw new RegraException("Selecione uma data no ano atual ou no próximo ano.");
     Configuracao c = config.findById(1L).orElseThrow();
     if (inicio.isBefore(c.abertura) || fim.isAfter(c.fechamento))
       throw new RegraException(

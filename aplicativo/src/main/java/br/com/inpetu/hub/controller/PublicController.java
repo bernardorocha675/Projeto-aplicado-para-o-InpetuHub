@@ -7,9 +7,11 @@ import br.com.inpetu.hub.exception.RegraException;
 import br.com.inpetu.hub.repository.*;
 import br.com.inpetu.hub.service.*;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
+import org.springframework.validation.annotation.Validated;
 import java.time.*;
 import java.util.*;
+import br.com.inpetu.hub.validation.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -48,6 +50,8 @@ public class PublicController {
 
   @GetMapping({"/", "/agenda"})
   public String agenda(Model m) {
+    m.addAttribute("today", LocalDate.now(clock));
+    m.addAttribute("maxDate", ReservationDates.lastDay(clock));
     m.addAttribute("espacos", espacos.findByAtivoTrueAndDisponibilidadeTrueOrderByNomeEspaco());
     return "public/agenda";
   }
@@ -59,11 +63,17 @@ public class PublicController {
 
   @GetMapping("/reserva")
   public String form(
-      @RequestParam(required = false) LocalDate data,
+      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data,
       @RequestParam(required = false) Long espacoId,
       @RequestParam(required = false) LocalTime horaInicio,
       @RequestParam(required = false) LocalTime horaFim,
+      @RequestParam(defaultValue = "false") boolean editar,
+      HttpSession session,
       Model m) {
+    if (editar && session.getAttribute("solicitacao") instanceof ReservaForm draft) {
+      formModel(m,draft);
+      return "public/reserva-form";
+    }
     ReservaForm f = new ReservaForm();
     f.data = data;
     f.espacoId = espacoId;
@@ -74,6 +84,9 @@ public class PublicController {
   }
 
   private void formModel(Model m, ReservaForm f) {
+    m.addAttribute("minDate", LocalDate.now(clock));
+    m.addAttribute("maxDate", ReservationDates.lastDay(clock));
+    m.addAttribute("contactPatterns", ContactRules.patterns());
     m.addAttribute("form", f);
     m.addAttribute("espacos", espacos.findByAtivoTrueAndDisponibilidadeTrueOrderByNomeEspaco());
     m.addAttribute("personas", personas.findAll());
@@ -81,7 +94,8 @@ public class PublicController {
 
   @PostMapping("/reservas/resumo")
   public String resumo(
-      @Valid @ModelAttribute("form") ReservaForm f,
+      @Validated({jakarta.validation.groups.Default.class, ContactRules.Input.class})
+      @ModelAttribute("form") ReservaForm f,
       BindingResult erros,
       Model m,
       HttpSession session,
@@ -91,7 +105,9 @@ public class PublicController {
       response.setStatus(400);
       br.com.inpetu.hub.observability.OperationalEvents.validation("/reservas/resumo",
           erros.getFieldErrors().stream().anyMatch(e -> e.isBindingFailure()));
-      m.addAttribute("erro", "Confira os campos obrigatórios, as datas e os números informados.");
+      m.addAttribute("erro", "Confira os campos indicados. A data deve estar entre hoje e o fim do próximo ano.");
+      m.addAttribute("fieldErrors", erros.getFieldErrors().stream().map(e ->
+          e.isBindingFailure() ? "Confira a data, o horário ou o número informado." : e.getDefaultMessage()).distinct().toList());
       return "public/reserva-form";
     }
     try {
@@ -129,7 +145,7 @@ public class PublicController {
   @GetMapping("/disponibilidade")
   @ResponseBody
   public Map<String, Object> disponibilidade(
-      @RequestParam(required = false) LocalDate data,
+      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data,
       @RequestParam(required = false) String mes,
       @RequestParam(required = false) Long espacoId) {
     Configuracao c = config.findById(1L).orElseThrow();

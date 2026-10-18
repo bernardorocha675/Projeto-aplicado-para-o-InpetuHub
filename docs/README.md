@@ -11,6 +11,7 @@ O aplicativo é utilizado pelo executável, disponível para Windows, macOS e Li
 - [Estrutura e desenvolvimento](ESTRUTURA.md)
 - [Validação da release](VALIDACAO.md)
 - [Revisão desktop e primeiro lote](REVISAO-DESKTOP.md)
+- [Correções do relatório caçabugs](CORRECOES-RELATORIO.md)
 - [Handover técnico](HANDOVER.md)
 - [Operação do receptor](RECEPTOR.md)
 

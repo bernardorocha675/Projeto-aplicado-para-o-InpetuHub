@@ -1,3 +1,17 @@
+# Relatório caçabugs — 0.4.7 em validação final
+
+Em 18/10/2026 o responsável enviou `caçabugs_0.1_Joaoe.docx` e confirmou corrigir **todos os itens restantes** nesta entrega. Foram lidos texto e 12 capturas; original não foi incluído no Git. Base `efe162a1ff9b1296a22b8ab4fff61174ca70af19`, checkout inicialmente limpo e remoto main no mesmo SHA. A última estável verificada é 0.4.6.
+
+Implementados: validação de contatos no navegador/servidor/cadastro, rollback/reenvio de edição inválida; data ISO em pt-BR e rascunho da sessão para editar o resumo; janela de hoje até 31/12 do próximo ano com avanço anual; confirmação da sessão sem campo de código inexistente no modo local; consulta da agenda por dia com capacidades, indicação livre/parcial/ocupado, sete colunas em largura estreita e asteriscos nos obrigatórios. A correção de capacidade 0.4.4 e dos erros/logs 0.4.5 foi preservada e revalidada. Causas/evidências em docs/CORRECOES-RELATORIO.md; mapa em docs/BUGS.md.
+
+Contatos novos usam grupo de validação de entrada, preservando o processamento/persistência de solicitações históricas. Regressão comprova recusa de registro legado sem reescrever seu contato. Sem migration, reset, mudança de contas/senhas, preços/cotas, dependências ou ativação externa. A janela de datas foi alterada por pedido explícito do relatório; preços futuros ainda exigem tabela cadastrada. Confirmação obrigatória de produção, expiração e tentativas permanecem intactas. Android continua retirado.
+
+Validação local: 117 Java (18 novos), 33 Go/detector de concorrência/go vet, 16 Node; roteiro HTTP/backup e Chromium 154 em pt-BR com desktop/390px, zero erros JS. Fluxo agenda → reserva → erro/correção → revisão/edição → conferência manual verificado no JAR final. O primeiro conjunto de 13 regressores apresentou 12 falhas antes do patch. Smoke final Linux x64 aprovado: 15 logins, permissões, agenda, cadastro, reinício, troca real do iniciador e banco/chave preservados. Publicação depende dos gates reais; não declarar compatibilidade dos outros sistemas antes da matriz remota.
+
+Preparada versão 0.4.7. Publicação deve ocorrer somente pelo workflow após os seis ambientes nativos, fonte/segredos/dependências/CodeQL/relatório. As 12 releases anteriores foram inventariadas com links/digests e tags para comparação. Depois desta entrega, parar e aguardar nova autorização. SMTP real não foi testado/ativado; Render e envio externo permanecem desativados.
+
+---
+
 # Primeiro lote desktop 0.4.6 — publicado e concluído
 
 Pedido do responsável em 18/10/2026: retirar Android do produto ativo, revisar o desktop e entregar um primeiro lote pequeno, parando depois. Base `64487c7e17e254a5c743e16d375ce3eb2020ee9a`, branch local `work`, inicialmente limpa e remoto main no mesmo SHA. Instruções, continuidade, handovers e RELEASES.md lidos; não havia AGENTS.md no workspace.

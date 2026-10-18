@@ -29,7 +29,8 @@ public class RequestReviewController {
 
   @GetMapping("/solicitacoes/confirmar")
   public String confirm(HttpSession session, Model model) {
-    model.addAttribute("confirmed", Boolean.TRUE.equals(session.getAttribute("request.confirmed")));
+    Object reference=session.getAttribute("request.reference");
+    model.addAttribute("mode",service.confirmationMode(reference instanceof String r ? r : null).name());
     return "public/confirmar";
   }
 
