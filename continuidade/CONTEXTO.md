@@ -84,3 +84,8 @@ O responsável informou que o projeto aplicado é oficial para o InPETU Hub e pe
 ## Autorização de publicação — 18/10/2026
 
 Após informado sobre a preparação e o bloqueio do domínio oficial, o responsável autorizou verificar os PRs #5/#6/#7 e publicar tudo. Prosseguir com a 0.4.8 após os gates obrigatórios, preservando a pendência de conferência oficial documentada; não declarar cópia integral verificada. A autorização cobre os três PRs de Actions, não atualizações indiscriminadas do aplicativo, publicação de chaves/dados, Android ou ativação externa.
+
+
+## Prioridade da gestão — correção de 18/10/2026
+
+O responsável aprovou o visual institucional e pediu restaurar a essência do projeto: a área interna. A identidade pública não pode esconder/substituir a gestão. Manter /admin e /reserva visíveis no topo, logo/Início locais e navegação própria para login, painel, reservas, solicitações e cadastros. Não retirar menus/fluxos do aplicativo para copiar o site institucional.

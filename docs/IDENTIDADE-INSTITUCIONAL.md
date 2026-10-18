@@ -6,7 +6,7 @@ Pedido de 18/10/2026: o responsável informou que este é o projeto aplicado ofi
 
 ## Implementação revisável
 
-- `templates/public/agenda.html` e `static/css/institucional.css`: textos das capturas, painel azul, proporção 39,5%/60,5%, cantos arredondados, calendário compacto e responsivo. Cabeçalho e rodapé compartilhados em `templates/fragments.html`. Área interna acessível no rodapé.
+- `templates/public/agenda.html` e `static/css/institucional.css`: textos das capturas, painel azul, proporção 39,5%/60,5%, cantos arredondados, calendário compacto e responsivo. Cabeçalho e rodapé públicos em `templates/fragments.html`. Na 0.4.9, Área interna e Solicitar reserva ficam no topo; login/gestão usam navegação própria. Veja RESTAURACAO-AREA-INTERNA.md.
 - `static/js/agenda.js`: mês no formato “Outubro 2026”, marcação com ponto apenas quando há reservas aprovadas retornadas pelo servidor, destaque do dia selecionado e detalhes de título/data/horários/sala. Nenhum evento ou padrão de ocupação da captura foi inserido no banco.
 - Filtros de espaço/dia, capacidades, estados acessíveis de disponibilidade, horários livres e solicitação de reserva continuam em “Consultar espaços e solicitar reserva”, abaixo do dia selecionado. Regras de dados, reserva, preços, cotas e confirmação permanecem as da 0.4.7.
 - Fontes locais Lato e Montserrat com licença OFL e procedência documentada em `static/fonts/README.md`. `SecurityConfig.java` libera somente a rota de arquivos estáticos `/fonts/**` para visitantes; `SafeRoutes.java` classifica essas requisições como ASSET.

@@ -86,4 +86,37 @@ class PublicDemoLoginTest {
   }
  }
 
+ private String header(String html){
+  int start=html.indexOf("<header");int end=html.indexOf("</header>",start);
+  assertTrue(start>=0&&end>start,"Cabeçalho do aplicativo ausente");
+  return html.substring(start,end);
+ }
+ @Test void publicHeaderKeepsManagementAndReservationEntryPoints() throws Exception {
+  for(String path:new String[]{"/","/agenda","/reserva"}){
+   var html=mvc.perform(get(path)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+   var top=header(html);
+   assertTrue(top.contains("href=\"/admin\""),"A gestão precisa estar no topo");
+   assertTrue(top.contains("href=\"/reserva\""),"A reserva precisa estar acessível diretamente");
+   assertTrue(top.contains("class=\"logo\" href=\"/\""),"O logo deve permanecer no aplicativo");
+   assertTrue(top.contains("href=\"/\">INÍCIO</a>"));
+  }
+ }
+ @Test void internalNavigationAndAllManagementScreensRemainAvailable() throws Exception {
+  var loginHeader=header(mvc.perform(get("/login")).andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
+  assertFalse(loginHeader.contains("https://"),"O login deve usar a navegação do aplicativo");
+  var result=mvc.perform(post("/login").with(csrf()).param("username","bernardo").param("password",LocalAccounts.all().stream().filter(a->a.login().equals("bernardo")).findFirst().orElseThrow().password()))
+    .andExpect(redirectedUrl("/admin")).andReturn();
+  var session=(org.springframework.mock.web.MockHttpSession)result.getRequest().getSession(false);
+  for(String path:new String[]{"/admin","/admin/reservas","/admin/solicitacoes","/admin/cadastros/empreendedores","/admin/cadastros/espacos","/admin/cadastros/atendimentos","/admin/cadastros/visitas","/admin/config","/admin/config/cotas","/admin/config/auditoria","/conta/senha"}){
+   var html=mvc.perform(get(path).session(session)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+   var top=header(html);
+   assertTrue(top.contains("app-topo"));assertFalse(top.contains("https://"));
+   for(String target:new String[]{"/admin","/admin/reservas","/admin/solicitacoes","/agenda"})assertTrue(top.contains("href=\""+target+"\""),path+" perdeu a navegação interna");
+   if(path.startsWith("/admin")){
+    assertTrue(html.contains("aria-label=\"Menu interno\""));
+    for(String target:new String[]{"empreendedores","espacos","atendimentos","visitas"})assertTrue(html.contains("href=\"/admin/cadastros/"+target+"\""));
+   }
+  }
+ }
+
 }

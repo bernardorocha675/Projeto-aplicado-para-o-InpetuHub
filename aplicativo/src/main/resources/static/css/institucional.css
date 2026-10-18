@@ -52,15 +52,15 @@ body{font-family:Lato,Arial,sans-serif}
 @media(max-width:900px){.agenda-page .agenda-shell{grid-template-columns:1fr;min-height:0;border-radius:40px}.agenda-page .agenda-intro{padding:45px 35px}.agenda-page .agenda-intro h1{margin:28px 0}.agenda-page .agenda-intro h1 br{display:initial}.agenda-page .agenda-calendar{padding:35px 25px}}
 @media(max-width:480px){.agenda-page .public-main{width:calc(100% - 32px);margin:30px auto}.agenda-page .agenda-intro{padding:35px 28px}.agenda-page .agenda-intro h1{font-size:30px}.agenda-page .agenda-intro p,.agenda-page .agenda-intro .intro-note{font-size:16px;line-height:1.75}.agenda-page .agenda-calendar{padding:30px 16px}.agenda-page .calendar-toolbar{margin-bottom:24px}.agenda-page .calendar-grid .day{height:44px}.agenda-page .calendar-grid .day strong{font-size:13px}.agenda-page .weekdays{font-size:11px}}
 
-.topo{display:block;height:84px;padding:0;background:#fafafa;box-shadow:0 6px 20px #14273920}
-.institutional-header{width:calc(100% - 48px);max-width:1220px;height:100%;margin:auto;display:flex;align-items:center;gap:40px}
-.topo .logo{flex-shrink:0;font-family:Arial,Helvetica,sans-serif;font-size:44px;font-weight:500;letter-spacing:-2px;line-height:1;color:#191f37;text-decoration:none}
-.topo .logo span{font-size:34px;font-weight:700;letter-spacing:-1.4px;color:#007cc3}
-.topo nav{display:flex;flex-wrap:wrap;gap:24px;margin-left:auto;margin-right:160px;transform:translateY(8px)}
-.topo nav a{font-size:14px;font-weight:400;white-space:nowrap;border-top:3px solid transparent;padding:2px 0 0;color:#0081d1}
-.topo nav a.active{border-top-color:#0081d1}
-.topo nav a span{display:inline-block;margin-left:4px;font-size:15px;line-height:1}
-.rodape{display:block;padding:0;border:0;background:#222;color:#fff;font-size:14px;text-align:center}
+.institutional-topo{display:block;height:84px;padding:0;background:#fafafa;box-shadow:0 6px 20px #14273920}
+.institutional-header{width:calc(100% - 48px);max-width:1220px;height:100%;margin:auto;display:flex;align-items:center;gap:24px}
+.institutional-topo .logo{flex-shrink:0;font-family:Arial,Helvetica,sans-serif;font-size:44px;font-weight:500;letter-spacing:-2px;line-height:1;color:#191f37;text-decoration:none}
+.institutional-topo .logo span{font-size:34px;font-weight:700;letter-spacing:-1.4px;color:#007cc3}
+.institutional-topo nav{display:flex;flex-wrap:wrap;gap:24px;margin-left:auto;margin-right:0;transform:translateY(8px)}
+.institutional-topo nav a{font-size:14px;font-weight:400;white-space:nowrap;border-top:3px solid transparent;padding:2px 0 0;color:#0081d1}
+.institutional-topo nav a.active{border-top-color:#0081d1}
+.institutional-topo nav a span{display:inline-block;margin-left:4px;font-size:15px;line-height:1}
+.institutional-footer{display:block;padding:0;border:0;background:#222;color:#fff;font-size:14px;text-align:center}
 .institutional-contact{padding:70px 24px;min-height:352px}
 .institutional-contact p{margin:18px 0 24px;line-height:1.6}
 .institutional-contact p:first-child{margin-top:18px}
@@ -68,6 +68,13 @@ body{font-family:Lato,Arial,sans-serif}
 .institutional-contact a{color:white;text-decoration:underline}
 .institutional-footer-bar{background:#171717;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:24px;padding:14px max(24px,calc((100vw - 1220px)/2));font-size:12px}
 .institutional-footer-bar a{color:#aaa}
-@media(max-width:1400px){.topo nav{margin-right:0}}
-@media(max-width:1000px){.topo{height:auto;min-height:84px}.institutional-header{flex-wrap:wrap;justify-content:center;gap:20px;padding:20px 0}.topo nav{margin:0;transform:none;justify-content:center;gap:14px 22px}.topo .logo{font-size:38px}.topo .logo span{font-size:30px}}
-@media(max-width:480px){.institutional-header{width:calc(100% - 32px);gap:16px}.topo nav{gap:10px 16px}.topo nav a{font-size:11px}.institutional-contact{padding:48px 20px}.institutional-contact p{overflow-wrap:anywhere}.institutional-footer-bar{justify-content:center}}
+@media(max-width:1400px){.institutional-topo nav{margin-right:0}}
+@media(max-width:1000px){.institutional-topo{height:auto;min-height:84px}.institutional-header{flex-wrap:wrap;justify-content:center;gap:20px;padding:20px 0}.institutional-topo nav{margin:0;transform:none;justify-content:center;gap:14px 22px}.institutional-topo .logo{font-size:38px}.institutional-topo .logo span{font-size:30px}}
+@media(max-width:480px){.institutional-header{width:calc(100% - 32px);gap:16px}.institutional-topo nav{gap:10px 16px}.institutional-topo nav a{font-size:11px}.institutional-contact{padding:48px 20px}.institutional-contact p{overflow-wrap:anywhere}.institutional-footer-bar{justify-content:center}}
+
+/* A identidade pública não substitui a navegação e o layout da gestão. */
+.app-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.app-actions .button{font-size:13px;white-space:nowrap;padding:10px 14px}
+.app-actions .internal-access{font-weight:700}
+@media(max-width:1250px){.institutional-topo{height:auto;min-height:84px}.institutional-header{flex-wrap:wrap;justify-content:center;padding:18px 0;gap:16px}.institutional-topo nav{margin:0;transform:none;justify-content:center}.app-actions{justify-content:center}}
+@media(max-width:480px){.app-actions{width:100%;flex-wrap:wrap}.app-topo nav{flex-wrap:wrap;gap:10px 16px}}

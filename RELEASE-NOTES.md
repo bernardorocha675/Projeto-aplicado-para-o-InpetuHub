@@ -1,13 +1,12 @@
-# InPETU Hub 0.4.8
+# InPETU Hub 0.4.9
 
-Agenda com apresentação baseada nas capturas institucionais fornecidas pelo responsável: textos, cabeçalho, painel azul, calendário com marcações de eventos, detalhes e rodapé. Fontes incluídas no aplicativo para uso offline.
+Restaura o acesso direto ao aplicativo de gestão, mantendo o visual institucional da agenda.
 
-- Eventos provenientes das reservas aprovadas locais. Consulta de espaços/capacidades e solicitação de reserva acessíveis abaixo do dia selecionado.
-- Falha de atualização da agenda retira os links antigos de reserva e informa o erro.
-- Ações da CI atualizadas após revisão dos PRs #5, #6 e #7: download-artifact 8.0.2, setup-go 7.0.0 e setup-java 6.1.0, fixadas por SHA oficial. JDK 21, Go 1.27.2, seis alvos e todos os gates preservados.
+- Botões “Área interna” e “Solicitar reserva” no topo da área pública. Logo e “Início” permanecem no aplicativo local.
+- Login e telas internas voltam a ter navegação própria: painel, reservas, solicitações, cadastros, administração e retorno à agenda.
+- Cabeçalho e rodapé institucionais ficam restritos à área pública; o layout da gestão mantém sua barra lateral e rodapé compacto.
+- Regressões verificam os acessos no cabeçalho, login, telas internas e permissões. O smoke do executável confere esses acessos nos seis alvos nativos.
 
-Sem migrations, reset de dados, mudança de contas/senhas, preços ou cotas. Java privado e atualizações 0.4.x preservados. Android continua retirado. SMTP, Render e envio externo permanecem desativados.
+Sem reset, migrations, alteração de contas/senhas, reservas, preços ou cotas. Java privado, família 0.4.x e executáveis Windows/macOS/Linux x64/ARM64 preservados. Android, SMTP, Render e envio externo continuam desativados. Releases anteriores permanecem intactas.
 
-Publicação autorizada pelo responsável após a apresentação dos limites da comparação. O domínio oficial continua bloqueado neste ambiente (HTTP 403): arquivo da marca, fontes/CSS originais, destinos de links, submenus e redes sociais ainda precisam de conferência. Esta entrega não declara cópia integral idêntica nem sincroniza a agenda externa da UFSC.
-
-Publicada somente após os checks obrigatórios de RELEASES.md. Evidências e limites em docs/VALIDACAO.md, docs/IDENTIDADE-INSTITUCIONAL.md e docs/REVISAO-PRS-2026-10-18.md.
+A aparência pública segue as capturas fornecidas. A conferência de recursos/links institucionais externos continua pendente por restrição da rede do ambiente. Publicação somente após todos os gates de RELEASES.md.

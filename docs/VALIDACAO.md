@@ -1,3 +1,13 @@
+# Restauração da área interna — 0.4.9 em validação
+
+Base `e8ca2336dc1ef039ebb8a47d25069f501bcd7d4d`. Dois testes de integração novos passaram no PublicDemoLoginTest (sete casos no conjunto): acessos ao topo público, logo/Início locais, login real e navegação em 11 rotas internas. Smoke nativo ampliado para comprovar a entrada na gestão e os menus instalados.
+
+Passaram localmente 120 testes Java (dois novos), 33 Go com detector de concorrência/go vet, 19 Node, check de segredos, roteiro HTTP/permissões/persistência/backup e empacotamento/smoke do Linux x64 com Java privado. Chromium 154 aprovou agenda → acesso interno → login → painel e oito menus, cotas/auditoria/senha, logout e fluxo completo de reserva, em larguras de 390 a 1919px, sem erros JS ou requisições externas no roteiro de navegação. A execução nativa dos outros cinco alvos depende da nova CI.
+
+Os 19 testes Node, Go com detector de concorrência/go vet e check local de segredos passaram novamente. Não houve mudança de Java de negócio/Go além da versão, dependências, autenticação ou dados. Detalhes em RESTAURACAO-AREA-INTERNA.md. A release anterior permanece preservada.
+
+---
+
 # Publicação 0.4.8 — concluída e verificada
 
 A [0.4.8](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.8) foi publicada e verificada em 18/10/2026, exclusivamente pelo [run 39157060612](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39157060612), com os 11 jobs obrigatórios aprovados. Tag/código testado `2de098c6099af08d1fd44963978ccef94ce14adc`. Os seis alvos nativos executaram testes, roteiro HTTP/backup, empacotamento e smoke com Java privado. Conferidos os 12 assets e os 11 checksums contra digests públicos; ZIP de código baixado e verificado, incluindo quatro fontes/licenças e os SHAs oficiais das três ações. As 13 releases/tags anteriores mantêm links, arquivos e digests; nenhum asset histórico foi substituído. Relatório de CI: `Testes/teste11-2026-10-18_16-04-21-0ced77a7/log.txt`.

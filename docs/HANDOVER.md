@@ -1,6 +1,12 @@
-# Handover técnico — InPETU Hub 0.4.8
+# Handover técnico — InPETU Hub 0.4.9
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
+
+## Restauração do aplicativo — 0.4.9 em validação
+
+O responsável aprovou o visual, mas apontou a perda de acesso à área interna. Corrigidos os acessos escondidos: /admin e /reserva voltam ao topo; logo e Início são locais. Templates admin/auth usam fragmentos internos próprios, e CSS institucional não substitui topo/rodapé da gestão. Sidebar, rotas, permissões, contas e dados foram preservados.
+
+Dois testes Java cobrem navegação pública e login/telas internas; o smoke nativo foi ampliado para comprovar esses acessos. Passaram localmente 120 testes Java (dois novos), 33 Go com detector de concorrência/go vet, 19 Node, check de segredos, roteiro HTTP/permissões/persistência/backup e empacotamento/smoke do Linux x64 com Java privado. Chromium 154 aprovou agenda → acesso interno → login → painel e oito menus, cotas/auditoria/senha, logout e fluxo completo de reserva, em larguras de 390 a 1919px, sem erros JS ou requisições externas no roteiro de navegação. A execução nativa dos outros cinco alvos depende da nova CI. Detalhes em RESTAURACAO-AREA-INTERNA.md. Publicação 0.4.9 depende da nova matriz obrigatória; não mover a tag 0.4.8 nem substituir assets.
 
 ## Identidade institucional — 0.4.8
 

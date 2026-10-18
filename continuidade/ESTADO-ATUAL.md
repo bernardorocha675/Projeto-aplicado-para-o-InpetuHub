@@ -1,3 +1,13 @@
+# 0.4.9 em validação — restauração da área interna
+
+O responsável aprovou o visual da agenda, mas pediu seu projeto de volta, com a área interna. Base limpa e main `e8ca2336dc1ef039ebb8a47d25069f501bcd7d4d`, última release 0.4.8 aprovada nos 11 jobs. Instruções/continuidade/handover/RELEASES lidos; AGENTS ausente.
+
+Causas confirmadas: /admin foi escondido no rodapé, logo/Início passaram ao site externo, templates internos herdaram o menu institucional e CSS genérico de topo/rodapé atingiu a gestão. Rotas/dados continuavam presentes. Corrigidos: Área interna e Solicitar reserva no topo público, logo/Início locais; fragmentos próprios para admin/auth e CSS institucional limitado ao cabeçalho/rodapé públicos. O visual do calendário/painel foi preservado. Sem reset, migrations, mudança de credenciais, permissões, regras ou dependências.
+
+Dois regressores Java adicionados para login e 11 rotas internas. Smoke nativo ampliado para acessos do topo e menus. Passaram localmente 120 testes Java (dois novos), 33 Go com detector de concorrência/go vet, 19 Node, check de segredos, roteiro HTTP/permissões/persistência/backup e empacotamento/smoke do Linux x64 com Java privado. Chromium 154 aprovou agenda → acesso interno → login → painel e oito menus, cotas/auditoria/senha, logout e fluxo completo de reserva, em larguras de 390 a 1919px, sem erros JS ou requisições externas no roteiro de navegação. A execução nativa dos outros cinco alvos depende da nova CI. Preparada versão 0.4.9 coerente nos componentes e roteiro. Publicar somente após a matriz obrigatória, preservar a 0.4.8 e todas as releases históricas. Não ativar Android, SMTP, Render ou envio externo. Detalhes em docs/RESTAURACAO-AREA-INTERNA.md.
+
+---
+
 # 0.4.8 publicada — PRs #5/#6/#7 integrados, entrega concluída
 
 A [0.4.8](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.8) foi publicada e verificada em 18/10/2026, exclusivamente pelo [run 39157060612](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39157060612), com os 11 jobs obrigatórios aprovados. Tag/código testado `2de098c6099af08d1fd44963978ccef94ce14adc`. Os seis alvos nativos executaram testes, roteiro HTTP/backup, empacotamento e smoke com Java privado. Conferidos os 12 assets e os 11 checksums contra digests públicos; ZIP de código baixado e verificado, incluindo quatro fontes/licenças e os SHAs oficiais das três ações. As 13 releases/tags anteriores mantêm links, arquivos e digests; nenhum asset histórico foi substituído. Relatório de CI: `Testes/teste11-2026-10-18_16-04-21-0ced77a7/log.txt`.
