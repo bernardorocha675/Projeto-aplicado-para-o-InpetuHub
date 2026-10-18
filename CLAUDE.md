@@ -10,7 +10,7 @@ Este repositório é o projeto acadêmico de Projeto Aplicado do UniSENAI, em pa
 
 1. Leia `continuidade/CONTEXTO.md` e `continuidade/OPERACAO.md`; para detalhes da entrega, consulte `docs/HANDOVER.md`.
 2. Confira `git status`, `VERSION`, a release mais recente e os resultados de Actions. Este contexto tem data e pode ficar desatualizado; o código e as evidências atuais prevalecem sobre o resumo.
-3. Trabalhe nos fontes ativos: `aplicativo/` (Java), `iniciador/` (Go), `receptor/` (Node) e `android/` (Java/SQLite experimental). Os guias ficam em `docs/`. Versões antigas estão nas tags/releases e no backup; não recrie pastas de versões na raiz.
+3. Trabalhe nos fontes ativos: `aplicativo/` (Java), `iniciador/` (Go), `receptor/` (Node). Os guias ficam em `docs/`. Versões antigas estão nas tags/releases e no backup; não recrie pastas de versões na raiz.
 4. Preserve mudanças de outras pessoas e limite as alterações ao pedido. Quando o pedido for somente analisar, não edite, faça commit, merge ou deploy.
 
 ## Decisões que devem ser preservadas
@@ -39,4 +39,4 @@ Backup e reorganização foram concluídos na 0.4.3. O relatório caçabugs_0.1_
 
 O fix 0.4.5 de logs foi publicado e verificado, com seis ambientes aprovados. Consulte o estado atual e o handover. O envio dos PCs ao GitHub ainda não foi ativado: a integração Render exige identificar explicitamente o workspace, e a descoberta desta sessão não autoriza selecionar My Workspace sem a resposta do usuário. Parar para essa confirmação; não avançar automaticamente outras partes do PDF nem declarar envio real como concluído.
 
-Entrega Android experimental independente/offline publicada e validada, conforme estado atual. Fontes em android/, guia docs/ANDROID.md e handover docs/HANDOVER-ANDROID.md. Linha Android 0.1.0-experimental.1 é separada; desktop continua 0.4.5. Não sincronizar bancos nem ativar Render por esse pedido. Publicar somente após testes em emulador. Chave privada de recuperação entregue fora do Git; manter apenas certificado público no repositório e backup criptografado na release. Futuras releases exigem reutilizar a assinatura, nunca gerar outra silenciosamente.
+Em 18/10/2026, o responsável retirou o suporte Android do projeto ativo. Manter somente desktop Windows/macOS/Linux. Histórico, releases Android já publicadas e materiais privados de recuperação permanecem preservados; não retomar Android sem nova autorização.

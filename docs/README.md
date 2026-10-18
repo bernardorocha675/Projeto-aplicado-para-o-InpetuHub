@@ -10,6 +10,7 @@ O aplicativo é utilizado pelo executável, disponível para Windows, macOS e Li
 - [Testes automáticos e conferência da equipe](TESTAR.md)
 - [Estrutura e desenvolvimento](ESTRUTURA.md)
 - [Validação da release](VALIDACAO.md)
+- [Revisão desktop e primeiro lote](REVISAO-DESKTOP.md)
 - [Handover técnico](HANDOVER.md)
 - [Operação do receptor](RECEPTOR.md)
 

@@ -20,6 +20,15 @@ import (
 
 var errNetwork = errors.New("download indisponivel")
 
+// Somente falhas de leitura da rede permitem usar a versao instalada.
+// Erros de escrita local e de validacao continuam interrompendo a troca.
+type downloadReader struct { io.Reader }
+func (r downloadReader) Read(p []byte)(int,error) {
+ n,e:=r.Reader.Read(p)
+ if e!=nil && e!=io.EOF{return n,fmt.Errorf("%w: transferencia interrompida: %v",errNetwork,e)}
+ return n,e
+}
+
 type HTTPDoer interface { Do(*http.Request)(*http.Response,error) }
 type releaseAsset struct { Name string; State string; Browser_download_url string }
 type githubRelease struct { Tag_name string; Draft bool; Prerelease bool; Assets []releaseAsset }
@@ -82,7 +91,7 @@ func (m *Manager) latest() (*release,error) {
 func (m *Manager) downloadRelease(next *release,stage string) (string,error) {
  if next.ZipURL=="" || next.SumURL==""{return "",errors.New("release ainda incompleta; tente novamente depois")}
  response,e:=m.get(context.Background(),next.SumURL,true);if e!=nil{return "",e}
- sums,e:=limited(response.Body,65536);response.Body.Close();if e!=nil{return "",e}
+ sums,e:=limited(downloadReader{response.Body},65536);response.Body.Close();if e!=nil{return "",e}
  expected:=""
  for _,line:=range strings.Split(string(sums),"\n"){
   parts:=strings.Fields(line)
@@ -94,7 +103,7 @@ func (m *Manager) downloadRelease(next *release,stage string) (string,error) {
  response,e=m.get(context.Background(),next.ZipURL,true);if e!=nil{return "",e};defer response.Body.Close()
  archive:=filepath.Join(stage,"download.zip")
  out,e:=os.OpenFile(archive,os.O_CREATE|os.O_EXCL|os.O_WRONLY,0600);if e!=nil{return "",e}
- n,e:=io.Copy(out,io.LimitReader(response.Body,(512<<20)+1));closeErr:=out.Close()
+ n,e:=io.Copy(out,io.LimitReader(downloadReader{response.Body},(512<<20)+1));closeErr:=out.Close()
  if e!=nil{return "",e};if closeErr!=nil{return "",closeErr};if n>512<<20{return "",errors.New("pacote maior que o limite")}
  actual,e:=digest(archive);if e!=nil{return "",e};if actual!=expected{return "",errors.New("integridade invalida; pacote nao instalado")}
  content:=filepath.Join(stage,"content")

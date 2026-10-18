@@ -49,7 +49,3 @@ Banco e configurações ficam no perfil do usuário, em `InPETU-Hub/0.4`. Os nom
 Migrações, regras, contas, senhas, permissões e conteúdo de negócio foram preservados nesta reorganização. Mantenha a cópia do banco, chave e ambiente ao recuperar uma instalação. Não usar dados reais nos testes nem versionar arquivos gerados em .tools, target, dist, data, .secrets, backups ou logs.
 
 Novas entregas seguem [RELEASES.md](../RELEASES.md). O ponto de retomada está em [continuidade](../continuidade/README.md); a ativação do receptor permanece uma etapa separada, pendente de confirmação.
-
-## Android experimental
-
-`android/` contém o aplicativo nativo Java/SQLite, recursos, instrumentação e scripts de compilação/publicação. Sua versão é independente do desktop. O desenvolvimento usa JDK 17 e SDK Android API 35/Build Tools 35.0.0; o usuário instala apenas o APK. Consulte [o guia Android](ANDROID.md) e [o handover Android](HANDOVER-ANDROID.md), incluindo assinatura, testes e limitações. A automação está em `.github/workflows/android-experimental.yml`; as releases Android são prereleases e não substituem a estável desktop.

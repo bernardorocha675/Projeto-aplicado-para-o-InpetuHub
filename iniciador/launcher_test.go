@@ -6,6 +6,8 @@ import (
  "context"
  "encoding/json"
  "fmt"
+ "errors"
+ "io"
  "net/http"
  "net/http/httptest"
  "net/url"
@@ -179,3 +181,87 @@ func TestNewInstalledLauncherIsSelectedBeforeStartingTheBackend(t *testing.T){
  if e:=m.start();e!=nil{t.Fatal(e)}
  if called!=filepath.Join(root,b.Launcher)||m.state().Running{t.Fatal("iniciador novo nao selecionado",called)}
 }
+
+func TestMissingPrivateConfigurationNeverReplacesExistingInstallation(t *testing.T) {
+	for _, missing := range []string{".secrets/mfa.key", ".env.local"} {
+		t.Run(missing, func(t *testing.T) {
+			m := testManager(t)
+			if e := m.prepareConfig(); e != nil {
+				t.Fatal(e)
+			}
+			db := filepath.Join(m.home, "data", "inpetu-v02.mv.db")
+			original := []byte("existing database fixture")
+			if e := os.WriteFile(db, original, 0600); e != nil {
+				t.Fatal(e)
+			}
+			other := ".env.local"
+			if missing == other {
+				other = ".secrets/mfa.key"
+			}
+			preserved, e := os.ReadFile(filepath.Join(m.home, other))
+			if e != nil {
+				t.Fatal(e)
+			}
+			if e = os.Remove(filepath.Join(m.home, missing)); e != nil {
+				t.Fatal(e)
+			}
+			if e = m.prepareConfig(); e == nil {
+				t.Fatal("missing private configuration was silently regenerated")
+			}
+			if _, e = os.Lstat(filepath.Join(m.home, missing)); !os.IsNotExist(e) {
+				t.Fatal("missing file was recreated", e)
+			}
+			data, _ := os.ReadFile(db)
+			again, _ := os.ReadFile(filepath.Join(m.home, other))
+			if !bytes.Equal(data, original) || !bytes.Equal(again, preserved) {
+				t.Fatal("existing installation changed")
+			}
+		})
+	}
+}
+
+func TestTruncatedDownloadKeepsInstalledVersion(t *testing.T) {
+	m := testManager(t)
+	old := filepath.Join(m.home, "installed", "0.4.0")
+	b := fixtureBundle(t, old, "0.4.0")
+	if e := m.ready(old, b); e != nil {
+		t.Fatal(e)
+	}
+	server := releaseServer(t, m, "0.4.1", false)
+	defer server.Close()
+	m.client = truncatedDownloadClient{Client: server.Client()}
+	if e := m.installLatest(); e != nil {
+		t.Fatal("usable installed version blocked by interrupted transfer:", e)
+	}
+	if m.state().Version != "0.4.0" || !m.state().Ready {
+		t.Fatal(m.state())
+	}
+	if _, e := os.Stat(filepath.Join(m.home, "installed", "0.4.1")); !os.IsNotExist(e) {
+		t.Fatal("partial update installed", e)
+	}
+}
+
+type truncatedDownloadClient struct{ *http.Client }
+
+func (c truncatedDownloadClient) Do(r *http.Request) (*http.Response, error) {
+	response, e := c.Client.Do(r)
+	if e == nil && r.URL.Path == "/zip" {
+		response.Body.Close()
+		response.Body = io.NopCloser(&interruptedReader{})
+	}
+	return response, e
+}
+
+type interruptedReader struct{}
+
+func (*interruptedReader) Read([]byte) (int, error) { return 0, io.ErrUnexpectedEOF }
+
+func TestDownloadReaderDoesNotClassifyDiskFailureAsNetwork(t *testing.T) {
+ diskError:=errors.New("simulated disk full")
+ _,e:=io.Copy(failingDownloadWriter{diskError},downloadReader{strings.NewReader("package bytes")})
+ if !errors.Is(e,diskError)||errors.Is(e,errNetwork){t.Fatal("disk error must block update",e)}
+ _,e=io.ReadAll(downloadReader{&interruptedReader{}})
+ if !errors.Is(e,errNetwork){t.Fatal("interrupted network read must allow installed version",e)}
+}
+type failingDownloadWriter struct { err error }
+func (w failingDownloadWriter) Write([]byte)(int,error){return 0,w.err}

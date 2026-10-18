@@ -11,3 +11,9 @@ Se a consulta ou download estiver indisponível, usa a versão completa já inst
 Os backups automáticos contêm dados e chaves reais, não são cifrados e não devem ser publicados. Ficam na pasta de dados do usuário, com acesso restrito pelo perfil. Não há limpeza automática desses backups. Para retorno após falha, pare o aplicativo e preserve o estado atual; restaure o banco, chave e ambiente do mesmo backup em uma cópia separada com a versão anterior. Restaurar somente código antigo pode ser incompatível com um banco já migrado. A restauração perde alterações posteriores ao backup.
 
 O mecanismo não garante reversão automática de migrations após falha de inicialização. A integridade depende de HTTPS, SHA-256 e da confiança no repositório oficial; os executáveis desta entrega não possuem certificado comercial nem notarização Apple.
+
+## Configuração ausente e downloads interrompidos — 0.4.6
+
+Se já existem dados, o iniciador não gera outra chave ou ambiente para substituir arquivos ausentes. Pare e preserve a instalação; recupere banco, `.secrets/mfa.key` e `.env.local` do mesmo backup. Não apague o banco nem gere uma chave para tentar recuperar o acesso. Arquivos privados que sejam atalhos ou diretórios também são recusados.
+
+Se o corpo do download for interrompido, a versão instalada continua disponível e a pasta temporária é removida. A próxima abertura pode tentar novamente. Erros de integridade, de gravação local ou pacote inválido continuam interrompendo a atualização; nenhum pacote parcial é ativado.

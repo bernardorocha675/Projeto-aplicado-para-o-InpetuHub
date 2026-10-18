@@ -1,10 +1,14 @@
-# Handover técnico — InPETU Hub 0.4.5
+# Handover técnico — InPETU Hub 0.4.6
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
 
-## Android experimental independente
+## Primeiro lote 0.4.6 — foco desktop e confiabilidade
 
-A linha Android 0.1.0-experimental.1 foi publicada separadamente, sem alterar a versão estável desktop 0.4.5 ou seus dados. Fontes em android/, uso em [ANDROID.md](ANDROID.md), arquitetura/assinatura em [HANDOVER-ANDROID.md](HANDOVER-ANDROID.md) e evidências de publicação/testes em [VALIDACAO-ANDROID.md](VALIDACAO-ANDROID.md). Não importar H2 nem presumir sincronização ou equivalência completa. A validação Android usa emulador próprio e não substitui a matriz de computadores.
+Por decisão do responsável em 18/10/2026, Android saiu do produto ativo. Fontes, testes, workflow e guias exclusivos foram retirados; histórico, prerelease e materiais privados de recuperação permanecem preservados. Desktop continua Windows/macOS/Linux x64/ARM64, Java privado e dados na família 0.4.
+
+O iniciador verifica a configuração antes de gerar arquivos: se há dados e falta chave ou ambiente, interrompe e orienta recuperar o conjunto original. Instalação nova continua automática. Download interrompido mantém a versão íntegra instalada utilizável; integridade e erros de disco continuam bloqueando a troca. Duas regressões reproduziram as falhas antes das correções. Detalhes e suspeitas em [REVISAO-DESKTOP.md](REVISAO-DESKTOP.md).
+
+Versão de trabalho 0.4.6, publicação condicionada aos gates de RELEASES.md. Situação concreta em continuidade/ESTADO-ATUAL.md. Sem reset, migration, mudança de contas/regras/dependências. Encerrar após este lote.
 
 ## Fix 0.4.5 — logs e finalização de relatórios
 
