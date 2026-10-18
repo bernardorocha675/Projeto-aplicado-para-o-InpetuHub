@@ -62,6 +62,3 @@ A instalação usa a pasta `InPETU-Hub/0.4` dentro da configuração do seu usu�
 Não é necessário copiar arquivo de senhas. As cinco contas são criadas automaticamente no banco e as senhas públicas voltam aos valores publicados quando o sistema inicia. Registros de negócio novos não são apagados ao reiniciar.
 
 A primeira execução da 0.4 começa limpa; a pasta da 0.3 permanece intacta. Não copie banco e chave manualmente sem conferir o procedimento técnico do handover.
-
-
-Na 0.4.9, selecione o dia na agenda e abra **Consultar espaços e solicitar reserva** para usar filtros, consultar capacidades e escolher os horários. Use **Área interna** no topo para entrar na gestão. O atalho **Solicitar reserva** também fica no topo; logo e **Início** mantêm você no aplicativo. A aparência segue as capturas institucionais; os limites da conferência com o site estão em IDENTIDADE-INSTITUCIONAL.md.

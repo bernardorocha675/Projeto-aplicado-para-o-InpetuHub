@@ -75,48 +75,30 @@ class PublicDemoLoginTest {
           org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.is("SEM_ESPACOS"))))
       .andExpect(jsonPath("$.dias[0].espacos").isEmpty());
  }
- @Test void institutionalFontsAreAvailableWithoutLoginOrExternalServices() throws Exception {
-  for(String font: new String[]{"lato/lato-latin-400-normal.woff2","lato/lato-latin-700-normal.woff2",
-      "lato/lato-latin-900-normal.woff2","montserrat/montserrat-latin-700-normal.woff2"}){
-   var response=mvc.perform(get("/fonts/"+font))
-       .andExpect(status().isOk()).andReturn().getResponse();
-   byte[] content=response.getContentAsByteArray();
-   assertTrue(content.length>1000);
-   assertArrayEquals(new byte[]{'w','O','F','2'},java.util.Arrays.copyOf(content,4));
-  }
- }
-
- private String header(String html){
-  int start=html.indexOf("<header");int end=html.indexOf("</header>",start);
-  assertTrue(start>=0&&end>start,"Cabeçalho do aplicativo ausente");
-  return html.substring(start,end);
- }
- @Test void publicHeaderKeepsManagementAndReservationEntryPoints() throws Exception {
-  for(String path:new String[]{"/","/agenda","/reserva"}){
+ @Test void restoredPublicNavigationStaysInsideTheApplication() throws Exception {
+  for(String path:new String[]{"/","/agenda","/reserva","/login"}){
    var html=mvc.perform(get(path)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-   var top=header(html);
-   assertTrue(top.contains("href=\"/admin\""),"A gestão precisa estar no topo");
-   assertTrue(top.contains("href=\"/reserva\""),"A reserva precisa estar acessível diretamente");
-   assertTrue(top.contains("class=\"logo\" href=\"/\""),"O logo deve permanecer no aplicativo");
-   assertTrue(top.contains("href=\"/\">INÍCIO</a>"));
+   assertLocalHeader(html,path);
   }
  }
- @Test void internalNavigationAndAllManagementScreensRemainAvailable() throws Exception {
-  var loginHeader=header(mvc.perform(get("/login")).andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
-  assertFalse(loginHeader.contains("https://"),"O login deve usar a navegação do aplicativo");
+ @Test void restoredManagementScreensKeepLocalNavigationAfterLogin() throws Exception {
   var result=mvc.perform(post("/login").with(csrf()).param("username","bernardo").param("password",LocalAccounts.all().stream().filter(a->a.login().equals("bernardo")).findFirst().orElseThrow().password()))
     .andExpect(redirectedUrl("/admin")).andReturn();
   var session=(org.springframework.mock.web.MockHttpSession)result.getRequest().getSession(false);
   for(String path:new String[]{"/admin","/admin/reservas","/admin/solicitacoes","/admin/cadastros/empreendedores","/admin/cadastros/espacos","/admin/cadastros/atendimentos","/admin/cadastros/visitas","/admin/config","/admin/config/cotas","/admin/config/auditoria","/conta/senha"}){
    var html=mvc.perform(get(path).session(session)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-   var top=header(html);
-   assertTrue(top.contains("app-topo"));assertFalse(top.contains("https://"));
-   for(String target:new String[]{"/admin","/admin/reservas","/admin/solicitacoes","/agenda"})assertTrue(top.contains("href=\""+target+"\""),path+" perdeu a navegação interna");
-   if(path.startsWith("/admin")){
-    assertTrue(html.contains("aria-label=\"Menu interno\""));
-    for(String target:new String[]{"empreendedores","espacos","atendimentos","visitas"})assertTrue(html.contains("href=\"/admin/cadastros/"+target+"\""));
-   }
+   assertLocalHeader(html,path);
+   if(path.startsWith("/admin"))assertTrue(html.contains("aria-label=\"Menu interno\""),path);
   }
+ }
+ private void assertLocalHeader(String html,String path){
+  int start=html.indexOf("<header"),end=html.indexOf("</header>",start);
+  assertTrue(start>=0&&end>start,path+" perdeu o cabeçalho");
+  var top=html.substring(start,end);
+  assertFalse(top.contains("https://"),path+" está saindo do aplicativo");
+  assertFalse(top.contains("http://"),path+" está saindo do aplicativo");
+  for(String target:new String[]{"/","/agenda","/admin"})assertTrue(top.contains("href=\""+target+"\""),path+" perdeu a navegação local");
+  assertFalse(html.contains("/css/institucional.css"),"O visual deve ser o da 0.4.7");
  }
 
 }

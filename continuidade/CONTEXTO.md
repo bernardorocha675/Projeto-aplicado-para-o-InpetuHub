@@ -89,3 +89,8 @@ Após informado sobre a preparação e o bloqueio do domínio oficial, o respons
 ## Prioridade da gestão — correção de 18/10/2026
 
 O responsável aprovou o visual institucional e pediu restaurar a essência do projeto: a área interna. A identidade pública não pode esconder/substituir a gestão. Manter /admin e /reserva visíveis no topo, logo/Início locais e navegação própria para login, painel, reservas, solicitações e cadastros. Não retirar menus/fluxos do aplicativo para copiar o site institucional.
+
+
+## Retorno determinado pelo responsável — 18/10/2026
+
+O pedido “volte para a versão 0.4.7” substitui os pedidos de reproduzir o site e de manter os ajustes visuais da 0.4.9. Restaurar os fontes/visual/fluxos da tag v0.4.7, sem reaplicar o redesenho institucional. A entrega usa 0.4.10 para alcançar instalações mais novas pelo atualizador da família 0.4.x; não mover tags nem substituir releases. Preservar dados e os recursos de gestão originais. As seções anteriores sobre identidade são históricas, não uma autorização para reintroduzi-la.

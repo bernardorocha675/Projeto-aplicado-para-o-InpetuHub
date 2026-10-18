@@ -1,3 +1,5 @@
+> Registro histórico: esta interface foi retirada pelo retorno à 0.4.7, entregue como 0.4.10. Não usar como especificação ativa; consulte [RETORNO-0.4.7.md](RETORNO-0.4.7.md).
+
 # Restauração da navegação do aplicativo — 0.4.9
 
 O responsável apontou que a entrega 0.4.8 tinha tirado o foco da área interna e pediu seu projeto de volta, mantendo o visual institucional que aprovou. Base limpa `e8ca2336dc1ef039ebb8a47d25069f501bcd7d4d`, branch work, main no mesmo SHA. AGENTS.md ausente; instruções, continuidade, handover e RELEASES.md lidos. Última release 0.4.8 com seus 11 jobs aprovados.

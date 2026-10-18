@@ -1,3 +1,11 @@
+# Retorno à 0.4.7 solicitado — 0.4.10 em validação
+
+O responsável reportou nova quebra e pediu voltar à versão 0.4.7. Base limpa c0e08b4, branch work/main. Fontes de aplicativo/iniciador/receptor restaurados da tag v0.4.7 (992168e3ceb39f196b2153aa5e291fbae0e2f196); apenas versões de distribuição passam a 0.4.10. Interface institucional e links externos foram retirados. Atualizações de Actions aprovadas permanecem na CI; dois testes novos protegem navegação local/gestão, e o smoke do pacote também foi ampliado. Ver docs/RETORNO-0.4.7.md.
+
+Passaram localmente 119 testes Java (117 da 0.4.7 mais duas regressões de navegação), 33 Go com detector de concorrência/go vet, 16 Node, check de segredos, roteiro HTTP/permissões/persistência/backup e empacotamento/smoke Linux x64 com Java privado. Chromium 154 verificou menu original, login, painel e oito menus, cotas/auditoria/senha, logout, fluxo de reserva e larguras de 390 a 1919px, sem erros JavaScript nem requisições externas no roteiro de navegação. Cópia isolada de dados sintéticos da 0.4.9 abriu na restauração: oito contagens, chave e histórico Flyway preservados após navegação e login. O JAR não contém CSS/fontes retirados. Paridade com a tag comprovada: somente versões e testes adicionais diferem nos três componentes. Outros cinco alvos aguardam a matriz nativa da CI. Só publicar após a matriz de seis alvos e todos os gates. 0.4.10 permite atualização de instalações 0.4.9; não apagar/republicar/mover a 0.4.7 nem releases anteriores. Dados, chave, contas e backups preservados. Sem Android, serviços externos ou novas mudanças de negócio. Reproduzir o site deixa de ser objetivo; aguardar autorização para outro trabalho após esta entrega.
+
+---
+
 # 0.4.9 publicada — aplicativo e área interna restaurados
 
 O responsável aprovou o visual da agenda e pediu a restauração da área interna. Corrigida a regressão da 0.4.8: /admin havia ficado escondido no rodapé, logo/Início apontavam para o site externo e a gestão herdava navegação/CSS institucionais. Área interna e Solicitar reserva agora estão no topo; logo/Início são locais. Admin/auth usam seus próprios fragmentos e preservam painel, reservas, solicitações, cadastros, administração e sidebar. O visual público aprovado permanece. Detalhes em docs/RESTAURACAO-AREA-INTERNA.md.

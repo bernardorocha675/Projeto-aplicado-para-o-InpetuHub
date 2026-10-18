@@ -44,7 +44,7 @@ export function createReceiver({fetcher=fetch,now=()=>Date.now(),authorize}={}){
  const server=http.createServer(async(req,res)=>{
   if(active>=4){respond(res,503,{error:"BUSY"});return;}active++;
   try{
-   if(req.method==='GET'&&req.url==='/healthz'){respond(res,200,{status:'ok',version:'0.4.9',pending:pending.size,publisher:'github-actions'});return;}
+   if(req.method==='GET'&&req.url==='/healthz'){respond(res,200,{status:'ok',version:'0.4.10',pending:pending.size,publisher:'github-actions'});return;}
    if(req.headers.origin){respond(res,403,{error:'ORIGIN_DENIED'});return;}
    if(req.method==='POST'&&req.url==='/v1/reports'){
     if(req.headers['x-inpetu-project']!=='inpetu-hub-v04'||!/^application\/json(?:;|$)/.test(req.headers['content-type']||'')){respond(res,415,{error:'FORMAT_DENIED'});return;}
@@ -75,4 +75,4 @@ export function createReceiver({fetcher=fetch,now=()=>Date.now(),authorize}={}){
  server.requestTimeout=30000;server.headersTimeout=10000;server.keepAliveTimeout=5000;
  return server;
 }
-if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){const server=createReceiver();server.listen(Number(process.env.PORT||10000),'0.0.0.0',()=>console.log('RECEIVER_READY version=0.4.9'));}
+if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){const server=createReceiver();server.listen(Number(process.env.PORT||10000),'0.0.0.0',()=>console.log('RECEIVER_READY version=0.4.10'));}

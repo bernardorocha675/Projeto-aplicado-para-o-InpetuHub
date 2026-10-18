@@ -76,8 +76,9 @@ with tempfile.TemporaryDirectory(prefix='inpetu-desktop-smoke-') as temp:
         with get(browser(),base+'/agenda') as response:
             public_page=response.read().decode()
         public_header=public_page.split('<header',1)[1].split('</header>',1)[0]
-        assert 'href="/admin"' in public_header and 'href="/reserva"' in public_header, 'Gestao e reserva precisam estar visiveis no topo'
-        assert 'class="logo" href="/"' in public_header, 'O logo nao deve retirar o usuario do aplicativo'
+        assert 'https://' not in public_header and 'http://' not in public_header, 'O menu restaurado deve permanecer no aplicativo'
+        assert all('href="'+path+'"' in public_header for path in ['/','/agenda','/admin'])
+        assert '/css/institucional.css' not in public_page
         with get(browser(),base+'/disponibilidade') as response:
             fresh_calendar=json.loads(response.read())
         assert fresh_calendar['dias'] and all(d['estado']=='SEM_ESPACOS' and not d['espacos'] for d in fresh_calendar['dias']), 'Banco sem espacos nao pode indicar ocupacao'
@@ -107,8 +108,8 @@ with tempfile.TemporaryDirectory(prefix='inpetu-desktop-smoke-') as temp:
                 page=response.read().decode()
                 assert response.status==200
             header=page.split('<header',1)[1].split('</header>',1)[0]
-            assert 'app-topo' in header and 'https://' not in header, 'Navegacao interna substituida em '+path
-            assert 'aria-label="Menu interno"' in page, 'Menu de gestao ausente em '+path
+            assert 'https://' not in header and 'http://' not in header, 'Navegacao externa indevida em '+path
+            assert 'href="/admin"' in header and 'aria-label="Menu interno"' in page
         assert not (home/'.secrets/accounts.properties').exists(), 'Arquivo de senhas nao deve ser necessario'
         fields={'nomeEspaco':'Sala persistente desktop','capacidade':'10','ativo':'on','disponibilidade':'on',
                 '_csrf':csrf(admin,base,'/admin/cadastros/espacos/editar')}

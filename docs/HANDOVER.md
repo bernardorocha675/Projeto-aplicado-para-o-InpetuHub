@@ -1,6 +1,10 @@
-# Handover técnico — InPETU Hub 0.4.9
+# Handover técnico — InPETU Hub 0.4.10
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
+
+## Retorno à 0.4.7 — 0.4.10 em validação
+
+O responsável cancelou as alterações de interface posteriores à 0.4.7. Os três componentes ativos foram restaurados dessa tag, com nova versão 0.4.10 para o atualizador. Menu local original, agenda, login, painel e cadastros voltam ao estado anterior; fontes/CSS/menu institucional foram retirados. Sem mudança de dados/schema/negócio/dependências. Passaram localmente 119 testes Java (117 da 0.4.7 mais duas regressões de navegação), 33 Go com detector de concorrência/go vet, 16 Node, check de segredos, roteiro HTTP/permissões/persistência/backup e empacotamento/smoke Linux x64 com Java privado. Chromium 154 verificou menu original, login, painel e oito menus, cotas/auditoria/senha, logout, fluxo de reserva e larguras de 390 a 1919px, sem erros JavaScript nem requisições externas no roteiro de navegação. Cópia isolada de dados sintéticos da 0.4.9 abriu na restauração: oito contagens, chave e histórico Flyway preservados após navegação e login. O JAR não contém CSS/fontes retirados. Paridade com a tag comprovada: somente versões e testes adicionais diferem nos três componentes. Outros cinco alvos aguardam a matriz nativa da CI. Duas regressões de navegação local e smoke reforçado; matriz obrigatória em validação. Histórico e releases são preservados. Detalhes em RETORNO-0.4.7.md. Não reintroduzir o redesenho sem novo pedido.
 
 ## Restauração do aplicativo — 0.4.9 publicada e verificada
 
