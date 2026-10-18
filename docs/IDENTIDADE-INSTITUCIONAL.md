@@ -1,4 +1,4 @@
-# Agenda institucional — preparação 0.4.8
+# Agenda institucional — 0.4.8
 
 Pedido de 18/10/2026: o responsável informou que este é o projeto aplicado oficial do InPETU Hub e pediu a mesma apresentação do site original. Referência informada: https://inpetuhub.sites.ufsc.br/agenda/, além de três capturas com agenda inicial, rodapé e evento selecionado. Base limpa `215e57d2055faeb4a6b0455436a71a9f26a9115d`, branch `work`, main remoto no mesmo commit; última release publicada 0.4.7. Nenhum AGENTS.md encontrado no workspace. Instruções, continuidade, handover e RELEASES.md consultados.
 
@@ -19,7 +19,7 @@ Agora o erro esconde as ferramentas e limpa os links antigos, com mensagem para 
 
 A requisição ao domínio oficial foi recusada pela rede do ambiente com HTTP 403. A configuração observada não contém esse domínio. Foi salvo um rascunho aditivo com `inpetuhub.sites.ufsc.br`; salvar o rascunho não aplica nem publica a configuração. É preciso revisar/salvar em configurações do ambiente e publicar para retomar a consulta.
 
-**A preparação não está publicada e não foi declarada uma cópia integral verificada.** A implementação pelas capturas está disponível para revisão, mas faltam:
+**Publicação autorizada em 18/10/2026.** Depois de informado sobre o bloqueio e a preparação, o responsável pediu verificar os PRs e “pode publicar tudo”. Essa autorização permite entregar a implementação pelas capturas após os gates obrigatórios; não transforma as seguintes pendências em equivalência verificada:
 
 1. Obter/conferir o arquivo da marca e as fontes/CSS originais. A marca atual é texto estilizado; Lato/Montserrat foram escolhidas visualmente.
 2. Conferir destinos de Sobre, Iniciativas, Notícias e Eventos, Contato, Política de Privacidade e Termos de Uso. Os caminhos no template são provisórios, derivados dos rótulos, ainda sem validação HTTP. Conferir e implementar os submenus reais; não há itens de submenu inventados.
@@ -32,4 +32,4 @@ Escopo assumido enquanto a preferência opcional não é respondida: agenda e id
 
 Passaram 118 Java, 33 Go/-race/vet, 19 Node, roteiro HTTP/backup, navegador e smoke local Linux. Código testado `12bdb6b169b4020692deb88584751ac80757203a`, enviado para `release-v0.4`. [Run 39155638958](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39155638958): nove jobs aprovados — Ubuntu 24.04 x64/ARM64, macOS 15 Apple Silicon/Intel, Windows Server 2025 x64, Windows 11 ARM64, fonte/segredos, dependências e CodeQL. Cada alvo nativo executou testes, roteiro HTTP/backup, empacotamento e smoke. Relatório público em Testes e publicação de release não foram executados: são restritos a main. Não confundir estes nove checks com uma release publicada ou com o pipeline de publicação completo. Evidências e limites em VALIDACAO.md e continuidade/ESTADO-ATUAL.md. O navegador usou dados sintéticos em instalação descartável; os 16 dias ocupados da captura foram simulados somente na requisição interceptada de teste visual. Nenhum dado de negócio ou serviço externo foi alterado. A comparação funcional agenda → reserva usa o JAR real e o endpoint real, separadamente dessa simulação visual.
 
-Não publicar 0.4.8 em main antes da conferência oficial e dos gates de RELEASES.md. Releases/tags/assets anteriores, inclusive Android experimental, permanecem preservados.
+A publicação da 0.4.8 foi autorizada com os limites acima documentados e continua condicionada aos gates de RELEASES.md. Revisão das ações da CI em REVISAO-PRS-2026-10-18.md. Releases/tags/assets anteriores, inclusive Android experimental, permanecem preservados.

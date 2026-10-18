@@ -1,3 +1,17 @@
+# Publicação 0.4.8 autorizada — PRs integrados, aguardando CI de main
+
+Em 18/10/2026 o responsável mostrou os PRs #5/#6/#7 e disse “Verifica isso e pode publicar tudo”, após informado sobre a preparação da interface e o acesso oficial bloqueado. Essa nova autorização substitui a retenção anterior da publicação pela conferência visual. Não declara equivalência integral da marca/fontes/links/submenus: essa pendência continua documentada.
+
+Base da retomada limpa: `90c997827fbe979d32e066e675eb916c9f1e5c3d`, branch work; main remoto `215e57d2055faeb4a6b0455436a71a9f26a9115d`. Lidos CLAUDE, continuidade, handover e RELEASES; AGENTS ausente. Revisados e integrados os três PRs sem conflitos, preservando os commits originais: download-artifact 8.0.2, setup-go 7.0.0 e setup-java 6.1.0 com SHAs das tags oficiais. Somente as referências de ações do workflow mudaram. JDK 21, Go 1.27.2, seis alvos, qualidade, segredos e publicação por gates mantidos.
+
+PRs #5/#6 têm matrizes históricas aprovadas. PR #7 tinha falhas nos dois alvos Windows, em Testar.java/HTTP/backup, depois do setup Java; os logs antigos retornam 404, sem causa histórica confirmada. Validar a integração atual em nova matriz completa, sem mascarar testes. YAML/contrato do workflow, 19 Node e segredos passaram localmente. Java/Go/UI não mudaram em relação à preparação, cuja evidência aparece abaixo.
+
+A versão continua 0.4.8, ainda sem tag ou release no início da retomada. Baseline das 13 releases/tags anteriores registrada antes de publicar. Preparar documentação e enviar main; o workflow deve executar os seis pacotes nativos, fonte/segredos/dependências/CodeQL, relatório de CI e publicação dos artefatos do mesmo run. Só declarar publicado após conferir tag, SHA, arquivos, checksums e preservação do histórico. Sem reset, migrations, mudanças de contas/preços/cotas, Android, SMTP, Render ou envio externo. Detalhes em docs/REVISAO-PRS-2026-10-18.md.
+
+---
+
+## Registro anterior: preparação retida antes da nova autorização
+
 # Identidade institucional — 0.4.8 em preparação, publicação bloqueada
 
 Pedido do responsável em 18/10/2026: aparência igual ao site original, porque o projeto aplicado é oficial do InPETU Hub. URL fornecida: https://inpetuhub.sites.ufsc.br/agenda/; três capturas de referência. Base limpa `215e57d2055faeb4a6b0455436a71a9f26a9115d`, branch `work`; remoto main no mesmo SHA. AGENTS.md ausente; CLAUDE, continuidade, handover e RELEASES.md lidos. A release pública atual permanece [0.4.7](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.7), cujo run obrigatório passou nos 11 jobs.

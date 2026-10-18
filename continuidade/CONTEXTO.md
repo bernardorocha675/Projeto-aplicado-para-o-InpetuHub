@@ -79,3 +79,8 @@ O responsável autorizou todos os itens restantes do relatório caçabugs em uma
 ## Identidade oficial — pedido de 18/10/2026
 
 O responsável informou que o projeto aplicado é oficial para o InPETU Hub e pediu a mesma aparência do site https://inpetuhub.sites.ufsc.br/agenda/. Foram fornecidas três capturas. Não interpretar o pedido visual como autorização para importar eventos externos, substituir reservas locais, hospedar o aplicativo ou apagar dados. A preparação 0.4.8 mantém o fluxo do executável; falta conferir recursos/links/submenus oficiais porque a rede recusou o domínio com HTTP 403. Não declarar equivalência integral sem essa evidência.
+
+
+## Autorização de publicação — 18/10/2026
+
+Após informado sobre a preparação e o bloqueio do domínio oficial, o responsável autorizou verificar os PRs #5/#6/#7 e publicar tudo. Prosseguir com a 0.4.8 após os gates obrigatórios, preservando a pendência de conferência oficial documentada; não declarar cópia integral verificada. A autorização cobre os três PRs de Actions, não atualizações indiscriminadas do aplicativo, publicação de chaves/dados, Android ou ativação externa.

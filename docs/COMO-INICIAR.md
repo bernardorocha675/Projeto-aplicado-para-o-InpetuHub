@@ -64,4 +64,4 @@ Não é necessário copiar arquivo de senhas. As cinco contas são criadas autom
 A primeira execução da 0.4 começa limpa; a pasta da 0.3 permanece intacta. Não copie banco e chave manualmente sem conferir o procedimento técnico do handover.
 
 
-Na preparação 0.4.8, selecione o dia na agenda e abra **Consultar espaços e solicitar reserva** para usar filtros, consultar capacidades e escolher os horários. O acesso **Área interna** fica no rodapé. Essa preparação ainda depende da conferência com o site institucional antes da publicação; a release atual permanece 0.4.7.
+Na 0.4.8, selecione o dia na agenda e abra **Consultar espaços e solicitar reserva** para usar filtros, consultar capacidades e escolher os horários. O acesso **Área interna** fica no rodapé. A aparência segue as capturas institucionais; os limites da conferência com o site estão em IDENTIDADE-INSTITUCIONAL.md.

@@ -1,14 +1,14 @@
-# Handover técnico — InPETU Hub 0.4.8 em preparação
+# Handover técnico — InPETU Hub 0.4.8
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
 
-## Identidade institucional — 0.4.8 em preparação
+## Identidade institucional — 0.4.8
 
 Pedido do responsável: reproduzir a agenda oficial e identidade compartilhada, usando https://inpetuhub.sites.ufsc.br/agenda/ e as três capturas. Foram ajustados textos, geometria, calendário, detalhes e cabeçalho/rodapé; fontes locais OFL acompanham o JAR. Consulta/reserva foi preservada abaixo do dia selecionado. Não há importação/sincronização de eventos externos ou mudança de dados/negócio.
 
 O catch da agenda agora retira ações de reserva da consulta anterior quando a atualização falha, com regressor que falhou sem a limpeza. Fontes são públicas em /fonts/** e registradas como ASSET. Detalhes, arquivos e evidências em [IDENTIDADE-INSTITUCIONAL.md](IDENTIDADE-INSTITUCIONAL.md).
 
-**Publicação pendente.** O domínio oficial retornou HTTP 403 pela política de rede. Rascunho de liberação salvo, ainda sem aplicação/publicação no ambiente. Marca, tipografia, rotas provisórias, submenus e redes sociais precisam ser conferidos antes de integrar em main e publicar. Não apresentar a preparação como cópia integral idêntica. A 0.4.7 continua sendo a release pública atual; não substituir seus assets.
+**Publicação autorizada pelo responsável em 18/10/2026**, após apresentação da preparação e dos limites. O domínio oficial continua bloqueado (HTTP 403); marca, fontes, rotas, submenus e redes sociais permanecem pendentes de conferência. Não apresentar a entrega como cópia integral idêntica. Os PRs #5/#6/#7 foram revistos e integrados preservando JDK 21, Go 1.27.2 e gates; detalhes em REVISAO-PRS-2026-10-18.md. Publicar somente pelo run obrigatório de main, preservando a 0.4.7 e releases anteriores.
 
 Código testado `12bdb6b169b4020692deb88584751ac80757203a`, enviado para `release-v0.4`. [Run 39155638958](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39155638958): nove jobs aprovados — Ubuntu 24.04 x64/ARM64, macOS 15 Apple Silicon/Intel, Windows Server 2025 x64, Windows 11 ARM64, fonte/segredos, dependências e CodeQL. Cada alvo nativo executou testes, roteiro HTTP/backup, empacotamento e smoke. Relatório público em Testes e publicação de release não foram executados: são restritos a main. Não confundir estes nove checks com uma release publicada ou com o pipeline de publicação completo. Revalidação das 13 tags/releases anteriores aprovada, incluindo Android experimental. A configuração cloud salva agora inicia o JAR da VERSION em dados isolados e impede regenerar chave quando já há dados; foi testada nesta instância, sem publicar a configuração.
 
