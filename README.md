@@ -13,9 +13,9 @@ Projeto aplicado oficial do **InPETU Hub**, desenvolvido na disciplina de **Proj
 
 ## Versão atual
 
-[**Versão 0.4.7**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.7) — corrige contatos, datas, confirmação e agenda, preservando os dados do desktop.
+[**Versão 0.4.8**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.8) — agenda com identidade institucional, correção da consulta após erro e ações da CI atualizadas, preservando os dados do desktop.
 
-A identidade institucional da agenda e os PRs da CI estão em validação para publicação da 0.4.8; [limites da comparação visual](docs/IDENTIDADE-INSTITUCIONAL.md).
+A apresentação segue as capturas fornecidas pelo responsável; [limites da comparação com o site oficial](docs/IDENTIDADE-INSTITUCIONAL.md).
 
 ## Usar o aplicativo
 

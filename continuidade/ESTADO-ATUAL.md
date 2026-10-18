@@ -1,3 +1,19 @@
+# 0.4.8 publicada — PRs #5/#6/#7 integrados, entrega concluída
+
+A [0.4.8](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.8) foi publicada e verificada em 18/10/2026, exclusivamente pelo [run 39157060612](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39157060612), com os 11 jobs obrigatórios aprovados. Tag/código testado `2de098c6099af08d1fd44963978ccef94ce14adc`. Os seis alvos nativos executaram testes, roteiro HTTP/backup, empacotamento e smoke com Java privado. Conferidos os 12 assets e os 11 checksums contra digests públicos; ZIP de código baixado e verificado, incluindo quatro fontes/licenças e os SHAs oficiais das três ações. As 13 releases/tags anteriores mantêm links, arquivos e digests; nenhum asset histórico foi substituído. Relatório de CI: `Testes/teste11-2026-10-18_16-04-21-0ced77a7/log.txt`.
+
+O responsável autorizou verificar os três PRs e publicar tudo após informado sobre os limites da preparação. Os PRs aparecem como merged no GitHub; os commits do Dependabot foram preservados. Atualizações restritas a download-artifact 8.0.2, setup-go 7.0.0 e setup-java 6.1.0. JDK 21, Go 1.27.2, seis alvos, gates e regras preservados. As etapas HTTP/backup dos dois Windows que falharam no PR #7 histórico passaram no novo run, incluindo smoke; causa histórica não confirmada porque os logs antigos retornam 404. Não confundir falha antiga com o resultado aprovado desta integração.
+
+A interface da agenda foi entregue pelas capturas, com fontes locais e fluxo de reserva preservado. Continua pendente conferir o arquivo da marca, fontes/CSS originais, destinos dos links, submenus e redes sociais: o domínio oficial ainda está bloqueado por HTTP 403. Publicação autorizada com os limites descritos; não declarar cópia integral idêntica nem sincronização de eventos da UFSC. Detalhes em docs/IDENTIDADE-INSTITUCIONAL.md e docs/REVISAO-PRS-2026-10-18.md.
+
+Passaram os 118 Java, 33 Go/-race/vet, 19 Node, roteiro HTTP/backup, Chromium e smoke locais da preparação; as ações integradas passaram na nova matriz completa, sem enfraquecer testes. Fonte/segredos/dependências/CodeQL e relatório/publicação aprovados. Testes/configuracao.json permanece desativado. Sem reset, migrations, mudança de contas/senhas/preços/cotas, Android, SMTP, Render ou envio externo. Chaves/bancos/backups fora dos pacotes e do Git.
+
+O ZIP de código preserva o snapshot do commit testado antes do relatório da CI. O fechamento acompanha main sem substituir assets publicados. A configuração cloud permanece salva como rascunho; sua aplicação/publicação pelo produto não foi declarada concluída. **Entrega publicada e verificada. Parar e aguardar autorização para outro lote.**
+
+---
+
+## Registro anterior: autorização e execução da publicação
+
 # Publicação 0.4.8 autorizada — PRs integrados, aguardando CI de main
 
 Em 18/10/2026 o responsável mostrou os PRs #5/#6/#7 e disse “Verifica isso e pode publicar tudo”, após informado sobre a preparação da interface e o acesso oficial bloqueado. Essa nova autorização substitui a retenção anterior da publicação pela conferência visual. Não declara equivalência integral da marca/fontes/links/submenus: essa pendência continua documentada.

@@ -1,3 +1,17 @@
+# Publicação 0.4.8 — concluída e verificada
+
+A [0.4.8](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.8) foi publicada e verificada em 18/10/2026, exclusivamente pelo [run 39157060612](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39157060612), com os 11 jobs obrigatórios aprovados. Tag/código testado `2de098c6099af08d1fd44963978ccef94ce14adc`. Os seis alvos nativos executaram testes, roteiro HTTP/backup, empacotamento e smoke com Java privado. Conferidos os 12 assets e os 11 checksums contra digests públicos; ZIP de código baixado e verificado, incluindo quatro fontes/licenças e os SHAs oficiais das três ações. As 13 releases/tags anteriores mantêm links, arquivos e digests; nenhum asset histórico foi substituído. Relatório de CI: `Testes/teste11-2026-10-18_16-04-21-0ced77a7/log.txt`.
+
+Os PRs #5/#6/#7 estão integrados e marcados como merged no GitHub. As etapas que falharam nos dois Windows do PR #7 antigo passaram nesta integração, incluindo o roteiro HTTP/backup e o smoke completo. A causa histórica continua sem diagnóstico conclusivo pelos logs antigos indisponíveis; não foi declarada correção causal sem evidência. Também passaram fonte/segredos, dependências, CodeQL, relatório de CI e download/publicação dos artefatos pelo download-artifact 8.0.2.
+
+Java/Go/UI não mudaram na integração das ações: permanecem válidos os 118 Java, 33 Go/-race/vet, 19 Node e a validação Chromium descritos abaixo. A nova matriz confirma os seis runners, não todos os navegadores, distribuições ou ambientes corporativos. Sem reset, migrations, ativação de SMTP/Render/envio ou mudança de regras. A conferência da marca/fontes/submenus/links oficiais continua bloqueada pela rede (HTTP 403). Publicação autorizada com esse limite documentado, sem alegar equivalência integral.
+
+O código da release é o snapshot anterior à CI; o fechamento documental e o relatório seguem em main, sem substituir assets ou mover a tag.
+
+---
+
+## Registro de preparação e autorização
+
 # Publicação 0.4.8 e revisão dos PRs — em validação
 
 O responsável autorizou verificar os PRs #5/#6/#7 e publicar tudo em 18/10/2026, após informado sobre a preparação e o bloqueio da referência oficial. As ações foram conferidas nas tags oficiais e em seus contratos; merges sem conflitos. JDK 21, Go 1.27.2, seis alvos e gates mantidos. YAML/contrato do workflow, 19 testes Node e check de segredos passaram novamente. Detalhes em [REVISAO-PRS-2026-10-18.md](REVISAO-PRS-2026-10-18.md).
