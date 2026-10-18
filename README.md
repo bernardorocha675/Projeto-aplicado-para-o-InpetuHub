@@ -13,11 +13,9 @@ Projeto aplicado oficial do **InPETU Hub**, desenvolvido na disciplina de **Proj
 
 ## Versão atual
 
-[**Versão 0.4.9**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.9) — acesso à área interna e navegação da gestão restaurados, mantendo o visual da agenda e os dados do desktop.
+[**Versão 0.4.10**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.10) — restaura o aplicativo da **0.4.7**, com seu visual, menu local, agenda e área interna. Dados preservados.
 
-Use **Área interna** no topo para abrir o painel, reservas, solicitações e cadastros.
-
-A apresentação segue as capturas fornecidas pelo responsável; [limites da comparação com o site oficial](docs/IDENTIDADE-INSTITUCIONAL.md).
+O novo número permite receber a restauração pelo atualizador. A release 0.4.7 original permanece disponível; [detalhes do retorno](docs/RETORNO-0.4.7.md).
 
 ## Usar o aplicativo
 
