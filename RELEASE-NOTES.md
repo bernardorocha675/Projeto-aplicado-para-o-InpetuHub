@@ -1,12 +1,9 @@
-# InPETU Hub 0.4.7
+# InPETU Hub 0.4.8
 
-Corrige os itens restantes do relatório caçabugs no desktop:
+Preparação da agenda com a identidade institucional apresentada nas capturas do responsável: textos, cabeçalho, painel azul, calendário com marcações de eventos, detalhes e rodapé. Fontes incluídas no aplicativo para uso offline.
 
-- Nome sem números, email com domínio completo e telefone sem letras, no navegador e servidor; permite corrigir e reenviar sem perder o cadastro anterior.
-- Data da agenda preservada na reserva, nos erros e ao voltar da revisão para editar. Reservas limitadas de hoje até 31/12 do próximo ano, com atualização automática anual.
-- Confirmação local orienta conferência manual sem pedir um código inexistente. Código ativo mantém os controles de produção, expiração e tentativas.
-- Agenda com consulta direta por dia, capacidades no filtro e indicação de livre/parcial/ocupado; grade estreita sem cortes e asteriscos nos campos obrigatórios.
+Os eventos vêm das reservas aprovadas locais. A consulta de espaços/capacidades e solicitação de reserva permanece acessível abaixo do dia selecionado. Falha de atualização da agenda retira os links antigos de reserva e informa o erro.
 
-Sem reset, migrations, mudança de contas/senhas, preços ou cotas. Solicitações históricas preservadas. Android continua fora do produto ativo, e SMTP/Render/envio externo não foram ativados. Preços futuros precisam de tabela configurada pelo gestor. O executável inclui Java privado e o atualizador permanece na família 0.4.x.
+Sem migrations, reset de dados, mudança de contas/senhas, preços ou cotas. Java privado, seis plataformas desktop e atualizações 0.4.x preservados. Android continua retirado. SMTP, Render e envio externo permanecem desativados.
 
-Publicação somente após os seis ambientes nativos e todos os gates de CI. Detalhes em docs/CORRECOES-RELATORIO.md.
+**Preparação; publicação pendente.** O acesso ao domínio oficial está bloqueado neste ambiente (HTTP 403). Marca, tipografia, destinos dos links e submenus institucionais ainda precisam ser conferidos. A versão não representa uma cópia integral verificada do site. Publicar somente após essa conferência e todos os gates obrigatórios de RELEASES.md.

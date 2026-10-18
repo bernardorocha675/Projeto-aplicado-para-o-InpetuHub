@@ -75,4 +75,15 @@ class PublicDemoLoginTest {
           org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.is("SEM_ESPACOS"))))
       .andExpect(jsonPath("$.dias[0].espacos").isEmpty());
  }
+ @Test void institutionalFontsAreAvailableWithoutLoginOrExternalServices() throws Exception {
+  for(String font: new String[]{"lato/lato-latin-400-normal.woff2","lato/lato-latin-700-normal.woff2",
+      "lato/lato-latin-900-normal.woff2","montserrat/montserrat-latin-700-normal.woff2"}){
+   var response=mvc.perform(get("/fonts/"+font))
+       .andExpect(status().isOk()).andReturn().getResponse();
+   byte[] content=response.getContentAsByteArray();
+   assertTrue(content.length>1000);
+   assertArrayEquals(new byte[]{'w','O','F','2'},java.util.Arrays.copyOf(content,4));
+  }
+ }
+
 }

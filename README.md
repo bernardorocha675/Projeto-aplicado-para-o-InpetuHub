@@ -2,7 +2,7 @@
 
 Sistema de agendamento de espaços e gestão de reservas, com agenda pública e área interna para a equipe do Hub.
 
-Projeto acadêmico desenvolvido na disciplina de **Projeto Aplicado do UniSENAI**, em parceria com o **InPETU Hub**.
+Projeto aplicado oficial do **InPETU Hub**, desenvolvido na disciplina de **Projeto Aplicado do UniSENAI**.
 
 ## Equipe
 
@@ -14,6 +14,8 @@ Projeto acadêmico desenvolvido na disciplina de **Projeto Aplicado do UniSENAI*
 ## Versão atual
 
 [**Versão 0.4.7**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.7) — corrige contatos, datas, confirmação e agenda, preservando os dados do desktop.
+
+A identidade institucional da agenda está [em preparação para a 0.4.8](docs/IDENTIDADE-INSTITUCIONAL.md), com conferência do site original pendente.
 
 ## Usar o aplicativo
 

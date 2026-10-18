@@ -64,6 +64,7 @@ class LoggingTest {
     assertEquals("/admin/cadastros/espacos/{id}/excluir", SafeRoutes.canonical("/admin/cadastros/espacos/19/excluir"));
     assertEquals("/admin/solicitacoes/{id}/aceitar", SafeRoutes.canonical("/admin/solicitacoes/22/aceitar"));
     assertEquals("ASSET", SafeRoutes.canonical("/js/anything-secret.js"));
+    assertEquals("ASSET", SafeRoutes.canonical("/fonts/lato/font.woff2"));
     assertEquals("OTHER", SafeRoutes.canonical("/private-email@example.com"));
     assertEquals("OTHER", SafeRoutes.canonical("/login?password=private-secret"));
   }

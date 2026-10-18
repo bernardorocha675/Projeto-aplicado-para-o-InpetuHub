@@ -44,7 +44,7 @@ Falhas de SMTP são testadas com serviço simulado, sem enviar emails reais. Nã
 
 ## Relatório caçabugs — 0.4.7
 
-1. Selecione um dia na agenda, confira nomes/capacidades e escolha um horário. A reserva deve trazer data ISO e espaço/horários preenchidos.
+1. Selecione um dia na agenda, abra **Consultar espaços e solicitar reserva**, confira nomes/capacidades e escolha um horário. A reserva deve trazer data ISO e espaço/horários preenchidos.
 2. Tente nome `João 123`, email `11231231@a` e telefone com letras: devem ser rejeitados. Corrija para nome com acentos/hífen/apóstrofo, email completo e telefone com DDD; números do evento/empresa continuam permitidos.
 3. Informe hora final anterior à inicial e envie: a mensagem deve ser simples e a data/contatos devem permanecer. Corrija e revise; use Voltar para editar, altere outro campo e confira que data e horários permanecem.
 4. Confira mínimo hoje e máximo 31/12 do próximo ano. Uma data do ano posterior deve ser recusada também pelo servidor. Preços do ano escolhido precisam estar cadastrados pelo gestor; não são inventados automaticamente.
@@ -52,3 +52,10 @@ Falhas de SMTP são testadas com serviço simulado, sem enviar emails reais. Nã
 6. Todos os campos obrigatórios devem ter `*`. Confira agenda com dia livre/parcial/ocupado e em janela estreita; os sete dias da semana devem ficar visíveis.
 
 Evidências e limites: [CORRECOES-RELATORIO.md](CORRECOES-RELATORIO.md).
+
+
+## Preparação da identidade institucional — 0.4.8
+
+Confira as três capturas de referência em desktop: cabeçalho, textos, painel, dias marcados, seleção, detalhes e rodapé. Confira as larguras 390, 768, 1024 e 1919px sem corte horizontal. Os pontos devem corresponder a reservas aprovadas reais; dias livres continuam selecionáveis para consultar espaços. O aviso Sem espaços deve continuar correto em banco novo.
+
+Após selecionar um dia, abra Consultar espaços e solicitar reserva e confira filtro/dia, capacidades, horários e o fluxo de revisão/edição. Falhe uma atualização depois de consulta válida: os links antigos devem desaparecer e o erro ficar visível. Teste também como visitante: fontes locais devem retornar WOFF2, sem login ou CDN. A conferência da marca, fontes, rotas e submenus com o domínio oficial permanece bloqueada pela rede; veja IDENTIDADE-INSTITUCIONAL.md.

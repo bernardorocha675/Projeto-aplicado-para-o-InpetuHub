@@ -1,3 +1,19 @@
+# Identidade institucional — 0.4.8 em preparação
+
+Base `215e57d2055faeb4a6b0455436a71a9f26a9115d`. A release pública atual continua 0.4.7. A preparação pelas três capturas foi implementada; o acesso a https://inpetuhub.sites.ufsc.br/agenda/ retornou HTTP 403 pela rede do ambiente. Não há evidência de equivalência integral da marca, fontes, links, submenus ou redes sociais. Dependências concretas em [IDENTIDADE-INSTITUCIONAL.md](IDENTIDADE-INSTITUCIONAL.md).
+
+Validação local Linux x64, 18/10/2026:
+
+- 118 testes Java: zero falhas, erros ou ignorados. Inclui visitante obtendo os quatro WOFF2 locais com cabeçalho binário válido. Classificação ASSET das fontes coberta em LoggingTest.
+- Testar.java: VERIFICAÇÕES AUTOMÁTICAS APROVADAS, relatório de 18:41:01 UTC. Roteiro de regras, segurança, HTTP/perfis, persistência, backup cifrado/restauração e contas em dados descartáveis. Uma tentativa concorrente foi corretamente recusada pelo lock do executor; foi aguardada a rodada original, sem enfraquecer o bloqueio.
+- 33 testes Go com detector de concorrência e go vet aprovados. 19 Node: dez agenda, dois administração e sete receptor/coletor. O regressor de falha de atualização não passou quando removida somente a limpeza dos links antigos; passou com a correção. Todos os testes existentes preservados.
+- JAR final recompilado após os ajustes de CSS/JS. Chromium 154 em pt-BR: fluxo real login → cadastro → agenda → reserva → erro/correção → revisão/edição → conferência manual, obrigatórios e limites HTML aprovados, zero erros JS. A largura 390px mantém os sete dias e textos dentro da tela.
+- Comparação visual local separada com resposta sintética interceptada, somente no navegador: desktop 1919px, 1024px, 768px e 390px sem transbordamento horizontal, seleção/detalhes, ferramentas expansíveis e quatro fontes carregadas. Zero requisições externas da página. Na largura 1919px: cabeçalho 84px, painel x=66,6/y=144, altura 696,2px, colunas 699,4/1071,3px, grade y=288 e rodapé y=900,2. Esses valores corroboram proximidade com a captura; não demonstram igualdade de DOM/estilo com o site bloqueado.
+
+Pacote final Linux x64 com Java privado e smoke do executável real aprovados: instalação, 15 logins, permissões, agenda, cadastro, reinício, troca do iniciador, banco/chave preservados e encerramento. A matriz remota ainda está em acompanhamento nesta preparação. Não declarar novos executáveis publicados. A publicação em main depende da conferência oficial e dos gates obrigatórios. Sem migrations, reset, alteração de contas/regras ou ativação externa. Android segue retirado; histórico e releases anteriores preservados.
+
+---
+
 # Validação do relatório caçabugs — 0.4.7
 
 Base `efe162a1ff9b1296a22b8ab4fff61174ca70af19`. Release [0.4.7](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.7) publicada pelo [run 39152880226](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39152880226), com 11 jobs aprovados. Tag no commit `992168e3ceb39f196b2153aa5e291fbae0e2f196`. Foram conferidos os 12 assets e SHA256SUMS contra os digests públicos; as 12 tags/releases anteriores mantêm os arquivos e digests registrados antes da publicação. Escopo autorizado: todos os itens restantes do DOCX. Detalhes em [CORRECOES-RELATORIO.md](CORRECOES-RELATORIO.md).

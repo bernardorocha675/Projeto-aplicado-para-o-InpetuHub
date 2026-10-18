@@ -16,7 +16,7 @@ public final class SafeRoutes {
     if (path == null || path.length() > 200) return "OTHER";
     for (String route : PUBLIC) if (route.equals(path)) return route;
     if (path.startsWith("/js/") || path.startsWith("/css/") || path.startsWith("/img/")
-        || path.equals("/favicon.ico")) return "ASSET";
+        || path.startsWith("/fonts/") || path.equals("/favicon.ico")) return "ASSET";
     if (path.matches("/admin/empreendedores/[0-9]{1,19}")) return "/admin/empreendedores/{id}";
     if (path.matches("/admin/reservas/[0-9]{1,19}")) return "/admin/reservas/{id}";
     for (String action : Set.of("aprovar", "recusar", "cancelar", "alterar", "pagamento", "concluir"))

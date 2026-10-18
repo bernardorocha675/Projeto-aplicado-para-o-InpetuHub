@@ -1,0 +1,35 @@
+# Agenda institucional — preparação 0.4.8
+
+Pedido de 18/10/2026: o responsável informou que este é o projeto aplicado oficial do InPETU Hub e pediu a mesma apresentação do site original. Referência informada: https://inpetuhub.sites.ufsc.br/agenda/, além de três capturas com agenda inicial, rodapé e evento selecionado. Base limpa `215e57d2055faeb4a6b0455436a71a9f26a9115d`, branch `work`, main remoto no mesmo commit; última release publicada 0.4.7. Nenhum AGENTS.md encontrado no workspace. Instruções, continuidade, handover e RELEASES.md consultados.
+
+## Implementação revisável
+
+- `templates/public/agenda.html` e `static/css/institucional.css`: textos das capturas, painel azul, proporção 39,5%/60,5%, cantos arredondados, calendário compacto e responsivo. Cabeçalho e rodapé compartilhados em `templates/fragments.html`. Área interna acessível no rodapé.
+- `static/js/agenda.js`: mês no formato “Outubro 2026”, marcação com ponto apenas quando há reservas aprovadas retornadas pelo servidor, destaque do dia selecionado e detalhes de título/data/horários/sala. Nenhum evento ou padrão de ocupação da captura foi inserido no banco.
+- Filtros de espaço/dia, capacidades, estados acessíveis de disponibilidade, horários livres e solicitação de reserva continuam em “Consultar espaços e solicitar reserva”, abaixo do dia selecionado. Regras de dados, reserva, preços, cotas e confirmação permanecem as da 0.4.7.
+- Fontes locais Lato e Montserrat com licença OFL e procedência documentada em `static/fonts/README.md`. `SecurityConfig.java` libera somente a rota de arquivos estáticos `/fonts/**` para visitantes; `SafeRoutes.java` classifica essas requisições como ASSET.
+
+## Bug confirmado e correção
+
+Em `static/js/agenda.js`, o catch de atualização antes só trocava a grade pelo erro. Os links e horários da consulta anterior continuavam ativos na área de detalhes. Impacto: uma falha de rede/filtro deixava ações de reserva baseadas numa consulta antiga. A validação do servidor continuava necessária e não foi removida.
+
+Agora o erro esconde as ferramentas e limpa os links antigos, com mensagem para nova consulta. O regressor Node simula falha após uma consulta válida. Remover apenas a limpeza do catch reproduziu a falha do teste (`hidden=false`); o código corrigido passou. Isso não altera reserva nem apaga dados.
+
+## Dependência externa e limites da comparação
+
+A requisição ao domínio oficial foi recusada pela rede do ambiente com HTTP 403. A configuração observada não contém esse domínio. Foi salvo um rascunho aditivo com `inpetuhub.sites.ufsc.br`; salvar o rascunho não aplica nem publica a configuração. É preciso revisar/salvar em configurações do ambiente e publicar para retomar a consulta.
+
+**A preparação não está publicada e não foi declarada uma cópia integral verificada.** A implementação pelas capturas está disponível para revisão, mas faltam:
+
+1. Obter/conferir o arquivo da marca e as fontes/CSS originais. A marca atual é texto estilizado; Lato/Montserrat foram escolhidas visualmente.
+2. Conferir destinos de Sobre, Iniciativas, Notícias e Eventos, Contato, Política de Privacidade e Termos de Uso. Os caminhos no template são provisórios, derivados dos rótulos, ainda sem validação HTTP. Conferir e implementar os submenus reais; não há itens de submenu inventados.
+3. Conferir os destinos dos ícones sociais do rodapé antes de reproduzi-los. A barra atual mantém acesso interno/site institucional.
+4. Comparar navegação, fontes e interações com o site acessível. A comparação local usa as capturas, não o DOM original. Não existe sincronização com a agenda pública da UFSC: os eventos do executável vêm das reservas locais.
+
+Escopo assumido enquanto a preferência opcional não é respondida: agenda e identidade compartilhada do aplicativo. Páginas institucionais completas não foram copiadas para o executável.
+
+## Validação
+
+Testes e resultados finais devem ser consultados em VALIDACAO.md e continuidade/ESTADO-ATUAL.md. O navegador usou dados sintéticos em instalação descartável; os 16 dias ocupados da captura foram simulados somente na requisição interceptada de teste visual. Nenhum dado de negócio ou serviço externo foi alterado. A comparação funcional agenda → reserva usa o JAR real e o endpoint real, separadamente dessa simulação visual.
+
+Não publicar 0.4.8 em main antes da conferência oficial e dos gates de RELEASES.md. Releases/tags/assets anteriores, inclusive Android experimental, permanecem preservados.

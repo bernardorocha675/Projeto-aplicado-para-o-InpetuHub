@@ -74,3 +74,8 @@ Por decisão do responsável, o suporte Android foi retirado da árvore atual. O
 ## Reservas e contatos — autorização de 18/10/2026
 
 O responsável autorizou todos os itens restantes do relatório caçabugs em uma entrega. A janela de novas reservas passa a hoje até 31/12 do ano seguinte, atualizada pelo Clock no fuso da aplicação. Isso substitui o limite móvel de 365 dias; não cria preços para anos futuros nem altera cotas. Entrada de contatos exige nome sem números, domínio completo e telefone de 10–15 dígitos sem letras, preservando formatos usuais. Registros históricos permanecem preservados e a confirmação local sem SMTP continua manual; produção mantém confirmação obrigatória.
+
+
+## Identidade oficial — pedido de 18/10/2026
+
+O responsável informou que o projeto aplicado é oficial para o InPETU Hub e pediu a mesma aparência do site https://inpetuhub.sites.ufsc.br/agenda/. Foram fornecidas três capturas. Não interpretar o pedido visual como autorização para importar eventos externos, substituir reservas locais, hospedar o aplicativo ou apagar dados. A preparação 0.4.8 mantém o fluxo do executável; falta conferir recursos/links/submenus oficiais porque a rede recusou o domínio com HTTP 403. Não declarar equivalência integral sem essa evidência.
