@@ -337,6 +337,22 @@ class Testar {
   }
 
   static void startServer(Path folder) throws Exception {
+    // No Windows, o banco do servidor anterior pode levar alguns segundos para ser liberado.
+    for (int attempt = 1; ; attempt++) {
+      try {
+        startServerOnce(folder);
+        return;
+      } catch (IOException e) {
+        if (attempt >= 3 || server == null || server.isAlive()) throw e;
+        stop(server);
+        server = null;
+        System.out.println("  Servidor de testes encerrou ao iniciar; nova tentativa em 3 s.");
+        Thread.sleep(3000);
+      }
+    }
+  }
+
+  static void startServerOnce(Path folder) throws Exception {
     int port;
     try (var socket = new java.net.ServerSocket(0, 1, InetAddress.getLoopbackAddress())) {
       port = socket.getLocalPort();
@@ -788,9 +804,14 @@ class Testar {
     require(
         temp != null && temp.startsWith(work) && !temp.equals(work),
         "Diretório temporário inválido.");
-    if (!Files.exists(temp)) return;
-    try (var stream = Files.walk(temp)) {
-      for (Path p : stream.sorted(Comparator.reverseOrder()).toList()) Files.deleteIfExists(p);
+    // No Windows, arquivos do servidor encerrado podem continuar presos por alguns segundos.
+    for (int attempt = 1; Files.exists(temp); attempt++) {
+      try (var stream = Files.walk(temp)) {
+        for (Path p : stream.sorted(Comparator.reverseOrder()).toList()) Files.deleteIfExists(p);
+      } catch (IOException e) {
+        if (attempt >= 10) throw e;
+        Thread.sleep(1000);
+      }
     }
     require(!Files.exists(temp), "Os dados temporários não foram removidos completamente.");
   }
