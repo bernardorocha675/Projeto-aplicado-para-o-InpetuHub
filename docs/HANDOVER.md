@@ -1,6 +1,10 @@
-# Handover técnico — InPETU Hub 0.5.0
+# Handover técnico — InPETU Hub 0.5.1
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
+
+## 0.5.1 — identidade do site oficial — em revisão
+
+Pedido de 19/10/2026: o sistema com a cara do site oficial, mantendo agenda e área interna. Site analisado com o domínio liberado no ambiente (HTML, CSS gerado pelo Divi, imagens, fontes e 34 links). `templates/public/home.html` reproduz a página inicial oficial; `PublicController` separa `/` (início) de `/agenda`. `fragments.html`: cabeçalho com logotipo e menu oficial (submenus de Iniciativas e de Notícias e Eventos) mais ÁREA INTERNA, e rodapé oficial. `static/css/site.css` com cores e medidas extraídas do site; 26 imagens em `static/images/site` (≈880 KB, fotos convertidas para JPEG) e fontes Lato/Plus Jakarta Sans (OFL) em `static/fonts`, liberadas em `SecurityConfig` e classificadas como ASSET em `SafeRoutes`. Links conferidos: 20 páginas oficiais com HTTP 200; `/sobre` e `/termos-de-uso` dão 404 no próprio site e não foram reproduzidos (o Saiba mais da capa aponta para a página Sobre que funciona). Drive/Forms (401 neste ambiente) e Instagram (429) não puderam ser conferidos daqui; são os mesmos links do site oficial. As notícias são um retrato de 19/10/2026. Testes locais (Linux x64, 19/10/2026): 126 Java (rota pública: Início com conteúdo oficial, Agenda em /agenda, links oficiais em nova aba, sem /sobre nem termos-de-uso, fontes/imagens/CSS servidos; navegação local mantida em 15 telas públicas e internas), Go, Node da agenda (10) e de cadastros (4), Testar 14/14, pacote Linux x64, smoke (regra nova: externos só do domínio oficial e em nova aba) e segredos aprovados. Capturas da instância local comparadas às do site oficial em 1440 px e 640 px. Windows, macOS e ARM64 ficam com a matriz. Sem migration, reset ou dependências; agenda, reservas e área interna inalteradas.
 
 ## 0.5.0 — início da linha 0.5 — publicada e verificada
 

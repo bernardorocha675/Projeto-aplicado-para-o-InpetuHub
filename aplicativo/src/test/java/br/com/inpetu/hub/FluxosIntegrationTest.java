@@ -269,7 +269,16 @@ class FluxosIntegrationTest {
 
   @Test
   void rotasPublicasEProtecaoCsrf() throws Exception {
-    mvc.perform(get("/"))
+    // Início com a identidade do site oficial; agenda e área interna continuam no menu.
+    String home =
+        mvc.perform(get("/")).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+    assertTrue(home.contains("InPETU hub: inovação conectando pessoas, ideias e soluções"));
+    assertTrue(home.contains("<a href=\"/\" class=\"active\">INÍCIO</a>"));
+    assertTrue(home.contains("<a href=\"/agenda\">AGENDA</a>") && home.contains("<a href=\"/admin\">ÁREA INTERNA</a>"));
+    assertTrue(home.contains("href=\"https://inpetuhub.sites.ufsc.br/contato/\" target=\"_blank\" rel=\"noopener\""));
+    // Links que no site oficial levam a páginas inexistentes não são reproduzidos.
+    assertFalse(home.contains("inpetuhub.sites.ufsc.br/sobre") || home.contains("termos-de-uso"));
+    mvc.perform(get("/agenda"))
         .andExpect(status().isOk())
         .andExpect(content().string(org.hamcrest.Matchers.containsString("Agenda de")))
         // O aviso de cadastro de espaços é só da equipe; o público não o vê.
@@ -280,12 +289,14 @@ class FluxosIntegrationTest {
                         org.hamcrest.Matchers.containsString("agenda-aviso"))))
         .andExpect(
             content()
-                .string(org.hamcrest.Matchers.containsString("<a href=\"/\" class=\"active\">INÍCIO</a>")))
+                .string(org.hamcrest.Matchers.containsString("<a href=\"/agenda\" class=\"active\">AGENDA</a>")))
         .andExpect(
             content()
                 .string(
                     org.hamcrest.Matchers.containsString(
                         "Clique em um dia marcado para ver os eventos.")));
+    for (String asset : new String[] {"/css/site.css", "/fonts/Lato-400.woff2", "/images/site/logo.png"})
+      mvc.perform(get(asset)).andExpect(status().isOk());
     mvc.perform(get("/login")).andExpect(status().isOk());
     mvc.perform(get("/admin")).andExpect(status().is3xxRedirection());
     mvc.perform(post("/reservas/solicitar")).andExpect(status().isForbidden());

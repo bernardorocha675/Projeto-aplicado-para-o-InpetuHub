@@ -102,7 +102,10 @@ with tempfile.TemporaryDirectory(prefix='inpetu-desktop-smoke-') as temp:
         with get(browser(),base+'/agenda') as response:
             public_page=response.read().decode()
         public_header=public_page.split('<header',1)[1].split('</header>',1)[0]
-        assert 'https://' not in public_header and 'http://' not in public_header, 'O menu restaurado deve permanecer no aplicativo'
+        # Menu do site oficial (0.5.1): externos só do domínio oficial, em nova aba; início, agenda e área interna locais.
+        external=re.findall(r'href="(https?://[^"]+)"([^>]*)',public_header)
+        assert external and all(u.startswith('https://inpetuhub.sites.ufsc.br/') and 'target="_blank"' in rest for u,rest in external), external
+        assert not any(u.rstrip('/').endswith(('/sobre','/termos-de-uso')) for u,_ in external), 'Link oficial sabidamente quebrado'
         assert all('href="'+path+'"' in public_header for path in ['/','/agenda','/admin'])
         assert '/css/institucional.css' not in public_page
         with get(browser(),base+'/disponibilidade') as response:
@@ -134,7 +137,7 @@ with tempfile.TemporaryDirectory(prefix='inpetu-desktop-smoke-') as temp:
                 page=response.read().decode()
                 assert response.status==200
             header=page.split('<header',1)[1].split('</header>',1)[0]
-            assert 'https://' not in header and 'http://' not in header, 'Navegacao externa indevida em '+path
+            assert all(u.startswith('https://inpetuhub.sites.ufsc.br/') and 'target="_blank"' in rest for u,rest in re.findall(r'href="(https?://[^"]+)"([^>]*)',header)), 'Navegacao externa indevida em '+path
             assert 'href="/admin"' in header and 'aria-label="Menu interno"' in page
         assert not (home/'.secrets/accounts.properties').exists(), 'Arquivo de senhas nao deve ser necessario'
         fields={'nomeEspaco':'Sala persistente desktop','capacidade':'10','ativo':'on','disponibilidade':'on',

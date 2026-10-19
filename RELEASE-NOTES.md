@@ -1,12 +1,13 @@
-# InPETU Hub 0.5.0
+# InPETU Hub 0.5.1
 
-Início da linha 0.5.
+Visual do site oficial do InPETU Hub.
 
-- Mesmo aplicativo da 0.4.16: agenda com dias de atividade em azul, telefone formatado, destaque do menu, aviso de solicitações pendentes e todas as correções anteriores.
-- **Mesmos dados:** banco, reservas, contas, configurações, chave e backups continuam na pasta `InPETU-Hub/0.4`; nada é copiado, apagado ou redefinido.
-- **Atualização automática:** quem usa a 0.4.17 recebe a 0.5.0 ao abrir o iniciador. Quem está numa 0.4 anterior passa primeiro pela 0.4.17. Também é possível baixar o pacote completo abaixo.
-- O código completo desta versão está no ZIP `InPETU-Hub-codigo-v0.5.0.zip`, junto aos executáveis.
+- **Página inicial nova**, igual à do site oficial (inpetuhub.sites.ufsc.br): capa com o prédio, “InPETU hub: inovação conectando pessoas, ideias e soluções”, Iniciativas, Participe, Missão/Visão/Valores, Novidades e Parceiros.
+- **Cabeçalho e rodapé do site oficial** em todas as telas, com as mesmas fontes, cores e logotipo. Sobre, Iniciativas, Notícias e Eventos e Contato abrem as páginas do site oficial em outra aba; **Início**, **Agenda** e **Área Interna** continuam sendo do sistema.
+- A agenda, os pedidos de reserva e toda a área interna continuam iguais. A agenda passou para o endereço `/agenda`.
+- Links que no site oficial levam a páginas inexistentes não foram reproduzidos: o “Saiba mais” da capa abre a página Sobre que funciona, e “Termos de Uso” aparece sem link.
+- As notícias da página inicial são as do site oficial em 19/10/2026; para ver as mais recentes, use “Entradas Antigas” ou o menu Notícias, que abrem o site oficial.
 
-Não há migration, reset, mudança de dependências ou ativação externa. Windows/macOS/Linux x64/ARM64 e Java privado preservados; Android continua retirado. No macOS, o iniciador continua exigindo macOS 13 ou mais recente.
+Dados, reservas, contas, configurações, chave e backups permanecem na mesma pasta (`InPETU-Hub/0.4`); quem está na 0.5.0 recebe esta versão automaticamente. Não há migration, reset ou mudança de dependências. Imagens e fontes ficam dentro do aplicativo, que continua funcionando sem internet. Windows/macOS/Linux x64/ARM64 e Java privado preservados. No macOS, o iniciador continua exigindo macOS 13 ou mais recente.
 
 Publicação condicionada à matriz obrigatória de RELEASES.md.

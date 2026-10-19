@@ -1,0 +1,105 @@
+/* Identidade do site oficial do InPETU Hub (https://inpetuhub.sites.ufsc.br/), aplicada ao sistema. */
+@font-face{font-family:'Lato';font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/Lato-400.woff2) format('woff2')}
+@font-face{font-family:'Lato';font-style:normal;font-weight:700;font-display:swap;src:url(/fonts/Lato-700.woff2) format('woff2')}
+@font-face{font-family:'Plus Jakarta Sans';font-style:normal;font-weight:600 800;font-display:swap;src:url(/fonts/PlusJakartaSans.woff2) format('woff2')}
+:root{--site-blue:#0077cc;--site-navy:#02569a;--site-cyan:#00c3ff;--site-text:#2d2d2d}
+body{font-family:'Lato',Helvetica,Arial,sans-serif}
+h1,h2,h3,h4{font-family:'Plus Jakarta Sans','Lato',sans-serif}
+
+/* Cabeçalho */
+.topo{background:#fafafa;box-shadow:0 2px 12px #0000001f;padding:0 max(5vw,24px);min-height:80px;position:relative;z-index:20}
+.topo .logo{display:flex;align-items:center;font-size:0}
+.topo .logo img{display:block;width:200px;height:auto}
+.topo nav{display:flex;gap:22px;align-items:stretch;align-self:stretch;flex-wrap:wrap}
+.topo nav>a,.topo .menu-group>a{display:flex;align-items:center;font-family:'Lato',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.2px;color:var(--site-blue);padding-top:0;border-top:3px solid transparent}
+.topo nav>a:hover,.topo .menu-group>a:hover{text-decoration:none;opacity:.75}
+.topo nav a.active{border-color:var(--site-blue)}
+.topo .menu-group{position:relative;display:flex}
+.topo .menu-group>a::after{content:'';width:5px;height:5px;margin:-3px 0 0 8px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg)}
+.topo .submenu{display:none;position:absolute;top:100%;left:0;min-width:240px;margin:0;padding:12px 0;list-style:none;background:#fff;border-top:3px solid var(--site-blue);box-shadow:0 2px 12px #0000002e}
+.topo .menu-group:hover .submenu,.topo .menu-group:focus-within .submenu{display:block}
+.topo .submenu a{display:block;padding:7px 20px;font-size:.82rem;color:#444}
+.topo .submenu a:hover{background:#f4f8fc;color:var(--site-blue);text-decoration:none}
+
+/* Rodapé */
+.rodape.site-footer{display:block;padding:0;border:0;background:#222;color:#fff;text-align:center;font-size:.85rem}
+.site-footer .footer-main{padding:48px 20px 40px;line-height:1.7}
+.site-footer .footer-main p{margin:0 0 14px}
+.site-footer strong{display:block;font-size:1rem}
+.site-footer a{color:#fff;text-decoration:underline}
+.site-footer .footer-project{color:#9e9e9e;font-size:.78rem}
+.site-footer .footer-bottom{background:#171717;display:flex;justify-content:flex-end;gap:18px;padding:14px max(5vw,24px)}
+.site-footer .footer-bottom a{color:#666;display:inline-flex}
+.site-footer .footer-bottom a:hover{color:#fff}
+.site-footer svg{width:20px;height:20px;fill:currentColor}
+
+/* Página inicial */
+.home-main{background:#fff}
+.home-hero{min-height:560px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:90px 20px 70px;text-align:center;background-blend-mode:multiply;background-image:linear-gradient(180deg,rgba(0,195,255,0) 0%,#02569a 100%),url(/images/site/hero.jpg);background-size:cover;background-position:center}
+.home-hero img{width:min(490px,80vw);height:auto;margin-bottom:40px}
+.site-button{display:inline-block;background:var(--site-blue);color:#fff;border-radius:8px;padding:9px 20px;font-family:'Lato',sans-serif;font-size:1.15rem;box-shadow:6px 6px 18px 0 #0000004d}
+.site-button:hover{text-decoration:none;filter:brightness(1.08)}
+.home-intro{margin:52px 16px 0;border-radius:44px;padding:64px max(4vw,24px);color:#fff;background:linear-gradient(180deg,#0274c6 0%,#05467f 62%,#0b2a4d 100%)}
+.home-intro .intro-top{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;max-width:1280px;margin:0 auto}
+.home-intro h1{font-size:clamp(28px,3vw,40px);line-height:1.25;margin:0 0 30px}
+.home-intro img{width:100%;border-radius:22px;display:block}
+.home-intro .intro-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;max-width:1280px;margin:48px auto 0}
+.home-intro .intro-cols div{border-top:1px solid #ffffff88;padding-top:18px}
+.home-intro h2{font-size:1.25rem;margin:0 0 14px}
+.home-intro p{font-size:1.05rem;line-height:1.7;margin:0}
+.home-section{max-width:1080px;margin:0 auto;padding:90px 20px}
+.home-section>h2{text-align:center;font-size:clamp(28px,3vw,40px);margin:0 0 60px;color:#2d3e50}
+.initiatives{display:grid;grid-template-columns:repeat(3,1fr);gap:56px 50px}
+.initiatives article{font-size:.9rem;line-height:1.6;color:#555;text-align:justify}
+.initiatives .logo-slot{height:80px;display:flex;align-items:center}
+.initiatives .logo-slot img{max-height:80px;max-width:200px;width:auto}
+.initiatives .logo-slot.placeholder::before{content:'';width:200px;height:80px;background:#e6e6e6}
+.initiatives h3{font-size:1.05rem;color:#222;margin:22px 0 14px;text-align:left}
+.home-note{text-align:right;font-size:.75rem;color:#666;margin-top:40px}
+.participe{max-width:1360px;margin:0 auto 20px;background:#fff;border-radius:40px;box-shadow:0 25px 60px #0000002e;padding:70px 100px}
+.participe>h2{font-size:42px;margin:0 0 8px}
+.participe>p{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;color:#555;margin:0 0 40px}
+.participe-grid{display:grid;grid-template-columns:1.8fr 1fr;gap:32px}
+.participe-hero{border-radius:28px;overflow:hidden;background:linear-gradient(0deg,#000000b3,#00000033 70%),url(/images/site/participe.jpg) center/cover;color:#fff;display:flex;align-items:flex-end;min-height:420px}
+.participe-hero div{padding:32px}
+.participe-hero h3{font-size:36px;line-height:1.2;margin:0 0 12px}
+.participe-hero p{font-size:19px;margin:0 0 18px;max-width:90%}
+.participe-outline{display:inline-block;padding:10px 22px;border:2px solid #fff;border-radius:6px;color:#fff;font-size:18px;font-weight:600}
+.participe-outline:hover{text-decoration:none;background:#ffffff22}
+.participe-cards{display:grid;gap:18px}
+.participe-cards article{display:grid;grid-template-columns:80px 1fr;gap:16px;background:#fff;border-radius:20px;padding:22px;box-shadow:0 10px 30px #0000001a;align-items:center}
+.participe-cards img{width:72px;height:72px}
+.participe-cards h4{margin:0;font-size:22px}
+.participe-cards p{margin:6px 0;font-size:16px;color:#555}
+.participe-cards .soon{font-size:16px;color:#1f6fd8;font-weight:600}
+.mission>h2{color:var(--site-cyan);font-size:33px;font-weight:800}
+.mission-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;text-align:center}
+.mission-cols img{width:80px;height:80px}
+.mission-cols h3{text-transform:uppercase;color:var(--site-navy);font-size:30px;font-weight:800;margin:10px 0 14px}
+.mission-cols p{font-size:.95rem;line-height:1.7;color:#333}
+.news{max-width:1360px;margin:0 16px;border-radius:40px;box-shadow:0 10px 40px #00000024;padding:40px max(5vw,24px)}
+.news>h2{font-size:30px;margin:0 0 10px}
+.news>p{margin:0 0 30px;color:#222}
+.news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+.news-grid article{border-radius:8px;box-shadow:0 2px 12px #0000002b;overflow:hidden;align-self:start}
+.news-grid img{width:100%;display:block}
+.news-grid div{padding:18px 20px}
+.news-grid h3{font-family:'Lato',sans-serif;font-size:1rem;margin:0 0 8px;color:#222}
+.news-grid time{display:block;font-size:.75rem;font-weight:700;margin-bottom:8px}
+.news-grid p{font-size:.85rem;color:#444;margin:0 0 6px}
+.news-more{display:inline-block;margin-top:24px;font-weight:700;font-size:.9rem}
+.partners{text-align:center}
+.partners>h2{color:#000;margin-bottom:20px}
+.partners>p{font-size:18px;line-height:1.6;color:#000;max-width:900px;margin:0 auto 60px}
+.partners-logos{display:flex;flex-wrap:wrap;gap:40px 60px;justify-content:center;align-items:center}
+.partners-logos img{max-height:90px;max-width:220px;width:auto}
+
+@media(max-width:980px){
+  .topo{flex-wrap:wrap;padding:12px 20px;gap:10px}
+  .topo nav{gap:12px 16px}
+  .topo nav>a,.topo .menu-group>a{min-height:32px}
+  .home-intro .intro-top,.home-intro .intro-cols,.initiatives,.participe-grid,.mission-cols,.news-grid{grid-template-columns:1fr}
+  .participe{padding:32px 24px;border-radius:24px}
+  .participe-hero h3{font-size:22px}
+  .participe-hero p{font-size:14px}
+}
