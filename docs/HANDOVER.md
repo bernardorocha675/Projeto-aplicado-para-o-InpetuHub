@@ -1,6 +1,16 @@
-# Handover técnico — InPETU Hub 0.4.13
+# Handover técnico — InPETU Hub 0.4.14
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
+
+## Fix 0.4.14 — macOS 12 Monterey — em revisão
+
+Pedido em 19/10/2026: o responsável não conseguia abrir o app num MacBook Pro 13" 2016 (Intel Core i5) com macOS 12.7.6. Causa confirmada: o iniciador da 0.4.13, gerado com Go 1.27.2, grava macOS mínimo 13.0 no Mach-O (LC_BUILD_VERSION), e o Go 1.27 deixou de suportar o macOS 12. O Java privado (Temurin 21) já declarava 11.0, e os bits de execução do ZIP estavam corretos.
+
+- `release-v0.4.yml`: Go por alvo na matriz; macOS x64/ARM64 com Go 1.26.9 (mínimo 12.0), Windows/Linux seguem com 1.27.2.
+- `package_v04.py`: lê o mínimo gravado no iniciador e em `runtime/bin/java` e recusa o pacote se passar de 12.0; `Info.plist` declara `LSMinimumSystemVersion` 12.0.
+- Versão 0.4.14 em VERSION/POM/iniciador/receptor/roteiro; COMO-INICIAR informa o mínimo e o caminho do Gatekeeper no Monterey.
+
+Atenção: o Go 1.26 recebe correções até o lançamento do Go 1.28; ao trocar o Go do macOS, a checagem da CI mostra se o Monterey deixou de ser atendido. Sem migration, reset, contas, dependências do aplicativo ou ativação externa.
 
 ## Fix 0.4.13 — agenda, validação e padronização — publicada e verificada
 

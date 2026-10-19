@@ -15,12 +15,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - {os: ubuntu-24.04, goos: linux, goarch: amd64, javaarch: x64}
-          - {os: ubuntu-24.04-arm, goos: linux, goarch: arm64, javaarch: aarch64}
-          - {os: macos-15, goos: darwin, goarch: arm64, javaarch: aarch64}
-          - {os: macos-15-intel, goos: darwin, goarch: amd64, javaarch: x64}
-          - {os: windows-2025, goos: windows, goarch: amd64, javaarch: x64}
-          - {os: windows-11-arm, goos: windows, goarch: arm64, javaarch: aarch64}
+          # Go 1.27 exige macOS 13; no macOS o iniciador usa Go 1.26 para abrir também no macOS 12 Monterey.
+          - {os: ubuntu-24.04, goos: linux, goarch: amd64, javaarch: x64, go: '1.27.2'}
+          - {os: ubuntu-24.04-arm, goos: linux, goarch: arm64, javaarch: aarch64, go: '1.27.2'}
+          - {os: macos-15, goos: darwin, goarch: arm64, javaarch: aarch64, go: '1.26.9'}
+          - {os: macos-15-intel, goos: darwin, goarch: amd64, javaarch: x64, go: '1.26.9'}
+          - {os: windows-2025, goos: windows, goarch: amd64, javaarch: x64, go: '1.27.2'}
+          - {os: windows-11-arm, goos: windows, goarch: arm64, javaarch: aarch64, go: '1.27.2'}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 35
     defaults:
@@ -37,7 +38,7 @@ jobs:
           architecture: ${{ matrix.javaarch }}
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
         with:
-          go-version: '1.27.2'
+          go-version: ${{ matrix.go }}
           architecture: ${{ matrix.goarch }}
           cache: false
       - name: Testar e conferir o iniciador
