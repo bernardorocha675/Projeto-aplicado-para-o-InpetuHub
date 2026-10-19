@@ -1,3 +1,9 @@
+# 0.5.0 — em revisão
+
+Mesmo código da 0.4.17, só com a versão 0.5.0 (VERSION, POM, iniciador, receptor, roteiro), notas, README e o texto do LEIA-PRIMEIRO do pacote. Testes locais (Linux x64, 19/10/2026): Go test/vet, 126 Java, Testar 14/14, pacote Linux x64, smoke (inclui a troca real do iniciador 0.5.0 → 0.5.1 na mesma pasta) e segredos aprovados. Windows, macOS e ARM64 ficam com a matriz. Teste real da passagem de linha: pacote Linux x64 da 0.4.17 (commit edd985a) com o smoke forçando a troca para um iniciador 0.5.0 — troca real do iniciador, 15 logins, chave e banco preservados e recuperação aprovados.
+
+---
+
 # Fix 0.4.17 — em revisão
 
 Testes locais (Linux x64, 19/10/2026): Go test/vet/race e gofmt (dois testes novos: a 0.4 escolhe a 0.5.0 e não outra linha; a 0.4.17 entrega a execução ao iniciador da 0.5.0 instalado na mesma pasta), receptor, 126 Java (filtro de versão dos logs aceita 0.5), Testar 14/14, pacote Linux x64, smoke e segredos aprovados. Windows, macOS e ARM64 ficam com a matriz.
