@@ -103,3 +103,7 @@ O responsável decidiu que uma reserva aprovada cujo horário final já passou n
 ## Recuperação do executável — 0.4.11
 
 Com o lock do iniciador, um aplicativo que ainda mantém o lock dos dados é tratado como sobra de uma execução anterior: o iniciador pede o encerramento normal por `.secrets/launcher.stop` e aguarda. Pastas de versão danificadas são renomeadas para `installed/.danificada-…`, nunca apagadas. Com versão instalada íntegra, falhas de atualização não impedem o início; a primeira instalação continua recusando pacote inválido.
+
+## Linha 0.5 (19/10/2026)
+
+O responsável pediu a versão 0.5 com o código atual e decidiu: mesmos dados (a 0.5 continua na pasta `InPETU-Hub/0.4`), atualização automática a partir da 0.4.17 (que aceita as linhas 0.4 e 0.5) e conteúdo igual ao da 0.4.16, sem os lotes 3 a 5. Fixes seguintes na `0.5.x`; uma linha 0.6 exige novo pedido.

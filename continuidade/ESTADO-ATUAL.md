@@ -1,6 +1,12 @@
-# 0.4.16 em revisão — lote 2 do Caça bugs 2 (calendário)
+# 0.4.17 em revisão — ponte para a 0.5
 
-Autorizado em 19/10/2026 (“Continue o lote 2”). Calendário igual à referência: dias com atividades em azul com ponto, dias sem nada em branco, detalhes ao clicar. Testes locais (Linux x64, 19/10/2026): 126 Java (página pública confere o texto “Clique em um dia marcado”), Node da agenda (10, reescritos para o novo visual: dia azul com ponto, dia branco sem texto, título do mês, aviso só para a equipe) e de cadastros (4), Testar 14/14, pacote Linux x64, smoke e segredos aprovados; captura de tela com dados simulados comparada à referência do PDF. Windows, macOS e ARM64 ficam com a matriz. PR aberto; publicação aguarda a matriz e a autorização do responsável.
+Em 19/10/2026 o responsável pediu a versão 0.5 com o código completo na principal e decidiu: mesmos dados, atualização automática e conteúdo igual ao da 0.4.16. Plano: 0.4.17 (iniciador aceita a linha 0.5) e depois 0.5.0. Testes locais (Linux x64, 19/10/2026): Go test/vet/race e gofmt (dois testes novos: a 0.4 escolhe a 0.5.0 e não outra linha; a 0.4.17 entrega a execução ao iniciador da 0.5.0 instalado na mesma pasta), receptor, 126 Java (filtro de versão dos logs aceita 0.5), Testar 14/14, pacote Linux x64, smoke e segredos aprovados. Windows, macOS e ARM64 ficam com a matriz. Merge e publicação autorizados.
+
+---
+
+# 0.4.16 publicada — lote 2 do Caça bugs 2 (calendário)
+
+Autorizado em 19/10/2026 (“Continue o lote 2”). Calendário igual à referência: dias com atividades em azul com ponto, dias sem nada em branco, detalhes ao clicar. Testes locais (Linux x64, 19/10/2026): 126 Java (página pública confere o texto “Clique em um dia marcado”), Node da agenda (10, reescritos para o novo visual: dia azul com ponto, dia branco sem texto, título do mês, aviso só para a equipe) e de cadastros (4), Testar 14/14, pacote Linux x64, smoke e segredos aprovados; captura de tela com dados simulados comparada à referência do PDF. Windows, macOS e ARM64 ficam com a matriz. A [0.4.16](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.16) foi publicada e verificada em 19/10/2026 pelo [run 39330445496](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39330445496), na primeira tentativa, após o PR [#18](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/18) (matriz verde de primeira). Tag/código testado `ae99fe07aca99b95093d2f7e139a8eee4572e55d` (merge em main). Conferidos os 12 assets e os 11 checksums contra digests públicos; v0.4.16 é a latest; as 21 releases anteriores mantêm arquivos, tamanhos e digests; links do README respondem. Relatório da CI: `Testes/teste23-2026-10-19_18-49-14-2e3f29e6/log.txt`. **Entrega concluída: parar e aguardar nova autorização.** Lotes 3, 4 e 5 aguardam decisões (ver abaixo).
 
 ---
 

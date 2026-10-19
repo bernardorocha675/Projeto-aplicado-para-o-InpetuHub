@@ -191,7 +191,7 @@ func (m *Manager) queryLatest() (*release, error) {
 			if item.Draft || item.Prerelease {
 				continue
 			}
-			if _, e = patch(item.Tag_name); e != nil {
+			if _, e = versionOrder(item.Tag_name); e != nil {
 				continue
 			}
 			version := strings.TrimPrefix(item.Tag_name, "v")
@@ -496,7 +496,7 @@ func (m *Manager) installLatest() error {
 		}
 	}
 	hasCurrent := e == nil
-	m.message("Verificando", "Verificando atualizacoes da linha 0.4.x...")
+	m.message("Verificando", "Verificando atualizacoes...")
 	if m.offline {
 		if !hasCurrent {
 			return errors.New("sem pacote local; conecte a internet para a primeira instalacao")

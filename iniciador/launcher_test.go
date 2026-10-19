@@ -14,6 +14,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -53,11 +54,11 @@ func fixtureBundle(t *testing.T, root, version string) Bundle {
 	return b
 }
 func TestVersionFamilyAndNumericOrder(t *testing.T) {
-	if !newer("0.4.10", "0.4.9") {
-		t.Fatal("ordem lexicografica incorreta")
+	if !newer("0.4.10", "0.4.9") || !newer("0.5.0", "0.4.17") || newer("0.4.99", "0.5.0") {
+		t.Fatal("ordem numerica incorreta")
 	}
-	for _, v := range []string{"0.3.99", "0.5.0", "0.4.1-beta", "0.4.01", "../../0.4.2"} {
-		if _, e := patch(v); e == nil {
+	for _, v := range []string{"0.3.99", "0.6.0", "1.0.0", "0.4.1-beta", "0.4.01", "0.5.01", "0.4.1000000", "../../0.4.2"} {
+		if _, e := versionOrder(v); e == nil {
 			t.Fatal(v)
 		}
 	}
@@ -66,7 +67,7 @@ func TestLatestSkipsOtherFamiliesDraftsAndPrereleases(t *testing.T) {
 	m := testManager(t)
 	var server *httptest.Server
 	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		releases := []githubRelease{{Tag_name: "v0.5.0"}, {Tag_name: "v0.4.50", Draft: true}, {Tag_name: "v0.4.99", Prerelease: true}, {Tag_name: "v0.4.9"}, {Tag_name: "v0.4.10"}}
+		releases := []githubRelease{{Tag_name: "v0.6.0"}, {Tag_name: "v1.0.0"}, {Tag_name: "v0.4.50", Draft: true}, {Tag_name: "v0.4.99", Prerelease: true}, {Tag_name: "v0.4.9"}, {Tag_name: "v0.4.10"}}
 		for i := range releases {
 			releases[i].Assets = []releaseAsset{{Name: archiveName(strings.TrimPrefix(releases[i].Tag_name, "v")), State: "uploaded", Browser_download_url: server.URL + "/package.zip"}, {Name: "SHA256SUMS.txt", State: "uploaded", Browser_download_url: server.URL + "/SHA256SUMS.txt"}}
 		}
@@ -80,6 +81,24 @@ func TestLatestSkipsOtherFamiliesDraftsAndPrereleases(t *testing.T) {
 		t.Fatalf("release inesperada: %v %v", latest, e)
 	}
 }
+func TestLatestCrossesFromLine04To05(t *testing.T) {
+	m := testManager(t)
+	var server *httptest.Server
+	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		releases := []githubRelease{{Tag_name: "v0.4.17"}, {Tag_name: "v0.5.0"}, {Tag_name: "v0.6.0"}}
+		for i := range releases {
+			releases[i].Assets = []releaseAsset{{Name: archiveName(strings.TrimPrefix(releases[i].Tag_name, "v")), State: "uploaded", Browser_download_url: server.URL + "/package.zip"}, {Name: "SHA256SUMS.txt", State: "uploaded", Browser_download_url: server.URL + "/SHA256SUMS.txt"}}
+		}
+		_ = json.NewEncoder(w).Encode(releases)
+	}))
+	defer server.Close()
+	m.api = server.URL
+	m.client = server.Client()
+	latest, e := m.latest()
+	if e != nil || latest.Version != "0.5.0" {
+		t.Fatalf("a 0.4 deve atualizar para a 0.5, e nao para outra linha: %v %v", latest, e)
+	}
+}
 func TestLatestPaginates(t *testing.T) {
 	m := testManager(t)
 	pages := 0
@@ -88,7 +107,7 @@ func TestLatestPaginates(t *testing.T) {
 		if r.URL.Query().Get("page") == "1" {
 			list := make([]githubRelease, 100)
 			for i := range list {
-				list[i] = githubRelease{Tag_name: "v0.5.0"}
+				list[i] = githubRelease{Tag_name: "v0.6.0"}
 			}
 			_ = json.NewEncoder(w).Encode(list)
 		} else {
@@ -357,11 +376,12 @@ func TestVerifiedUpdateBacksUpAndPreservesDataAndSecrets(t *testing.T) {
 func TestNewInstalledLauncherIsSelectedBeforeStartingTheBackend(t *testing.T) {
 	m := testManager(t)
 	m.offline = true
-	current, e := patch(buildVersion)
-	if e != nil {
+	if _, e := versionOrder(buildVersion); e != nil {
 		t.Fatal(e)
 	}
-	next := fmt.Sprintf("0.4.%d", current+1)
+	cut := strings.LastIndex(buildVersion, ".")
+	fix, _ := strconv.Atoi(buildVersion[cut+1:])
+	next := fmt.Sprintf("%s.%d", buildVersion[:cut], fix+1)
 	root := filepath.Join(m.home, "installed", next)
 	b := fixtureBundle(t, root, next)
 	if e := m.ready(root, b); e != nil {
@@ -374,6 +394,30 @@ func TestNewInstalledLauncherIsSelectedBeforeStartingTheBackend(t *testing.T) {
 	}
 	if called != filepath.Join(root, b.Launcher) || m.state().Running {
 		t.Fatal("iniciador novo nao selecionado", called)
+	}
+}
+
+func TestLine04HandsOffToInstalled05WithTheSameData(t *testing.T) {
+	previous := buildVersion
+	buildVersion = "0.4.17"
+	defer func() { buildVersion = previous }()
+	m := testManager(t)
+	m.offline = true
+	root := filepath.Join(m.home, "installed", "0.5.0")
+	b := fixtureBundle(t, root, "0.5.0")
+	if e := m.ready(root, b); e != nil {
+		t.Fatal(e)
+	}
+	called := ""
+	m.onHandoff = func(path string) error { called = path; return nil }
+	if e := m.start(); e != nil {
+		t.Fatal(e)
+	}
+	if called != filepath.Join(root, b.Launcher) {
+		t.Fatal("a 0.4.17 deve entregar a execucao ao iniciador da 0.5.0", called)
+	}
+	if !strings.HasPrefix(root, m.home) {
+		t.Fatal("a 0.5 deve ficar na mesma pasta de dados")
 	}
 }
 

@@ -9,7 +9,7 @@ import java.time.Instant;
 /** JSON por linha. Mensagens livres de bibliotecas e de exceções nunca são serializadas. */
 public class SafeLogEncoder extends EncoderBase<ILoggingEvent> {
   private static String version(String value) {
-    return value != null && value.matches("0\\.4\\.(0|[1-9][0-9]*)") ? value : "unknown";
+    return value != null && value.matches("0\\.(4|5)\\.(0|[1-9][0-9]*)") ? value : "unknown";
   }
   @Override
   public byte[] headerBytes() {

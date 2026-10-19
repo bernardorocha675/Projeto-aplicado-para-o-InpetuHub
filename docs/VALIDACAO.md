@@ -1,4 +1,12 @@
-# Fix 0.4.16 — em revisão
+# Fix 0.4.17 — em revisão
+
+Testes locais (Linux x64, 19/10/2026): Go test/vet/race e gofmt (dois testes novos: a 0.4 escolhe a 0.5.0 e não outra linha; a 0.4.17 entrega a execução ao iniciador da 0.5.0 instalado na mesma pasta), receptor, 126 Java (filtro de versão dos logs aceita 0.5), Testar 14/14, pacote Linux x64, smoke e segredos aprovados. Windows, macOS e ARM64 ficam com a matriz.
+
+---
+
+# Fix 0.4.16 — publicada e verificada
+
+A [0.4.16](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.16) foi publicada e verificada em 19/10/2026 pelo [run 39330445496](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39330445496), na primeira tentativa, após o PR [#18](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/18) (matriz verde de primeira). Tag/código testado `ae99fe07aca99b95093d2f7e139a8eee4572e55d` (merge em main). Conferidos os 12 assets e os 11 checksums contra digests públicos; v0.4.16 é a latest; as 21 releases anteriores mantêm arquivos, tamanhos e digests; links do README respondem. Relatório da CI: `Testes/teste23-2026-10-19_18-49-14-2e3f29e6/log.txt`.
 
 Testes locais (Linux x64, 19/10/2026): 126 Java (página pública confere o texto “Clique em um dia marcado”), Node da agenda (10, reescritos para o novo visual: dia azul com ponto, dia branco sem texto, título do mês, aviso só para a equipe) e de cadastros (4), Testar 14/14, pacote Linux x64, smoke e segredos aprovados; captura de tela com dados simulados comparada à referência do PDF. Windows, macOS e ARM64 ficam com a matriz.
 

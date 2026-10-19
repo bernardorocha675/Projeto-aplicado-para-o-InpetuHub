@@ -1,11 +1,11 @@
-# InPETU Hub 0.4.16
+# InPETU Hub 0.4.17
 
-Novo visual do calendário (lote 2 do “Caça bugs 2”).
+Preparação para a versão 0.5.
 
-- Dias com atividades marcadas ficam em azul, com um ponto; dias sem nada marcado ficam em branco, como na referência enviada pela equipe.
-- Para ver os eventos, a disponibilidade e os horários livres de um dia, clique nele. As etiquetas “Livre”, “Parcial” e “Ocupado” saíram dos dias.
-- Abaixo do calendário: “Clique em um dia marcado para ver os eventos.” O título do mês aparece como “Outubro 2026”.
+- O iniciador passa a reconhecer a nova linha 0.5. Quando a 0.5 for publicada, quem estiver na 0.4.17 recebe a atualização automaticamente, sem baixar nada.
+- Os dados continuam no mesmo lugar: banco, reservas, contas, configurações, chave e backups da pasta `InPETU-Hub/0.4` serão usados pela 0.5, sem cópia nem reset.
+- O aplicativo e as telas não mudam nesta versão.
 
-Dados, reservas, contas, configurações, chave e backups permanecem no mesmo local da família 0.4.x. Não há migration, reset, mudança de dependências ou ativação externa. Windows/macOS/Linux x64/ARM64 e Java privado preservados; Android continua retirado. No macOS, o iniciador continua exigindo macOS 13 ou mais recente.
+Não há migration, reset, mudança de dependências ou ativação externa. Windows/macOS/Linux x64/ARM64 e Java privado preservados; Android continua retirado. No macOS, o iniciador continua exigindo macOS 13 ou mais recente.
 
 Publicação condicionada à matriz obrigatória de RELEASES.md.

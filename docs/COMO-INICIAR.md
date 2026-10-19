@@ -57,7 +57,7 @@ Espaços já existentes podem ser editados nessa mesma tela. Não é preciso apa
 
 ## Dados e contas
 
-A instalação usa a pasta `InPETU-Hub/0.4` dentro da configuração do seu usuário: LocalAppData no Windows, Library/Application Support no macOS e normalmente `~/.config` no Linux. O banco continua disponível nos próximos reinícios. Cada computador tem seu próprio banco.
+A instalação usa a pasta `InPETU-Hub/0.4` (também na 0.5, para manter os mesmos dados) dentro da configuração do seu usuário: LocalAppData no Windows, Library/Application Support no macOS e normalmente `~/.config` no Linux. O banco continua disponível nos próximos reinícios. Cada computador tem seu próprio banco.
 
 Não é necessário copiar arquivo de senhas. As cinco contas são criadas automaticamente no banco e as senhas públicas voltam aos valores publicados quando o sistema inicia. Registros de negócio novos não são apagados ao reiniciar.
 

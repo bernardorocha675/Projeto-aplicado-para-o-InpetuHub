@@ -111,7 +111,7 @@ func cleanReport(report SessionReport) (SessionReport, error) {
 		return fail()
 	}
 	for _, v := range report.LauncherVersions {
-		if _, e = patch(v); e != nil {
+		if _, e = versionOrder(v); e != nil {
 			return fail()
 		}
 	}
@@ -124,7 +124,7 @@ func cleanReport(report SessionReport) (SessionReport, error) {
 		if event.SessionID != report.ID || !codePattern.MatchString(event.Event) || safeVersion(event.AppVersion) != event.AppVersion {
 			return fail()
 		}
-		if _, e = patch(event.LauncherVersion); e != nil {
+		if _, e = versionOrder(event.LauncherVersion); e != nil {
 			return fail()
 		}
 		if event.Component != "launcher" && event.Component != "app" {
