@@ -117,14 +117,9 @@ public class ReservaService {
   }
 
   private void reservarCota(Reserva r) {
+    // Somente reservas aprovadas consomem cota; pendentes não fazem alocação provisória.
     if (r.usaCota && r.statusReserva == StatusReserva.APROVADA)
-      cota.movimentar(
-          r,
-          r.statusReserva == StatusReserva.PENDENTE
-              ? TipoMovimentacao.RESERVA_PENDENTE
-              : TipoMovimentacao.UTILIZACAO,
-          r.horasCota,
-          "Alocação da reserva #" + r.id);
+      cota.movimentar(r, TipoMovimentacao.UTILIZACAO, r.horasCota, "Alocação da reserva #" + r.id);
   }
 
   public void registrar(Reserva r, Colaborador c, String acao, String texto) {

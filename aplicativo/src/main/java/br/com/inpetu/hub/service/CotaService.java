@@ -88,13 +88,8 @@ public class CotaService {
   }
 
   public void liberar(Reserva r) {
-    if (!r.usaCota || r.statusReserva != br.com.inpetu.hub.enums.StatusReserva.APROVADA) return;
+    if (!r.usaCota || r.statusReserva != StatusReserva.APROVADA) return;
     movimentar(
-        r,
-        r.statusReserva == StatusReserva.PENDENTE
-            ? TipoMovimentacao.LIBERACAO_PENDENTE
-            : TipoMovimentacao.ESTORNO_UTILIZACAO,
-        r.horasCota.negate(),
-        "Liberação da reserva #" + r.id);
+        r, TipoMovimentacao.ESTORNO_UTILIZACAO, r.horasCota.negate(), "Liberação da reserva #" + r.id);
   }
 }

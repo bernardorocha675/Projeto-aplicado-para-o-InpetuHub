@@ -21,9 +21,10 @@ O aplicativo é utilizado pelo executável, disponível para Windows, macOS e Li
 
 ## Registros de entregas anteriores
 
+- [Handover](historico/HANDOVER-ENTREGAS.md) e [validação](historico/VALIDACAO-ENTREGAS.md) das versões 0.4.1 a 0.4.11
 - [Relatório caçabugs: acompanhamento](BUGS.md) e [correções](CORRECOES-RELATORIO.md)
 - [Revisão dos PRs de 18/10/2026](REVISAO-PRS-2026-10-18.md)
 - [Identidade institucional (0.4.8, cancelada)](IDENTIDADE-INSTITUCIONAL.md) e [restauração da área interna (0.4.9)](RESTAURACAO-AREA-INTERNA.md)
 - [Retorno à 0.4.7 (0.4.10)](RETORNO-0.4.7.md)
 
-Versões antigas dos guias acompanham as tags e releases anteriores. `LEIA-PRIMEIRO.txt` é a base do aviso incluído nos pacotes.
+Versões antigas dos guias acompanham as tags e releases anteriores. O aviso `LEIA-PRIMEIRO.txt` de cada pacote é gerado por `.github/scripts/package_v04.py`.
