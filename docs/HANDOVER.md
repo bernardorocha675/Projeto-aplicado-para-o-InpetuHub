@@ -1,6 +1,16 @@
-# Handover técnico — InPETU Hub 0.4.12
+# Handover técnico — InPETU Hub 0.4.13
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
+
+## Fix 0.4.13 — agenda, validação e padronização (preparado, aguardando matriz)
+
+Autorizado em 19/10/2026 após a revisão de qualidade. Mudanças:
+
+- `static/js/agenda.js`: reescrito em formato legível, mesma lógica; o `catch` da consulta também limpa o detalhe do dia (horários, links e formulário de reserva), recuperando a correção da 0.4.8 que o retorno à 0.4.7 desfez. Regressão em `test_agenda_ui.cjs` falha no script anterior.
+- `CrudService`: email de cadastros usa `ContactRules.EMAIL`; login usa `LoginNames.PATTERN`/`valid`, também em `PrivateAccountInitializer`. Teste `collaboratorEmailUsesTheSameFormatAsPublicContacts` falha com a regra anterior.
+- Iniciador formatado com `gofmt`; `reserva.js` e `admin.js` formatados. O job `source` da CI recusa Go fora do `gofmt` e confere a sintaxe dos scripts da interface.
+
+Validação: Testes locais (Linux x64, 19/10/2026): 124 Java (um novo de email), 48 Go (+race, vet nos três sistemas, gofmt limpo), 17 Node (uma regressão nova da agenda que falha no script anterior), segredos, Testar 14/14, pacote Linux x64 e smoke (15 logins, troca de iniciador, recuperação de órfão, recusa de host externo) aprovados. Windows, macOS e ARM64 ficam com a matriz. Testes Java ainda com estilo compacto não foram reformatados (exigiria formatador novo no Maven). Sem migration, reset, contas, preços, cotas, dependências ou ativação externa.
 
 ## Fix 0.4.12 — lote 2 desktop — publicada e verificada
 

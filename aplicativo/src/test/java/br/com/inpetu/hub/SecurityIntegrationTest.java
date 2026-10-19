@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import br.com.inpetu.hub.dto.ReservaForm;
 import br.com.inpetu.hub.entity.*;
 import br.com.inpetu.hub.enums.*;
+import br.com.inpetu.hub.exception.RegraException;
 import br.com.inpetu.hub.repository.*;
 import br.com.inpetu.hub.security.*;
 import br.com.inpetu.hub.service.*;
@@ -192,6 +193,34 @@ class SecurityIntegrationTest {
                 .getRequest()
                 .getSession(false);
     mvc.perform(get("/admin").session(session)).andExpect(status().isOk());
+  }
+
+  @Test
+  void collaboratorEmailUsesTheSameFormatAsPublicContacts() {
+    var actor = users.findByLogin("fixture-admin").orElseThrow();
+    for (String email : new String[] {"pessoa@dominio.1", "pessoa@dominio.c", "pessoa@dominio"}) {
+      var error =
+          assertThrows(
+              RegraException.class,
+              () ->
+                  crud.salvar(
+                      "colaboradores",
+                      null,
+                      Map.of(
+                          "nome", "Pessoa", "login", "pessoa.email", "email", email,
+                          "senha", "Teste123", "perfil", "COLABORADOR", "ativo", "on"),
+                      actor),
+              email);
+      assertTrue(error.getMessage().startsWith("Email:"), email);
+    }
+    crud.salvar(
+        "colaboradores",
+        null,
+        Map.of(
+            "nome", "Pessoa", "login", "pessoa.email", "email", "pessoa@instituicao.edu.br",
+            "senha", "Teste123", "perfil", "COLABORADOR", "ativo", "on"),
+        actor);
+    assertTrue(users.findByLogin("pessoa.email").isPresent());
   }
 
   @Test

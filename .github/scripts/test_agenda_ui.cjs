@@ -34,10 +34,12 @@ const source = fs.readFileSync(path.resolve(__dirname, '../../aplicativo/src/mai
 async function calendar(state, rooms = []) {
   const nodes = Object.fromEntries(['calendario', 'mes-titulo', 'detalhe-dia', 'filtro-espaco', 'agenda-aviso', 'mes-anterior', 'mes-proximo', 'filtro-dia'].map(id => [id, new Element()]));
   let current = state;
+  let failed = false;
   const context = {
     document: {getElementById: id => nodes[id], createElement: tag => new Element(tag)},
     URLSearchParams, Date: CalendarDate, setInterval: () => {},
     fetch: async url => {
+      if (failed) return {ok: false};
       const month = new URLSearchParams(url.split('?')[1]).get('mes');
       return {ok: true, json: async () => ({dias: [{data: month + '-20', estado: current, feriado: false, espacos: rooms}]})};
     }
@@ -45,7 +47,7 @@ async function calendar(state, rooms = []) {
   vm.runInNewContext(source, context);
   const flush = () => new Promise(setImmediate);
   await flush();
-  return {nodes, flush, setState: value => {current = value;}, day: () => nodes.calendario.children.find(n => !n.disabled)};
+  return {nodes, flush, fail: () => { failed = true; }, setState: value => {current = value;}, day: () => nodes.calendario.children.find(n => !n.disabled)};
 }
 
 test('banco sem espaços não exibe Ocupado nem Livre e explica como habilitar a agenda', async () => {
@@ -103,4 +105,17 @@ test('consulta por dia muda o mês, mantém a seleção ao filtrar e limita nave
  assert.equal(page.nodes['mes-proximo'].disabled,true);assert.equal(page.day().attributes['aria-pressed'],'true');
  await page.nodes['filtro-espaco'].listeners.change();await page.flush();assert.equal(picker.value,`${year+1}-12-20`);
  picker.value=`${year}-01-20`;picker.listeners.change();await page.flush();assert.equal(page.nodes['mes-anterior'].disabled,true);
+});
+
+
+test('falha na atualização retira os horários e links de reserva da consulta anterior', async () => {
+  const page = await calendar('DISPONÍVEL', [{id: 1, nome: 'Sala', capacidade: 5, ocupados: [], livres: [{inicio: '09:00', fim: '10:00'}]}]);
+  page.day().listeners.click();
+  assert.ok(flattened(page.nodes['detalhe-dia']).some(n => n.tag === 'a'));
+  page.fail();
+  await page.nodes['filtro-espaco'].listeners.change();
+  await page.flush();
+  assert.equal(flattened(page.nodes['detalhe-dia']).some(n => n.tag === 'a' || n.tag === 'form'), false);
+  assert.ok(flattened(page.nodes['detalhe-dia']).some(n => /não pôde ser atualizada/.test(n.textContent)));
+  assert.ok(flattened(page.nodes.calendario).some(n => /Não foi possível consultar/.test(n.textContent)));
 });
