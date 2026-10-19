@@ -49,6 +49,18 @@ jobs:
         run: python ../.github/scripts/setup_maven.py
       - name: Executar testes de regras, HTTP e backup
         run: java "-Dfile.encoding=UTF-8" --source 17 scripts/Testar.java
+      - name: Mostrar testes Java que falharam (somente nome, tipo e mensagem)
+        if: failure()
+        shell: python
+        run: |
+          import glob, xml.etree.ElementTree as ET
+          for path in sorted(glob.glob('target/surefire-reports/TEST-*.xml')):
+              for case in ET.parse(path).getroot().iter('testcase'):
+                  for problem in list(case.iter('failure')) + list(case.iter('error')):
+                      frames = [l.strip() for l in (problem.text or '').splitlines() if 'br.com.inpetu' in l][:8]
+                      print(f"FALHOU {case.get('classname')}.{case.get('name')}: {problem.get('type')}: {(problem.get('message') or '')[:400]}")
+                      for frame in frames:
+                          print('   ', frame)
       - name: Gerar executável e runtime privado
         env:
           INPETU_GOOS: ${{ matrix.goos }}
