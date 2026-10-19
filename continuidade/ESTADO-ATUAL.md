@@ -1,3 +1,9 @@
+# 0.4.14 — voltar da troca de senha e aviso de agenda sem espaços
+
+Pedido em 19/10/2026 por PDF, com release e merge autorizados “o mais rápido possível”. Correções: botão **Voltar sem alterar** na troca de senha; aviso da agenda vazia com **Cadastrar espaço**. Decisão do responsável: manter o banco novo sem espaços (não criar espaços padrão). Testes locais (Linux x64, 19/10/2026): 125 Java (dois testes alterados/novos: link de voltar na troca de senha e botão Cadastrar espaço na agenda), testes Go/vet/gofmt, Node da agenda e cadastros, segredos, Testar 14/14, pacote Linux x64 e smoke aprovados. Windows, macOS e ARM64 ficam com a matriz. PR, matriz e publicação: registrar aqui após verificar a release. README já aponta para os downloads da 0.4.14.
+
+---
+
 # README com downloads diretos da 0.4.13
 
 Pedido em 19/10/2026: links diretos dos seis pacotes completos da 0.4.13 e do SHA256SUMS na seção "Usar o aplicativo" do README, para o time baixar sem entrar no GitHub. Os sete links responderam com download (HTTP 206 em leitura parcial). Os links usam o nome da versão: ao publicar a próxima release, atualize a tabela. Aviso incluído: no macOS, a 0.4.13 exige macOS 13 (iniciador gerado com Go 1.27.2); a correção para macOS 12 foi preparada no PR #12 e descartada a pedido do responsável. Sem mudança de código ou release.

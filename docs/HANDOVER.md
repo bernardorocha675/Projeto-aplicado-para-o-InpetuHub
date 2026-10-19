@@ -1,6 +1,16 @@
-# Handover técnico — InPETU Hub 0.4.13
+# Handover técnico — InPETU Hub 0.4.14
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
+
+## Fix 0.4.14 — voltar da troca de senha e aviso de agenda sem espaços
+
+Pedido em 19/10/2026 (PDF do responsável), com release e merge autorizados. O responsável escolheu manter o banco novo sem espaços (a equipe cadastra os reais) e só melhorar o aviso.
+
+- `auth/password.html`: link **Voltar sem alterar** para `/admin`.
+- `public/agenda.html`: aviso explica “Sem espaços” e oferece **Cadastrar espaço** (`/admin/cadastros/espacos/editar`) e a lista de espaços; CSS em `style.css`.
+- Testes: `SecurityIntegrationTest.passwordPageOffersWayBackWithoutChanging`; `FluxosIntegrationTest.rotasPublicasEProtecaoCsrf` confere o botão.
+
+Testes locais (Linux x64, 19/10/2026): 125 Java (dois testes alterados/novos: link de voltar na troca de senha e botão Cadastrar espaço na agenda), testes Go/vet/gofmt, Node da agenda e cadastros, segredos, Testar 14/14, pacote Linux x64 e smoke aprovados. Windows, macOS e ARM64 ficam com a matriz. Sem migration, reset, contas, dependências ou ativação externa. A PR #12 (macOS 12) foi descartada; o iniciador de macOS continua exigindo macOS 13.
 
 ## Fix 0.4.13 — agenda, validação e padronização — publicada e verificada
 

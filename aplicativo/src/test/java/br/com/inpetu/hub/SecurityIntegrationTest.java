@@ -254,6 +254,18 @@ class SecurityIntegrationTest {
   }
 
   @Test
+  void passwordPageOffersWayBackWithoutChanging() throws Exception {
+    var session = login(create(Perfil.COLABORADOR));
+    mvc.perform(get("/conta/senha").session(session))
+        .andExpect(status().isOk())
+        .andExpect(
+            content()
+                .string(
+                    org.hamcrest.Matchers.containsString(
+                        "href=\"/admin\">Voltar sem alterar</a>")));
+  }
+
+  @Test
   void passwordChangeAcceptsBasicEightCharacterPassword() throws Exception {
     var c = create(Perfil.COLABORADOR);
     var session = login(c);

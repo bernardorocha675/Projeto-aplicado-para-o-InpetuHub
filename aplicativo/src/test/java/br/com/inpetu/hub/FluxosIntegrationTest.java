@@ -271,7 +271,12 @@ class FluxosIntegrationTest {
   void rotasPublicasEProtecaoCsrf() throws Exception {
     mvc.perform(get("/"))
         .andExpect(status().isOk())
-        .andExpect(content().string(org.hamcrest.Matchers.containsString("Agenda de")));
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("Agenda de")))
+        .andExpect(
+            content()
+                .string(
+                    org.hamcrest.Matchers.containsString(
+                        "href=\"/admin/cadastros/espacos/editar\">Cadastrar espaço</a>")));
     mvc.perform(get("/login")).andExpect(status().isOk());
     mvc.perform(get("/admin")).andExpect(status().is3xxRedirection());
     mvc.perform(post("/reservas/solicitar")).andExpect(status().isForbidden());
