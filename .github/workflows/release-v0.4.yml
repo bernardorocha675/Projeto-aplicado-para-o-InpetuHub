@@ -49,7 +49,7 @@ jobs:
         run: python ../.github/scripts/setup_maven.py
       - name: Executar testes de regras, HTTP e backup
         run: java "-Dfile.encoding=UTF-8" --source 17 scripts/Testar.java
-      - name: Mostrar testes Java que falharam (somente nome, tipo e mensagem)
+      - name: Mostrar testes Java e erros do Maven que falharam (sem saída dos testes)
         if: failure()
         shell: python
         run: |
@@ -61,6 +61,13 @@ jobs:
                       print(f"FALHOU {case.get('classname')}.{case.get('name')}: {problem.get('type')}: {(problem.get('message') or '')[:400]}")
                       for frame in frames:
                           print('   ', frame)
+          # Sem relatório de teste, o Maven parou antes (dependências ou compilação): mostrar só as linhas de erro.
+          for log in sorted(glob.glob('.tools/testes/rodada-*/logs/01-processo.log')):
+              lines = open(log, encoding='utf-8', errors='replace').read().splitlines()
+              errors = [l for l in lines if l.startswith('[ERROR]') or 'BUILD FAILURE' in l][:40]
+              print(f'Maven: {len(errors)} linha(s) de erro em {log.split("rodada-")[0]}rodada-*')
+              for line in errors:
+                  print('   ', line[:300])
       - name: Gerar executável e runtime privado
         env:
           INPETU_GOOS: ${{ matrix.goos }}
