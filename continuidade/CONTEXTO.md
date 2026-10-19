@@ -94,3 +94,12 @@ O responsável aprovou o visual institucional e pediu restaurar a essência do p
 ## Retorno determinado pelo responsável — 18/10/2026
 
 O pedido “volte para a versão 0.4.7” substitui os pedidos de reproduzir o site e de manter os ajustes visuais da 0.4.9. Restaurar os fontes/visual/fluxos da tag v0.4.7, sem reaplicar o redesenho institucional. A entrega usa 0.4.10 para alcançar instalações mais novas pelo atualizador da família 0.4.x; não mover tags nem substituir releases. Preservar dados e os recursos de gestão originais. As seções anteriores sobre identidade são históricas, não uma autorização para reintroduzi-la.
+
+
+## Cancelamento após o evento — decisão de 19/10/2026
+
+O responsável decidiu que uma reserva aprovada cujo horário final já passou não pode ser cancelada pelo fluxo comum; deve ser concluída. Isso substitui o comportamento anterior, que permitia esse cancelamento e cobrava penalidade de 2× as horas de cota. A exceção de força maior do gestor, com justificativa, continua igual. Cancelamentos antes do término mantêm a regra de penalidade para menos de 30 dias.
+
+## Recuperação do executável — 0.4.11
+
+Com o lock do iniciador, um aplicativo que ainda mantém o lock dos dados é tratado como sobra de uma execução anterior: o iniciador pede o encerramento normal por `.secrets/launcher.stop` e aguarda. Pastas de versão danificadas são renomeadas para `installed/.danificada-…`, nunca apagadas. Com versão instalada íntegra, falhas de atualização não impedem o início; a primeira instalação continua recusando pacote inválido.

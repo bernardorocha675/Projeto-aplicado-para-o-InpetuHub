@@ -12,9 +12,11 @@ import (
  "net/url"
  "os"
  "os/exec"
+ "os/signal"
  "path/filepath"
  "runtime"
  "strings"
+ "syscall"
  "time"
 )
 
@@ -71,8 +73,17 @@ func (c *controller) perform(action string){
  }
  m.mu.Lock();m.status.Busy=false;m.mu.Unlock()
  <-m.operation
- if err!=nil{m.record("ERROR","ACTION_FAILED",map[string]any{"action":operation,"errorType":fmt.Sprintf("%T",err)});m.message("Precisa de atencao",err.Error())}else{m.record("INFO","ACTION_FINISHED",map[string]any{"action":operation})}
+ if err!=nil{m.record("ERROR","ACTION_FAILED",map[string]any{"action":operation,"errorType":fmt.Sprintf("%T",err),"result":failureCode(err)});m.message("Precisa de atencao",err.Error())}else{m.record("INFO","ACTION_FINISHED",map[string]any{"action":operation})}
  if action=="/api/close"&&err==nil{go c.server.Shutdown(context.Background())}
+}
+// Codigo estavel do motivo, sem texto livre, para distinguir falhas nos relatorios.
+func failureCode(err error) string {
+ for _,known:=range []struct{err error;code string}{
+  {errDataInUse,"DATA_IN_USE"},{errOrphanRunning,"ORPHAN_STILL_RUNNING"},{errJavaCheck,"JAVA_CHECK_FAILED"},
+  {errAppNotStarted,"APP_NOT_STARTED"},{errStartTimeout,"APP_START_TIMEOUT"},{errPrivateConfigMissing,"PRIVATE_CONFIG_MISSING"},
+  {errNoPackage,"NO_PACKAGE"},{errNetwork,"NETWORK"},
+ }{if errors.Is(err,known.err){return known.code}}
+ return "OTHER"
 }
 func safeLocalURL(address string)bool{
  u,e:=url.Parse(address);return e==nil && u.Scheme=="http" && u.Hostname()=="127.0.0.1" && u.Port()!=""
@@ -123,6 +134,14 @@ func run() (runErr error){
  if !headless{openBrowser(address)}
  m.operation<-struct{}{}
  go func(){if start{c.perform("/api/start")}else{c.perform("/api/install")}}()
+ // Logout, desligamento ou Ctrl+C: parar o Java e finalizar a sessao, sem deixar processo orfao.
+ signals:=make(chan os.Signal,1);signal.Notify(signals,os.Interrupt,syscall.SIGTERM);defer signal.Stop(signals)
+ go func(){
+  select{case <-signals:case <-reportDone:return}
+  m.record("WARN","LAUNCHER_SIGNAL",nil)
+  select{case m.operation<-struct{}{}:case <-time.After(45*time.Second):}
+  _=m.stop();_ = c.server.Shutdown(context.Background())
+ }()
  e=c.server.Serve(listener)
  if e!=nil && !errors.Is(e,http.ErrServerClosed){return e}
  _=m.stop()

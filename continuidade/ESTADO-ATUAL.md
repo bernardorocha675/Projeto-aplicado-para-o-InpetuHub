@@ -1,3 +1,13 @@
+# Fix 0.4.11 preparado na branch — aguardando autorização para main/publicação
+
+Em 19/10/2026 o responsável recebeu a análise desktop, autorizou o lote 1 e decidiu: pasta de versão danificada é preservada com outro nome; reserva aprovada já terminada não pode ser cancelada sem força maior (substitui a penalidade nesse caso). Base `e2575cc` (main = release 0.4.10). Trabalho na branch `claude/confident-gauss-9w9qmz`; detalhes em docs/HANDOVER.md e docs/VALIDACAO.md.
+
+Entregue no código: recuperação de Java deixado por iniciador encerrado à força; separação entre dados em uso e falha da JVM; ambiente Java limpo e UTF-8 no Linux; SIGTERM/Ctrl+C tratados no Linux/macOS; versão instalada íntegra usada quando a atualização falha; pasta danificada renomeada para `.danificada-…`; bloqueio do cancelamento de evento aprovado terminado; códigos de motivo nos logs; smoke com acentos, sem locale e recuperação. Versão 0.4.11 em VERSION/POM/iniciador/receptor/roteiro.
+
+Evidência local: 121 Java, 44 Go (+race, vet nos três sistemas), 16 Node, segredos, Testar 19/19, compilação cruzada dos seis alvos e smoke do pacote Linux x64 aprovados. Windows/macOS/ARM64 ainda não executados. **Pendente:** autorização para levar a branch a main (PR/merge), o que dispara a matriz e a publicação automática da 0.4.11. Não declarar publicada antes de conferir run, tag e assets. Próximo lote (download lento, erros invisíveis, documentação) só com nova autorização. Sem reset, migrations, contas, dependências, Render, SMTP ou Android.
+
+---
+
 # Aplicativo 0.4.7 restaurado — distribuído na 0.4.10
 
 O responsável pediu “volte para a versão 0.4.7”, após a captura de um destino externo inexistente. Este pedido substitui a reprodução do site e os ajustes da 0.4.9. Fontes ativos de aplicativo/iniciador/receptor restaurados da tag v0.4.7 (992168e3ceb39f196b2153aa5e291fbae0e2f196). Interface, recursos e código de produção são os originais, exceto identificação da versão. Duas regressões e smoke protegem menu local/gestão. Infraestrutura de Actions aprovada foi preservada. Detalhes em docs/RETORNO-0.4.7.md.

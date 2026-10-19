@@ -1,3 +1,17 @@
+# Fix 0.4.11 — validação local (Linux x64), aguardando matriz
+
+Execução em 19/10/2026 numa cópia descartável da árvore de trabalho, com JDK 21.0.12, Go 1.27.2 (toolchain fixado), Maven local e Node 22.22.
+
+- 121 testes Java (dois novos de cancelamento), 44 Go (11 novos) também com detector de concorrência, `go vet` para Linux/Windows/macOS, 16 Node, check de segredos e `Testar.java` com 19 verificações aprovadas.
+- Compilação do iniciador e dos testes Go para os seis alvos Windows/macOS/Linux x64/ARM64. Execução nativa somente em Linux x64.
+- Antes da correção, as regressões de atualização falharam no código 0.4.10 (pasta danificada, release incompleta, checksum) e o teste de cancelamento falhou sem a regra nova.
+- Pacote Linux x64 com Java privado gerado e smoke aprovado sem `LANG`/`LC_*`, com pasta acentuada e a fase nova de recuperação: iniciador encerrado à força, Java anterior parado pelo pedido local, sessões INTERROMPIDO/CONCLUIDO.
+- Pacote real: `JAVA_TOOL_OPTIONS` inválido não bloqueia mais o início; SIGTERM ao iniciador parou o Java e finalizou a sessão como CONCLUIDO.
+
+Não executados localmente: Windows, macOS, ARM64, CodeQL, gitleaks e OSV (rede bloqueada), navegador visual. A matriz de main é a referência para os seis alvos.
+
+---
+
 # Retorno à 0.4.7 — 0.4.10 publicada e verificada
 
 A [0.4.10](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.10) foi publicada e verificada em 18/10/2026 pelo [run 39160916469](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39160916469), com os 11 jobs obrigatórios aprovados. Tag/código testado `0a67211d7ea2be3834c296b3a4660d01fe5abf73`. Seis alvos Windows/macOS/Linux x64/ARM64 passaram testes, HTTP/backup, empacotamento e smoke do pacote com Java privado. Conferidos os 12 assets e os 11 checksums contra digests públicos. ZIP de código baixado e fontes de produção comparados à tag 0.4.7: idênticos, exceto identificadores de versão. As 15 releases/tags anteriores mantêm links, arquivos e digests, inclusive a 0.4.7 original e Android experimental. Relatório da CI: `Testes/teste13-2026-10-18_16-55-03-aea7918d/log.txt`.

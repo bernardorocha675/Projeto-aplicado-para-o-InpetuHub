@@ -35,3 +35,7 @@ Revise os trechos antes de compartilhar. Não envie banco, chave, ambiente ou ba
 O envio dos computadores depende do receptor ativado em `Testes/configuracao.json`. Registros de CI já publicados não significam que esse envio esteja ativo. A cópia local permanece até confirmação final no GitHub.
 
 Na 0.4.5, REQUEST_REJECTED identifica recusa tratada e REQUEST_FAILED identifica falha inesperada. VALIDATION_REJECTED corresponde a formulário inválido; EMAIL_FAILED a falha de email. Use a referência de suporte mostrada na tela para localizar o mesmo requestId no log. REPORT_CONFIG_FAILED e REPORT_UPLOAD_FAILED indicam tentativa de envio pendente; REPORTS_CONFIRMED indica recibos finais recebidos. Uma resposta de fila não é confirmação final.
+
+## Códigos adicionados na 0.4.11
+
+ACTION_FAILED passa a trazer `result` com o motivo: DATA_IN_USE (outro processo usa os dados), ORPHAN_STILL_RUNNING (sistema anterior não encerrou), JAVA_CHECK_FAILED (o Java do pacote não executou a conferência), APP_NOT_STARTED, APP_START_TIMEOUT, PRIVATE_CONFIG_MISSING, NO_PACKAGE, NETWORK ou OTHER. ORPHAN_APP_FOUND e ORPHAN_APP_STOPPED indicam a recuperação de um sistema deixado aberto. UPDATE_SKIPPED informa que a atualização não foi instalada e a versão anterior continuou em uso; DAMAGED_VERSION_PRESERVED, que uma pasta de versão danificada foi renomeada. LAUNCHER_SIGNAL indica encerramento pelo sistema operacional. A saída da conferência do Java também fica em `logs/launcher-java.log`.

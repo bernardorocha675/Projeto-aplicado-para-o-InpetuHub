@@ -1,14 +1,15 @@
-# InPETU Hub 0.4.10
+# InPETU Hub 0.4.11
 
-Retorno ao aplicativo 0.4.7.
+Abertura mais confiável do executável e regra de cancelamento.
 
-Restaura o visual, a navegação e o comportamento do aplicativo da release 0.4.7, por pedido do responsável. Retira a reprodução do site institucional introduzida na 0.4.8 e os ajustes de interface da 0.4.9.
+- Se o iniciador foi fechado à força e o sistema continuou aberto, a próxima abertura encerra esse sistema anterior de forma normal e inicia de novo. Antes, a tela ficava presa em “outra execução está usando os dados”.
+- No Linux e no macOS, um pedido de encerramento do sistema operacional ao iniciador agora também para o sistema e finaliza o registro da sessão.
+- Uma falha do Java na conferência não é mais apresentada como “outra execução”. No Linux sem idioma configurado, pastas com acentos passam a funcionar.
+- Quando a atualização não pode ser instalada (pacote ausente, incompleto ou que não confere), a versão já instalada continua sendo usada, com aviso. Um pacote inválido continua nunca sendo ativado.
+- Uma pasta de versão danificada é preservada com outro nome (`.danificada-…`) e a versão é instalada de novo, sem apagar arquivos.
+- Reserva aprovada cujo evento já terminou não pode mais ser cancelada; use **Concluir**. A exceção de força maior do gestor, com justificativa, continua disponível. Antes, esse cancelamento cobrava penalidade de cota.
+- Os registros de falha passam a indicar o motivo por código (por exemplo, DATA_IN_USE, JAVA_CHECK_FAILED, ORPHAN_APP_STOPPED, UPDATE_SKIPPED).
 
-- Cabeçalho local original: Início, Agenda e Área interna. Retirados os links externos Sobre/Iniciativas/Notícias/Contato e o rodapé institucional.
-- Agenda, login, painel, reservas, solicitações e cadastros novamente usam os fontes da tag v0.4.7; mantidas as correções de contatos, datas e confirmação daquela versão.
-- Removidos CSS/fontes adicionados pelo redesenho posterior. Nenhuma nova alteração visual ou de regras foi incluída no retorno.
-- Regressões adicionais verificam que o menu permanece no aplicativo e a gestão continua acessível após login; smoke confere isso no pacote real.
+Dados, reservas, contas, configurações, chave e backups permanecem no mesmo local da família 0.4.x. Não há migration, reset, mudança de dependências ou ativação externa. Windows/macOS/Linux x64/ARM64 e Java privado preservados; Android continua retirado.
 
-O número 0.4.10 permite que instalações 0.4.8/0.4.9 recebam a restauração pelo atualizador. Não substitui a tag, arquivos ou release original 0.4.7. Dados, reservas, contas, configurações, chave e backups permanecem no mesmo local da família 0.4.x. Não há migration, reset, mudança de dependências ou ativação externa. Windows/macOS/Linux x64/ARM64 e Java privado preservados; Android continua retirado.
-
-As atualizações de Actions já aprovadas permanecem apenas na infraestrutura da CI. Publicação condicionada à matriz obrigatória de RELEASES.md.
+Publicação condicionada à matriz obrigatória de RELEASES.md.

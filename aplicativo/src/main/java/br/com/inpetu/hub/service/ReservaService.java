@@ -246,6 +246,13 @@ public class ReservaService {
     if (forcaMaior
         && (c.perfil != Perfil.ADMIN || justificativa == null || justificativa.isBlank()))
       throw new RegraException("A exceção exige um gestor e justificativa.");
+    // Evento aprovado já terminado é concluído, não cancelado; força maior continua disponível.
+    if (r.statusReserva == StatusReserva.APROVADA
+        && !forcaMaior
+        && !LocalDateTime.of(r.data, r.horaFim).isAfter(LocalDateTime.now(clock)))
+      throw new RegraException(
+          "Este evento já terminou e não pode ser cancelado. Use Concluir ou registre uma"
+              + " exceção de força maior com justificativa.");
     cota.liberar(r);
     boolean penalizar =
         r.usaCota
