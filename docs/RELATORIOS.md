@@ -1,4 +1,4 @@
-# Registros automáticos — 0.4.5
+# Registros automáticos
 
 Abrir o executável começa uma sessão automaticamente, sem botão de iniciar teste. Reabrir a janela de uma instância já em execução mantém a mesma sessão. Cada evento inclui data/hora, versão do aplicativo e versão do iniciador. Antes de selecionar o pacote, a versão do aplicativo aparece como unknown; a do iniciador já é conhecida.
 

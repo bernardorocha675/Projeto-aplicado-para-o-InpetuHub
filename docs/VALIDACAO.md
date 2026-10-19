@@ -1,3 +1,16 @@
+# Fix 0.4.12 — validação local (Linux x64), aguardando matriz
+
+Execução em 19/10/2026 numa cópia descartável da árvore, com JDK 21.0.12, Go 1.27.2, Maven local e Node 22.22.
+
+- 123 testes Java (dois novos do filtro de host), 50 Go (6 novos) também com detector de concorrência, `go vet` e compilação de iniciador/testes para os seis alvos, 16 Node, check de segredos, links da documentação e `Testar.java` com 19 verificações aprovadas.
+- Antes da correção, falharam no código 0.4.11: remoção de downloads interrompidos, aviso repetido de envio (3 eventos em 3 tentativas) e cliente com prazo total de 5 min. No pacote 0.4.11, `Host: atacante.example` recebia HTTP 200.
+- Novos testes cobrem download lento mas ativo (mais longo que o prazo de travamento) concluído, download parado cancelado sem bloquear a versão instalada e sem repetição no Iniciar, cache da consulta de releases e aviso gráfico somente fora do modo `--headless`.
+- Pacote Linux x64 gerado com `--compress=zip-6` e smoke aprovado sem locale, com pasta acentuada, recuperação de órfão e recusa de host externo (HTTP 400).
+
+Não executados localmente: Windows, macOS, ARM64, janelas de aviso nativas (sem ambiente gráfico), CodeQL, gitleaks e OSV. A matriz de main é a referência para os seis alvos.
+
+---
+
 # Fix 0.4.11 — publicada e verificada
 
 A [0.4.11](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.11) foi publicada e verificada em 19/10/2026 pelo [run 39189511175](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39189511175), após o PR [#8](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/8) (matriz do PR no run 39188538949, verde). Tag/código testado `da8e362e323e8b048a564eca440e345472bfb61c` (merge em main). Seis alvos Windows/macOS/Linux x64/ARM64, fonte/segredos, dependências, CodeQL, relatório e publicação aprovados. Conferidos os 12 assets e os 11 checksums contra digests públicos; v0.4.11 é a latest. As 16 releases/tags anteriores mantêm arquivos, tamanhos e digests. Relatório da CI: `Testes/teste14-2026-10-18_23-20-37-702b82ba/log.txt`.

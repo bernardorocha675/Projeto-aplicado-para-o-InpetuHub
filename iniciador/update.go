@@ -32,15 +32,33 @@ func (r downloadReader) Read(p []byte)(int,error) {
  return n,e
 }
 
+// Reinicia o prazo de travamento a cada bloco recebido e informa o progresso aproximadamente por MB.
+type progressReader struct { reader io.Reader; total,read,reported int64; stall *time.Timer; report func(int64,int64) }
+func (r *progressReader) Read(p []byte)(int,error) {
+ n,e:=r.reader.Read(p)
+ if n>0{
+  r.stall.Reset(downloadStallTimeout);r.read+=int64(n)
+  if r.read-r.reported>=1<<20{r.reported=r.read;r.report(r.read,r.total)}
+ }
+ return n,e
+}
+
 type HTTPDoer interface { Do(*http.Request)(*http.Response,error) }
 type releaseAsset struct { Name string; State string; Browser_download_url string }
 type githubRelease struct { Tag_name string; Draft bool; Prerelease bool; Assets []releaseAsset }
 type release struct { Version string; ZipURL string; SumURL string }
 
+// Sem limite total: um download lento continua enquanto os dados chegam. A conexao, o
+// cabecalho e cada intervalo sem dados (downloadStallTimeout) tem prazo proprio.
+var downloadStallTimeout = 60*time.Second
+const latestCacheTTL = 10*time.Minute
+
 func newHTTPClient() *http.Client {
  transport:=http.DefaultTransport.(*http.Transport).Clone()
  transport.DialContext=(&net.Dialer{Timeout:10*time.Second,KeepAlive:30*time.Second}).DialContext
- client:=&http.Client{Transport:transport,Timeout:5*time.Minute}
+ transport.TLSHandshakeTimeout=15*time.Second
+ transport.ResponseHeaderTimeout=30*time.Second
+ client:=&http.Client{Transport:transport}
  client.CheckRedirect=func(req *http.Request,via []*http.Request)error{
   if len(via)>5{return errors.New("redirecionamentos em excesso")}
   return allowedNetwork(req.URL,false)
@@ -67,7 +85,15 @@ func (m *Manager) get(ctx context.Context,address string,asset bool) (*http.Resp
  return response,nil
 }
 func limited(body io.Reader,limit int64) ([]byte,error) {data,e:=io.ReadAll(io.LimitReader(body,limit+1));if e!=nil{return nil,e};if int64(len(data))>limit{return nil,errors.New("resposta maior que o limite")};return data,nil}
+// Abrir e iniciar consultam a lista em seguida; reutilizar o resultado poupa o limite da API sem login.
 func (m *Manager) latest() (*release,error) {
+ m.mu.RLock();cached,at:=m.latestCache,m.latestAt;m.mu.RUnlock()
+ if cached!=nil && time.Since(at)<latestCacheTTL{snapshot:=*cached;return &snapshot,nil}
+ best,e:=m.queryLatest()
+ if e==nil && best!=nil{m.mu.Lock();m.latestCache=best;m.latestAt=time.Now();m.mu.Unlock()}
+ return best,e
+}
+func (m *Manager) queryLatest() (*release,error) {
  var best *release
  for page:=1;page<=10;page++{
   ctx,cancel:=context.WithTimeout(context.Background(),8*time.Second)
@@ -93,7 +119,8 @@ func (m *Manager) latest() (*release,error) {
 }
 func (m *Manager) downloadRelease(next *release,stage string) (string,error) {
  if next.ZipURL=="" || next.SumURL==""{return "",errIncompleteRelease}
- response,e:=m.get(context.Background(),next.SumURL,true);if e!=nil{return "",e}
+ sumsCtx,cancelSums:=context.WithTimeout(context.Background(),time.Minute);defer cancelSums()
+ response,e:=m.get(sumsCtx,next.SumURL,true);if e!=nil{return "",e}
  sums,e:=limited(downloadReader{response.Body},65536);response.Body.Close();if e!=nil{return "",e}
  expected:=""
  for _,line:=range strings.Split(string(sums),"\n"){
@@ -103,10 +130,17 @@ func (m *Manager) downloadRelease(next *release,stage string) (string,error) {
   }
  }
  if !regexp.MustCompile("^[0-9a-f]{64}$").MatchString(expected){return "",errors.New("checksum ausente ou invalido")}
- response,e=m.get(context.Background(),next.ZipURL,true);if e!=nil{return "",e};defer response.Body.Close()
+ zipCtx,cancelZip:=context.WithCancel(context.Background());defer cancelZip()
+ response,e=m.get(zipCtx,next.ZipURL,true);if e!=nil{return "",e};defer response.Body.Close()
  archive:=filepath.Join(stage,"download.zip")
  out,e:=os.OpenFile(archive,os.O_CREATE|os.O_EXCL|os.O_WRONLY,0600);if e!=nil{return "",e}
- n,e:=io.Copy(out,io.LimitReader(downloadReader{response.Body},(512<<20)+1));closeErr:=out.Close()
+ progress:=&progressReader{reader:response.Body,total:response.ContentLength,stall:time.AfterFunc(downloadStallTimeout,cancelZip),report:func(read,total int64){
+  text:=fmt.Sprintf("Baixando e conferindo a versao %s... %d MB",next.Version,read>>20)
+  if total>0{text+=fmt.Sprintf(" de %d MB",total>>20)}
+  m.message("Instalando",text)
+ }}
+ defer progress.stall.Stop()
+ n,e:=io.Copy(out,io.LimitReader(downloadReader{progress},(512<<20)+1));closeErr:=out.Close()
  if e!=nil{return "",e};if closeErr!=nil{return "",closeErr};if n>512<<20{return "",errors.New("pacote maior que o limite")}
  actual,e:=digest(archive);if e!=nil{return "",e};if actual!=expected{return "",errIntegrity}
  content:=filepath.Join(stage,"content")
@@ -179,13 +213,27 @@ func updateFailureCode(err error) string {
 // nao e ativado e a troca e tentada de novo na proxima abertura ou inicio.
 func (m *Manager) keepInstalled(root string,b Bundle,next string,cause error) error {
  m.record("WARN","UPDATE_SKIPPED",map[string]any{"phase":"UPDATE","result":updateFailureCode(cause)})
+ // Iniciar logo apos a abertura nao repete a mesma tentativa demorada; a proxima abertura tenta de novo.
+ m.mu.Lock();if m.skippedUpdates==nil{m.skippedUpdates=map[string]bool{}};m.skippedUpdates[next]=true;m.mu.Unlock()
  if e:=m.ready(root,b);e!=nil{return e}
  if errors.Is(cause,errNetwork){m.message("Pronto","Download indisponivel. Usando a versao instalada.");return nil}
  m.message("Pronto","A atualizacao "+next+" nao foi instalada ("+cause.Error()+"). Usando a versao "+b.Version+"; nova tentativa na proxima abertura.")
  return nil
 }
+// Pastas temporarias de download/copia so existem durante uma instalacao; com o lock do iniciador,
+// as restantes sobraram de uma execucao interrompida e podem ocupar mais de 1 GB.
+func (m *Manager) removeStaleStages() {
+ entries,_:=os.ReadDir(filepath.Join(m.home,"installed"))
+ for _,entry:=range entries{
+  name:=entry.Name()
+  if entry.IsDir() && (strings.HasPrefix(name,".download-") || strings.HasPrefix(name,".stage-")){
+   if os.RemoveAll(filepath.Join(m.home,"installed",name))==nil{m.record("INFO","STALE_DOWNLOAD_REMOVED",nil)}
+  }
+ }
+}
 func (m *Manager) installLatest() error {
  if m.state().Running{return errors.New("pare o sistema antes de atualizar")}
+ m.removeStaleStages()
  root,current,e:=m.current()
  if e!=nil{
   if embedded,err:=embeddedBundle();err==nil{root,current,e=m.installEmbedded(embedded)}
@@ -204,6 +252,12 @@ func (m *Manager) installLatest() error {
   return nil
  }
  if hasCurrent && !newer(next.Version,current.Version){return m.ready(root,current)}
+ m.mu.RLock();skipped:=m.skippedUpdates[next.Version];m.mu.RUnlock()
+ if hasCurrent && skipped{
+  if e=m.ready(root,current);e!=nil{return e}
+  m.message("Pronto","Usando a versao "+current.Version+"; a atualizacao "+next.Version+" sera tentada na proxima abertura.")
+  return nil
+ }
  // Sem versao instalada, qualquer falha continua interrompendo; nunca instalar parcialmente.
  fail:=func(cause error) error {
   if hasCurrent{return m.keepInstalled(root,current,next.Version,cause)}

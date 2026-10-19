@@ -1,6 +1,19 @@
-# Handover técnico — InPETU Hub 0.4.11
+# Handover técnico — InPETU Hub 0.4.12
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
+
+## Fix 0.4.12 — lote 2 desktop (preparado, aguardando matriz e autorização)
+
+Autorizado em 19/10/2026. Base: main da 0.4.11. Mudanças:
+
+- `iniciador/update.go`: cliente sem prazo total; prazos de TLS/cabeçalho e `downloadStallTimeout` (60 s sem dados cancela pelo contexto); `progressReader` informa MB; consulta de releases em cache por 10 min; versão cuja instalação falhou não é tentada de novo na mesma execução; `removeStaleStages` limpa `.download-*`/`.stage-*`.
+- `iniciador/main.go` + `alert_*.go`: `reportFatal` mostra aviso nativo quando `run()` falha, exceto com `--headless`.
+- `security/LocalHostFilter.java`: perfil local aceita somente 127.0.0.1/localhost/::1 no Host.
+- `reporting.go`: falhas de envio registradas uma vez por período. `model.go`: novas tentativas no Windows antes de remover o destino. `app.go`: `openBrowser` aguarda o auxiliar.
+- `package_v04.py`: `--compress=zip-6`. `smoke_v04.py`: recusa de host externo.
+- Documentação: guias sem versões antigas, índice, `continuidade/HISTORICO.md` com os estados anteriores, `CLAUDE.md` sem instruções vencidas. Resultado das suspeitas em REVISAO-DESKTOP.md.
+
+Sem migration, reset, contas, preços, cotas, dependências ou ativação externa.
 
 ## Fix 0.4.11 — abertura, atualização e cancelamento — publicada e verificada
 

@@ -1,4 +1,4 @@
-# Consultar os logs — 0.4.5
+# Consultar os logs
 
 Os registros começam automaticamente ao abrir o executável. Não é necessário abrir VS Code nem iniciar um teste manual. Cada evento da sessão informa data/hora e as versões do aplicativo e do iniciador.
 
@@ -39,3 +39,7 @@ Na 0.4.5, REQUEST_REJECTED identifica recusa tratada e REQUEST_FAILED identifica
 ## Códigos adicionados na 0.4.11
 
 ACTION_FAILED passa a trazer `result` com o motivo: DATA_IN_USE (outro processo usa os dados), ORPHAN_STILL_RUNNING (sistema anterior não encerrou), JAVA_CHECK_FAILED (o Java do pacote não executou a conferência), APP_NOT_STARTED, APP_START_TIMEOUT, PRIVATE_CONFIG_MISSING, NO_PACKAGE, NETWORK ou OTHER. ORPHAN_APP_FOUND e ORPHAN_APP_STOPPED indicam a recuperação de um sistema deixado aberto. UPDATE_SKIPPED informa que a atualização não foi instalada e a versão anterior continuou em uso; DAMAGED_VERSION_PRESERVED, que uma pasta de versão danificada foi renomeada. LAUNCHER_SIGNAL indica encerramento pelo sistema operacional. A saída da conferência do Java também fica em `logs/launcher-java.log`.
+
+## Códigos adicionados na 0.4.12
+
+STALE_DOWNLOAD_REMOVED indica a remoção de restos de download interrompido. REPORT_CONFIG_FAILED e REPORT_UPLOAD_FAILED passam a aparecer uma vez por período de falha, e não a cada minuto. Erros que impedem abrir o iniciador aparecem também numa janela de aviso do sistema.
