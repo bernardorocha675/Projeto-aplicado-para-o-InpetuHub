@@ -1,4 +1,8 @@
-# Fix 0.4.11 — validação local (Linux x64), aguardando matriz
+# Fix 0.4.11 — publicada e verificada
+
+A [0.4.11](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.11) foi publicada e verificada em 19/10/2026 pelo [run 39189511175](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39189511175), após o PR [#8](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/8) (matriz do PR no run 39188538949, verde). Tag/código testado `da8e362e323e8b048a564eca440e345472bfb61c` (merge em main). Seis alvos Windows/macOS/Linux x64/ARM64, fonte/segredos, dependências, CodeQL, relatório e publicação aprovados. Conferidos os 12 assets e os 11 checksums contra digests públicos; v0.4.11 é a latest. As 16 releases/tags anteriores mantêm arquivos, tamanhos e digests. Relatório da CI: `Testes/teste14-2026-10-18_23-20-37-702b82ba/log.txt`.
+
+## Validação local (Linux x64)
 
 Execução em 19/10/2026 numa cópia descartável da árvore de trabalho, com JDK 21.0.12, Go 1.27.2 (toolchain fixado), Maven local e Node 22.22.
 
@@ -8,7 +12,7 @@ Execução em 19/10/2026 numa cópia descartável da árvore de trabalho, com JD
 - Pacote Linux x64 com Java privado gerado e smoke aprovado sem `LANG`/`LC_*`, com pasta acentuada e a fase nova de recuperação: iniciador encerrado à força, Java anterior parado pelo pedido local, sessões INTERROMPIDO/CONCLUIDO.
 - Pacote real: `JAVA_TOOL_OPTIONS` inválido não bloqueia mais o início; SIGTERM ao iniciador parou o Java e finalizou a sessão como CONCLUIDO.
 
-Não executados localmente: Windows, macOS, ARM64, CodeQL, gitleaks e OSV (rede bloqueada), navegador visual. A matriz de main é a referência para os seis alvos.
+Não executados localmente: Windows, macOS, ARM64, CodeQL, gitleaks e OSV (rede bloqueada), navegador visual. A matriz de main, aprovada, é a referência para os seis alvos.
 
 ---
 

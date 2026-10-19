@@ -1,10 +1,12 @@
-# Fix 0.4.11 preparado na branch — aguardando autorização para main/publicação
+# 0.4.11 publicada — abertura do executável e cancelamento após o evento
 
 Em 19/10/2026 o responsável recebeu a análise desktop, autorizou o lote 1 e decidiu: pasta de versão danificada é preservada com outro nome; reserva aprovada já terminada não pode ser cancelada sem força maior (substitui a penalidade nesse caso). Base `e2575cc` (main = release 0.4.10). Trabalho na branch `claude/confident-gauss-9w9qmz`; detalhes em docs/HANDOVER.md e docs/VALIDACAO.md.
 
 Entregue no código: recuperação de Java deixado por iniciador encerrado à força; separação entre dados em uso e falha da JVM; ambiente Java limpo e UTF-8 no Linux; SIGTERM/Ctrl+C tratados no Linux/macOS; versão instalada íntegra usada quando a atualização falha; pasta danificada renomeada para `.danificada-…`; bloqueio do cancelamento de evento aprovado terminado; códigos de motivo nos logs; smoke com acentos, sem locale e recuperação. Versão 0.4.11 em VERSION/POM/iniciador/receptor/roteiro.
 
-Evidência local: 121 Java, 44 Go (+race, vet nos três sistemas), 16 Node, segredos, Testar 19/19, compilação cruzada dos seis alvos e smoke do pacote Linux x64 aprovados. Windows/macOS/ARM64 ainda não executados. **Pendente:** autorização para levar a branch a main (PR/merge), o que dispara a matriz e a publicação automática da 0.4.11. Não declarar publicada antes de conferir run, tag e assets. Próximo lote (download lento, erros invisíveis, documentação) só com nova autorização. Sem reset, migrations, contas, dependências, Render, SMTP ou Android.
+A [0.4.11](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.11) foi publicada e verificada em 19/10/2026 pelo [run 39189511175](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39189511175), após o PR [#8](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/8) (matriz do PR no run 39188538949, verde). Tag/código testado `da8e362e323e8b048a564eca440e345472bfb61c` (merge em main). Seis alvos Windows/macOS/Linux x64/ARM64, fonte/segredos, dependências, CodeQL, relatório e publicação aprovados. Conferidos os 12 assets e os 11 checksums contra digests públicos; v0.4.11 é a latest. As 16 releases/tags anteriores mantêm arquivos, tamanhos e digests. Relatório da CI: `Testes/teste14-2026-10-18_23-20-37-702b82ba/log.txt`.
+
+Evidência local: 121 Java, 44 Go (+race, vet nos três sistemas), 16 Node, segredos, Testar 19/19, compilação cruzada dos seis alvos e smoke do pacote Linux x64 aprovados. O responsável autorizou publicar após a matriz verde. **Entrega concluída: parar e aguardar nova autorização.** Próximo lote (download lento, erros invisíveis, documentação) só com nova autorização. Sem reset, migrations, contas, dependências, Render, SMTP ou Android.
 
 ---
 
