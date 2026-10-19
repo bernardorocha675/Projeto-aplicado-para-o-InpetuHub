@@ -1,6 +1,10 @@
-# Handover técnico — InPETU Hub 0.4.17
+# Handover técnico — InPETU Hub 0.5.0
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
+
+## 0.5.0 — início da linha 0.5 — em revisão
+
+Mesmo código da 0.4.17, só com a versão 0.5.0 (VERSION, POM, iniciador, receptor, roteiro), notas, README e o texto do LEIA-PRIMEIRO do pacote. Testes locais (Linux x64, 19/10/2026): Go test/vet, 126 Java, Testar 14/14, pacote Linux x64, smoke (inclui a troca real do iniciador 0.5.0 → 0.5.1 na mesma pasta) e segredos aprovados. Windows, macOS e ARM64 ficam com a matriz. Teste real da passagem de linha: pacote Linux x64 da 0.4.17 (commit edd985a) com o smoke forçando a troca para um iniciador 0.5.0 — troca real do iniciador, 15 logins, chave e banco preservados e recuperação aprovados.
 
 ## Fix 0.4.17 — ponte para a 0.5 — em revisão
 

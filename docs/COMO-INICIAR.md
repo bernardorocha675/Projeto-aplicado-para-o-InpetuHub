@@ -1,4 +1,4 @@
-# Instalar e iniciar — 0.4
+# Instalar e iniciar — 0.5
 
 ## Escolher o download
 

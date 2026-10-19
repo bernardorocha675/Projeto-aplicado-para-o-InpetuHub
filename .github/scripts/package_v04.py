@@ -77,7 +77,7 @@ manifest = {'Version': version, 'GOOS': goos, 'GOARCH': arch, 'Jar': 'app.jar',
     'InPETU Hub ' + version + '\n\n'
     'Abra o iniciador deste pacote. Ele configura o aplicativo sem VS Code, Java ou Maven externos.\n'
     'As cinco contas publicas estao em docs/ACESSOS.md no codigo da release e na tela do iniciador.\n'
-    'O banco da 0.4 e novo; a instalacao da 0.3 nao e apagada nem importada automaticamente.\n'
+    'A 0.5 usa os mesmos dados da 0.4 (pasta InPETU-Hub/0.4); a instalacao da 0.3 nao e apagada nem importada.\n'
     'Use dados de demonstracao. Para encerrar, use Parar e Fechar iniciador.\n'
     'Executaveis sem certificado comercial: Windows/macOS podem pedir confirmacao do sistema.\n',
     encoding='utf-8')
