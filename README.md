@@ -1,27 +1,41 @@
-# InPETU Hub
+# InPETU Hub CRM
 
-Sistema de agendamento de espaços e gestão de reservas, com agenda pública e área interna para a equipe do Hub.
+Sistema de gestão de relacionamento (CRM) desenvolvido pela nossa equipe para o InPETU Hub, como projeto aplicado da disciplina de Projeto Aplicado do UniSENAI.
 
-Projeto aplicado oficial do **InPETU Hub**, desenvolvido na disciplina de **Projeto Aplicado do UniSENAI**.
+## Sobre o projeto
 
-## Equipe
+O InPETU Hub CRM reúne em um só lugar as informações dos empreendedores atendidos pelo Hub e ajuda a equipe a organizar o dia a dia: cadastros, atendimentos, visitas e reservas de espaços.
 
-- Bernardo Rocha
-- João Mussiol
-- João Feitosa
-- Guilherme Batista
+O sistema foi pensado para resolver problemas comuns na rotina da equipe:
 
-## Versão atual
+- informações de empreendedores espalhadas em diferentes planilhas;
+- dificuldade para localizar e consultar os dados cadastrados;
+- falta de um histórico centralizado dos atendimentos e das interações;
+- necessidade de organizar e acompanhar melhor as reservas de espaços.
 
-[**Versão 0.5.0**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.5.0) — início da linha 0.5, com o mesmo aplicativo da 0.4.16 e os mesmos dados. Quem usa a 0.4.17 recebe a atualização automaticamente.
+O que o sistema já oferece:
 
-O aplicativo continua o da 0.4.7, restaurado na 0.4.10; [detalhes do retorno](docs/RETORNO-0.4.7.md).
+- **Cadastro de empreendedores** com busca e uma página de perfil que reúne reservas, atendimentos, visitas e histórico de cada pessoa.
+- **Registro de atendimentos e visitas**, ligados ao empreendedor e ao colaborador responsável.
+- **Agenda pública de espaços**, em que qualquer pessoa consulta os dias com atividades e envia um pedido de reserva.
+- **Análise das solicitações e das reservas** pela equipe, com aprovação, recusa e cancelamento.
+- **Cadastro de espaços** e painel inicial com as últimas solicitações e as próximas reservas.
 
-## Usar o aplicativo
+O projeto continua em desenvolvimento, com melhorias entregues em novas versões.
 
-Baixe o pacote completo do seu sistema, extraia e abra o iniciador. O pacote inclui o aplicativo e o Java necessário; não é preciso instalar mais nada nem entrar no GitHub.
+## Download do Projeto
 
-| Sistema | Download da versão 0.5.0 |
+Os arquivos ficam na [página de Releases](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.5.0) da versão oficial.
+
+### 1. Baixar o projeto completo
+
+[**InPETU-Hub-codigo-v0.5.0.zip**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.0/InPETU-Hub-codigo-v0.5.0.zip): todos os arquivos do sistema, compactados, com o código-fonte, a documentação e os testes. Indicado para quem quer estudar ou continuar o desenvolvimento.
+
+### 2. Baixar o executável
+
+Para usar o sistema sem abrir o código-fonte, baixe o pacote do seu computador. Ele já traz o executável que inicia o sistema e tudo o que é necessário para rodá-lo, sem instalar mais nada.
+
+| Computador | Download |
 | --- | --- |
 | Windows (Intel/AMD) | [InPETU-Hub-Windows-x64-v0.5.0.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.0/InPETU-Hub-Windows-x64-v0.5.0.zip) |
 | Windows ARM | [InPETU-Hub-Windows-ARM64-v0.5.0.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.0/InPETU-Hub-Windows-ARM64-v0.5.0.zip) |
@@ -30,29 +44,37 @@ Baixe o pacote completo do seu sistema, extraia e abra o iniciador. O pacote inc
 | Linux (Intel/AMD) | [InPETU-Hub-Linux-x64-v0.5.0.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.0/InPETU-Hub-Linux-x64-v0.5.0.zip) |
 | Linux ARM | [InPETU-Hub-Linux-ARM64-v0.5.0.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.0/InPETU-Hub-Linux-ARM64-v0.5.0.zip) |
 
-No macOS, a 0.5.0 exige macOS 13 Ventura ou mais recente. Conferência dos arquivos: [SHA256SUMS.txt](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.0/SHA256SUMS.txt). Todas as versões: [Releases](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases).
+No macOS, é necessário o macOS 13 Ventura ou mais recente.
 
-- [Instalação e execução](docs/COMO-INICIAR.md)
-- [Acessos de demonstração](docs/ACESSOS.md)
-- [Atualizações e dados](docs/ATUALIZACOES.md)
-- [Logs e relatórios](docs/RELATORIOS.md)
+## Como executar
 
-## Organização do repositório
+1. Baixe o pacote do seu computador e **extraia o ZIP inteiro**.
+2. Abra o executável:
+   - **Windows:** `InPETU-Hub.exe`. Se aparecer o aviso do SmartScreen, confira se o arquivo veio deste repositório e escolha *Mais informações → Executar assim mesmo*.
+   - **macOS:** `InPETU Hub.app`. Se o sistema bloquear, permita em *Ajustes do Sistema → Privacidade e Segurança → Abrir Mesmo Assim*.
+   - **Linux:** `InPETU-Hub` (permita a execução nas propriedades do arquivo).
+3. O iniciador abre no navegador. Aguarde a indicação **Pronto** e clique em **Iniciar**.
+4. Entre com um dos [acessos de demonstração](docs/ACESSOS.md).
+5. Para encerrar, volte ao iniciador e clique em **Parar** ou **Fechar iniciador**.
 
-| Pasta | Conteúdo |
-| --- | --- |
-| `aplicativo/` | Aplicativo Java e testes de regras, segurança e integração. |
-| `iniciador/` | Código Go do executável de instalação, atualização e início. |
-| `receptor/` | Serviço auxiliar de recebimento dos relatórios. |
-| `docs/` | Guias, testes e handover da entrega atual. |
-| `Testes/` | Relatórios publicados e configuração de envio. |
-| `continuidade/` | Contexto e decisões para continuidade com o Claude Code. |
+O passo a passo completo está em [Instalação e execução](docs/COMO-INICIAR.md). Os dados ficam no seu computador e são mantidos nas atualizações.
 
-As versões anteriores permanecem nas [releases](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases) e no histórico Git. O código atual reúne os componentes necessários ao executável e ao seu ciclo de testes/publicação.
+## Versão oficial
 
-- [Handover técnico](docs/HANDOVER.md) · [Estrutura e desenvolvimento](docs/ESTRUTURA.md)
-- [Guia de testes](docs/TESTAR.md) · [Publicação de versões](RELEASES.md)
-- [Continuidade e migração para o Claude Code](continuidade/README.md)
+**Versão 0.5.0**, a referência para os downloads acima.
+
+O iniciador verifica novas versões ao abrir e atualiza o sistema automaticamente, mantendo os dados já cadastrados. As versões anteriores continuam disponíveis em [Releases](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases).
+
+## Equipe e créditos
+
+Projeto aplicado oficial do **InPETU Hub**, desenvolvido na disciplina de **Projeto Aplicado do UniSENAI** por:
+
+- Bernardo Rocha
+- João Mussiol
+- João Feitosa
+- Guilherme Batista
+
+Documentação para a equipe de desenvolvimento: [estrutura do código](docs/ESTRUTURA.md), [testes](docs/TESTAR.md), [publicação de versões](RELEASES.md) e [handover técnico](docs/HANDOVER.md).
 
 ---
 

@@ -1,6 +1,6 @@
 # 0.5.0 em revisão — início da linha 0.5
 
-Mesmo código da 0.4.16/0.4.17, versão 0.5.0, mesmos dados (pasta `InPETU-Hub/0.4`). Testes locais (Linux x64, 19/10/2026): Go, 126 Java, Testar 14/14, pacote e smoke da 0.5.0 aprovados; Teste real da passagem de linha: pacote Linux x64 da 0.4.17 (commit edd985a) com o smoke forçando a troca para um iniciador 0.5.0 — troca real do iniciador, 15 logins, chave e banco preservados e recuperação aprovados. PR aberto; merge somente depois da publicação da 0.4.17 (autorizado).
+Mesmo código da 0.4.16/0.4.17, versão 0.5.0, mesmos dados (pasta `InPETU-Hub/0.4`). Testes locais (Linux x64, 19/10/2026): Go, 126 Java, Testar 14/14, pacote e smoke da 0.5.0 aprovados; Teste real da passagem de linha: pacote Linux x64 da 0.4.17 (commit edd985a) com o smoke forçando a troca para um iniciador 0.5.0 — troca real do iniciador, 15 logins, chave e banco preservados e recuperação aprovados. A 0.4.17 foi publicada e verificada (run 39335067420; 12 assets, 11 checksums, 22 releases anteriores intactas). README reorganizado a pedido (19/10/2026): “InPETU Hub CRM”, sobre o projeto (só funções existentes), Download do Projeto (código completo e pacotes executáveis da 0.5.0), como executar, versão oficial 0.5.0 (o responsável escolheu a 0.5 em vez da 0.4 citada no requisito) e equipe. Links a conferir após a publicação. PR #20; merge autorizado.
 
 ---
 
