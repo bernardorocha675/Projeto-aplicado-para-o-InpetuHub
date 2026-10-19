@@ -1,4 +1,12 @@
-# Fix 0.4.15 — em revisão
+# Fix 0.4.16 — em revisão
+
+Testes locais (Linux x64, 19/10/2026): 126 Java (página pública confere o texto “Clique em um dia marcado”), Node da agenda (10, reescritos para o novo visual: dia azul com ponto, dia branco sem texto, título do mês, aviso só para a equipe) e de cadastros (4), Testar 14/14, pacote Linux x64, smoke e segredos aprovados; captura de tela com dados simulados comparada à referência do PDF. Windows, macOS e ARM64 ficam com a matriz.
+
+---
+
+# Fix 0.4.15 — publicada e verificada
+
+A [0.4.15](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.15) foi publicada e verificada em 19/10/2026 pelo [run 39327380746](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39327380746), na primeira tentativa, após o PR [#17](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/17). Tag/código testado `703be5998e2a4faaa12bc40c65c0a40b99b1b972` (merge em main). Conferidos os 12 assets e os 11 checksums contra digests públicos; v0.4.15 é a latest; as 20 releases anteriores mantêm arquivos, tamanhos e digests; links do README respondem. Relatório da CI: `Testes/teste22-2026-10-19_18-25-33-3f736ad4/log.txt`. O PR também trouxe a causa das falhas intermitentes de Maven (`Connection reset` ao baixar do Maven Central): `aplicativo/.mvn/maven.config` repete downloads (até 6 vezes) e a CI guarda as dependências em cache.
 
 Testes locais (Linux x64, 19/10/2026): 126 Java (um novo: destaque da Área Interna, bolinha de solicitações e aviso só para a equipe; um alterado: público não vê o aviso), Go test/vet, Node da agenda (9, um novo sem o aviso) e de cadastros (4, dois novos da máscara de telefone), segredos, Testar 14/14, pacote Linux x64 e smoke aprovados. Windows, macOS e ARM64 ficam com a matriz.
 

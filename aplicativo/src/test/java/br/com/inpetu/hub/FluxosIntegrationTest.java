@@ -280,7 +280,12 @@ class FluxosIntegrationTest {
                         org.hamcrest.Matchers.containsString("agenda-aviso"))))
         .andExpect(
             content()
-                .string(org.hamcrest.Matchers.containsString("<a href=\"/\" class=\"active\">INÍCIO</a>")));
+                .string(org.hamcrest.Matchers.containsString("<a href=\"/\" class=\"active\">INÍCIO</a>")))
+        .andExpect(
+            content()
+                .string(
+                    org.hamcrest.Matchers.containsString(
+                        "Clique em um dia marcado para ver os eventos.")));
     mvc.perform(get("/login")).andExpect(status().isOk());
     mvc.perform(get("/admin")).andExpect(status().is3xxRedirection());
     mvc.perform(post("/reservas/solicitar")).andExpect(status().isForbidden());

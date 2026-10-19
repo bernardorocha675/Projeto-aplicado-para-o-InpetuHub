@@ -35,7 +35,8 @@
     previous.disabled = shown <= minMonth;
     next.disabled = shown >= maxMonth;
     if (picker) picker.value = selected || '';
-    title.textContent = month.toLocaleDateString('pt-BR', {month: 'long', year: 'numeric'});
+    const monthName = month.toLocaleDateString('pt-BR', {month: 'long'});
+    title.textContent = `${monthName.charAt(0).toUpperCase()}${monthName.slice(1)} ${month.getFullYear()}`;
     grid.replaceChildren(el('p', 'Carregando...'));
     try {
       const ym = dateISO(month).slice(0, 7);
@@ -79,20 +80,22 @@
       b.disabled = true;
       return b;
     }
-    const partial = info.estado === 'PARCIAL';
-    const full = info.estado === 'INDISPONÍVEL';
-    const empty = info.estado === 'SEM_ESPACOS';
-    if (partial) b.classList.add('partial');
-    if (full) b.classList.add('full');
-    if (empty) b.classList.add('empty-day');
-    b.append(el('span', empty ? '— Sem espaços' : partial ? '◐ Parcial' : full ? '● Ocupado' : '○ Livre'));
+    // Como na referência da equipe: dia com atividade marcada fica azul com um ponto; os demais, brancos.
+    // Disponibilidade e horários aparecem só ao clicar no dia.
+    const events = info.espacos.reduce((total, room) => total + room.ocupados.length, 0);
+    if (events) {
+      b.classList.add('has-events');
+      b.append(el('span', '•', 'event-dot'));
+    }
     if (iso === today) b.classList.add('today');
     if (iso < today) b.classList.add('past');
     if (iso === selected) b.classList.add('selected');
-    b.setAttribute(
-      'aria-label',
-      `${d.toLocaleDateString('pt-BR')}: ${empty ? 'Sem espaços habilitados' : info.estado}${info.feriado ? ', feriado' : ''}`
-    );
+    const activity = events
+      ? `${events} ${events === 1 ? 'atividade marcada' : 'atividades marcadas'}`
+      : 'sem atividades marcadas';
+    const situation =
+      info.estado === 'SEM_ESPACOS' ? ', sem espaços habilitados' : info.estado === 'INDISPONÍVEL' ? ', sem horários livres' : '';
+    b.setAttribute('aria-label', `${d.toLocaleDateString('pt-BR')}: ${activity}${situation}${info.feriado ? ', feriado' : ''}`);
     b.setAttribute('aria-pressed', iso === selected ? 'true' : 'false');
     b.addEventListener('click', () => {
       selected = iso;

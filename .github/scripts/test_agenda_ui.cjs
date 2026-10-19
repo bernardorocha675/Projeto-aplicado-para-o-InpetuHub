@@ -52,39 +52,51 @@ async function calendar(state, rooms = [], staff = true) {
   return {nodes, flush, fail: () => { failed = true; }, setState: value => {current = value;}, day: () => nodes.calendario.children.find(n => !n.disabled)};
 }
 
-test('banco sem espaços não exibe Ocupado nem Livre e explica como habilitar a agenda', async () => {
+const room = (ocupados = []) => ({id: 1, nome: 'Sala', capacidade: 5, ocupados, livres: [{inicio: '09:00', fim: '10:00'}]});
+
+test('banco sem espaços deixa o dia branco, sem ponto, e a equipe vê o aviso', async () => {
   const page = await calendar('SEM_ESPACOS');
   const day = page.day();
-  assert.equal(day.children[1].textContent, '— Sem espaços');
-  assert.equal(day.classList.contains('full'), false);
-  assert.equal(day.classList.contains('empty-day'), true);
+  assert.equal(day.children.length, 1);
+  assert.equal(day.classList.contains('has-events'), false);
   assert.equal(page.nodes['agenda-aviso'].hidden, false);
-  assert.match(day.attributes['aria-label'], /Sem espaços habilitados/);
+  assert.match(day.attributes['aria-label'], /sem atividades marcadas, sem espaços habilitados/);
   day.listeners.click();
   assert.ok(page.nodes['detalhe-dia'].children.some(n => /Não há espaços habilitados/.test(n.textContent)));
 });
 
-for (const [state, label, style] of [
-  ['DISPONÍVEL', '○ Livre', null],
-  ['PARCIAL', '◐ Parcial', 'partial'],
-  ['INDISPONÍVEL', '● Ocupado', 'full']
-]) {
-  test('preserva a apresentação de ' + state, async () => {
-    const page = await calendar(state);
-    assert.equal(page.day().children[1].textContent, label);
-    if (style) assert.equal(page.day().classList.contains(style), true);
-    assert.equal(page.day().classList.contains('empty-day'), false);
-    assert.equal(page.nodes['agenda-aviso'].hidden, true);
+test('dia com atividade marcada fica azul com um ponto, como na referência', async () => {
+  const page = await calendar('PARCIAL', [room([{inicio: '08:00', fim: '09:00', titulo: 'Reunião'}])]);
+  const day = page.day();
+  assert.equal(day.classList.contains('has-events'), true);
+  assert.equal(day.children[1].textContent, '•');
+  assert.equal(day.children[1].className, 'event-dot');
+  assert.match(day.attributes['aria-label'], /1 atividade marcada/);
+  assert.equal(page.nodes['agenda-aviso'].hidden, true);
+});
+
+for (const state of ['DISPONÍVEL', 'INDISPONÍVEL']) {
+  test('dia sem atividade fica branco e sem texto de situação (' + state + ')', async () => {
+    const page = await calendar(state, [room()]);
+    const day = page.day();
+    assert.equal(day.children.length, 1);
+    assert.equal(day.classList.contains('has-events'), false);
+    assert.equal(day.classList.contains('full'), false);
   });
 }
 
-test('ao atualizar a consulta após cadastrar um espaço, remove o aviso e mostra Livre', async () => {
+test('título do mês segue a referência, sem "de"', async () => {
+  const page = await calendar('DISPONÍVEL');
+  assert.match(page.nodes['mes-titulo'].textContent, /^[A-ZÇ][a-zç]+ 2026$/);
+});
+
+test('ao atualizar a consulta após cadastrar um espaço, remove o aviso', async () => {
   const page = await calendar('SEM_ESPACOS');
   page.setState('DISPONÍVEL');
   await page.nodes['filtro-espaco'].listeners.change();
   await page.flush();
   assert.equal(page.nodes['agenda-aviso'].hidden, true);
-  assert.equal(page.day().children[1].textContent, '○ Livre');
+  assert.equal(page.day().children.length, 1);
 });
 
 function flattened(node) { return [node, ...node.children.flatMap(flattened)]; }
@@ -125,5 +137,5 @@ test('falha na atualização retira os horários e links de reserva da consulta 
 test('visitante sem login vê a agenda vazia sem o aviso destinado à equipe', async () => {
   const page = await calendar('SEM_ESPACOS', [], false);
   assert.equal(page.nodes['agenda-aviso'], undefined);
-  assert.equal(page.day().children[1].textContent, '— Sem espaços');
+  assert.equal(page.day().children.length, 1);
 });
