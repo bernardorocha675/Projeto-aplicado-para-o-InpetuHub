@@ -8,7 +8,7 @@ Para um fix 0.4.x, atualize VERSION, a versão no POM, buildVersion de referênc
 
 Em main, `.github/workflows/release-v0.4.yml` compila e testa os seis pacotes nativos, executa o roteiro HTTP/backup e o smoke do próprio executável/runtime. Código, segredos, dependências, CodeQL e publicação do relatório de CI são etapas obrigatórias antes da publicação. O resultado concreto está no run associado ao commit da tag.
 
-O Maven de CI é preparado por `.github/scripts/setup_maven.py`, com SHA-512 oficial. Go 1.27.2 (Windows e Linux), Go 1.26.9 (macOS) e JDK 21 continuam fixados no workflow para construir o iniciador e o Java privado. O Go 1.27 exige macOS 13; o pacote de macOS usa Go 1.26 para abrir no macOS 12, e `package_v04.py` recusa iniciador ou Java privado com mínimo acima de 12.0. Antes de trocar o Go do macOS, confira o mínimo da nova versão. Alterações nessas ferramentas exigem revisão e uma nova release.
+O Maven de CI é preparado por `.github/scripts/setup_maven.py`, com SHA-512 oficial. Go 1.27.2 e JDK 21 continuam fixados no workflow para construir o iniciador e o Java privado. Alterações nessas ferramentas exigem revisão e uma nova release.
 
 ## Artefatos e preservação
 

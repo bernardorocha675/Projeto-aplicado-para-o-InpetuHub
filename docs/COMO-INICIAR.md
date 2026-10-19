@@ -21,7 +21,7 @@ Extraia o ZIP inteiro e dê dois cliques em **InPETU-Hub.exe**. Não abra arquiv
 
 ## macOS
 
-Requer macOS 12 Monterey ou mais recente. Extraia o ZIP e abra **InPETU Hub.app**. Você pode movê-lo para Aplicativos. Esta entrega não tem notarização da Apple: se o macOS bloquear, confira a origem do download e clique no app com o botão direito (ou Control + clique) → Abrir, ou permita a abertura em Ajustes do Sistema → Privacidade e Segurança → Abrir Mesmo Assim (no Monterey: Preferências do Sistema → Segurança e Privacidade → Geral). Políticas de computadores administrados podem exigir liberação do responsável.
+Extraia o ZIP e abra **InPETU Hub.app**. Você pode movê-lo para Aplicativos. Esta entrega não tem notarização da Apple: se o macOS bloquear, confira a origem do download e permita a abertura em Ajustes do Sistema → Privacidade e Segurança → Abrir Mesmo Assim. Políticas de computadores administrados podem exigir liberação do responsável.
 
 ## Linux
 

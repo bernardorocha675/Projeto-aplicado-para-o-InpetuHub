@@ -4,22 +4,6 @@ Registros anteriores de `ESTADO-ATUAL.md`, do mais recente ao mais antigo, prese
 
 ---
 
-# Lote 2 desktop — 0.4.12 publicada
-
-Em 19/10/2026 o responsável autorizou o segundo lote da análise desktop e sua publicação: download lento, erros invisíveis antes da tela, limpeza da documentação e validação das suspeitas pendentes. Base: main após a 0.4.11. Detalhes em docs/HANDOVER.md, docs/VALIDACAO.md e docs/REVISAO-DESKTOP.md.
-
-A [0.4.12](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.12) foi publicada e verificada em 19/10/2026 pelo [run 39192696646](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39192696646), após o PR [#9](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/9) (matriz do PR no run 39191819341, verde). Tag/código testado `f9e7ea1f831981d1dcb92637eac8808257806b18` (merge em main). Seis alvos Windows/macOS/Linux x64/ARM64, fonte/segredos, dependências, CodeQL, relatório e publicação aprovados. Conferidos os 12 assets e os 11 checksums contra digests públicos; v0.4.12 é a latest. As 17 releases/tags anteriores mantêm arquivos, tamanhos e digests. Relatório da CI: `Testes/teste15-2026-10-19_00-01-36-b40967e0/log.txt`.
-
-Evidência local: 123 Java, 50 Go (+race, vet e compilação para os seis alvos), 16 Node, segredos, links, Testar 19/19 e smoke do pacote Linux x64 (sem locale, pasta acentuada, recuperação de órfão, recusa de host externo). Janelas de aviso nativas não foram vistas em tela (sem ambiente gráfico); a matriz não as exercita.
-
-Limpeza posterior (19/10/2026, autorizada, sem nova release): retirados rótulos de testes inexistentes e as verificações de Backup.java do Testar.java, dois testes Go redundantes, um método sem uso, ramos de código que nunca executavam, a coleta de relatórios a cada 5 min (pausada até ativar o receptor) e a execução semanal da CI; handover e validação reduzidos à versão atual, com histórico em docs/historico/. Testes locais: 48 Go (+race), 123 Java, Testar 14/14, Node, YAML e segredos aprovados. **Pendente de autorização explícita** (a proteção da sessão bloqueou exclusões): apagar `aplicativo/scripts/Backup.java`, `config/DemoInitializer.java`, `docs/LEIA-PRIMEIRO.txt` e as branches remotas fix-v03-acessos, logging-v03, security-v02, release-v0.4 e release/android-experimental.
-
-Pendências reais: decisões do responsável sobre limpeza de backups antigos, releases imutáveis no GitHub e o backup criptografado da assinatura Android; melhorias opcionais (govulncheck/JRE na CI) e suspeitas mantidas, listadas em docs/REVISAO-DESKTOP.md. Envio dos PCs continua desativado; Render exige confirmação explícita do workspace. **Entrega concluída: parar e aguardar nova autorização.**
-
-Preservado: dados, reservas, contas, chave e backups na família 0.4.x; sem migration, reset, dependências, Render, SMTP ou Android. Histórico dos estados anteriores: [HISTORICO.md](HISTORICO.md).
-
----
-
 # 0.4.11 publicada — abertura do executável e cancelamento após o evento
 
 Em 19/10/2026 o responsável recebeu a análise desktop, autorizou o lote 1 e decidiu: pasta de versão danificada é preservada com outro nome; reserva aprovada já terminada não pode ser cancelada sem força maior (substitui a penalidade nesse caso). Base `e2575cc` (main = release 0.4.10). Trabalho na branch `claude/confident-gauss-9w9qmz`; detalhes em docs/HANDOVER.md e docs/VALIDACAO.md.

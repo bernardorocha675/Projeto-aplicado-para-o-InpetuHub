@@ -10,7 +10,7 @@ As pastas versão 0.1, versão 0.2, versão 0.3 e versão 0.4 saíram da árvore
 
 ## Compilar e testar
 
-Estes comandos são para desenvolvedores. O usuário final abre o pacote da release sem instalar ferramentas externas. Para desenvolvimento, prepare JDK 21, Python 3, Go compatível com o pin da CI e Node 22 ou posterior. A CI mantém Go 1.27.2 (Windows/Linux) e Go 1.26.9 (macOS, para abrir no macOS 12); confira o workflow antes de mudar versões.
+Estes comandos são para desenvolvedores. O usuário final abre o pacote da release sem instalar ferramentas externas. Para desenvolvimento, prepare JDK 21, Python 3, Go compatível com o pin da CI e Node 22 ou posterior. A CI mantém Go 1.27.2; confira o workflow antes de mudar versões.
 
 Na raiz:
 

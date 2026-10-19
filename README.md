@@ -13,7 +13,7 @@ Projeto aplicado oficial do **InPETU Hub**, desenvolvido na disciplina de **Proj
 
 ## Versão atual
 
-[**Versão 0.4.14**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.14) — passa a abrir no macOS 12 Monterey. Dados preservados.
+[**Versão 0.4.13**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.13) — agenda segura após falhas de consulta, regras de contato unificadas e código padronizado. Dados preservados.
 
 O aplicativo continua o da 0.4.7, restaurado na 0.4.10; [detalhes do retorno](docs/RETORNO-0.4.7.md).
 

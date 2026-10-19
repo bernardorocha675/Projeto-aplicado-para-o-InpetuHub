@@ -40,42 +40,13 @@ if goos == 'windows':
 subprocess.run(['go', 'build', '-trimpath', '-ldflags', flags, '-o', str(binary), '.'],
                cwd=root / 'iniciador', env=env, check=True)
 launcher = 'InPETU-Hub.exe' if goos == 'windows' else 'InPETU-Hub'
-MACOS_MINIMUM = '12.0'
-
-
-def macos_minimum(path):
-    """Le o macOS minimo gravado no Mach-O (LC_BUILD_VERSION ou LC_VERSION_MIN_MACOSX)."""
-    data = path.read_bytes()[:65536]
-    if int.from_bytes(data[:4], 'little') != 0xfeedfacf:
-        raise SystemExit(f'{path.name}: Mach-O de 64 bits esperado.')
-    count, offset = int.from_bytes(data[16:20], 'little'), 32
-    for _ in range(count):
-        command = int.from_bytes(data[offset:offset + 4], 'little')
-        size = int.from_bytes(data[offset + 4:offset + 8], 'little')
-        field = {0x32: 12, 0x24: 8}.get(command)
-        if field:
-            value = int.from_bytes(data[offset + field:offset + field + 4], 'little')
-            return (value >> 16, (value >> 8) & 255)
-        offset += size
-    raise SystemExit(f'{path.name}: versao minima do macOS ausente.')
-
-
-def require_macos(path):
-    found = macos_minimum(path)
-    if found > tuple(int(part) for part in MACOS_MINIMUM.split('.')):
-        raise SystemExit(f'{path.name} exige macOS {found[0]}.{found[1]}; o pacote precisa abrir no macOS {MACOS_MINIMUM}.')
-    print(f'{path.name}: macOS minimo {found[0]}.{found[1]}')
-
-
-if goos == 'darwin':
-    require_macos(binary)
 if goos == 'darwin':
     shutil.copy2(binary, bundle / launcher)
     info = {'CFBundleName': 'InPETU Hub', 'CFBundleDisplayName': 'InPETU Hub',
             'CFBundleIdentifier': 'br.edu.unisenai.inpetuhub',
             'CFBundleExecutable': 'InPETU-Hub', 'CFBundlePackageType': 'APPL',
             'CFBundleVersion': version, 'CFBundleShortVersionString': version,
-            'LSMinimumSystemVersion': MACOS_MINIMUM, 'NSHighResolutionCapable': True}
+            'NSHighResolutionCapable': True}
     with (app / 'Contents/Info.plist').open('wb') as stream:
         plistlib.dump(info, stream)
 shutil.copy2(project / f'target/inpetu-hub-{version}.jar', bundle / 'app.jar')
@@ -87,8 +58,6 @@ subprocess.run([str(jlink), '--add-modules',
                 'java.se,jdk.crypto.ec,jdk.unsupported,jdk.zipfs,jdk.charsets,jdk.management,jdk.naming.dns,jdk.localedata,jdk.jfr',
                 '--strip-debug', '--no-header-files', '--no-man-pages', '--compress=zip-6',
                 '--output', str(bundle / 'runtime')], check=True)
-if goos == 'darwin':
-    require_macos(bundle / 'runtime/bin/java')
 # ZIPs nao carregam symlinks: todas as licencas e arquivos do runtime sao arquivos reais.
 for path in sorted((bundle / 'runtime').rglob('*'), key=lambda p: len(p.parts)):
     if path.is_symlink():
