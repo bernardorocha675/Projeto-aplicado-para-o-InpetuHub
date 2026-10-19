@@ -1,6 +1,17 @@
-# Handover técnico — InPETU Hub 0.4.14
+# Handover técnico — InPETU Hub 0.4.15
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
+
+## Fix 0.4.15 — lote 1 do Caça bugs 2 — em revisão
+
+Lote 1 do PDF “Caça bugs 2”, autorizado em 19/10/2026. Mudanças:
+
+- `GlobalModel`: `equipeLogada`, `secaoAtual` (início, agenda ou área interna, pela URL) e `solicitacoesPendentes` (`SolicitacaoPublicaRepository.existsByEstado("RECEBIDA")`, consultado só em `/admin`).
+- `fragments.html`: o item ativo do menu principal vem de `secaoAtual`; “Solicitações recebidas” ganha `.pending-dot` com texto para leitores de tela.
+- `public/agenda.html` + `agenda.js`: o aviso de cadastro de espaços só é renderizado para a equipe logada.
+- `admin.js`: máscara de telefone (somente dígitos, até 11, `(48) 99808-2043`) em `input[type=tel]` e `input[name=telefone]`; números antigos com mais de 11 dígitos não são cortados ao abrir. O servidor já aceitava o formato.
+
+Testes locais (Linux x64, 19/10/2026): 126 Java (um novo: destaque da Área Interna, bolinha de solicitações e aviso só para a equipe; um alterado: público não vê o aviso), Go test/vet, Node da agenda (9, um novo sem o aviso) e de cadastros (4, dois novos da máscara de telefone), segredos, Testar 14/14, pacote Linux x64 e smoke aprovados. Windows, macOS e ARM64 ficam com a matriz. Sem migration, reset, contas, dependências ou ativação externa. Lotes 2 a 5 aguardam decisão do responsável.
 
 ## Fix 0.4.14 — voltar da troca de senha e aviso de agenda sem espaços — publicada e verificada
 

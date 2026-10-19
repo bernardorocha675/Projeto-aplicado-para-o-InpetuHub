@@ -38,3 +38,32 @@ test('validação do navegador não bloqueia o botão e nova resposta começa ha
   assert.equal(p.button.disabled, false);
   assert.equal(page().button.disabled, false);
 });
+
+function phone(initial = '') {
+  const listeners = {};
+  const input = {value: initial, attributes: {}, setAttribute(name, value) { this.attributes[name] = value; },
+    addEventListener: (name, fn) => {listeners[name] = fn;}};
+  vm.runInNewContext(source, {
+    document: {querySelectorAll: selector => selector.includes('tel') ? [input] : []},
+    window: {addEventListener: () => {}}, setTimeout: fn => fn()
+  });
+  const type = value => { input.value = value; listeners.input(); return input.value; };
+  return {input, type};
+}
+
+test('telefone recusa letras, formata o DDD e limita a 11 dígitos', () => {
+  const p = phone();
+  assert.equal(p.input.maxLength, 15);
+  assert.equal(p.input.attributes.inputmode, 'numeric');
+  assert.equal(p.type('gfhfghdgdg'), '');
+  assert.equal(p.type('4'), '(4');
+  assert.equal(p.type('489980'), '(48) 9980');
+  assert.equal(p.type('48998082043'), '(48) 99808-2043');
+  assert.equal(p.type('(48) 99808-20439999'), '(48) 99808-2043');
+  assert.equal(p.type('4833334444'), '(48) 3333-4444');
+});
+
+test('telefone salvo é exibido formatado, sem cortar números antigos com código do país', () => {
+  assert.equal(phone('48999990000').input.value, '(48) 99999-0000');
+  assert.equal(phone('+55 48 99999-0000').input.value, '+55 48 99999-0000');
+});

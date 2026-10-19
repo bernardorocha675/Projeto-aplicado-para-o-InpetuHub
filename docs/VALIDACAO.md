@@ -1,3 +1,9 @@
+# Fix 0.4.15 — em revisão
+
+Testes locais (Linux x64, 19/10/2026): 126 Java (um novo: destaque da Área Interna, bolinha de solicitações e aviso só para a equipe; um alterado: público não vê o aviso), Go test/vet, Node da agenda (9, um novo sem o aviso) e de cadastros (4, dois novos da máscara de telefone), segredos, Testar 14/14, pacote Linux x64 e smoke aprovados. Windows, macOS e ARM64 ficam com a matriz.
+
+---
+
 # Fix 0.4.14 — publicada e verificada
 
 A [0.4.14](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.14) foi publicada e verificada em 19/10/2026 pelo [run 39317656989](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39317656989). Tag/código testado `5cf993c5c34f7581a836229a08ab4f4511f1f097` (merge em main). Conferidos os 12 assets e os 11 checksums contra digests públicos; v0.4.14 é a latest; as 18 releases anteriores à 0.4.13 mantêm arquivos, tamanhos e digests; links de download do README respondem. Relatório da CI: `Testes/teste21-2026-10-19_17-14-33-8e2d6083/log.txt`. Caminho até a publicação: PR [#14](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/14) (correções); duas execuções da main barradas por falhas intermitentes da CI (Maven no Ubuntu x64/Windows ARM; reinício e limpeza do servidor de teste no Windows x64), nenhuma reproduzida localmente; PR [#15](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/15) passou a mostrar nome/mensagem de testes Java e linhas [ERROR] do Maven quando o job falha; PR [#16](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/16) fez o `Testar.java` tentar de novo o início do servidor (até 3 vezes, só se ele encerrar ao iniciar) e a limpeza (até 10 s) no Windows. Pendência: a causa exata das falhas de Maven no Ubuntu x64/Windows ARM não foi identificada; se voltar, o diagnóstico do PR #15 mostra a mensagem.

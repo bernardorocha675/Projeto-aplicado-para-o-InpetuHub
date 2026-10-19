@@ -31,12 +31,14 @@ class Element {
 class CalendarDate extends Date { constructor(...args) { super(...(args.length ? args : ['2026-10-18T12:00:00Z'])); } }
 
 const source = fs.readFileSync(path.resolve(__dirname, '../../aplicativo/src/main/resources/static/js/agenda.js'), 'utf8');
-async function calendar(state, rooms = []) {
-  const nodes = Object.fromEntries(['calendario', 'mes-titulo', 'detalhe-dia', 'filtro-espaco', 'agenda-aviso', 'mes-anterior', 'mes-proximo', 'filtro-dia'].map(id => [id, new Element()]));
+async function calendar(state, rooms = [], staff = true) {
+  const ids = ['calendario', 'mes-titulo', 'detalhe-dia', 'filtro-espaco', 'agenda-aviso', 'mes-anterior', 'mes-proximo', 'filtro-dia'];
+  // Para o público, o aviso de cadastro de espaços não existe na página.
+  const nodes = Object.fromEntries(ids.filter(id => staff || id !== 'agenda-aviso').map(id => [id, new Element()]));
   let current = state;
   let failed = false;
   const context = {
-    document: {getElementById: id => nodes[id], createElement: tag => new Element(tag)},
+    document: {getElementById: id => nodes[id] || null, createElement: tag => new Element(tag)},
     URLSearchParams, Date: CalendarDate, setInterval: () => {},
     fetch: async url => {
       if (failed) return {ok: false};
@@ -118,4 +120,10 @@ test('falha na atualização retira os horários e links de reserva da consulta 
   assert.equal(flattened(page.nodes['detalhe-dia']).some(n => n.tag === 'a' || n.tag === 'form'), false);
   assert.ok(flattened(page.nodes['detalhe-dia']).some(n => /não pôde ser atualizada/.test(n.textContent)));
   assert.ok(flattened(page.nodes.calendario).some(n => /Não foi possível consultar/.test(n.textContent)));
+});
+
+test('visitante sem login vê a agenda vazia sem o aviso destinado à equipe', async () => {
+  const page = await calendar('SEM_ESPACOS', [], false);
+  assert.equal(page.nodes['agenda-aviso'], undefined);
+  assert.equal(page.day().children[1].textContent, '— Sem espaços');
 });

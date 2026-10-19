@@ -44,7 +44,7 @@ export function createReceiver({fetcher=fetch,now=()=>Date.now(),authorize}={}){
  const server=http.createServer(async(req,res)=>{
   if(active>=4){respond(res,503,{error:"BUSY"});return;}active++;
   try{
-   if(req.method==='GET'&&req.url==='/healthz'){respond(res,200,{status:'ok',version:'0.4.14',pending:pending.size,publisher:'github-actions'});return;}
+   if(req.method==='GET'&&req.url==='/healthz'){respond(res,200,{status:'ok',version:'0.4.15',pending:pending.size,publisher:'github-actions'});return;}
    if(req.headers.origin){respond(res,403,{error:'ORIGIN_DENIED'});return;}
    if(req.method==='POST'&&req.url==='/v1/reports'){
     if(req.headers['x-inpetu-project']!=='inpetu-hub-v04'||!/^application\/json(?:;|$)/.test(req.headers['content-type']||'')){respond(res,415,{error:'FORMAT_DENIED'});return;}

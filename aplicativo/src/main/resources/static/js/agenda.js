@@ -47,7 +47,8 @@
       if (seq !== request) return;
 
       const days = new Map(json.dias.map(d => [d.data, d]));
-      notice.hidden = !json.dias.length || !json.dias.every(d => d.estado === 'SEM_ESPACOS');
+      // O aviso de cadastro de espaços só existe na página da equipe logada.
+      if (notice) notice.hidden = !json.dias.length || !json.dias.every(d => d.estado === 'SEM_ESPACOS');
       grid.replaceChildren();
       const start = new Date(month);
       start.setDate(1 - start.getDay());

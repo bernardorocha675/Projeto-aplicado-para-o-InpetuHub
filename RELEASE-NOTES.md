@@ -1,9 +1,11 @@
-# InPETU Hub 0.4.14
+# InPETU Hub 0.4.15
 
-Ajustes de uso pedidos pela equipe.
+Ajustes pedidos pela equipe (lote 1).
 
-- A tela **Alterar senha** ganhou o botão **Voltar sem alterar**, que retorna ao painel sem trocar a senha.
-- Quando nenhum espaço está cadastrado para reservas, a agenda explica que os dias aparecem como “Sem espaços” por esse motivo e mostra o botão **Cadastrar espaço**, que leva direto ao cadastro (acesso da equipe, com login). O aplicativo continua começando sem espaços: a equipe cadastra os espaços reais do Hub.
+- **Telefone:** o campo aceita somente números, no máximo 11 dígitos, e formata enquanto você digita, como (48) 99808-2043. Vale no pedido de reserva e nos cadastros.
+- **Menu principal:** o item da página atual fica destacado. Na Área Interna, o destaque fica em “ÁREA INTERNA”, e não mais em “AGENDA”.
+- **Solicitações recebidas:** uma bolinha azul ao lado do item do menu lateral indica que há solicitações aguardando análise.
+- **Agenda:** o aviso sobre cadastro de espaços aparece somente para a equipe com login; o público não o vê mais.
 
 Dados, reservas, contas, configurações, chave e backups permanecem no mesmo local da família 0.4.x. Não há migration, reset, mudança de dependências ou ativação externa. Windows/macOS/Linux x64/ARM64 e Java privado preservados; Android continua retirado. No macOS, o iniciador continua exigindo macOS 13 ou mais recente.
 
