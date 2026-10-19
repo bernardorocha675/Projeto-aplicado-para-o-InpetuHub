@@ -2,7 +2,10 @@
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
 
-## Fix 0.4.16 — lote 2 do Caça bugs 2 (calendário) — em revisão
+## Fix 0.4.16 — lote 2 do Caça bugs 2 (calendário) — publicada e verificada
+
+A [0.4.16](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.16) foi publicada e verificada em 19/10/2026 pelo [run 39330445496](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39330445496), na primeira tentativa, após o PR [#18](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/18) (matriz verde de primeira). Tag/código testado `ae99fe07aca99b95093d2f7e139a8eee4572e55d` (merge em main). Conferidos os 12 assets e os 11 checksums contra digests públicos; v0.4.16 é a latest; as 21 releases anteriores mantêm arquivos, tamanhos e digests; links do README respondem. Relatório da CI: `Testes/teste23-2026-10-19_18-49-14-2e3f29e6/log.txt`.
+
 
 Autorizado em 19/10/2026. `agenda.js`: o dia recebe `.has-events` e um ponto (`.event-dot`) quando algum espaço tem `ocupados`; sem atividade, só o número; a situação (sem espaços, sem horários livres, feriado) fica no `aria-label` e nos detalhes ao clicar. Título do mês sem “de”. `agenda.html`: a legenda Livre/Parcial/Ocupado vira “Clique em um dia marcado para ver os eventos.”; `style.css` com o visual da referência. Testes locais (Linux x64, 19/10/2026): 126 Java (página pública confere o texto “Clique em um dia marcado”), Node da agenda (10, reescritos para o novo visual: dia azul com ponto, dia branco sem texto, título do mês, aviso só para a equipe) e de cadastros (4), Testar 14/14, pacote Linux x64, smoke e segredos aprovados; captura de tela com dados simulados comparada à referência do PDF. Windows, macOS e ARM64 ficam com a matriz. Sem mudança no servidor, migration ou dependências.
 
