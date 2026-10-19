@@ -1,3 +1,9 @@
+# Fix 0.4.13 em preparação — agenda, validação e padronização
+
+Autorizado em 19/10/2026, com PR e merge liberados após a matriz verde: correção da agenda após falha de consulta (recupera a limpeza da 0.4.8), regras únicas de email/login no cadastro e no arquivo privado de contas, `gofmt` no iniciador, JS formatados e checagem de formatação na CI. Testes locais (Linux x64, 19/10/2026): 124 Java (um novo de email), 48 Go (+race, vet nos três sistemas, gofmt limpo), 17 Node (uma regressão nova da agenda que falha no script anterior), segredos, Testar 14/14, pacote Linux x64 e smoke (15 logins, troca de iniciador, recuperação de órfão, recusa de host externo) aprovados. Windows, macOS e ARM64 ficam com a matriz. Não declarar publicada antes de conferir run, tag e assets. Análise dos logs (19/10/2026) com melhorias propostas e ainda não autorizadas: causa raiz das falhas de inicialização, 503 da espera tratado como erro, consultas da agenda ocupando a sessão.
+
+---
+
 # Lote 2 desktop — 0.4.12 publicada
 
 Em 19/10/2026 o responsável autorizou o segundo lote da análise desktop e sua publicação: download lento, erros invisíveis antes da tela, limpeza da documentação e validação das suspeitas pendentes. Base: main após a 0.4.11. Detalhes em docs/HANDOVER.md, docs/VALIDACAO.md e docs/REVISAO-DESKTOP.md.

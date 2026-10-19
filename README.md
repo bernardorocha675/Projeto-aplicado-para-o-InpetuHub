@@ -13,7 +13,7 @@ Projeto aplicado oficial do **InPETU Hub**, desenvolvido na disciplina de **Proj
 
 ## Versão atual
 
-[**Versão 0.4.12**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.12) — atualização sem limite de tempo em conexões lentas, aviso visível quando o iniciador não abre e proteção do endereço local. Dados preservados.
+[**Versão 0.4.13**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.13) — agenda segura após falhas de consulta, regras de contato unificadas e código padronizado. Dados preservados.
 
 O aplicativo continua o da 0.4.7, restaurado na 0.4.10; [detalhes do retorno](docs/RETORNO-0.4.7.md).
 

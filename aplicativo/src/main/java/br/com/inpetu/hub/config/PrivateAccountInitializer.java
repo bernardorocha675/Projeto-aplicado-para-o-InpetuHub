@@ -68,7 +68,7 @@ public class PrivateAccountInitializer implements ApplicationRunner {
         String login = LoginNames.normalize(p.getProperty(prefix + "login", ""));
         String password = p.getProperty(prefix + "password", "");
         Perfil role = Perfil.valueOf(p.getProperty(prefix + "role", "").trim());
-        if (!login.matches("[a-z0-9._@+-]{4,120}")
+        if (!LoginNames.valid(login)
             || !logins.add(login)
             || name.isBlank()
             || name.length() > 120

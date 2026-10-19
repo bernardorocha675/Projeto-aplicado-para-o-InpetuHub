@@ -83,6 +83,15 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+        with:
+          go-version: '1.27.2'
+          cache: false
+      - name: Conferir formatação do iniciador e sintaxe dos scripts da interface
+        run: |
+          unformatted="$(gofmt -l iniciador)"
+          if [ -n "$unformatted" ]; then echo "Arquivos fora do gofmt:"; echo "$unformatted"; exit 1; fi
+          for file in aplicativo/src/main/resources/static/js/*.js; do node --check "$file"; done
       - name: Testar interfaces da agenda e cadastros
         run: |
           node .github/scripts/test_agenda_ui.cjs

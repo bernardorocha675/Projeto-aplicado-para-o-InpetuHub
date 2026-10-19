@@ -249,11 +249,12 @@ public class CrudService {
           throw new RegraException("Preencha: " + campo.rotulo);
         if (raw.length() > (campo.tipo.equals("textarea") ? 2000 : 255))
           throw new RegraException("Campo muito longo: " + campo.rotulo);
+        // Mesmo formato do formulário público e do cadastro de empreendedores.
         if (campo.tipo.equals("email")
             && !raw.isBlank()
-            && (raw.chars().anyMatch(Character::isWhitespace)
-                || !raw.matches("[^@]++@[^@.]++(?:[.][^@.]++)++")))
-          throw new RegraException("Email inválido.");
+            && !raw.matches(br.com.inpetu.hub.validation.ContactRules.EMAIL))
+          throw new RegraException(
+              "Email: informe um endereço completo, como nome@instituicao.com.br.");
         if (campo.tipo.equals("select") && !campo.opcoes.containsKey(raw))
           throw new RegraException("Opção inválida: " + campo.rotulo);
         if (campo.nome.equals("senha")) {
@@ -286,7 +287,7 @@ public class CrudService {
       }
       if (o instanceof Colaborador c) {
         c.login = LoginNames.normalize(c.login);
-        if (!c.login.matches("[a-z0-9._@+-]{4,120}"))
+        if (!LoginNames.valid(c.login))
           throw new RegraException("Use um usuário com 4–120 letras, números ou . _ @ + -.");
         if (id != null
             && id.equals(actorId)
