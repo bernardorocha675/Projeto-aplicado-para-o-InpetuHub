@@ -22,3 +22,22 @@ document.querySelectorAll('form').forEach(form => {
     window.addEventListener('pageshow', () => buttons().forEach(button => { button.disabled = false; }));
   }
 });
+// Telefone: somente números, com DDD entre parênteses, como (48) 99808-2043.
+const formatPhone = value => {
+  const digits = value.replace(/\D/g, '').slice(0, 11);
+  if (digits.length <= 2) return digits.length ? `(${digits}` : '';
+  const local = digits.slice(2);
+  const split = local.length > 8 ? 5 : 4;
+  return local.length > split
+    ? `(${digits.slice(0, 2)}) ${local.slice(0, split)}-${local.slice(split)}`
+    : `(${digits.slice(0, 2)}) ${local}`;
+};
+document.querySelectorAll('input[type=tel], input[name=telefone]').forEach(input => {
+  input.setAttribute('inputmode', 'numeric');
+  input.maxLength = 15;
+  input.addEventListener('input', () => {
+    input.value = formatPhone(input.value);
+  });
+  // Cadastros antigos com código do país (mais de 11 dígitos) ficam como estão até serem editados.
+  if (input.value.replace(/\D/g, '').length <= 11) input.value = formatPhone(input.value);
+});

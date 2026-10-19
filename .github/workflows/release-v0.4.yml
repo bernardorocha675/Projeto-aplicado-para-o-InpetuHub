@@ -35,6 +35,9 @@ jobs:
           distribution: temurin
           java-version: '21'
           architecture: ${{ matrix.javaarch }}
+          # Dependências em cache: menos downloads do Maven Central, que às vezes cai com "Connection reset".
+          cache: maven
+          cache-dependency-path: aplicativo/pom.xml
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
         with:
           go-version: '1.27.2'
@@ -137,6 +140,8 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
+          cache: maven
+          cache-dependency-path: aplicativo/pom.xml
       - run: mvn -B -ntp dependency:list -DincludeScope=runtime -DoutputFile=target/dependencies.txt
       - run: python scripts/check_dependencies.py
   codeql:

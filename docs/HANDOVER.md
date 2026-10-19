@@ -1,8 +1,21 @@
-# Handover técnico — InPETU Hub 0.4.14
+# Handover técnico — InPETU Hub 0.4.15
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
 
-## Fix 0.4.14 — voltar da troca de senha e aviso de agenda sem espaços
+## Fix 0.4.15 — lote 1 do Caça bugs 2 — em revisão
+
+Lote 1 do PDF “Caça bugs 2”, autorizado em 19/10/2026. Mudanças:
+
+- `GlobalModel`: `equipeLogada`, `secaoAtual` (início, agenda ou área interna, pela URL) e `solicitacoesPendentes` (`SolicitacaoPublicaRepository.existsByEstado("RECEBIDA")`, consultado só em `/admin`).
+- `fragments.html`: o item ativo do menu principal vem de `secaoAtual`; “Solicitações recebidas” ganha `.pending-dot` com texto para leitores de tela.
+- `public/agenda.html` + `agenda.js`: o aviso de cadastro de espaços só é renderizado para a equipe logada.
+- `admin.js`: máscara de telefone (somente dígitos, até 11, `(48) 99808-2043`) em `input[type=tel]` e `input[name=telefone]`; números antigos com mais de 11 dígitos não são cortados ao abrir. O servidor já aceitava o formato.
+
+Testes locais (Linux x64, 19/10/2026): 126 Java (um novo: destaque da Área Interna, bolinha de solicitações e aviso só para a equipe; um alterado: público não vê o aviso), Go test/vet, Node da agenda (9, um novo sem o aviso) e de cadastros (4, dois novos da máscara de telefone), segredos, Testar 14/14, pacote Linux x64 e smoke aprovados. Windows, macOS e ARM64 ficam com a matriz. Sem migration, reset, contas, dependências ou ativação externa. Lotes 2 a 5 aguardam decisão do responsável.
+
+## Fix 0.4.14 — voltar da troca de senha e aviso de agenda sem espaços — publicada e verificada
+
+A [0.4.14](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.14) foi publicada e verificada em 19/10/2026 pelo [run 39317656989](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39317656989). Tag/código testado `5cf993c5c34f7581a836229a08ab4f4511f1f097` (merge em main). Conferidos os 12 assets e os 11 checksums contra digests públicos; v0.4.14 é a latest; as 18 releases anteriores à 0.4.13 mantêm arquivos, tamanhos e digests; links de download do README respondem. Relatório da CI: `Testes/teste21-2026-10-19_17-14-33-8e2d6083/log.txt`. Caminho até a publicação: PR [#14](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/14) (correções); duas execuções da main barradas por falhas intermitentes da CI (Maven no Ubuntu x64/Windows ARM; reinício e limpeza do servidor de teste no Windows x64), nenhuma reproduzida localmente; PR [#15](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/15) passou a mostrar nome/mensagem de testes Java e linhas [ERROR] do Maven quando o job falha; PR [#16](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/16) fez o `Testar.java` tentar de novo o início do servidor (até 3 vezes, só se ele encerrar ao iniciar) e a limpeza (até 10 s) no Windows. Pendência: a causa exata das falhas de Maven no Ubuntu x64/Windows ARM não foi identificada; se voltar, o diagnóstico do PR #15 mostra a mensagem.
 
 Pedido em 19/10/2026 (PDF do responsável), com release e merge autorizados. O responsável escolheu manter o banco novo sem espaços (a equipe cadastra os reais) e só melhorar o aviso.
 

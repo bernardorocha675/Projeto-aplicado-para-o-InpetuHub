@@ -10,4 +10,6 @@ public interface SolicitacaoPublicaRepository extends JpaRepository<SolicitacaoP
   Optional<SolicitacaoPublica> findByReferencia(String referencia);
 
   List<SolicitacaoPublica> findTop200ByEstadoOrderByCriadaEmAsc(String estado);
+
+  boolean existsByEstado(String estado);
 }

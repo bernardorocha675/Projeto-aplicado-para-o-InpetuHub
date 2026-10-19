@@ -272,11 +272,15 @@ class FluxosIntegrationTest {
     mvc.perform(get("/"))
         .andExpect(status().isOk())
         .andExpect(content().string(org.hamcrest.Matchers.containsString("Agenda de")))
+        // O aviso de cadastro de espaços é só da equipe; o público não o vê.
         .andExpect(
             content()
                 .string(
-                    org.hamcrest.Matchers.containsString(
-                        "href=\"/admin/cadastros/espacos/editar\">Cadastrar espaço</a>")));
+                    org.hamcrest.Matchers.not(
+                        org.hamcrest.Matchers.containsString("agenda-aviso"))))
+        .andExpect(
+            content()
+                .string(org.hamcrest.Matchers.containsString("<a href=\"/\" class=\"active\">INÍCIO</a>")));
     mvc.perform(get("/login")).andExpect(status().isOk());
     mvc.perform(get("/admin")).andExpect(status().is3xxRedirection());
     mvc.perform(post("/reservas/solicitar")).andExpect(status().isForbidden());

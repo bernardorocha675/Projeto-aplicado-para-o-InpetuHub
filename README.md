@@ -13,7 +13,7 @@ Projeto aplicado oficial do **InPETU Hub**, desenvolvido na disciplina de **Proj
 
 ## Versão atual
 
-[**Versão 0.4.14**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.14) — botão para voltar sem alterar a senha e aviso mais claro quando não há espaços cadastrados. Dados preservados.
+[**Versão 0.4.15**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.15) — ajustes da equipe: telefone só com números e formatado, destaque correto do menu, aviso de solicitações pendentes e aviso de espaços só para a equipe. Dados preservados.
 
 O aplicativo continua o da 0.4.7, restaurado na 0.4.10; [detalhes do retorno](docs/RETORNO-0.4.7.md).
 
@@ -21,16 +21,16 @@ O aplicativo continua o da 0.4.7, restaurado na 0.4.10; [detalhes do retorno](do
 
 Baixe o pacote completo do seu sistema, extraia e abra o iniciador. O pacote inclui o aplicativo e o Java necessário; não é preciso instalar mais nada nem entrar no GitHub.
 
-| Sistema | Download da versão 0.4.14 |
+| Sistema | Download da versão 0.4.15 |
 | --- | --- |
-| Windows (Intel/AMD) | [InPETU-Hub-Windows-x64-v0.4.14.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.4.14/InPETU-Hub-Windows-x64-v0.4.14.zip) |
-| Windows ARM | [InPETU-Hub-Windows-ARM64-v0.4.14.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.4.14/InPETU-Hub-Windows-ARM64-v0.4.14.zip) |
-| Mac Apple Silicon (M1 ou mais recente) | [InPETU-Hub-macOS-ARM64-v0.4.14.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.4.14/InPETU-Hub-macOS-ARM64-v0.4.14.zip) |
-| Mac Intel | [InPETU-Hub-macOS-x64-v0.4.14.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.4.14/InPETU-Hub-macOS-x64-v0.4.14.zip) |
-| Linux (Intel/AMD) | [InPETU-Hub-Linux-x64-v0.4.14.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.4.14/InPETU-Hub-Linux-x64-v0.4.14.zip) |
-| Linux ARM | [InPETU-Hub-Linux-ARM64-v0.4.14.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.4.14/InPETU-Hub-Linux-ARM64-v0.4.14.zip) |
+| Windows (Intel/AMD) | [InPETU-Hub-Windows-x64-v0.4.15.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.4.15/InPETU-Hub-Windows-x64-v0.4.15.zip) |
+| Windows ARM | [InPETU-Hub-Windows-ARM64-v0.4.15.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.4.15/InPETU-Hub-Windows-ARM64-v0.4.15.zip) |
+| Mac Apple Silicon (M1 ou mais recente) | [InPETU-Hub-macOS-ARM64-v0.4.15.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.4.15/InPETU-Hub-macOS-ARM64-v0.4.15.zip) |
+| Mac Intel | [InPETU-Hub-macOS-x64-v0.4.15.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.4.15/InPETU-Hub-macOS-x64-v0.4.15.zip) |
+| Linux (Intel/AMD) | [InPETU-Hub-Linux-x64-v0.4.15.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.4.15/InPETU-Hub-Linux-x64-v0.4.15.zip) |
+| Linux ARM | [InPETU-Hub-Linux-ARM64-v0.4.15.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.4.15/InPETU-Hub-Linux-ARM64-v0.4.15.zip) |
 
-No macOS, a 0.4.14 exige macOS 13 Ventura ou mais recente. Conferência dos arquivos: [SHA256SUMS.txt](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.4.14/SHA256SUMS.txt). Todas as versões: [Releases](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases).
+No macOS, a 0.4.15 exige macOS 13 Ventura ou mais recente. Conferência dos arquivos: [SHA256SUMS.txt](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.4.15/SHA256SUMS.txt). Todas as versões: [Releases](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases).
 
 - [Instalação e execução](docs/COMO-INICIAR.md)
 - [Acessos de demonstração](docs/ACESSOS.md)

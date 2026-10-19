@@ -45,6 +45,7 @@ class SecurityIntegrationTest {
   @Autowired SecretCrypto crypto;
   @Autowired Clock clock;
   @Autowired PublicRequestService requests;
+  @Autowired SolicitacaoPublicaRepository solicitacoes;
   @Autowired ReservaService reservations;
   @Autowired SolicitacaoPublicaRepository intake;
   @Autowired EspacoRepository spaces;
@@ -251,6 +252,39 @@ class SecurityIntegrationTest {
                 .param("username", "ÁLUNO Básico")
                 .param("password", "Teste123"))
         .andExpect(redirectedUrl("/admin"));
+  }
+
+  @Test
+  void internalAreaHighlightsItsMenuAndSignalsPendingRequests() throws Exception {
+    var session = login(create(Perfil.COLABORADOR));
+    // Isola o teste de solicitações deixadas por outras classes; a transação é desfeita ao final.
+    solicitacoes.findAll().forEach(item -> item.estado = "ARQUIVADA_TESTE");
+    solicitacoes.flush();
+    String html =
+        mvc.perform(get("/admin").session(session)).andReturn().getResponse().getContentAsString();
+    assertTrue(html.contains("<a href=\"/admin\" class=\"active\">ÁREA INTERNA</a>"), html);
+    assertTrue(html.contains("<a href=\"/agenda\">AGENDA</a>"));
+    assertFalse(html.contains("pending-dot"));
+    var pendente = new SolicitacaoPublica();
+    pendente.estado = "RECEBIDA";
+    pendente.referencia = "TESTE-" + UUID.randomUUID();
+    pendente.chave = UUID.randomUUID().toString();
+    pendente.form = new ReservaForm();
+    pendente.criadaEm = LocalDateTime.now(clock);
+    pendente.expiraEm = pendente.criadaEm.plusDays(1);
+    solicitacoes.saveAndFlush(pendente);
+    mvc.perform(get("/admin").session(session))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("class=\"pending-dot\"")));
+    mvc.perform(get("/agenda").session(session))
+        .andExpect(
+            content()
+                .string(
+                    org.hamcrest.Matchers.containsString(
+                        "href=\"/admin/cadastros/espacos/editar\">Cadastrar espaço</a>")))
+        .andExpect(
+            content()
+                .string(org.hamcrest.Matchers.containsString("<a href=\"/agenda\" class=\"active\">")));
   }
 
   @Test
