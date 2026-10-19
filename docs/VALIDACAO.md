@@ -1,4 +1,8 @@
-# Fix 0.4.12 — validação local (Linux x64), aguardando matriz
+# Fix 0.4.12 — publicada e verificada
+
+A [0.4.12](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.12) foi publicada e verificada em 19/10/2026 pelo [run 39192696646](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39192696646), após o PR [#9](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/9) (matriz do PR no run 39191819341, verde). Tag/código testado `f9e7ea1f831981d1dcb92637eac8808257806b18` (merge em main). Seis alvos Windows/macOS/Linux x64/ARM64, fonte/segredos, dependências, CodeQL, relatório e publicação aprovados. Conferidos os 12 assets e os 11 checksums contra digests públicos; v0.4.12 é a latest. As 17 releases/tags anteriores mantêm arquivos, tamanhos e digests. Relatório da CI: `Testes/teste15-2026-10-19_00-01-36-b40967e0/log.txt`.
+
+## Validação local (Linux x64)
 
 Execução em 19/10/2026 numa cópia descartável da árvore, com JDK 21.0.12, Go 1.27.2, Maven local e Node 22.22.
 
@@ -7,7 +11,7 @@ Execução em 19/10/2026 numa cópia descartável da árvore, com JDK 21.0.12, G
 - Novos testes cobrem download lento mas ativo (mais longo que o prazo de travamento) concluído, download parado cancelado sem bloquear a versão instalada e sem repetição no Iniciar, cache da consulta de releases e aviso gráfico somente fora do modo `--headless`.
 - Pacote Linux x64 gerado com `--compress=zip-6` e smoke aprovado sem locale, com pasta acentuada, recuperação de órfão e recusa de host externo (HTTP 400).
 
-Não executados localmente: Windows, macOS, ARM64, janelas de aviso nativas (sem ambiente gráfico), CodeQL, gitleaks e OSV. A matriz de main é a referência para os seis alvos.
+Não executados localmente: Windows, macOS, ARM64, janelas de aviso nativas (sem ambiente gráfico), CodeQL, gitleaks e OSV. A matriz de main, aprovada, é a referência para os seis alvos.
 
 ---
 
