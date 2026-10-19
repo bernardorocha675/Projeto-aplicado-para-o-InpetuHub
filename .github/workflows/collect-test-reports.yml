@@ -3,8 +3,8 @@ on:
   push:
     branches: ['main']
     paths: ['.github/workflows/collect-test-reports.yml', '.github/scripts/collect-reports.mjs', '.github/scripts/verify-collector-identity.mjs', 'receptor/**', 'Testes/configuracao.json']
-  schedule:
-    - cron: '2-57/5 * * * *'
+  # Coleta periódica pausada enquanto o envio dos PCs está desativado (Testes/configuracao.json).
+  # Ao ativar o receptor, restaurar: schedule: - cron: '2-57/5 * * * *'
   workflow_dispatch:
 permissions:
   contents: read

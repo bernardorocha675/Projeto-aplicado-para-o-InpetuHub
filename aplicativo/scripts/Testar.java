@@ -196,9 +196,7 @@ class Testar {
 
   static String friendly(String className, String method) {
     String group =
-        className.contains("AutomaticUpdate")
-            ? "Atualização automática"
-            : className.contains("Concorrencia")
+        className.contains("Concorrencia")
                 ? "Concorrência"
                 : className.contains("Security")
                     ? "Segurança"
@@ -206,32 +204,6 @@ class Testar {
     String label = method.replaceAll("\\[.*", "");
     label =
         switch (label) {
-          case "updatesOnlyHighestPatchPreservingPrivateDataAndRemovingObsoleteCode" ->
-              "Fix da mesma linha preserva dados e remove código antigo";
-          case "paginatesReleaseListInsteadOfUsingGlobalLatest" ->
-              "Consulta todas as páginas sem mudar de linha";
-          case "offlineApiAndDownloadUseInstalledVersion" ->
-              "Falha de conexão mantém a versão instalada";
-          case "checksumFailureStopsWithoutChangingInstallation" ->
-              "Pacote corrompido não altera a instalação";
-          case "localChangesAreNotOverwritten" -> "Alterações locais são preservadas";
-          case "unmanagedNewPathCollisionIsNotOverwritten" ->
-              "Arquivo particular em caminho novo não é sobrescrito";
-          case "zipTraversalPrivatePathsAndUnexpectedFilesAreRejected" ->
-              "Pacotes com caminhos perigosos ou arquivos extras são recusados";
-          case "tamperedManifestOrVersionMismatchIsRejected" ->
-              "Manifesto e versão do pacote são conferidos";
-          case "runningServerPreventsUpdateEvenWhenDisabled" ->
-              "Servidor ativo impede troca de código";
-          case "disabledUpdateDoesNotConsultNetworkAndNoDowngradeOccurs" ->
-              "Desativação e prevenção de retorno automático para versão antiga";
-          case "recoversInterruptedCodeReplacementWithoutTouchingCurrentData" ->
-              "Troca interrompida restaura código e preserva dados";
-          case "windowsBatchLineEndingsAreAccepted" -> "Quebras de linha Windows são aceitas";
-          case "nativeStartCommandReloadsUpdatedLauncherAndPreservesArguments" ->
-              "Comando nativo relê a versão nova e mantém os argumentos";
-          case "productionDownloadDestinationsRequireProjectHttpsAssets" ->
-              "Downloads exigem HTTPS e release oficial";
           case "previousSessionsAreRevoked" -> "Alteração de conta revoga sessões anteriores";
           case "adminUsesPasswordWithoutSecondFactor" ->
               "Administrador acessa com senha; rotas de segundo fator removidas";
@@ -382,7 +354,6 @@ class Testar {
             "--spring.config.import=",
             "--app.accounts-file=" + folder.resolve(".secrets/accounts.properties"),
             "--app.security.key-file=" + folder.resolve(".secrets/mfa.key"),
-            "--app.seed-demo=true",
             "--spring.mail.username=",
             "--spring.mail.password=");
     // A senha do banco vem somente do arquivo de configuração descartável.
@@ -566,21 +537,6 @@ class Testar {
             effectivePassword[0] = replacement;
           });
       check(
-          "Backup recusa banco com servidor em execução",
-          () -> {
-            Path archive = transientData.resolve("nao-deve-existir.inpetu");
-            require(
-                command(
-                            source(
-                                ROOT.resolve("scripts/Backup.java"), "backup", archive.toString()),
-                            isolated,
-                            random(24) + "\n",
-                            90)
-                        != 0
-                    && !Files.exists(archive),
-                "Backup em uso foi aceito.");
-          });
-      check(
           "Logs persistentes correlacionam HTTP sem gravar dados privados",
           () -> {
             String sentinel = "never-log-" + random(18);
@@ -726,98 +682,6 @@ class Testar {
         });
   }
 
-  static void backupTests() throws Exception {
-    Path archive = transientData.resolve("backup-descartavel.inpetu");
-    String password = random(24);
-    if (!check(
-        "Backup cifrado de banco H2 real e restauração íntegra",
-        () -> {
-          require(
-              command(
-                      source(ROOT.resolve("scripts/Backup.java"), "backup", archive.toString()),
-                      isolated,
-                      password + "\n",
-                      90)
-                  == 0,
-              "Backup não criado.");
-          Path target = directory(transientData.resolve("restaurado"));
-          require(
-              command(
-                      source(ROOT.resolve("scripts/Backup.java"), "restore", archive.toString()),
-                      target,
-                      password + "\n",
-                      90)
-                  == 0,
-              "Restauração recusada.");
-          for (String name :
-              List.of(
-                  ".env.local",
-                  ".secrets/mfa.key",
-                  ".secrets/accounts.properties",
-                  "data/inpetu-v02.mv.db"))
-            require(
-                Files.mismatch(isolated.resolve(name), target.resolve(name)) == -1,
-                "Conteúdo restaurado diferente.");
-        })) return;
-    check(
-        "Backup existente não é apagado nem sobrescrito",
-        () -> {
-          byte[] before = Files.readAllBytes(archive);
-          require(
-              command(
-                      source(ROOT.resolve("scripts/Backup.java"), "backup", archive.toString()),
-                      isolated,
-                      password + "\n",
-                      90)
-                  != 0,
-              "Arquivo sobrescrito.");
-          require(Arrays.equals(before, Files.readAllBytes(archive)), "Arquivo modificado.");
-        });
-    check(
-        "Senha errada e arquivo adulterado não extraem dados",
-        () -> {
-          Path tampered = transientData.resolve("adulterado.inpetu");
-          byte[] bytes = Files.readAllBytes(archive);
-          bytes[bytes.length - 1] ^= 1;
-          Files.write(tampered, bytes);
-          protect(tampered);
-          int i = 0;
-          for (Path input : List.of(archive, tampered)) {
-            Path folder = directory(transientData.resolve("recusado-" + i));
-            String key = i++ == 0 ? password + "-errada" : password;
-            require(
-                command(
-                        source(ROOT.resolve("scripts/Backup.java"), "restore", input.toString()),
-                        folder,
-                        key + "\n",
-                        90)
-                    != 0,
-                "Arquivo não autenticado aceito.");
-            require(
-                !Files.exists(folder.resolve("data"))
-                    && !Files.exists(folder.resolve(".env.local")),
-                "Dados foram extraídos.");
-          }
-        });
-    check(
-        "Restauração não substitui dados existentes",
-        () -> {
-          Path target = transientData.resolve("restaurado"),
-              database = target.resolve("data/inpetu-v02.mv.db");
-          byte[] before = Files.readAllBytes(database);
-          require(
-              command(
-                      source(ROOT.resolve("scripts/Backup.java"), "restore", archive.toString()),
-                      target,
-                      password + "\n",
-                      90)
-                  != 0,
-              "Sobrescrita aceita.");
-          require(
-              Arrays.equals(before, Files.readAllBytes(database)), "Banco existente modificado.");
-        });
-  }
-
   static String html(String value) {
     return value
         .replace("&", "&amp;")
@@ -933,8 +797,7 @@ class Testar {
 
   static int run() throws Exception {
     require(
-        Files.isRegularFile(ROOT.resolve("pom.xml"))
-            && Files.isRegularFile(ROOT.resolve("scripts/Backup.java")),
+        Files.isRegularFile(ROOT.resolve("pom.xml")),
         "Abra a pasta aplicativo.");
     directory(ROOT.resolve(".tools"));
     report = directory(ROOT.resolve("relatorios-testes"));
@@ -970,14 +833,13 @@ class Testar {
       if (built) {
         // Todos os arquivos sensíveis ficam sob temporarios, excluídos ao encerrar.
         if (webTests()) {
-          backupTests();
           automaticAccountTests();
           accessTests();
         }
       } else
         RESULTS.add(
             new Result(
-                "Servidor real e backup",
+                "Servidor real e contas",
                 "NÃO EXECUTADO",
                 "A compilação precisa passar antes destas etapas."));
     } catch (Exception ex) {

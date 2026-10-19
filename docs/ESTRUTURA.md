@@ -4,7 +4,7 @@
 
 O repositório mantém uma única árvore de fontes atuais. `aplicativo/` contém Java/Spring Boot, Maven e os testes; `iniciador/` contém Go e a interface embutida; `receptor/` contém o serviço Node auxiliar dos relatórios. O Java é uma dependência real do executável e acompanha os pacotes como runtime privado.
 
-`.github/scripts/` e `.github/workflows/` constroem, testam e publicam os pacotes. `aplicativo/scripts/Testar.java` e `Backup.java` são ferramentas internas de verificação/manutenção, não uma segunda forma de iniciar o produto. `docs/`, `continuidade/` e `Testes/` reúnem documentação e registros necessários à entrega.
+`.github/scripts/` e `.github/workflows/` constroem, testam e publicam os pacotes. `aplicativo/scripts/Testar.java` é a ferramenta interna de verificação (`Backup.java`, ferramenta antiga de manutenção sem teste automático, aguarda decisão de remoção), não uma segunda forma de iniciar o produto. `docs/`, `continuidade/` e `Testes/` reúnem documentação e registros necessários à entrega.
 
 As pastas versão 0.1, versão 0.2, versão 0.3 e versão 0.4 saíram da árvore atual. Seus conteúdos continuam no histórico Git, nas tags/releases e no backup anterior à reorganização. Não houve reescrita do histórico nem alteração de assets antigos. Para consultar uma entrega antiga, use sua tag numa cópia separada.
 

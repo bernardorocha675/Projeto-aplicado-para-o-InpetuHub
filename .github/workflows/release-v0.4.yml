@@ -6,8 +6,6 @@ on:
   pull_request:
     paths: ['aplicativo/**', 'iniciador/**', 'receptor/**', '.github/**', '.gitleaks*', 'VERSION', 'RELEASE-NOTES.md', 'RELEASES.md']
   workflow_dispatch:
-  schedule:
-    - cron: '17 9 * * 1'
 permissions:
   contents: read
 jobs:

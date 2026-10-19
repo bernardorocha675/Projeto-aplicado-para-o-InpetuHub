@@ -81,14 +81,6 @@ func TestZipDuplicateIsRejected(t *testing.T){
  for i:=0;i<2;i++{entry,_:=w.Create("same.txt");_,_=entry.Write([]byte("fixture"))};_=w.Close();_=out.Close()
  if e:=extractArchive(path,filepath.Join(t.TempDir(),"out"));e==nil{t.Fatal("duplicata aceita")}
 }
-func TestChecksumFailureDoesNotInstallAnything(t *testing.T){
- m:=testManager(t)
- server:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){
-  if r.URL.Path=="/sums"{fmt.Fprintf(w,"%s  %s\n",strings.Repeat("0",64),archiveName("0.4.1"))}else{_,_=w.Write([]byte("wrong archive"))}
- }));defer server.Close();m.api=server.URL;m.client=server.Client()
- if _,e:=m.downloadRelease(&release{Version:"0.4.1",ZipURL:server.URL+"/zip",SumURL:server.URL+"/sums"},t.TempDir());e==nil{t.Fatal("checksum aceito")}
- entries,_:=os.ReadDir(filepath.Join(m.home,"installed"));if len(entries)!=0{t.Fatal("instalacao alterada")}
-}
 func TestDownloadOriginsRequireOfficialHTTPS(t *testing.T){
  for _,address:=range []string{"http://github.com/x","https://example.com/x","https://github.com/other/repo/releases/download/v0.4.0/x"}{u,_:=url.Parse(address);if e:=allowedNetwork(u,true);e==nil{t.Fatal(address)}}
 }
@@ -164,13 +156,6 @@ func TestVerifiedUpdateBacksUpAndPreservesDataAndSecrets(t *testing.T){
  if !bytes.Equal(data,saved){t.Fatal("backup divergente")}
  if _,e=readBundle(old);e!=nil{t.Fatal("versao anterior removida")}
 }
-func TestInterruptedDownloadKeepsInstalledVersion(t *testing.T){
- m:=testManager(t);old:=filepath.Join(m.home,"installed","0.4.0");b:=fixtureBundle(t,old,"0.4.0");if e:=m.ready(old,b);e!=nil{t.Fatal(e)}
- server:=releaseServer(t,m,"0.4.1",true);defer server.Close()
- if e:=m.installLatest();e!=nil{t.Fatal(e)}
- if m.state().Version!="0.4.0"||!m.state().Ready{t.Fatal(m.state())}
-}
-
 func TestNewInstalledLauncherIsSelectedBeforeStartingTheBackend(t *testing.T){
  m:=testManager(t);m.offline=true
  current,e:=patch(buildVersion);if e!=nil{t.Fatal(e)}

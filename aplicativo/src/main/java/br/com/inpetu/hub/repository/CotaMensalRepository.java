@@ -7,7 +7,6 @@ import java.util.*;
 import org.springframework.data.jpa.repository.*;
 
 public interface CotaMensalRepository extends JpaRepository<CotaMensal, Long> {
-  Optional<CotaMensal> findByPersonaIdAndAnoAndMes(Long personaId, int ano, int mes);
 
   List<CotaMensal> findByPersonaIdOrderByAnoAscMesAsc(Long personaId);
 }
