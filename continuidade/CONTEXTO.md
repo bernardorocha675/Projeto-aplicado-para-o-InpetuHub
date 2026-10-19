@@ -107,3 +107,7 @@ Com o lock do iniciador, um aplicativo que ainda mantém o lock dos dados é tra
 ## Linha 0.5 (19/10/2026)
 
 O responsável pediu a versão 0.5 com o código atual e decidiu: mesmos dados (a 0.5 continua na pasta `InPETU-Hub/0.4`), atualização automática a partir da 0.4.17 (que aceita as linhas 0.4 e 0.5) e conteúdo igual ao da 0.4.16, sem os lotes 3 a 5. Fixes seguintes na `0.5.x`; uma linha 0.6 exige novo pedido.
+
+## Identidade do site oficial (19/10/2026)
+
+O responsável pediu o sistema com a cara do site oficial (https://inpetuhub.sites.ufsc.br/), mantendo a agenda e a área interna. Isso substitui, para a 0.5.1 em diante, a regra do retorno à 0.4.7 de não reintroduzir a identidade institucional. Condições: Início, Agenda e Área Interna continuam locais e visíveis; links para o site oficial só depois de conferidos (HTTP 200) e em nova aba; links quebrados do próprio site (`/sobre`, `/termos-de-uso`) não são reproduzidos; imagens e fontes ficam empacotadas no aplicativo.

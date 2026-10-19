@@ -95,10 +95,13 @@ class PublicDemoLoginTest {
   int start=html.indexOf("<header"),end=html.indexOf("</header>",start);
   assertTrue(start>=0&&end>start,path+" perdeu o cabeçalho");
   var top=html.substring(start,end);
-  assertFalse(top.contains("https://"),path+" está saindo do aplicativo");
-  assertFalse(top.contains("http://"),path+" está saindo do aplicativo");
+  // Desde a 0.5.1 o menu é o do site oficial: externos só do domínio oficial, em nova aba.
+  var links=java.util.regex.Pattern.compile("href=\"(https?://[^\"]+)\"([^>]*)").matcher(top);
+  while(links.find()){
+   assertTrue(links.group(1).startsWith("https://inpetuhub.sites.ufsc.br/"),path+" aponta para fora do site oficial: "+links.group(1));
+   assertTrue(links.group(2).contains("target=\"_blank\""),path+" deve abrir o site oficial em outra aba");
+  }
   for(String target:new String[]{"/","/agenda","/admin"})assertTrue(top.contains("href=\""+target+"\""),path+" perdeu a navegação local");
-  assertFalse(html.contains("/css/institucional.css"),"O visual deve ser o da 0.4.7");
  }
 
 }

@@ -1,4 +1,12 @@
-# 0.5.0 — em revisão
+# 0.5.1 — em revisão
+
+Testes locais (Linux x64, 19/10/2026): 126 Java (rota pública: Início com conteúdo oficial, Agenda em /agenda, links oficiais em nova aba, sem /sobre nem termos-de-uso, fontes/imagens/CSS servidos; navegação local mantida em 15 telas públicas e internas), Go, Node da agenda (10) e de cadastros (4), Testar 14/14, pacote Linux x64, smoke (regra nova: externos só do domínio oficial e em nova aba) e segredos aprovados. Capturas da instância local comparadas às do site oficial em 1440 px e 640 px. Windows, macOS e ARM64 ficam com a matriz.
+
+---
+
+# 0.5.0 — publicada e verificada
+
+A [0.5.0](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.5.0) foi publicada e verificada em 19/10/2026 pelo [run 39337208760](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39337208760), na primeira tentativa, após o PR [#20](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/20). Tag/código testado `29602bae776c8981a925d5771d5953f63a447229`. Conferidos os 12 assets e os 11 checksums contra digests públicos; v0.5.0 é a latest; as 23 releases anteriores mantêm arquivos, tamanhos e digests; os 8 links do README novo (página da release, código completo e 6 pacotes) respondem. Relatório da CI: `Testes/teste25-2026-10-19_19-45-58-54005acb/log.txt`. A 0.4.17 também foi publicada e verificada (run 39335067420).
 
 Mesmo código da 0.4.17, só com a versão 0.5.0 (VERSION, POM, iniciador, receptor, roteiro), notas, README e o texto do LEIA-PRIMEIRO do pacote. Testes locais (Linux x64, 19/10/2026): Go test/vet, 126 Java, Testar 14/14, pacote Linux x64, smoke (inclui a troca real do iniciador 0.5.0 → 0.5.1 na mesma pasta) e segredos aprovados. Windows, macOS e ARM64 ficam com a matriz. Teste real da passagem de linha: pacote Linux x64 da 0.4.17 (commit edd985a) com o smoke forçando a troca para um iniciador 0.5.0 — troca real do iniciador, 15 logins, chave e banco preservados e recuperação aprovados.
 

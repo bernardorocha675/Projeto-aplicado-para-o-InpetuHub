@@ -48,7 +48,12 @@ public class PublicController {
     this.clock = clock;
   }
 
-  @GetMapping({"/", "/agenda"})
+  @GetMapping("/")
+  public String home() {
+    return "public/home";
+  }
+
+  @GetMapping("/agenda")
   public String agenda(Model m) {
     m.addAttribute("today", LocalDate.now(clock));
     m.addAttribute("maxDate", ReservationDates.lastDay(clock));
