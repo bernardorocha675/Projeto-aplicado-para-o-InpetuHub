@@ -13,9 +13,9 @@ Projeto aplicado oficial do **InPETU Hub**, desenvolvido na disciplina de **Proj
 
 ## Versão atual
 
-[**Versão 0.4.10**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.10) — restaura o aplicativo da **0.4.7**, com seu visual, menu local, agenda e área interna. Dados preservados.
+[**Versão 0.4.11**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.11) — abertura mais confiável do executável: recupera o sistema deixado aberto, mantém a versão instalada quando uma atualização falha e bloqueia o cancelamento de eventos já terminados. Dados preservados.
 
-O novo número permite receber a restauração pelo atualizador. A release 0.4.7 original permanece disponível; [detalhes do retorno](docs/RETORNO-0.4.7.md).
+O aplicativo continua o da 0.4.7, restaurado na 0.4.10; [detalhes do retorno](docs/RETORNO-0.4.7.md).
 
 ## Usar o aplicativo
 

@@ -5,6 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class InpetuApplication {
+  /** Saída da conferência quando outro processo mantém o lock; o iniciador a distingue de falhas. */
+  public static final int DATA_IN_USE_EXIT = 75;
+
   private static java.nio.channels.FileChannel lockChannel;
   private static java.nio.channels.FileLock runtimeLock;
 
@@ -23,6 +26,11 @@ public class InpetuApplication {
             java.nio.file.StandardOpenOption.CREATE,
             java.nio.file.StandardOpenOption.WRITE);
     runtimeLock = lockChannel.tryLock();
+    if (runtimeLock == null && stoppedCheck) {
+      lockChannel.close();
+      System.exit(DATA_IN_USE_EXIT);
+      return;
+    }
     if (runtimeLock == null)
       throw new IllegalStateException("Outra execução ou backup está usando esta instalação.");
     Runtime.getRuntime()

@@ -1,6 +1,19 @@
-# Handover técnico — InPETU Hub 0.4.10
+# Handover técnico — InPETU Hub 0.4.11
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
+
+## Fix 0.4.11 — abertura, atualização e cancelamento (preparado, aguardando CI de main)
+
+Lote 1 da análise desktop de 19/10/2026, autorizado pelo responsável. Base `e2575cc` (main com 0.4.10). O aplicativo continua o da 0.4.7; mudanças pontuais:
+
+- `iniciador/app.go`: `checkStopped` usa ambiente limpo e, no Linux sem locale UTF-8, `LC_CTYPE=C.UTF-8`; distingue dados em uso (código 75, ou exceção do lock de pacotes até 0.4.10) de falha da JVM e grava a saída em `logs/launcher-java.log`. `ensureStopped` encerra pelo `.secrets/launcher.stop` um Java deixado por iniciador encerrado à força (até 30 s) e nunca atua sobre o processo do próprio iniciador. Montagem duplicada do comando Java removida.
+- `InpetuApplication.java`: `--verificar-parado` sai com 75 quando o lock está ocupado; demais modos inalterados.
+- `iniciador/main.go`: SIGTERM/Ctrl+C param o Java e finalizam a sessão (Linux/macOS); `ACTION_FAILED` recebe `result` com código do motivo.
+- `iniciador/update.go`: com versão instalada íntegra, release incompleta, checksum/pacote inválido, erro de gravação ou backup não impedem o início (`UPDATE_SKIPPED`); nada inválido é ativado. Pasta de versão danificada é renomeada para `installed/.danificada-…` e reinstalada. Primeira instalação continua recusando pacote inválido.
+- `ReservaService.cancelar`: reserva aprovada com término no passado não é cancelada sem força maior; orienta Concluir. Decisão registrada em `continuidade/CONTEXTO.md`.
+- Smoke: pasta com espaços e acentos, Linux sem locale e nova fase de recuperação após encerrar o iniciador à força.
+
+Sem migration, reset, mudança de contas/senhas, preços, cotas, dependências ou ativação externa. Evidências locais em VALIDACAO.md. A publicação depende do merge em main e da matriz obrigatória; não declarar publicada antes de conferir run, tag e assets.
 
 ## Retorno à 0.4.7 — 0.4.10 publicada e verificada
 

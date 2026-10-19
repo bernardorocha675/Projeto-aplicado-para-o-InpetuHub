@@ -6,6 +6,7 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 import time
 import urllib.error
@@ -31,6 +32,25 @@ def wait_for(action, timeout=180):
         time.sleep(.5)
     raise AssertionError('Resultado nao confirmado no prazo: ' + str(last))
 
+def launcher_env():
+    # Sessoes graficas podem nao exportar locale; no Linux o iniciador deve funcionar com POSIX.
+    env = dict(os.environ)
+    if sys.platform.startswith('linux'):
+        for key in ('LANG', 'LC_ALL', 'LC_CTYPE', 'LANGUAGE'):
+            env.pop(key, None)
+    return env
+
+def control_api(folder):
+    control = json.loads((folder/'running.json').read_text())['URL']
+    parsed = urllib.parse.urlsplit(control)
+    control_base = urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, '', '', ''))
+    def call(action=None):
+        req = urllib.request.Request(control_base+'/api/'+(action or 'status'), headers={'Authorization':'Bearer '+parsed.fragment},
+                                     method='POST' if action else 'GET')
+        with browser().open(req, timeout=10) as response:
+            return json.loads(response.read())
+    return control, call
+
 def browser():
     return urllib.request.build_opener(urllib.request.ProxyHandler({}),
                                        urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
@@ -48,9 +68,9 @@ def post(opener, url, values):
     return opener.open(urllib.request.Request(url, data=urllib.parse.urlencode(values).encode()), timeout=15)
 
 with tempfile.TemporaryDirectory(prefix='inpetu-desktop-smoke-') as temp:
-    home = Path(temp) / 'dados com espacos'
+    home = Path(temp) / 'dados com espaços e acentuação'
     process = subprocess.Popen([package['executable'], '--headless', '--offline', '--start', '--home', str(home)],
-                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=launcher_env())
     try:
         def connection():
             return json.loads((home/'running.json').read_text())['URL']
@@ -207,3 +227,39 @@ with tempfile.TemporaryDirectory(prefix='inpetu-desktop-smoke-') as temp:
         if process.poll() is None:
             process.kill()
             process.wait(timeout=10)
+
+# Iniciador encerrado a forca deixa o Java ativo; a proxima abertura deve encerra-lo e iniciar normalmente.
+with tempfile.TemporaryDirectory(prefix='inpetu-desktop-orphan-', ignore_cleanup_errors=True) as temp:
+    home = Path(temp) / 'órfão com acentuação'
+    args = [package['executable'], '--headless', '--offline', '--start', '--home', str(home)]
+    first = subprocess.Popen(args, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=launcher_env())
+    second = None
+    try:
+        abandoned, call = wait_for(lambda: control_api(home))
+        wait_for(lambda: (s if (s:=call())['Running'] and not s['Busy'] else None))
+        first.kill()
+        first.wait(timeout=10)
+        second = subprocess.Popen(args, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=launcher_env())
+        wait_for(lambda: (value if (value:=control_api(home))[0]!=abandoned else None), timeout=60)
+        _, call = control_api(home)
+        recovered = wait_for(lambda: (s if (s:=call())['Running'] and not s['Busy'] else None), timeout=240)
+        with get(browser(), recovered['AppURL']+'/login') as response:
+            assert response.status == 200
+        call('close')
+        second.wait(timeout=60)
+        assert second.returncode == 0, 'O iniciador recuperado nao encerrou corretamente'
+        events = [json.loads(line) for path in (home/'logs/sessoes').glob('*/eventos.jsonl')
+                  for line in path.read_text(encoding='utf-8').splitlines() if line.strip()]
+        assert any(e['event']=='ORPHAN_APP_FOUND' for e in events), 'Processo anterior nao identificado'
+        assert any(e['event']=='ORPHAN_APP_STOPPED' for e in events), 'Processo anterior nao encerrado'
+        outcomes = sorted(json.loads(path.read_text(encoding='utf-8'))['outcome'] for path in (home/'logs/sessoes').glob('*/relatorio.json'))
+        assert outcomes == ['CONCLUIDO', 'INTERROMPIDO'], outcomes
+        print('RECUPERACAO APROVADA: iniciador encerrado a forca, Java anterior parado pelo pedido local e sistema reiniciado.')
+    finally:
+        for launcher in (first, second):
+            if launcher and launcher.poll() is None:
+                launcher.kill()
+                launcher.wait(timeout=10)
+        if (home/'.secrets').is_dir():
+            (home/'.secrets/launcher.stop').write_text('stop\n')
+            time.sleep(5)

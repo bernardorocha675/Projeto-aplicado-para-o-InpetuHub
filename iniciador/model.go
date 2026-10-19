@@ -19,7 +19,7 @@ import (
  "sync"
 )
 
-var buildVersion = "0.4.10"
+var buildVersion = "0.4.11"
 const repository = "bernardorocha675/Projeto-aplicado-para-o-InpetuHub"
 const family = "0.4"
 var versionPattern = regexp.MustCompile("^v?0[.]4[.](0|[1-9][0-9]*)$")
@@ -153,6 +153,7 @@ func (m *Manager) current() (string,Bundle,error) {
  for _,entry:=range entries {if !entry.IsDir(){continue};root:=filepath.Join(m.home,"installed",entry.Name());if b,e:=readBundle(root);e==nil{return root,b,nil}}
  return "",Bundle{},errors.New("primeira instalacao ainda nao concluida")
 }
+var errPrivateConfigMissing = errors.New("configuracao privada ausente com dados existentes; preserve a instalacao e restaure o backup completo")
 func (m *Manager) prepareConfig() error {
  // Um banco existente depende da chave e do ambiente originais. Nunca reparar
  // sua ausencia gerando material novo: a recuperacao exige o backup completo.
@@ -161,7 +162,7 @@ func (m *Manager) prepareConfig() error {
   fi,err:=os.Lstat(filepath.Join(m.home,filepath.FromSlash(name)))
   if err!=nil && !os.IsNotExist(err){return err}
   if err==nil && !fi.Mode().IsRegular(){return errors.New("configuracao privada deve ser arquivo regular, sem atalhos")}
-  if os.IsNotExist(err) && len(entries)>0{return errors.New("configuracao privada ausente com dados existentes; preserve a instalacao e restaure o backup completo")}
+  if os.IsNotExist(err) && len(entries)>0{return errPrivateConfigMissing}
  }
  secret:=filepath.Join(m.home,".secrets","mfa.key")
  if _,e:=os.Stat(secret);os.IsNotExist(e){if e=atomicWrite(secret,[]byte(randomText(32)+"\n"),0600);e!=nil{return e}}

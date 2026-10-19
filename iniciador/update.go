@@ -19,6 +19,9 @@ import (
 )
 
 var errNetwork = errors.New("download indisponivel")
+var errIncompleteRelease = errors.New("release ainda incompleta; tente novamente depois")
+var errIntegrity = errors.New("integridade invalida; pacote nao instalado")
+var errNoPackage = errors.New("nao foi possivel baixar o pacote; confira a internet e tente novamente")
 
 // Somente falhas de leitura da rede permitem usar a versao instalada.
 // Erros de escrita local e de validacao continuam interrompendo a troca.
@@ -89,7 +92,7 @@ func (m *Manager) latest() (*release,error) {
  return nil,errors.New("lista de releases excedeu o limite de consulta")
 }
 func (m *Manager) downloadRelease(next *release,stage string) (string,error) {
- if next.ZipURL=="" || next.SumURL==""{return "",errors.New("release ainda incompleta; tente novamente depois")}
+ if next.ZipURL=="" || next.SumURL==""{return "",errIncompleteRelease}
  response,e:=m.get(context.Background(),next.SumURL,true);if e!=nil{return "",e}
  sums,e:=limited(downloadReader{response.Body},65536);response.Body.Close();if e!=nil{return "",e}
  expected:=""
@@ -105,7 +108,7 @@ func (m *Manager) downloadRelease(next *release,stage string) (string,error) {
  out,e:=os.OpenFile(archive,os.O_CREATE|os.O_EXCL|os.O_WRONLY,0600);if e!=nil{return "",e}
  n,e:=io.Copy(out,io.LimitReader(downloadReader{response.Body},(512<<20)+1));closeErr:=out.Close()
  if e!=nil{return "",e};if closeErr!=nil{return "",closeErr};if n>512<<20{return "",errors.New("pacote maior que o limite")}
- actual,e:=digest(archive);if e!=nil{return "",e};if actual!=expected{return "",errors.New("integridade invalida; pacote nao instalado")}
+ actual,e:=digest(archive);if e!=nil{return "",e};if actual!=expected{return "",errIntegrity}
  content:=filepath.Join(stage,"content")
  if e=extractArchive(archive,content);e!=nil{return "",e}
  root:=content
@@ -152,9 +155,34 @@ func (m *Manager) installEmbedded(root string) (string,Bundle,error) {
  content:=filepath.Join(stage,"bundle")
  if e=copyTree(root,content,false);e!=nil{return "",b,e}
  if _,e=readBundle(content);e!=nil{return "",b,e}
- if _,e=os.Stat(target);e==nil{return "",b,errors.New("instalacao incompleta encontrada; preserve a pasta e consulte o guia")}
+ if e=m.preserveDamaged(target,b.Version);e!=nil{return "",b,e}
  if e=os.Rename(content,target);e!=nil{return "",b,e}
  return target,b,nil
+}
+// Uma pasta de versao que existe mas nao confere (ex.: arquivo removido por antivirus) nunca e
+// apagada nem usada: recebe outro nome para conferencia posterior e a versao e instalada de novo.
+func (m *Manager) preserveDamaged(target,version string) error {
+ if _,e:=os.Lstat(target);os.IsNotExist(e){return nil}else if e!=nil{return e}
+ if _,e:=readBundle(target);e==nil{return errors.New("a versao "+version+" ja esta instalada")}
+ kept:=filepath.Join(filepath.Dir(target),".danificada-"+version+"-"+time.Now().UTC().Format("20060102-150405")+"-"+randomText(4))
+ if e:=os.Rename(target,kept);e!=nil{return e}
+ m.record("WARN","DAMAGED_VERSION_PRESERVED",map[string]any{"result":"RENAMED"})
+ return nil
+}
+func updateFailureCode(err error) string {
+ for _,known:=range []struct{err error;code string}{{errNetwork,"NETWORK"},{errIncompleteRelease,"INCOMPLETE_RELEASE"},{errIntegrity,"INTEGRITY"},{errDataInUse,"DATA_IN_USE"},{errOrphanRunning,"ORPHAN_STILL_RUNNING"},{errJavaCheck,"JAVA_CHECK_FAILED"}}{
+  if errors.Is(err,known.err){return known.code}
+ }
+ return "PACKAGE_REJECTED"
+}
+// Com uma versao instalada integra, a falha da atualizacao nunca impede o uso: o pacote novo
+// nao e ativado e a troca e tentada de novo na proxima abertura ou inicio.
+func (m *Manager) keepInstalled(root string,b Bundle,next string,cause error) error {
+ m.record("WARN","UPDATE_SKIPPED",map[string]any{"phase":"UPDATE","result":updateFailureCode(cause)})
+ if e:=m.ready(root,b);e!=nil{return e}
+ if errors.Is(cause,errNetwork){m.message("Pronto","Download indisponivel. Usando a versao instalada.");return nil}
+ m.message("Pronto","A atualizacao "+next+" nao foi instalada ("+cause.Error()+"). Usando a versao "+b.Version+"; nova tentativa na proxima abertura.")
+ return nil
 }
 func (m *Manager) installLatest() error {
  if m.state().Running{return errors.New("pare o sistema antes de atualizar")}
@@ -170,34 +198,33 @@ func (m *Manager) installLatest() error {
  }
  next,e:=m.latest()
  if e!=nil || next==nil {
-  if !hasCurrent{return errors.New("nao foi possivel baixar o pacote; confira a internet e tente novamente")}
+  if !hasCurrent{return errNoPackage}
   if e=m.ready(root,current);e!=nil{return e}
   m.message("Pronto","Usando a versao instalada; nenhuma atualizacao disponivel ou consulta offline.")
   return nil
  }
  if hasCurrent && !newer(next.Version,current.Version){return m.ready(root,current)}
+ // Sem versao instalada, qualquer falha continua interrompendo; nunca instalar parcialmente.
+ fail:=func(cause error) error {
+  if hasCurrent{return m.keepInstalled(root,current,next.Version,cause)}
+  if errors.Is(cause,errNetwork){return errNoPackage}
+  return fmt.Errorf("atualizacao nao instalada: %w",cause)
+ }
  existing:=filepath.Join(m.home,"installed",next.Version)
  if b,e:=readBundle(existing);e==nil{
-  if hasCurrent{if e=m.backup(root,current);e!=nil{return e}}
+  if hasCurrent{if e=m.backup(root,current);e!=nil{return fail(e)}}
   return m.ready(existing,b)
  }
+ if e=m.preserveDamaged(existing,next.Version);e!=nil{return fail(e)}
  m.message("Instalando","Baixando e conferindo a versao "+next.Version+"...")
- stage,e:=os.MkdirTemp(filepath.Join(m.home,"installed"),".download-");if e!=nil{return e};defer os.RemoveAll(stage)
+ stage,e:=os.MkdirTemp(filepath.Join(m.home,"installed"),".download-");if e!=nil{return fail(e)};defer os.RemoveAll(stage)
  content,e:=m.downloadRelease(next,stage)
- if e!=nil{
-  // Pacote recebido invalido interrompe a troca; nunca instalar parcialmente.
-  if hasCurrent && errors.Is(e,errNetwork){
-   if e=m.ready(root,current);e!=nil{return e}
-   m.message("Pronto","Download indisponivel. Usando a versao instalada.");return nil
-  }
-  return fmt.Errorf("atualizacao nao instalada: %w",e)
- }
- target:=filepath.Join(m.home,"installed",next.Version)
- if _,e=os.Stat(target);e==nil{return errors.New("a pasta da nova versao ja existe; consulte o guia")}
+ if e!=nil{return fail(e)}
+ if _,e=os.Stat(existing);e==nil{return fail(errors.New("a pasta da nova versao reapareceu durante o download"))}
  if hasCurrent {
-  if e=m.backup(root,current);e!=nil{return e}
+  if e=m.backup(root,current);e!=nil{return fail(e)}
  }
- b,e:=readBundle(content);if e!=nil{return e}
- if e=os.Rename(content,target);e!=nil{return e}
- return m.ready(target,b)
+ b,e:=readBundle(content);if e!=nil{return fail(e)}
+ if e=os.Rename(content,existing);e!=nil{return fail(e)}
+ return m.ready(existing,b)
 }

@@ -186,6 +186,42 @@ class FluxosIntegrationTest {
   }
 
   @Test
+  void eventoAprovadoJaTerminadoNaoPodeSerCanceladoNemPenalizado() {
+    Persona p = personas.findByCodigo("P4").orElseThrow();
+    p.cotaMensalHoras = new BigDecimal("6");
+    personas.saveAndFlush(p);
+    var r = service.solicitar(form("P4", LocalDate.of(2026, 10, 20)));
+    service.aprovar(r.id, admin);
+    // O relógio de teste está em 05/10/2026 12:00; a reserva das 8h às 12h do mesmo dia terminou.
+    r.data = LocalDate.of(2026, 10, 5);
+    reservas.saveAndFlush(r);
+    var antes = cota.consultar(p, r.data).horasUtilizadas;
+    var erro =
+        assertThrows(RegraException.class, () -> service.cancelar(r.id, false, "Tarde", admin));
+    assertTrue(erro.getMessage().contains("já terminou"));
+    assertEquals(StatusReserva.APROVADA, r.statusReserva);
+    assertEquals(0, antes.compareTo(cota.consultar(p, r.data).horasUtilizadas));
+    service.cancelar(r.id, true, "Interdição registrada pelo gestor", admin);
+    assertEquals(StatusReserva.CANCELADA, r.statusReserva);
+    assertEquals(0, BigDecimal.ZERO.compareTo(cota.consultar(p, r.data).horasUtilizadas));
+  }
+
+  @Test
+  void eventoAprovadoAindaNaoTerminadoContinuaCancelavelComPenalidade() {
+    Persona p = personas.findByCodigo("P4").orElseThrow();
+    p.cotaMensalHoras = new BigDecimal("6");
+    personas.saveAndFlush(p);
+    var r = service.solicitar(form("P4", LocalDate.of(2026, 10, 20)));
+    service.aprovar(r.id, admin);
+    r.data = LocalDate.of(2026, 10, 5);
+    r.horaFim = LocalTime.of(13, 0);
+    reservas.saveAndFlush(r);
+    service.cancelar(r.id, false, "Desistência no dia", admin);
+    assertEquals(StatusReserva.CANCELADA, r.statusReserva);
+    assertEquals(0, new BigDecimal("8").compareTo(cota.consultar(p, r.data).horasUtilizadas));
+  }
+
+  @Test
   void forcaMaiorJustificadaDispensaPenalidade() {
     var r = service.solicitar(form("P3", LocalDate.of(2026, 10, 20)));
     service.cancelar(r.id, true, "Interdição do espaço", admin);

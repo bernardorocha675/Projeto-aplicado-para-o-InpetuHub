@@ -17,3 +17,13 @@ O mecanismo não garante reversão automática de migrations após falha de inic
 Se já existem dados, o iniciador não gera outra chave ou ambiente para substituir arquivos ausentes. Pare e preserve a instalação; recupere banco, `.secrets/mfa.key` e `.env.local` do mesmo backup. Não apague o banco nem gere uma chave para tentar recuperar o acesso. Arquivos privados que sejam atalhos ou diretórios também são recusados.
 
 Se o corpo do download for interrompido, a versão instalada continua disponível e a pasta temporária é removida. A próxima abertura pode tentar novamente. Erros de integridade, de gravação local ou pacote inválido continuam interrompendo a atualização; nenhum pacote parcial é ativado.
+
+## Atualização que não pode ser instalada — 0.4.11
+
+Se já existe uma versão completa instalada, uma atualização que não pode ser usada não impede mais o início. Isso vale para release sem o pacote do seu sistema, pacote que não confere com o SHA-256, erro de gravação ou backup que não pôde ser feito. O iniciador mostra o aviso, mantém a versão instalada e tenta de novo na próxima abertura. Nenhum pacote inválido é ativado. Na primeira instalação, sem versão anterior, a falha continua interrompendo.
+
+Se a pasta de uma versão existir mas estiver incompleta ou alterada (por exemplo, um arquivo removido pelo antivírus), ela não é usada nem apagada. Recebe o nome `installed/.danificada-<versão>-<data>-<código>` e a versão é baixada e conferida de novo. Essas pastas podem ser examinadas e removidas manualmente depois, com o sistema parado.
+
+## Sistema deixado aberto — 0.4.11
+
+Se o iniciador for fechado à força enquanto o sistema estava aberto, o Java pode continuar usando os dados. Na próxima vez que você abrir o executável e iniciar, o iniciador pede o encerramento normal desse sistema anterior, aguarda até 30 segundos e então inicia. Se ele não encerrar, a tela orienta fechá-lo ou reiniciar o computador. No Linux e no macOS, um pedido de encerramento do sistema operacional ao iniciador (SIGTERM ou Ctrl+C) também para o sistema e finaliza o registro da sessão. No Windows, o encerramento forçado é tratado na próxima abertura.

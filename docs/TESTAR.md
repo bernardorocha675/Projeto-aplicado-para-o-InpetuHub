@@ -52,3 +52,12 @@ Falhas de SMTP são testadas com serviço simulado, sem enviar emails reais. Nã
 6. Todos os campos obrigatórios devem ter `*`. Confira agenda com dia livre/parcial/ocupado e em janela estreita; os sete dias da semana devem ficar visíveis.
 
 Evidências e limites: [CORRECOES-RELATORIO.md](CORRECOES-RELATORIO.md).
+
+## Abertura e atualização — fix 0.4.11
+
+1. Com o sistema em execução, encerre o iniciador à força (Gerenciador de Tarefas, Monitor de Atividade ou `kill`), sem usar Parar. Abra o executável de novo e clique Iniciar: a tela deve indicar a recuperação e, em até cerca de 30 segundos, abrir o sistema com os dados preservados.
+2. Numa cópia descartável com duas versões instaladas, altere um arquivo da pasta da versão mais nova. Ao abrir, a versão anterior deve continuar utilizável e a pasta alterada deve ser preservada como `installed/.danificada-…`.
+3. Na área interna, tente cancelar uma reserva aprovada cujo horário já terminou: o sistema deve recusar e orientar Concluir. A exceção de força maior, com justificativa, continua permitida ao gestor.
+4. Confira em `logs/sessoes/.../log.txt` os códigos ORPHAN_APP_FOUND/ORPHAN_APP_STOPPED e, nas falhas, o campo `result` de ACTION_FAILED.
+
+O smoke da CI executa automaticamente o item 1 com pasta acentuada e, no Linux, sem locale configurado.
