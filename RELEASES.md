@@ -1,6 +1,6 @@
 # Publicação de versões
 
-A linha atual usa executáveis nativos. Os fontes estão em `aplicativo/`, `iniciador/` e `receptor/`; a documentação está em `docs/`. As releases anteriores e suas tags permanecem disponíveis. A reorganização é a entrega **0.4.3**.
+A linha atual usa executáveis nativos. Os fontes estão em `aplicativo/`, `iniciador/` e `receptor/`; a documentação está em `docs/`. As releases anteriores e suas tags permanecem disponíveis.
 
 ## Preparar e validar
 

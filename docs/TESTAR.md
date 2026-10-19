@@ -1,4 +1,4 @@
-# Testar a entrega 0.4.5
+# Testar a entrega
 
 ## Conferência da equipe pelo executável
 
@@ -8,7 +8,7 @@
 4. Pare e inicie novamente: cadastros, reservas e acessos devem permanecer.
 5. Feche só a aba e reabra o executável: a instância existente deve reaparecer. Use **Fechar iniciador** para encerrar de verdade e confira `logs/sessoes/.../log.txt`, com as versões em cada evento.
 6. Depois da primeira configuração, teste o pacote instalado sem internet. Relatórios devem permanecer pendentes, sem falsa confirmação de envio.
-7. Numa cópia de teste da 0.4.4, confira a atualização para 0.4.5 e a preservação de banco, chave e contas. A família 0.5 não deve ser instalada automaticamente.
+7. Numa cópia de teste da versão anterior, confira a atualização para a versão atual e a preservação de banco, chave e contas. A família 0.5 não deve ser instalada automaticamente.
 
 Registre sistema, arquitetura, versão, passos, esperado e observado ao relatar um bug. Revise os logs; não compartilhe banco, chaves ou backups.
 
@@ -61,3 +61,11 @@ Evidências e limites: [CORRECOES-RELATORIO.md](CORRECOES-RELATORIO.md).
 4. Confira em `logs/sessoes/.../log.txt` os códigos ORPHAN_APP_FOUND/ORPHAN_APP_STOPPED e, nas falhas, o campo `result` de ACTION_FAILED.
 
 O smoke da CI executa automaticamente o item 1 com pasta acentuada e, no Linux, sem locale configurado.
+
+## Download, avisos e endereço local — fix 0.4.12
+
+1. Numa conexão lenta ou limitada, confira que o download da atualização mostra o progresso em MB e termina, mesmo levando mais de 5 minutos.
+2. Abra o executável enquanto outra janela do iniciador estiver aberta sem `running.json` (ou com a pasta de dados sem permissão): deve aparecer uma janela de aviso, em vez de nada acontecer.
+3. Com o sistema aberto, um endereço diferente de 127.0.0.1/localhost na barra do navegador deve ser recusado com “Endereço recusado”.
+
+O smoke da CI confere automaticamente a recusa do host externo.

@@ -93,6 +93,12 @@ with tempfile.TemporaryDirectory(prefix='inpetu-desktop-smoke-') as temp:
             raise AssertionError('Controlador aceitou chamada sem token')
         except urllib.error.HTTPError as error:
             assert error.code == 403
+        # Outro nome de host apontado para 127.0.0.1 (DNS rebinding) nao acessa o aplicativo local.
+        try:
+            browser().open(urllib.request.Request(base+'/login',headers={'Host':'atacante.example'}),timeout=10)
+            raise AssertionError('Aplicativo aceitou host externo')
+        except urllib.error.HTTPError as error:
+            assert error.code==400
         with get(browser(),base+'/agenda') as response:
             public_page=response.read().decode()
         public_header=public_page.split('<header',1)[1].split('</header>',1)[0]

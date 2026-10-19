@@ -1,8 +1,23 @@
-# Handover técnico — InPETU Hub 0.4.11
+# Handover técnico — InPETU Hub 0.4.12
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
 
-## Fix 0.4.11 — abertura, atualização e cancelamento (preparado, aguardando CI de main)
+## Fix 0.4.12 — lote 2 desktop (preparado, aguardando matriz e autorização)
+
+Autorizado em 19/10/2026. Base: main da 0.4.11. Mudanças:
+
+- `iniciador/update.go`: cliente sem prazo total; prazos de TLS/cabeçalho e `downloadStallTimeout` (60 s sem dados cancela pelo contexto); `progressReader` informa MB; consulta de releases em cache por 10 min; versão cuja instalação falhou não é tentada de novo na mesma execução; `removeStaleStages` limpa `.download-*`/`.stage-*`.
+- `iniciador/main.go` + `alert_*.go`: `reportFatal` mostra aviso nativo quando `run()` falha, exceto com `--headless`.
+- `security/LocalHostFilter.java`: perfil local aceita somente 127.0.0.1/localhost/::1 no Host.
+- `reporting.go`: falhas de envio registradas uma vez por período. `model.go`: novas tentativas no Windows antes de remover o destino. `app.go`: `openBrowser` aguarda o auxiliar.
+- `package_v04.py`: `--compress=zip-6`. `smoke_v04.py`: recusa de host externo.
+- Documentação: guias sem versões antigas, índice, `continuidade/HISTORICO.md` com os estados anteriores, `CLAUDE.md` sem instruções vencidas. Resultado das suspeitas em REVISAO-DESKTOP.md.
+
+Sem migration, reset, contas, preços, cotas, dependências ou ativação externa.
+
+## Fix 0.4.11 — abertura, atualização e cancelamento — publicada e verificada
+
+A [0.4.11](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.11) foi publicada e verificada em 19/10/2026 pelo [run 39189511175](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39189511175), após o PR [#8](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/8) (matriz do PR no run 39188538949, verde). Tag/código testado `da8e362e323e8b048a564eca440e345472bfb61c` (merge em main). Seis alvos Windows/macOS/Linux x64/ARM64, fonte/segredos, dependências, CodeQL, relatório e publicação aprovados. Conferidos os 12 assets e os 11 checksums contra digests públicos; v0.4.11 é a latest. As 16 releases/tags anteriores mantêm arquivos, tamanhos e digests. Relatório da CI: `Testes/teste14-2026-10-18_23-20-37-702b82ba/log.txt`.
 
 Lote 1 da análise desktop de 19/10/2026, autorizado pelo responsável. Base `e2575cc` (main com 0.4.10). O aplicativo continua o da 0.4.7; mudanças pontuais:
 
@@ -13,7 +28,7 @@ Lote 1 da análise desktop de 19/10/2026, autorizado pelo responsável. Base `e2
 - `ReservaService.cancelar`: reserva aprovada com término no passado não é cancelada sem força maior; orienta Concluir. Decisão registrada em `continuidade/CONTEXTO.md`.
 - Smoke: pasta com espaços e acentos, Linux sem locale e nova fase de recuperação após encerrar o iniciador à força.
 
-Sem migration, reset, mudança de contas/senhas, preços, cotas, dependências ou ativação externa. Evidências locais em VALIDACAO.md. A publicação depende do merge em main e da matriz obrigatória; não declarar publicada antes de conferir run, tag e assets.
+Sem migration, reset, mudança de contas/senhas, preços, cotas, dependências ou ativação externa. Evidências locais em VALIDACAO.md.
 
 ## Retorno à 0.4.7 — 0.4.10 publicada e verificada
 

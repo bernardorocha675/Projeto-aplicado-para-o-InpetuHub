@@ -1,8 +1,9 @@
-InPETU Hub 0.4.5
+InPETU Hub 0.4
 
-Para USAR, baixe o pacote nativo da release e abra o iniciador.
+Para USAR, baixe o pacote nativo da release mais recente e abra o iniciador.
 Nao e necessario VS Code, Java, Maven ou arquivo de senhas.
 Veja COMO-INICIAR.md e ACESSOS.md.
 
-A 0.4 comeca com banco novo e cinco contas publicas de demonstracao.
+A linha 0.4 usa banco proprio e cinco contas publicas de demonstracao.
 A pasta da 0.3 permanece intacta. Os proximos inicios preservam os registros novos.
+(O pacote gera sua propria copia deste aviso com o numero exato da versao.)

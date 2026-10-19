@@ -189,5 +189,7 @@ func openBrowser(address string) {
  case "darwin":command=exec.Command("open",address)
  default:command=exec.Command("xdg-open",address)
  }
- quietCommand(command);_ = command.Start()
+ quietCommand(command)
+ // Aguardar o auxiliar evita processos encerrados acumulados enquanto o iniciador fica aberto.
+ if command.Start()==nil{go func(){_ = command.Wait()}()}
 }

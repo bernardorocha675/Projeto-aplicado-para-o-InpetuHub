@@ -56,7 +56,7 @@ java_home = Path(os.environ['JAVA_HOME'])
 jlink = java_home / 'bin' / ('jlink.exe' if goos == 'windows' else 'jlink')
 subprocess.run([str(jlink), '--add-modules',
                 'java.se,jdk.crypto.ec,jdk.unsupported,jdk.zipfs,jdk.charsets,jdk.management,jdk.naming.dns,jdk.localedata,jdk.jfr',
-                '--strip-debug', '--no-header-files', '--no-man-pages', '--compress=2',
+                '--strip-debug', '--no-header-files', '--no-man-pages', '--compress=zip-6',
                 '--output', str(bundle / 'runtime')], check=True)
 # ZIPs nao carregam symlinks: todas as licencas e arquivos do runtime sao arquivos reais.
 for path in sorted((bundle / 'runtime').rglob('*'), key=lambda p: len(p.parts)):

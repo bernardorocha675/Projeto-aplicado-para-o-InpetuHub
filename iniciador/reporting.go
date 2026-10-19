@@ -260,20 +260,29 @@ func (m *Manager) flushReports() {
 	client := reportingHTTPClient()
 	config, e := loadReportingConfig(m.home, client)
 	if e != nil {
-		m.record("WARN", "REPORT_CONFIG_FAILED", map[string]any{"phase": "CONFIG", "result": "NEGADO"})
+		// Sem internet a tentativa se repete a cada minuto; registrar so a mudanca de estado.
+		if !m.reportFailing {
+			m.record("WARN", "REPORT_CONFIG_FAILED", map[string]any{"phase": "CONFIG", "result": "NEGADO"})
+		}
+		m.reportFailing = true
 		m.reportingStatus("Envio pendente; registros preservados neste computador.")
 		return
 	}
 	if !config.Enabled {
+		m.reportFailing = false
 		m.reportingStatus("Registros locais ativos. Envio aguardando configuração do responsável.")
 		return
 	}
 	count, e := sendPendingReports(m.home, config, client)
 	if e != nil {
-		m.record("WARN", "REPORT_UPLOAD_FAILED", map[string]any{"phase": "UPLOAD", "result": "NEGADO"})
+		if !m.reportFailing {
+			m.record("WARN", "REPORT_UPLOAD_FAILED", map[string]any{"phase": "UPLOAD", "result": "NEGADO"})
+		}
+		m.reportFailing = true
 		m.reportingStatus("Envio pendente; nova tentativa automática durante o uso ou na próxima abertura.")
 		return
 	}
+	m.reportFailing = false
 	if pendingReportCount(m.home) > 0 {
 		m.reportingStatus("Relatórios aguardando confirmação de publicação no GitHub; cópias locais preservadas.")
 	} else if count > 0 {

@@ -13,7 +13,7 @@ Projeto aplicado oficial do **InPETU Hub**, desenvolvido na disciplina de **Proj
 
 ## Versão atual
 
-[**Versão 0.4.11**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.11) — abertura mais confiável do executável: recupera o sistema deixado aberto, mantém a versão instalada quando uma atualização falha e bloqueia o cancelamento de eventos já terminados. Dados preservados.
+[**Versão 0.4.12**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.12) — atualização sem limite de tempo em conexões lentas, aviso visível quando o iniciador não abre e proteção do endereço local. Dados preservados.
 
 O aplicativo continua o da 0.4.7, restaurado na 0.4.10; [detalhes do retorno](docs/RETORNO-0.4.7.md).
 

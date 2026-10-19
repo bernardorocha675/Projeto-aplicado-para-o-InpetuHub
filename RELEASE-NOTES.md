@@ -1,14 +1,14 @@
-# InPETU Hub 0.4.11
+# InPETU Hub 0.4.12
 
-Abertura mais confiável do executável e regra de cancelamento.
+Downloads em conexões lentas, avisos visíveis e proteção do endereço local.
 
-- Se o iniciador foi fechado à força e o sistema continuou aberto, a próxima abertura encerra esse sistema anterior de forma normal e inicia de novo. Antes, a tela ficava presa em “outra execução está usando os dados”.
-- No Linux e no macOS, um pedido de encerramento do sistema operacional ao iniciador agora também para o sistema e finaliza o registro da sessão.
-- Uma falha do Java na conferência não é mais apresentada como “outra execução”. No Linux sem idioma configurado, pastas com acentos passam a funcionar.
-- Quando a atualização não pode ser instalada (pacote ausente, incompleto ou que não confere), a versão já instalada continua sendo usada, com aviso. Um pacote inválido continua nunca sendo ativado.
-- Uma pasta de versão danificada é preservada com outro nome (`.danificada-…`) e a versão é instalada de novo, sem apagar arquivos.
-- Reserva aprovada cujo evento já terminou não pode mais ser cancelada; use **Concluir**. A exceção de força maior do gestor, com justificativa, continua disponível. Antes, esse cancelamento cobrava penalidade de cota.
-- Os registros de falha passam a indicar o motivo por código (por exemplo, DATA_IN_USE, JAVA_CHECK_FAILED, ORPHAN_APP_STOPPED, UPDATE_SKIPPED).
+- O download de atualização não tem mais limite total de 5 minutos: continua enquanto os dados chegam e mostra o progresso em MB. Só é interrompido após 60 segundos sem receber nada; então a versão instalada continua em uso e o download não é repetido ao clicar Iniciar.
+- Quando o iniciador não consegue abrir, uma janela de aviso explica o motivo (Windows, macOS e Linux com zenity/kdialog/xmessage). Antes, nada acontecia.
+- O sistema local recusa endereços diferentes de 127.0.0.1/localhost, impedindo que uma página externa use o aplicativo aberto no computador.
+- Restos de downloads interrompidos são removidos automaticamente; pastas de versão danificadas continuam preservadas.
+- Avisos de envio sem internet deixam de se repetir a cada minuto nos registros. A consulta de atualizações é reaproveitada por 10 minutos, poupando o limite do GitHub.
+- Gravação de arquivos no Windows tenta de novo quando o antivírus segura o arquivo por instantes.
+- Documentação reorganizada: guias sem números de versão antigos, índice atualizado e histórico da continuidade arquivado.
 
 Dados, reservas, contas, configurações, chave e backups permanecem no mesmo local da família 0.4.x. Não há migration, reset, mudança de dependências ou ativação externa. Windows/macOS/Linux x64/ARM64 e Java privado preservados; Android continua retirado.
 

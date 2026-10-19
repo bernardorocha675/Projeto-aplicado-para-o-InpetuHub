@@ -17,9 +17,10 @@ import (
  "strconv"
  "strings"
  "sync"
+ "time"
 )
 
-var buildVersion = "0.4.11"
+var buildVersion = "0.4.12"
 const repository = "bernardorocha675/Projeto-aplicado-para-o-InpetuHub"
 const family = "0.4"
 var versionPattern = regexp.MustCompile("^v?0[.]4[.](0|[1-9][0-9]*)$")
@@ -59,6 +60,11 @@ type Manager struct {
  stoppedCheck func(string,Bundle) error
  session *Session
  reportMu sync.Mutex
+ // Consulta recente das releases e versoes cuja instalacao ja falhou nesta execucao.
+ latestCache *release
+ latestAt time.Time
+ skippedUpdates map[string]bool
+ reportFailing bool
 }
 type runningProcess struct { cmd commandProcess; done chan struct{} }
 type commandProcess interface { Kill() error }
@@ -87,6 +93,9 @@ func atomicWrite(path string,data []byte,mode os.FileMode) error {
  if e=file.Chmod(mode);e==nil {_,e=file.Write(data)};if e==nil {e=file.Sync()};closeErr:=file.Close()
  if e!=nil{return e};if closeErr!=nil{return closeErr}
  e=os.Rename(tmp,path)
+ // No Windows, antivirus ou indexacao podem segurar o destino por instantes: tentar de novo antes
+ // do ultimo recurso de remover o arquivo antigo, que deixa um intervalo sem o arquivo.
+ for attempt:=0;e!=nil && runtime.GOOS=="windows" && attempt<10;attempt++{time.Sleep(100*time.Millisecond);e=os.Rename(tmp,path)}
  if e!=nil && runtime.GOOS=="windows" { if fi,err:=os.Lstat(path);err==nil && fi.Mode().IsRegular(){if err=os.Remove(path);err!=nil{return err};e=os.Rename(tmp,path)} }
  return e
 }

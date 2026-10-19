@@ -35,8 +35,6 @@ Ao concluir uma tarefa, atualize `continuidade/ESTADO-ATUAL.md` com: mudança, e
 
 As conexões do ChatGPT não são transferidas ao Claude Code. Verifique as integrações disponíveis na nova ferramenta; nunca registre credenciais nestes documentos.
 
-Backup e reorganização foram concluídos na 0.4.3. O relatório caçabugs_0.1_Joaoe.docx.PDF foi analisado e a parte 1 (cadastro de espaços) foi concluída na release 0.4.4, publicada e verificada. Consulte docs/BUGS.md e continuidade/ESTADO-ATUAL.md. Pare e aguarde nova autorização para outra parte. O Render não está incluído nesta etapa.
-
-O fix 0.4.5 de logs foi publicado e verificado, com seis ambientes aprovados. Consulte o estado atual e o handover. O envio dos PCs ao GitHub ainda não foi ativado: a integração Render exige identificar explicitamente o workspace, e a descoberta desta sessão não autoriza selecionar My Workspace sem a resposta do usuário. Parar para essa confirmação; não avançar automaticamente outras partes do PDF nem declarar envio real como concluído.
+Entregas e evidências anteriores estão em `continuidade/HISTORICO.md`, no handover e nas releases. O envio dos PCs ao GitHub ainda não foi ativado: a integração Render exige identificar explicitamente o workspace, e nada nesta área autoriza selecionar My Workspace sem a resposta do usuário. Não declarar envio real como concluído. Cada lote termina ao ser entregue: parar e aguardar nova autorização.
 
 Em 18/10/2026, o responsável retirou o suporte Android do projeto ativo. Manter somente desktop Windows/macOS/Linux. Histórico, releases Android já publicadas e materiais privados de recuperação permanecem preservados; não retomar Android sem nova autorização.

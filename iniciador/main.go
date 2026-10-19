@@ -96,6 +96,7 @@ func run() (runErr error){
  flag.BoolVar(&start,"start",false,"Iniciar apos preparar")
  flag.StringVar(&resume,"resume-session","","Continuidade interna de uma sessao apos atualizar")
  flag.Parse()
+ headlessRun=headless
  if flag.NArg()!=0{return errors.New("argumento desconhecido")}
  if home==""{var e error;home,e=defaultHome();if e!=nil{return e}}
  m,e:=newManager(home,offline,headless);if e!=nil{return e}
@@ -157,4 +158,11 @@ func run() (runErr error){
  }
  return nil
 }
-func main(){if e:=run();e!=nil{fmt.Fprintln(os.Stderr,"InPETU Hub:",e);os.Exit(1)}}
+// Sem terminal (Windows, app do macOS, gerenciador de arquivos), a falha precisa de um aviso visivel.
+var headlessRun bool
+var showFatal = nativeAlert
+func reportFatal(e error){
+ fmt.Fprintln(os.Stderr,"InPETU Hub:",e)
+ if !headlessRun{showFatal("InPETU Hub","Nao foi possivel abrir o InPETU Hub: "+e.Error())}
+}
+func main(){if e:=run();e!=nil{reportFatal(e);os.Exit(1)}}

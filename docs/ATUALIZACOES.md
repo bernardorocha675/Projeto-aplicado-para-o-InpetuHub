@@ -27,3 +27,7 @@ Se a pasta de uma versão existir mas estiver incompleta ou alterada (por exempl
 ## Sistema deixado aberto — 0.4.11
 
 Se o iniciador for fechado à força enquanto o sistema estava aberto, o Java pode continuar usando os dados. Na próxima vez que você abrir o executável e iniciar, o iniciador pede o encerramento normal desse sistema anterior, aguarda até 30 segundos e então inicia. Se ele não encerrar, a tela orienta fechá-lo ou reiniciar o computador. No Linux e no macOS, um pedido de encerramento do sistema operacional ao iniciador (SIGTERM ou Ctrl+C) também para o sistema e finaliza o registro da sessão. No Windows, o encerramento forçado é tratado na próxima abertura.
+
+## Conexões lentas — 0.4.12
+
+O download não tem mais prazo total: enquanto chegam dados, ele continua, e a tela mostra quantos MB já foram recebidos. A transferência só é interrompida após 60 segundos sem receber nada; nesse caso a versão instalada continua em uso e a tentativa volta na próxima abertura, sem repetir ao clicar Iniciar. Restos de downloads interrompidos (`installed/.download-*` e `.stage-*`) são removidos automaticamente na próxima instalação.
