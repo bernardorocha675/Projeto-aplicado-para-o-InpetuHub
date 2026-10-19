@@ -4,7 +4,7 @@ A linha atual usa executáveis nativos. Os fontes estão em `aplicativo/`, `inic
 
 ## Preparar e validar
 
-Para um fix 0.4.x, atualize VERSION, a versão no POM, buildVersion de referência no iniciador, a versão do receptor e os caminhos do JAR e a identificação da versão no roteiro de testes. Reescreva RELEASE-NOTES.md e atualize handover, guias afetados e continuidade.
+Para um fix 0.4.x ou 0.5.x, atualize VERSION, a versão no POM, buildVersion de referência no iniciador, a versão do receptor e os caminhos do JAR e a identificação da versão no roteiro de testes. Reescreva RELEASE-NOTES.md e atualize handover, guias afetados e continuidade.
 
 Em main, `.github/workflows/release-v0.4.yml` compila e testa os seis pacotes nativos, executa o roteiro HTTP/backup e o smoke do próprio executável/runtime. Código, segredos, dependências, CodeQL e publicação do relatório de CI são etapas obrigatórias antes da publicação. O resultado concreto está no run associado ao commit da tag.
 
@@ -16,4 +16,4 @@ O publicador só aceita os artefatos do mesmo run: seis ZIPs completos, dois EXE
 
 Uma release publicada não é substituída. Correções exigem novo número; não mover tags, excluir releases antigas ou trocar assets para reorganizar o repositório. Os fontes antigos podem ser consultados nas tags; sua retirada da árvore principal não apaga o histórico.
 
-O iniciador instala somente fixes estáveis da própria família 0.4.x, preservando dados no perfil do usuário. A reorganização do código não muda a pasta `InPETU-Hub/0.4`, não redefine contas e não importa instalações da 0.3. Detalhes em [docs/ATUALIZACOES.md](docs/ATUALIZACOES.md).
+O iniciador instala somente versões estáveis das linhas 0.4.x e 0.5.x (desde a 0.4.17, a 0.4 passa automaticamente para a 0.5, por decisão do responsável em 19/10/2026), preservando dados no perfil do usuário; as duas linhas usam a mesma pasta `InPETU-Hub/0.4`. A reorganização do código não muda a pasta `InPETU-Hub/0.4`, não redefine contas e não importa instalações da 0.3. Detalhes em [docs/ATUALIZACOES.md](docs/ATUALIZACOES.md).

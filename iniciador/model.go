@@ -20,12 +20,13 @@ import (
 	"time"
 )
 
-var buildVersion = "0.4.16"
+var buildVersion = "0.4.17"
 
 const repository = "bernardorocha675/Projeto-aplicado-para-o-InpetuHub"
-const family = "0.4"
 
-var versionPattern = regexp.MustCompile("^v?0[.]4[.](0|[1-9][0-9]*)$")
+// Linhas aceitas: 0.4.x e 0.5.x. Pela atualizacao automatica, a 0.4 atravessa para a 0.5;
+// os dados continuam na mesma pasta (InPETU-Hub/0.4), sem copia nem reset.
+var versionPattern = regexp.MustCompile("^v?0[.](4|5)[.](0|[1-9][0-9]*)$")
 
 type Bundle struct {
 	Version    string
@@ -75,16 +76,22 @@ type runningProcess struct {
 type commandProcess interface{ Kill() error }
 type installState struct{ Version string }
 
-func patch(version string) (int, error) {
+// Ordem numerica entre linhas e fixes: 0.5.0 vem depois de qualquer 0.4.x.
+func versionOrder(version string) (int, error) {
 	m := versionPattern.FindStringSubmatch(version)
 	if m == nil {
-		return 0, errors.New("versao fora da linha 0.4.x")
+		return 0, errors.New("versao fora das linhas 0.4.x e 0.5.x")
 	}
-	return strconv.Atoi(m[1])
+	minor, _ := strconv.Atoi(m[1])
+	fix, e := strconv.Atoi(m[2])
+	if e != nil || fix >= 1000000 {
+		return 0, errors.New("versao fora das linhas 0.4.x e 0.5.x")
+	}
+	return minor*1000000 + fix, nil
 }
 func newer(a, b string) bool {
-	x, e := patch(a)
-	y, e2 := patch(b)
+	x, e := versionOrder(a)
+	y, e2 := versionOrder(b)
 	return e == nil && (e2 != nil || x > y)
 }
 func randomText(size int) string {
@@ -248,7 +255,7 @@ func readBundle(root string) (Bundle, error) {
 	if e = json.Unmarshal(data, &b); e != nil {
 		return b, e
 	}
-	if _, e = patch(b.Version); e != nil {
+	if _, e = versionOrder(b.Version); e != nil {
 		return b, e
 	}
 	if b.GOOS != runtime.GOOS || b.GOARCH != runtime.GOARCH {
@@ -287,6 +294,7 @@ func defaultHome() (string, error) {
 			return "", e
 		}
 	}
+	// Pasta de dados fixa desde a 0.4: a 0.5 usa os mesmos dados.
 	return filepath.Join(base, "InPETU-Hub", "0.4"), nil
 }
 func newManager(home string, offline, headless bool) (*Manager, error) {
@@ -308,7 +316,7 @@ func (m *Manager) current() (string, Bundle, error) {
 	var saved installState
 	data, e := os.ReadFile(filepath.Join(m.home, "current.json"))
 	if e == nil && json.Unmarshal(data, &saved) == nil {
-		if _, e = patch(saved.Version); e == nil {
+		if _, e = versionOrder(saved.Version); e == nil {
 			root := filepath.Join(m.home, "installed", saved.Version)
 			if b, e := readBundle(root); e == nil {
 				return root, b, nil

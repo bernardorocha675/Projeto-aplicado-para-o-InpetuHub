@@ -1,6 +1,10 @@
-# Handover técnico — InPETU Hub 0.4.16
+# Handover técnico — InPETU Hub 0.4.17
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
+
+## Fix 0.4.17 — ponte para a 0.5 — em revisão
+
+Pedido em 19/10/2026: gerar a 0.5 com o código atual, mesmos dados e atualização automática. `model.go`: `versionPattern` aceita 0.4.x e 0.5.x; `versionOrder` (antes `patch`) ordena linha e fix, então 0.5.0 > 0.4.x; a pasta de dados continua `InPETU-Hub/0.4`. Também aceitam 0.5: `publish_v04.py`, `collect-reports.mjs`, `receptor/schema.mjs` e `SafeLogEncoder`. Testes locais (Linux x64, 19/10/2026): Go test/vet/race e gofmt (dois testes novos: a 0.4 escolhe a 0.5.0 e não outra linha; a 0.4.17 entrega a execução ao iniciador da 0.5.0 instalado na mesma pasta), receptor, 126 Java (filtro de versão dos logs aceita 0.5), Testar 14/14, pacote Linux x64, smoke e segredos aprovados. Windows, macOS e ARM64 ficam com a matriz. Em seguida, a 0.5.0 com o mesmo código.
 
 ## Fix 0.4.16 — lote 2 do Caça bugs 2 (calendário) — publicada e verificada
 

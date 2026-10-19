@@ -43,7 +43,7 @@ export function ciReport(version,jobs){
 function git(root,args,env=process.env){return execFileSync('git',args,{cwd:root,env,encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();}
 export async function main(){
  if(process.env.GITHUB_ACTIONS!=='true'||process.env.GITHUB_REF!=='refs/heads/main'||process.env.GITHUB_REPOSITORY!==REPOSITORY)throw new Error('Publicação permitida somente no workflow oficial de main.');
- const root=git(process.cwd(),['rev-parse','--show-toplevel']);const version=fs.readFileSync(path.join(root,'VERSION'),'utf8').trim();if(!/^0\.4\.(0|[1-9][0-9]*)$/.test(version))throw new Error('Versão inválida.');
+ const root=git(process.cwd(),['rev-parse','--show-toplevel']);const version=fs.readFileSync(path.join(root,'VERSION'),'utf8').trim();if(!/^0\.(4|5)\.(0|[1-9][0-9]*)$/.test(version))throw new Error('Versão inválida.');
  const ci=process.argv.includes('--ci');let reports,endpoint,oidc;
  if(ci){
   const jobs=await jsonRequest(`https://api.github.com/repos/${REPOSITORY}/actions/runs/${Number(process.env.GITHUB_RUN_ID)}/jobs?per_page=100`,{headers:{Authorization:'Bearer '+process.env.GITHUB_TOKEN,'User-Agent':'InPETU-Reports'}});

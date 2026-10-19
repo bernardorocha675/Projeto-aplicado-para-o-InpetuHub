@@ -29,7 +29,7 @@ class LoggingTest {
     String[] old = Arrays.stream(names).map(System::getProperty).toArray(String[]::new);
     try {
       System.setProperty(names[0], "0.4.2");
-      System.setProperty(names[1], "0.4.2");
+      System.setProperty(names[1], "0.5.0");
       System.setProperty(names[2], "a".repeat(32));
       var event = new LoggingEvent();
       event.setTimeStamp(0);
@@ -39,7 +39,7 @@ class LoggingTest {
       event.setMDCPropertyMap(Map.of());
       var encoded = json.readTree(new SafeLogEncoder().encode(event));
       assertEquals("0.4.2", encoded.get("appVersion").asString());
-      assertEquals("0.4.2", encoded.get("launcherVersion").asString());
+      assertEquals("0.5.0", encoded.get("launcherVersion").asString());
       assertEquals("a".repeat(32), encoded.get("sessionId").asString());
       System.setProperty(names[0], "invalid-version-secret");
       System.setProperty(names[2], "invalid-session-secret");

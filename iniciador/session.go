@@ -63,7 +63,7 @@ type Session struct {
 }
 
 func safeVersion(v string) string {
-	if _, e := patch(v); e == nil {
+	if _, e := versionOrder(v); e == nil {
 		return strings.TrimPrefix(v, "v")
 	}
 	if v == "dev" {

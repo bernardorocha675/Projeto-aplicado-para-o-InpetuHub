@@ -15,8 +15,8 @@ def run(*args):
 def main():
     os.chdir(run('git','rev-parse','--show-toplevel'))
     version=Path('VERSION').read_text().strip()
-    if not re.fullmatch(r'0\.4\.(0|[1-9]\d*)',version):
-        raise SystemExit('Publicador limitado a releases numericas 0.4.x.')
+    if not re.fullmatch(r'0\.(4|5)\.(0|[1-9]\d*)',version):
+        raise SystemExit('Publicador limitado a releases numericas 0.4.x e 0.5.x.')
     ns={'m':'http://maven.apache.org/POM/4.0.0'}
     if ET.parse('aplicativo/pom.xml').getroot().findtext('m:version',namespaces=ns)!=version:
         raise SystemExit('VERSION e pom.xml divergem.')

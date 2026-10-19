@@ -4,7 +4,7 @@ export const REPOSITORY_ID='1419952796';
 export const AUDIENCE='api://inpetu-report-collector';
 export const WORKFLOW=REPOSITORY+'/.github/workflows/collect-test-reports.yml@refs/heads/main';
 export const MAX_BODY=3*1024*1024;
-const version=/^0\.4\.(0|[1-9][0-9]*)$/;
+const version=/^0\.(4|5)\.(0|[1-9][0-9]*)$/;
 const validVersion=value=>typeof value==='string'&&version.test(value);
 const code=/^[A-Z][A-Z0-9_]{0,63}$/;
 const symbol=/^[a-zA-Z_$*][a-zA-Z0-9_.$*]{0,159}$/;

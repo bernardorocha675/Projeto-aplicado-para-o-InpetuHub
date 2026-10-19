@@ -1,10 +1,10 @@
-# Atualizações e dados — 0.4
+# Atualizações e dados — 0.4 e 0.5
 
-O iniciador verifica as releases oficiais ao abrir e novamente antes de iniciar. Seleciona o maior número estável **0.4.x**; não instala 0.5, rascunhos ou pré-releases. Confere o SHA-256 do ZIP, a plataforma, a versão e os arquivos principais antes de ativar uma instalação nova.
+O iniciador verifica as releases oficiais ao abrir e novamente antes de iniciar. Seleciona o maior número estável das linhas **0.4.x** e **0.5.x** (a partir da 0.4.17, a 0.4 passa sozinha para a 0.5); não instala 0.6 ou outras linhas, rascunhos ou pré-releases. Confere o SHA-256 do ZIP, a plataforma, a versão e os arquivos principais antes de ativar uma instalação nova.
 
 As versões são instaladas em pastas próprias no perfil do usuário. O EXE em execução não é substituído. Quando necessário, o iniciador abre o executável da versão nova antes de iniciar o aplicativo. Os arquivos da instalação, do Java e das configurações ficam fora das pastas de código-fonte.
 
-O banco, chave e configurações são compartilhados apenas entre fixes da mesma linha 0.4. Antes de trocar uma versão instalada, o iniciador confere se o aplicativo está parado e guarda `data/`, `.secrets/` e os arquivos de ambiente em `backups/`. Versões anteriores permanecem disponíveis. A atualização é bloqueada enquanto o sistema está em uso.
+O banco, chave e configurações são compartilhados entre os fixes das linhas 0.4 e 0.5, que usam a mesma pasta `InPETU-Hub/0.4`. Antes de trocar uma versão instalada, o iniciador confere se o aplicativo está parado e guarda `data/`, `.secrets/` e os arquivos de ambiente em `backups/`. Versões anteriores permanecem disponíveis. A atualização é bloqueada enquanto o sistema está em uso.
 
 Se a consulta ou download estiver indisponível, usa a versão completa já instalada. Um pacote corrompido não é instalado. O pacote ZIP completo também permite a primeira configuração offline; o iniciador avulso precisa de internet na primeira instalação.
 
