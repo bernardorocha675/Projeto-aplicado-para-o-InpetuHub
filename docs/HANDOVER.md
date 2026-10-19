@@ -2,7 +2,9 @@
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
 
-## Fix 0.4.13 — agenda, validação e padronização (preparado, aguardando matriz)
+## Fix 0.4.13 — agenda, validação e padronização — publicada e verificada
+
+A [0.4.13](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.4.13) foi publicada e verificada em 19/10/2026 pelo [run 39243199166](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39243199166), após o PR [#11](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/11) (matriz do PR no run 39241817701, verde). Tag/código testado `c3bdd011a08e80acb40143fadbe4633c7fa0080d` (merge em main). Conferidos os 12 assets e os 11 checksums contra digests públicos; v0.4.13 é a latest. As 18 releases/tags anteriores mantêm arquivos, tamanhos e digests. Relatório da CI: `Testes/teste17-2026-10-19_08-14-29-2e37f9bd/log.txt`.
 
 Autorizado em 19/10/2026 após a revisão de qualidade. Mudanças:
 
