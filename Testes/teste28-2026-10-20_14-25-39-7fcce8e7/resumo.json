@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "id": "7fcce8e7a8f6e082bb263730e0888327",
+  "sequence": 1,
+  "startedAt": "2026-10-20T17:25:39Z",
+  "endedAt": "2026-10-20T17:32:49.883Z",
+  "outcome": "CONCLUIDO",
+  "os": "linux",
+  "arch": "amd64",
+  "launcherVersions": [
+    "0.5.2"
+  ],
+  "appVersions": [
+    "0.5.2"
+  ],
+  "dropped": 0,
+  "eventCount": 9,
+  "errorCount": 0,
+  "warningCount": 0,
+  "sha256": "0436f7395b1e280a31898f4ee99d730830d60056def6b5730f9be5f487ca4a07"
+}
