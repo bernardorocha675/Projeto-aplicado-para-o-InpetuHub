@@ -1,6 +1,10 @@
-# Handover técnico — InPETU Hub 0.5.2
+# Handover técnico — InPETU Hub 0.5.3
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
+
+## 0.5.3 — espaços do Hub pré-cadastrados — em revisão
+
+Pedido de 20/10/2026 (documento “Nome dos Espaços”, lote 3 do Caça bugs 2): os 10 espaços reais do Hub pré-cadastrados e mantidos nas atualizações. Decisões do responsável: capacidade = cadeiras e campo novo de mobiliário; publicar como 0.5.3. Mudanças: migration aditiva `V5__espacos_do_hub.sql` (coluna `mobiliario` e os 10 espaços, só os nomes que faltam, sem alterar existentes); `Espaco.mobiliario`; campo opcional “Mobiliário” no cadastro; agenda e pedido de reserva mostram o mobiliário no lugar de “até N pessoas” quando informado (`agenda.html`, `reserva-form.html`, `agenda.js`, JSON de `/disponibilidade`). Testes locais (Linux x64, 20/10/2026): 127 Java (novo `EspacosDoHubMigrationTest`: banco na V4 com “auditório” e um espaço da equipe migra para 11 espaços, sem duplicar nem alterar o existente; `PublicDemoLoginTest`: banco novo com 10 espaços livres e mobiliário na agenda; `FluxosIntegrationTest` passa a desativar os espaços da migration para medir a agenda com uma sala), Node da agenda (11, um novo do mobiliário) e de cadastros (4), Testar 14/14, pacote Linux x64 e smoke (banco novo com 10 espaços livres e mobiliário na agenda) aprovados. Banco real em uso: instalação 0.5.2 com banco existente atualizada pelo pacote 0.5.3 (backup criado), agenda com os 10 espaços e mobiliário. Windows, macOS e ARM64 ficam com a matriz.
 
 ## 0.5.2 — atualização com o iniciador antigo aberto — publicada e verificada
 

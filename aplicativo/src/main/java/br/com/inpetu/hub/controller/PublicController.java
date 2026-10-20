@@ -207,6 +207,8 @@ public class PublicController {
                 e.nomeEspaco,
                 "capacidade",
                 e.capacidade,
+                "mobiliario",
+                e.mobiliario == null ? "" : e.mobiliario,
                 "livres",
                 livres,
                 "ocupados",

@@ -132,7 +132,7 @@
 
   function roomCard(info, room) {
     const card = el('section', null, 'space-slots');
-    card.append(el('h4', room.nome + ` · até ${room.capacidade} pessoas`));
+    card.append(el('h4', room.nome + (room.mobiliario ? ` · ${room.mobiliario}` : ` · até ${room.capacidade} pessoas`)));
     if (room.ocupados.length) {
       card.append(el('p', 'Horários indisponíveis', 'muted'));
       for (const event of room.ocupados) card.append(el('p', `${event.inicio}–${event.fim} · ${event.titulo}`, 'busy'));

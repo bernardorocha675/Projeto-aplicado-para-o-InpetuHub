@@ -110,7 +110,9 @@ with tempfile.TemporaryDirectory(prefix='inpetu-desktop-smoke-') as temp:
         assert '/css/institucional.css' not in public_page
         with get(browser(),base+'/disponibilidade') as response:
             fresh_calendar=json.loads(response.read())
-        assert fresh_calendar['dias'] and all(d['estado']=='SEM_ESPACOS' and not d['espacos'] for d in fresh_calendar['dias']), 'Banco sem espacos nao pode indicar ocupacao'
+        # Banco novo já traz os 10 espaços do Hub (0.5.3), livres e sem reservas.
+        assert fresh_calendar['dias'] and all(d['estado']=='DISPONÍVEL' and len(d['espacos'])==10 for d in fresh_calendar['dias']), 'Banco novo deve trazer os 10 espacos do Hub livres'
+        assert 'Sala Maker VIA · 32 cadeiras e 6 sofás' in public_page, 'Mobiliario do espaco ausente na agenda'
         requester=browser()
         try:
             post(requester,base+'/reservas/resumo',{'data':'invalid-private-date','_csrf':csrf(requester,base,'/reserva')})
@@ -148,7 +150,7 @@ with tempfile.TemporaryDirectory(prefix='inpetu-desktop-smoke-') as temp:
             assert 'Sala persistente desktop' in response.read().decode()
         with get(browser(),base+'/disponibilidade') as response:
             ready_calendar=json.loads(response.read())
-        assert all(d['estado']=='DISPONÍVEL' and len(d['espacos'])==1 and d['espacos'][0]['livres'] for d in ready_calendar['dias']), 'Espaco cadastrado e sem reservas deve ficar livre'
+        assert all(d['estado']=='DISPONÍVEL' and len(d['espacos'])==11 and all(e['livres'] for e in d['espacos']) for d in ready_calendar['dias']), 'Espaco cadastrado e sem reservas deve ficar livre'
         before=(home/'.secrets/mfa.key').read_bytes()
         api('stop')
         wait_for(lambda: not api()['Running'] and not api()['Busy'])

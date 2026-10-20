@@ -111,3 +111,7 @@ O responsável pediu a versão 0.5 com o código atual e decidiu: mesmos dados (
 ## Identidade do site oficial (19/10/2026)
 
 O responsável pediu o sistema com a cara do site oficial (https://inpetuhub.sites.ufsc.br/), mantendo a agenda e a área interna. Isso substitui, para a 0.5.1 em diante, a regra do retorno à 0.4.7 de não reintroduzir a identidade institucional. Condições: Início, Agenda e Área Interna continuam locais e visíveis; links para o site oficial só depois de conferidos (HTTP 200) e em nova aba; links quebrados do próprio site (`/sobre`, `/termos-de-uso`) não são reproduzidos; imagens e fontes ficam empacotadas no aplicativo.
+
+## Espaços do Hub pré-cadastrados (20/10/2026)
+
+O responsável enviou o documento “Nome dos Espaços” e pediu os 10 espaços reais já cadastrados, também nas próximas atualizações. Isso substitui a decisão da 0.4.14 de manter o banco novo sem espaços. A migration `V5__espacos_do_hub.sql` só acrescenta os nomes que faltam (sem diferenciar maiúsculas) e nunca altera espaços, capacidades ou reservas existentes; depois disso, o que a equipe editar ou desativar prevalece (a migration não roda de novo). Decisão do responsável: capacidade = número de cadeiras, e sofás/arquibancada/detalhes ficam no campo `mobiliario`, mostrado na agenda e no pedido de reserva.
