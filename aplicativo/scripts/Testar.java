@@ -336,6 +336,21 @@ class Testar {
     return post(c, "/login", Map.of("username", login, "password", password, "_csrf", token));
   }
 
+  // Encerramento normal pelo mesmo pedido do iniciador. Encerrar à força (como o Windows faz
+  // em Process.destroy) pode perder as últimas gravações do banco antes do reinício.
+  static void stopServer() {
+    if (server != null && server.isAlive() && isolated != null) {
+      try {
+        Files.writeString(isolated.resolve(".secrets/launcher.stop"), "stop\n");
+        server.waitFor(20, TimeUnit.SECONDS);
+      } catch (Exception ignored) {
+        // O encerramento forçado abaixo continua garantindo que nada fique aberto.
+      }
+    }
+    stop(server);
+    server = null;
+  }
+
   static void startServer(Path folder) throws Exception {
     // No Windows, o banco do servidor anterior pode levar alguns segundos para ser liberado.
     for (int attempt = 1; ; attempt++) {
@@ -365,6 +380,8 @@ class Testar {
             "-jar",
             ROOT.resolve("target/inpetu-hub-0.5.1.jar").toString(),
             "--spring.profiles.active=local",
+            // Permite encerrar como o iniciador faz, salvando o banco antes de sair.
+            "--app.launcher.enabled=true",
             "--app.public-demo-accounts=false",
             "--server.port=" + port,
             "--spring.config.import=",
@@ -597,8 +614,7 @@ class Testar {
                   "Permissão do log inadequada.");
           });
     } finally {
-      stop(server);
-      server = null;
+      stopServer();
     }
     return check(
         "Banco e senha descartável persistem após reiniciar",
@@ -615,8 +631,7 @@ class Testar {
                     .equals("/admin"),
                 "Dados não persistiram.");
           } finally {
-            stop(server);
-            server = null;
+            stopServer();
           }
         });
   }
@@ -644,8 +659,7 @@ class Testar {
             String text = Files.readString(isolated.resolve("logs/inpetu.log"));
             require(!text.contains(account) && !text.contains(password), "Acesso vazou no log.");
           } finally {
-            stop(server);
-            server = null;
+            stopServer();
           }
         });
   }
@@ -692,8 +706,7 @@ class Testar {
                 !text.contains(login) && !text.contains(password),
                 "Acesso sintético vazou no log.");
           } finally {
-            stop(server);
-            server = null;
+            stopServer();
           }
         });
   }
