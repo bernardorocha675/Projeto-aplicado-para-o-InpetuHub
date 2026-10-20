@@ -18,6 +18,7 @@ public class Espaco {
   public int capacidade;
   public boolean disponibilidade;
   public boolean ativo;
+  public String mobiliario;
 
   public Long getId() {
     return id;
@@ -45,6 +46,14 @@ public class Espaco {
 
   public void setDisponibilidade(boolean value) {
     disponibilidade = value;
+  }
+
+  public String getMobiliario() {
+    return mobiliario;
+  }
+
+  public void setMobiliario(String value) {
+    mobiliario = value;
   }
 
   public boolean getAtivo() {

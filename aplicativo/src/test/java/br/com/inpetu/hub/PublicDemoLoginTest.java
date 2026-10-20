@@ -43,6 +43,7 @@ class PublicDemoLoginTest {
  @Autowired ColaboradorRepository users;
  @Autowired EmpreendedorRepository people;
  @Autowired ReservaRepository reservations;
+ @Autowired EspacoRepository spaces;
  @Autowired PrivateAccountInitializer initializer;
  @Autowired PasswordEncoder encoder;
 
@@ -67,13 +68,20 @@ class PublicDemoLoginTest {
   assertEquals(0,people.count());assertEquals(0,reservations.count());
  }
 
- @Test void emptyDesktopCalendarDoesNotClaimThatEveryDayIsOccupied() throws Exception {
+ // Banco novo já traz os 10 espaços do Hub (documento "Nome dos Espaços"), livres e sem reservas.
+ @Test void newDesktopCalendarStartsWithTheHubSpacesFree() throws Exception {
+  assertEquals(10,spaces.count());
+  var maker=spaces.findAll().stream().filter(e->e.nomeEspaco.equals("Sala Maker VIA")).findFirst().orElseThrow();
+  assertEquals(32,maker.capacidade);assertEquals("32 cadeiras e 6 sofás",maker.mobiliario);
   mvc.perform(get("/disponibilidade").param("mes","2026-10"))
       .andExpect(status().isOk())
       .andExpect(jsonPath("$.dias.length()").value(31))
       .andExpect(jsonPath("$.dias[*].estado").value(
-          org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.is("SEM_ESPACOS"))))
-      .andExpect(jsonPath("$.dias[0].espacos").isEmpty());
+          org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.not(org.hamcrest.Matchers.oneOf("SEM_ESPACOS","INDISPONÍVEL")))))
+      .andExpect(jsonPath("$.dias[0].espacos.length()").value(10));
+  mvc.perform(get("/agenda")).andExpect(status().isOk())
+      .andExpect(content().string(org.hamcrest.Matchers.containsString("Sala VIA hub · 15 cadeiras, 7 sofás e 1 arquibancada")))
+      .andExpect(content().string(org.hamcrest.Matchers.containsString("Auditório · 114 cadeiras")));
  }
  @Test void restoredPublicNavigationStaysInsideTheApplication() throws Exception {
   for(String path:new String[]{"/","/agenda","/reserva","/login"}){

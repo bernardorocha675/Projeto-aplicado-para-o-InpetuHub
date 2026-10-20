@@ -58,6 +58,9 @@ class FluxosIntegrationTest {
 
   @BeforeEach
   void preparar() {
+    // Os espaços do Hub vêm da migration; estes testes medem a agenda com uma única sala.
+    espacos.findAll().forEach(e -> e.ativo = false);
+    espacos.flush();
     sala = new Espaco();
     sala.nomeEspaco = "Sala de teste";
     sala.capacidade = 40;

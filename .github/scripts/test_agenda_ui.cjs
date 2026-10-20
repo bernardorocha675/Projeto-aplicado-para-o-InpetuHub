@@ -113,6 +113,12 @@ test('seleção de dia mostra nomes, capacidades, ocupação e links com data e 
  assert.equal(params.get('horaInicio'),'09:00');assert.equal(params.get('horaFim'),'18:00');
 });
 
+test('espaço com mobiliário informado mostra o mobiliário no lugar da capacidade', async () => {
+ const page=await calendar('DISPONÍVEL',[{id:8,nome:'Sala Maker VIA',capacidade:32,mobiliario:'32 cadeiras e 6 sofás',ocupados:[],livres:[{inicio:'09:00',fim:'18:00'}]}]);
+ page.day().listeners.click();
+ assert.ok(flattened(page.nodes['detalhe-dia']).some(n=>n.textContent==='Sala Maker VIA · 32 cadeiras e 6 sofás'));
+});
+
 test('consulta por dia muda o mês, mantém a seleção ao filtrar e limita navegação aos dois anos', async () => {
  const page=await calendar('DISPONÍVEL');const year=2026;
  const picker=page.nodes['filtro-dia'];picker.value=`${year+1}-12-20`;picker.listeners.change();await page.flush();

@@ -89,6 +89,7 @@ public class CrudService {
               List.of(
                   campo("nomeEspaco", "Nome do espaço", "text"),
                   campo("capacidade", "Capacidade", "number"),
+                  opcional("mobiliario", "Mobiliário (ex.: 32 cadeiras e 6 sofás)", "text"),
                   campo("disponibilidade", "Disponível para reservas", "checkbox"),
                   campo("ativo", "Ativo", "checkbox")));
       case "atendimentos" ->
