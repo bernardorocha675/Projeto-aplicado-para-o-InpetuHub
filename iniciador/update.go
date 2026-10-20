@@ -372,6 +372,34 @@ func extractArchive(archive, dest string) error {
 	}
 	return nil
 }
+
+// Substituivel nos testes: o executavel de teste nao traz pacote.
+var findEmbedded = embeddedBundle
+
+// O executavel aberto pode trazer uma versao mais nova que a instalada (o time baixou o pacote
+// novo). Instalar a partir dele atualiza sem depender de outro download; se algo falhar, a versao
+// instalada continua em uso e a atualizacao segue pelo caminho normal.
+func (m *Manager) useNewerEmbedded(root string, current Bundle) (string, Bundle) {
+	embedded, e := findEmbedded()
+	if e != nil {
+		return root, current
+	}
+	b, e := readBundle(embedded)
+	if e != nil || !newer(b.Version, current.Version) {
+		return root, current
+	}
+	if e = m.backup(root, current); e != nil {
+		m.record("WARN", "EMBEDDED_PACKAGE_SKIPPED", map[string]any{"phase": "BACKUP"})
+		return root, current
+	}
+	target, installed, e := m.installEmbedded(embedded)
+	if e != nil {
+		m.record("WARN", "EMBEDDED_PACKAGE_SKIPPED", map[string]any{"phase": "COPY"})
+		return root, current
+	}
+	m.record("INFO", "EMBEDDED_PACKAGE_INSTALLED", nil)
+	return target, installed
+}
 func embeddedBundle() (string, error) {
 	exe, e := os.Executable()
 	if e != nil {
@@ -496,6 +524,9 @@ func (m *Manager) installLatest() error {
 		}
 	}
 	hasCurrent := e == nil
+	if hasCurrent {
+		root, current = m.useNewerEmbedded(root, current)
+	}
 	m.message("Verificando", "Verificando atualizacoes...")
 	if m.offline {
 		if !hasCurrent {

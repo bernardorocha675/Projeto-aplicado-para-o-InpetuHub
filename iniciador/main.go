@@ -7,6 +7,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"net"
 	"net/http"
 	"net/url"
@@ -94,6 +95,10 @@ func (c *controller) perform(action string) {
 	m.record("INFO", "ACTION_STARTED", map[string]any{"action": operation})
 	switch action {
 	case "/api/install":
+		// Configurar/atualizar e um pedido explicito: tenta de novo uma atualizacao que falhou antes.
+		m.mu.Lock()
+		m.skippedUpdates = nil
+		m.mu.Unlock()
 		err = m.installLatest()
 	case "/api/start":
 		err = m.start()
@@ -161,17 +166,23 @@ func run() (runErr error) {
 	if e != nil {
 		return e
 	}
-	lock, e := acquireLock(filepath.Join(m.home, "launcher.lock"))
+	lockPath := filepath.Join(m.home, "launcher.lock")
+	lock, e := acquireLock(lockPath)
 	if e != nil {
 		data, err := os.ReadFile(filepath.Join(m.home, "running.json"))
 		var running struct{ URL string }
-		if err == nil && json.Unmarshal(data, &running) == nil && safeLocalURL(running.URL) {
+		if err != nil || json.Unmarshal(data, &running) != nil || !safeLocalURL(running.URL) {
+			return errors.New("outra instancia esta aberta; aguarde e tente novamente")
+		}
+		if !replaceOlderLauncher(running.URL) {
 			if !headless {
 				openBrowser(running.URL)
 			}
 			return nil
 		}
-		return errors.New("outra instancia esta aberta; aguarde e tente novamente")
+		if lock, e = waitForLock(lockPath, 20*time.Second); e != nil {
+			return errors.New("outra instancia esta aberta; aguarde e tente novamente")
+		}
 	}
 	defer lock.Close()
 	ownsRunning := true
@@ -311,6 +322,54 @@ func run() (runErr error) {
 		handedOff = true
 	}
 	return nil
+}
+
+// Fechar a aba do navegador nao fecha o iniciador. Um iniciador mais antigo que ficou aberto nao
+// deve prender quem abriu o executavel novo: com o sistema parado, ele recebe o mesmo pedido do
+// botao Fechar iniciador. Com o sistema em uso ou uma operacao em andamento, nada e interrompido.
+func replaceOlderLauncher(address string) bool {
+	base, token, found := strings.Cut(address, "/#")
+	if !found || token == "" {
+		return false
+	}
+	client := &http.Client{Timeout: 5 * time.Second, Transport: &http.Transport{Proxy: nil}}
+	request := func(method, path string) (*http.Response, error) {
+		r, e := http.NewRequest(method, base+path, nil)
+		if e != nil {
+			return nil, e
+		}
+		r.Header.Set("Authorization", "Bearer "+token)
+		return client.Do(r)
+	}
+	response, e := request("GET", "/api/status")
+	if e != nil {
+		return false
+	}
+	var status Status
+	e = json.NewDecoder(io.LimitReader(response.Body, 1<<20)).Decode(&status)
+	response.Body.Close()
+	if e != nil || response.StatusCode != http.StatusOK || status.Running || status.Busy {
+		return false
+	}
+	if status.Version != "" && !newer(buildVersion, status.Version) {
+		return false
+	}
+	response, e = request("POST", "/api/close")
+	if e != nil {
+		return false
+	}
+	response.Body.Close()
+	return response.StatusCode == http.StatusAccepted
+}
+func waitForLock(path string, limit time.Duration) (*os.File, error) {
+	deadline := time.Now().Add(limit)
+	for {
+		lock, e := acquireLock(path)
+		if e == nil || time.Now().After(deadline) {
+			return lock, e
+		}
+		time.Sleep(200 * time.Millisecond)
+	}
 }
 
 // Sem terminal (Windows, app do macOS, gerenciador de arquivos), a falha precisa de um aviso visivel.

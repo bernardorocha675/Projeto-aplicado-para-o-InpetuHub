@@ -1,6 +1,10 @@
-# Handover técnico — InPETU Hub 0.5.1
+# Handover técnico — InPETU Hub 0.5.2
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
+
+## 0.5.2 — atualização com o iniciador antigo aberto — em revisão
+
+Pedido de 20/10/2026, depois do relato do time: com a 0.4.17 aberta, abrir o executável da 0.5.1 continuava mostrando a 0.4.17 (“Usando a versão 0.4.17; a atualização 0.5.1 será tentada na próxima abertura”). Causa: fechar a aba do navegador não fecha o iniciador; depois de uma falha de atualização, o mesmo processo não tentava de novo nem pelo botão, e o executável novo só reabria a tela do antigo. O responsável confirmou que fechar o iniciador e abrir de novo resolve no PC dele e autorizou a 0.5.2. Mudanças no iniciador: Configurar/atualizar limpa as atualizações adiadas e tenta de novo (o Iniciar automático continua sem repetir); um executável cujo pacote é mais novo que o instalado instala a partir dele mesmo, com o backup de sempre, sem novo download (`useNewerEmbedded`); um executável mais novo fecha o iniciador antigo pelo mesmo pedido do botão Fechar iniciador quando o sistema está parado e sem operação em andamento, e assume o lock (`replaceOlderLauncher`/`waitForLock`). Testes locais (Linux x64, 20/10/2026): 54 Go (+race, vet nos seis alvos, gofmt), três novos que falham sem a correção (repetir pelo botão, pacote do executável aberto sem download e com backup, antigo parado fechado e antigo em uso/ocupado/mesma versão preservado), Testar 14/14 (126 Java), receptor 7, pacote Linux x64 e smoke aprovados. Cenário real: pacote 0.4.17 publicado aberto e parado; ao abrir o pacote 0.5.2, a 0.4.17 encerrou a sessão, a 0.5.2 instalou o próprio pacote (backup criado, chave preservada) e iniciou o sistema. Windows, macOS e ARM64 ficam com a matriz.
 
 ## 0.5.1 — identidade do site oficial — publicada e verificada
 
