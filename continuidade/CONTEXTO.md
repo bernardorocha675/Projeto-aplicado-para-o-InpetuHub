@@ -115,3 +115,7 @@ O responsável pediu o sistema com a cara do site oficial (https://inpetuhub.sit
 ## Espaços do Hub pré-cadastrados (20/10/2026)
 
 O responsável enviou o documento “Nome dos Espaços” e pediu os 10 espaços reais já cadastrados, também nas próximas atualizações. Isso substitui a decisão da 0.4.14 de manter o banco novo sem espaços. A migration `V5__espacos_do_hub.sql` só acrescenta os nomes que faltam (sem diferenciar maiúsculas) e nunca altera espaços, capacidades ou reservas existentes; depois disso, o que a equipe editar ou desativar prevalece (a migration não roda de novo). Decisão do responsável: capacidade = número de cadeiras, e sofás/arquibancada/detalhes ficam no campo `mobiliario`, mostrado na agenda e no pedido de reserva.
+
+## Cidades do mundo e telefone internacional (21/10/2026)
+
+No lote 4 o responsável trocou a lista do IBGE por uma API de cidades do mundo todo e pediu telefone internacional. Escolha técnica: geocodificação pública do Open-Meteo (gratuita, sem chave nem conta), consultada pelo servidor local em `/cidades` (a CSP impede o navegador de chamar sites externos). Só o termo digitado (2 a 60 letras) sai do computador; sem internet ou com a API fora do ar, o campo continua aceitando texto livre. O sistema não usa o proxy do sistema operacional nessa consulta. Telefone: Brasil com DDD (10 a 15 dígitos, máscara mantida); outros países começam com + e o código do país (8 a 15 dígitos, E.164), sem máscara. Cidades e telefones já cadastrados não mudam.

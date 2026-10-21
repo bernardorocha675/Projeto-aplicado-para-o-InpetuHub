@@ -108,6 +108,9 @@ with tempfile.TemporaryDirectory(prefix='inpetu-desktop-smoke-') as temp:
         assert not any(u.rstrip('/').endswith(('/sobre','/termos-de-uso')) for u,_ in external), 'Link oficial sabidamente quebrado'
         assert all('href="'+path+'"' in public_header for path in ['/','/agenda','/admin'])
         assert '/css/institucional.css' not in public_page
+        # Sugestões de cidade são públicas; um termo inválido nem sai para a API externa.
+        with get(browser(),base+'/cidades?q=x') as response:
+            assert json.loads(response.read())==[]
         with get(browser(),base+'/disponibilidade') as response:
             fresh_calendar=json.loads(response.read())
         # Banco novo já traz os 10 espaços do Hub (0.5.3), livres e sem reservas.

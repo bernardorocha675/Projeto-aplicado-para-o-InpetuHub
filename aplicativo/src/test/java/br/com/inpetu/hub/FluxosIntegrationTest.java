@@ -321,6 +321,14 @@ class FluxosIntegrationTest {
   }
 
   @Test
+  void sugestoesDeCidadeSaoPublicasESemApiFicamVazias() throws Exception {
+    mvc.perform(get("/cidades").param("q", "Florianópolis"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$").isEmpty());
+  }
+
+  @Test
   void espacoInativoNaoSignificaAgendaOcupada() throws Exception {
     sala.ativo = false;
     espacos.saveAndFlush(sala);

@@ -31,7 +31,7 @@ public class ReservaForm {
 
   @NotBlank
   @Size(max = 255)
-  @Pattern(groups = ContactRules.Input.class, regexp = ContactRules.PHONE, message = "Informe de 10 a 15 dígitos no telefone, incluindo DDD, sem letras.")
+  @Pattern(groups = ContactRules.Input.class, regexp = ContactRules.PHONE, message = "Informe o telefone com DDD ou, fora do Brasil, com + e o código do país, sem letras.")
   public String telefone;
 
   @NotBlank

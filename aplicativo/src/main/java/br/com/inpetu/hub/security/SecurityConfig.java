@@ -50,6 +50,7 @@ public class SecurityConfig {
                         "/login",
                         "/error",
                         "/disponibilidade",
+                        "/cidades",
                         "/reserva",
                         "/reservas/resumo",
                         "/reservas/solicitar",
