@@ -22,8 +22,10 @@ document.querySelectorAll('form').forEach(form => {
     window.addEventListener('pageshow', () => buttons().forEach(button => { button.disabled = false; }));
   }
 });
-// Telefone: somente números, com DDD entre parênteses, como (48) 99808-2043.
+// Telefone do Brasil: somente números, com DDD entre parênteses, como (48) 99808-2043.
+// Outros países: começa com + e o código do país, sem máscara, como +351 912 345 678.
 const formatPhone = value => {
+  if (value.trimStart().startsWith('+')) return '+' + value.replace(/[^0-9 ().-]/g, '').slice(0, 19);
   const digits = value.replace(/\D/g, '').slice(0, 11);
   if (digits.length <= 2) return digits.length ? `(${digits}` : '';
   const local = digits.slice(2);
@@ -33,11 +35,35 @@ const formatPhone = value => {
     : `(${digits.slice(0, 2)}) ${local}`;
 };
 document.querySelectorAll('input[type=tel], input[name=telefone]').forEach(input => {
-  input.setAttribute('inputmode', 'numeric');
-  input.maxLength = 15;
+  input.setAttribute('inputmode', 'tel');
+  input.maxLength = 20;
   input.addEventListener('input', () => {
     input.value = formatPhone(input.value);
   });
-  // Cadastros antigos com código do país (mais de 11 dígitos) ficam como estão até serem editados.
-  if (input.value.replace(/\D/g, '').length <= 11) input.value = formatPhone(input.value);
+  // Cadastros antigos com código do país sem + (mais de 11 dígitos) ficam como estão até serem editados.
+  if (input.value.trimStart().startsWith('+') || input.value.replace(/\D/g, '').length <= 11) input.value = formatPhone(input.value);
+});
+// Cidade: sugestões do mundo todo, buscadas pelo servidor local. Sem resposta, o texto livre continua valendo.
+document.querySelectorAll('input[name=cidade]').forEach((input, index) => {
+  const list = document.createElement('datalist');
+  list.id = `cidades-sugeridas-${index}`;
+  input.after(list);
+  input.setAttribute('list', list.id);
+  input.setAttribute('autocomplete', 'off');
+  let timer, last = '';
+  input.addEventListener('input', () => {
+    clearTimeout(timer);
+    const term = input.value.trim();
+    if (term.length < 2 || term === last || term.includes(',')) return;
+    timer = setTimeout(() => {
+      last = term;
+      fetch(`/cidades?q=${encodeURIComponent(term)}`, {headers: {Accept: 'application/json'}})
+        .then(response => (response.ok ? response.json() : []))
+        .then(names => {
+          if (input.value.trim() !== term || !Array.isArray(names)) return;
+          list.replaceChildren(...names.map(name => Object.assign(document.createElement('option'), {value: name})));
+        })
+        .catch(() => {});
+    }, 300);
+  });
 });

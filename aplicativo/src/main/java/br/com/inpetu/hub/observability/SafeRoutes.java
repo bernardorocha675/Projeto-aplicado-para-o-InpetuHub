@@ -7,7 +7,7 @@ public final class SafeRoutes {
   private SafeRoutes() {}
 
   private static final Set<String> PUBLIC = Set.of(
-      "/", "/agenda", "/login", "/logout", "/disponibilidade", "/reserva",
+      "/", "/agenda", "/login", "/logout", "/disponibilidade", "/cidades", "/reserva",
       "/reservas/resumo", "/reservas/solicitar", "/reservas/sucesso",
       "/solicitacoes/confirmar", "/solicitacoes/reenviar", "/admin", "/admin/reservas",
       "/admin/config", "/admin/config/cotas", "/admin/config/auditoria", "/admin/solicitacoes", "/conta/senha");

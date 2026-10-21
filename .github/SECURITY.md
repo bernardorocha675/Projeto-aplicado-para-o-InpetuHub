@@ -7,6 +7,7 @@ O InPETU Hub busca proteger as informações utilizadas no projeto e manter o ac
 - Contas, senhas e arquivos de ambientes reais devem permanecer privados. O aplicativo inclui cinco acessos públicos apenas para demonstração local; essa instalação não deve receber informações confidenciais.
 - Limitamos o acesso de cada usuário às funções permitidas para seu perfil.
 - Registramos ações importantes para ajudar a identificar problemas, sem incluir senhas ou códigos de acesso nos registros técnicos.
+- Ao digitar uma cidade, somente as letras digitadas são enviadas ao serviço público de busca de cidades (Open-Meteo), para mostrar sugestões. Nenhum outro dado do formulário é enviado.
 - Realizamos testes, revisões e acompanhamento das ferramentas utilizadas para identificar riscos e aplicar melhorias.
 
 A versão atual é a mais recente publicada na página de releases deste repositório. As versões anteriores permanecem no repositório como histórico do desenvolvimento; a versão atual deve ser a referência para uso e acompanhamento das melhorias.

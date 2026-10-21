@@ -60,6 +60,11 @@ public final class OperationalEvents {
     else LOG.info("event=EMAIL_SENT phase={}", phase);
   }
 
+  // Sem o termo pesquisado nem a mensagem do erro: só o tipo da falha.
+  public static void citySearchUnavailable(Throwable failure) {
+    LOG.warn("event=CITY_SEARCH_UNAVAILABLE exceptionType={}", failure.getClass().getName());
+  }
+
   public static void mailNotConfigured() {
     LOG.info("event=EMAIL_NOT_CONFIGURED");
   }
