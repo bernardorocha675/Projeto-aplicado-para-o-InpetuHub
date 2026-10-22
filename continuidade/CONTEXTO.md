@@ -123,3 +123,7 @@ No lote 4 o responsável trocou a lista do IBGE por uma API de cidades do mundo 
 ## Telefone com país (22/10/2026)
 
 O responsável pediu escolher o país do telefone e preenchê-lo automaticamente, e autorizou a dependência libphonenumber (Google, Apache 2.0) para conferir o número por país. Regras: seletor de país com Brasil padrão; `+código` digitado escolhe o país; cidade escolhida nas sugestões marca o país se o telefone estiver vazio; Brasil gravado no formato nacional, como (48) 99808-2043, e outros países no internacional, como +351 912 345 678. A conferência rígida vale só para números novos (formulário público e cadastro); telefones gravados antes continuam aceitos na aprovação e na edição sem alteração do número. Substitui a regra de 21/10/2026 de conferir só a quantidade de dígitos.
+
+## Documento do empreendedor (22/10/2026)
+
+O CNPJ deixou de ser obrigatório. O pedido de reserva e o cadastro de empreendedores escolhem o tipo: CNPJ (14 dígitos), CPF (11), documento estrangeiro (4 a 30 letras ou números) ou Sem documento; só a quantidade é conferida, sem dígito verificador. O número continua na coluna `cnpj` (nome mantido para não mexer nos dados) e segue único quando existe; o tipo fica em `tipo_documento`. Cadastros e pedidos de antes são CNPJ. Sem documento, o empreendedor é encontrado pelo email. Substitui a exigência de CNPJ de 14 dígitos.

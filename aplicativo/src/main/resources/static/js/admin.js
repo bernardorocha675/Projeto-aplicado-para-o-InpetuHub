@@ -93,3 +93,31 @@ document.querySelectorAll('input[name=cidade]').forEach((input, index) => {
     }, 300);
   });
 });
+// Documento: o tipo define o que o número aceita; "Sem documento" esvazia e desativa o número.
+// O servidor confere de novo (Documentos.normalizar).
+const documentRules = {
+  CNPJ: {max: 14, clean: value => value.replace(/\D/g, '')},
+  CPF: {max: 11, clean: value => value.replace(/\D/g, '')},
+  ESTRANGEIRO: {max: 30, clean: value => value.toUpperCase().replace(/[^A-Z0-9./-]/g, '')}
+};
+document.querySelectorAll('select[name=tipoDocumento]').forEach(type => {
+  const number = type.form ? type.form.querySelector('input[name=cnpj]') : null;
+  if (!number) return;
+  const rule = () => documentRules[type.value];
+  const apply = () => {
+    const r = rule();
+    number.disabled = !r;
+    number.required = Boolean(r);
+    if (!r) number.value = '';
+    else {
+      number.maxLength = r.max;
+      number.value = r.clean(number.value);
+    }
+  };
+  number.addEventListener('input', () => {
+    const r = rule();
+    if (r) number.value = r.clean(number.value).slice(0, r.max);
+  });
+  type.addEventListener('change', apply);
+  apply();
+});

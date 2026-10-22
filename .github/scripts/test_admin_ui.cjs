@@ -160,3 +160,45 @@ test('escolher a cidade marca o país do telefone só se o telefone estiver vazi
   await q.typeCity('Lisboa, Distrito de Lisboa, Portugal');
   assert.equal(q.country.value, 'BR');
 });
+
+function documentForm(type = 'CNPJ', number = '') {
+  const listeners = {}, typeListeners = {};
+  const numberInput = {value: number, disabled: false, required: false, maxLength: -1,
+    addEventListener: (name, fn) => { listeners[name] = fn; }};
+  const typeSelect = {value: type, addEventListener: (name, fn) => { typeListeners[name] = fn; }};
+  const form = {querySelector: selector => selector.includes('cnpj') ? numberInput : null};
+  typeSelect.form = form;
+  vm.runInNewContext(source, {
+    document: {querySelectorAll: selector => selector.includes('tipoDocumento') ? [typeSelect] : []},
+    window: {addEventListener: () => {}}, setTimeout: fn => fn()
+  });
+  const typeNumber = value => { numberInput.value = value; listeners.input(); return numberInput.value; };
+  const choose = value => { typeSelect.value = value; typeListeners.change(); };
+  return {numberInput, typeNumber, choose};
+}
+
+test('CNPJ e CPF aceitam só dígitos, com o limite de cada tipo', () => {
+  const d = documentForm();
+  assert.equal(d.numberInput.required, true);
+  assert.equal(d.numberInput.maxLength, 14);
+  assert.equal(d.typeNumber('12.345.678/0001-90abc'), '12345678000190');
+  assert.equal(d.typeNumber('123456780001909999'), '12345678000190');
+  d.choose('CPF');
+  assert.equal(d.numberInput.maxLength, 11);
+  assert.equal(d.typeNumber('123.456.789-09'), '12345678909');
+});
+
+test('documento estrangeiro aceita letras e números e Sem documento esvazia e desativa o número', () => {
+  const d = documentForm('ESTRANGEIRO');
+  assert.equal(d.numberInput.maxLength, 30);
+  assert.equal(d.typeNumber('ab 12-34<x>'), 'AB12-34X');
+  d.choose('NENHUM');
+  assert.equal(d.numberInput.value, '');
+  assert.equal(d.numberInput.disabled, true);
+  assert.equal(d.numberInput.required, false);
+  d.choose('CPF');
+  assert.equal(d.numberInput.disabled, false);
+  assert.equal(d.numberInput.required, true);
+  // Cadastro antigo sem documento abre com o número desativado.
+  assert.equal(documentForm('NENHUM', '').numberInput.disabled, true);
+});

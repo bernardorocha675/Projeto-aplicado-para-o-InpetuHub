@@ -113,6 +113,15 @@ public class PublicController {
         erros.rejectValue("telefone", "telefone", ex.getMessage());
       }
     }
+    if (!erros.hasFieldErrors("cnpj") && !erros.hasFieldErrors("tipoDocumento")) {
+      try {
+        var doc = Documentos.normalizar(f.tipoDocumento, f.cnpj);
+        f.tipoDocumento = doc.tipo();
+        f.cnpj = doc.numero();
+      } catch (RegraException ex) {
+        erros.rejectValue("cnpj", "cnpj", ex.getMessage());
+      }
+    }
     if (erros.hasErrors()) {
       response.setStatus(400);
       br.com.inpetu.hub.observability.OperationalEvents.validation("/reservas/resumo",

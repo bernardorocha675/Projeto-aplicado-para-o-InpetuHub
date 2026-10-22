@@ -54,6 +54,8 @@ class FluxosIntegrationTest {
   @Autowired ReservaRepository reservas;
   @Autowired VisitaRepository visitas;
   @Autowired MockMvc mvc;
+  @Autowired PublicRequestService pedidos;
+  @Autowired org.springframework.jdbc.core.JdbcTemplate jdbc;
   Espaco sala;
   Colaborador admin;
 
@@ -563,6 +565,134 @@ class FluxosIntegrationTest {
                 .param("cidade", "Florianópolis")
                 .param("ativo", "on"))
         .andExpect(status().is3xxRedirection());
+  }
+
+  @Test
+  void pedidoPublicoAceitaCpfDocumentoEstrangeiroOuSemDocumento() throws Exception {
+    java.util.function.BiFunction<String, String, org.springframework.test.web.servlet.RequestBuilder> pedido =
+        (tipo, numero) ->
+            post("/reservas/resumo")
+                .with(csrf())
+                .param("espacoId", sala.id.toString())
+                .param("personaId", personas.findByCodigo("P6").orElseThrow().id.toString())
+                .param("data", "2026-10-20")
+                .param("horaInicio", "08:00")
+                .param("horaFim", "12:00")
+                .param("nome", "Ana")
+                .param("tipoDocumento", tipo)
+                .param("cnpj", numero)
+                .param("email", "ana@example.com")
+                .param("telefone", "48999999999")
+                .param("empresa", "Sem empresa")
+                .param("cidade", "Lisboa, Portugal")
+                .param("titulo", "Encontro")
+                .param("objetivo", "Conectar")
+                .param("numeroParticipantes", "10");
+    for (String[] ok :
+        new String[][] {{"NENHUM", ""}, {"CPF", "123.456.789-09"}, {"ESTRANGEIRO", "p 1234567"}, {"CNPJ", "12345678000190"}})
+      mvc.perform(pedido.apply(ok[0], ok[1]))
+          .andExpect(status().isOk())
+          .andExpect(view().name("public/reserva-resumo"));
+    for (String[] ruim :
+        new String[][] {{"CPF", "1234"}, {"CNPJ", ""}, {"ESTRANGEIRO", "ab"}, {"NENHUM", "123"}, {"RG", "1234567"}})
+      mvc.perform(pedido.apply(ruim[0], ruim[1])).andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void pedidoSemDocumentoVinculaPeloEmailSemTocarNoCadastroComCnpj() {
+    var comCnpj = service.solicitar(form("P6", LocalDate.of(2026, 10, 20))).empreendedor;
+    var f = form("P6", LocalDate.of(2026, 10, 21));
+    f.cnpj = null;
+    f.nome = "Ana";
+    f.email = "ana@example.com";
+    var primeiro = service.solicitar(f).empreendedor;
+    assertNull(primeiro.cnpj);
+    assertNotEquals(comCnpj.id, primeiro.id);
+    var g = form("P6", LocalDate.of(2026, 10, 22));
+    g.cnpj = null;
+    g.nome = "Ana";
+    g.email = "ANA@example.com";
+    assertEquals(primeiro.id, service.solicitar(g).empreendedor.id, "mesmo e-mail deveria achar o cadastro");
+    assertEquals(
+        "NENHUM",
+        jdbc.queryForObject(
+            "select tipo_documento from empreendedor where id_empreendedor=?", String.class, primeiro.id));
+    assertEquals(
+        "12345678000190", empreendedores.findById(comCnpj.id).orElseThrow().cnpj);
+  }
+
+  @Test
+  @WithMockUser(username = "fixture-admin", roles = "ADMIN")
+  void telasInternasMostramODocumentoOuSemDocumento() throws Exception {
+    var f = form("P6", LocalDate.of(2026, 10, 21));
+    f.cnpj = null;
+    var semDocumento = service.solicitar(f);
+    var comCnpj = service.solicitar(form("P6", LocalDate.of(2026, 10, 22)));
+    mvc.perform(get("/admin/empreendedores/" + semDocumento.empreendedor.id))
+        .andExpect(status().isOk())
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("<dt>Documento</dt><dd>Sem documento</dd>")));
+    mvc.perform(get("/admin/reservas/" + semDocumento.id))
+        .andExpect(status().isOk())
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("<dd>Empresa / Sem documento</dd>")));
+    mvc.perform(get("/admin/empreendedores/" + comCnpj.empreendedor.id))
+        .andExpect(status().isOk())
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("<dt>Documento</dt><dd>CNPJ 12345678000190</dd>")));
+    var pedido = form("P6", LocalDate.of(2026, 10, 23));
+    pedido.cnpj = null;
+    pedido.tipoDocumento = "NENHUM";
+    pedido.nome = "Pedido sem documento";
+    pedidos.submit(pedido, "chave-sem-documento-0001");
+    mvc.perform(get("/admin/solicitacoes"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("Pedido sem documento · Empresa · Sem documento")));
+    mvc.perform(get("/admin/reservas").param("busca", "null"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("/admin/reservas/" + semDocumento.id + "\""))));
+  }
+
+  @Test
+  @WithMockUser(username = "fixture-admin", roles = "ADMIN")
+  void cadastroDeEmpreendedorAceitaTipoDeDocumentoOuNenhum() throws Exception {
+    java.util.function.BiFunction<String, String, org.springframework.test.web.servlet.RequestBuilder> salvar =
+        (tipo, numero) ->
+            post("/admin/cadastros/empreendedores/salvar")
+                .with(csrf())
+                .param("nome", "Pessoa " + tipo)
+                .param("tipoDocumento", tipo)
+                .param("cnpj", numero)
+                .param("empresa", "Sem empresa")
+                .param("email", tipo.toLowerCase(java.util.Locale.ROOT) + "@example.com")
+                .param("telefone", "48999999999")
+                .param("cidade", "Florianópolis")
+                .param("ativo", "on");
+    long antes = empreendedores.count();
+    mvc.perform(salvar.apply("NENHUM", "")).andExpect(status().is3xxRedirection());
+    // Vários cadastros sem documento convivem (o número único só vale quando existe).
+    mvc.perform(salvar.apply("NENHUM", "")).andExpect(status().is3xxRedirection());
+    mvc.perform(salvar.apply("CPF", "123.456.789-09")).andExpect(status().is3xxRedirection());
+    mvc.perform(salvar.apply("ESTRANGEIRO", "x12345678")).andExpect(status().is3xxRedirection());
+    assertEquals(antes + 4, empreendedores.count());
+    mvc.perform(salvar.apply("CPF", "12345678909")).andExpect(status().isBadRequest());
+    mvc.perform(salvar.apply("CPF", "1234")).andExpect(status().isBadRequest());
+    mvc.perform(salvar.apply("NENHUM", "999")).andExpect(status().isBadRequest());
+    assertEquals(antes + 4, empreendedores.count());
+    assertEquals(
+        "X12345678",
+        jdbc.queryForObject(
+            "select cnpj from empreendedor where tipo_documento='ESTRANGEIRO'", String.class));
+    assertEquals(
+        2,
+        jdbc.queryForObject(
+            "select count(*) from empreendedor where tipo_documento='NENHUM' and cnpj is null", Integer.class));
+    Long semDocumento =
+        jdbc.queryForObject(
+            "select min(id_empreendedor) from empreendedor where tipo_documento='NENHUM'", Long.class);
+    String html =
+        mvc.perform(get("/admin/cadastros/empreendedores/editar").param("id", semDocumento.toString()))
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    assertTrue(html.matches("(?s).*<option value=\"NENHUM\"[^>]*selected.*"), "Sem documento não veio marcado");
   }
 
   @Test

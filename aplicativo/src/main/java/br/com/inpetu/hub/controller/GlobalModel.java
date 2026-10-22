@@ -33,6 +33,12 @@ public class GlobalModel {
     return br.com.inpetu.hub.validation.Telefones.PAISES;
   }
 
+  // Tipos de documento do pedido de reserva (CNPJ, CPF, estrangeiro ou sem documento).
+  @ModelAttribute("tiposDocumento")
+  public java.util.Map<String, String> tiposDocumento() {
+    return br.com.inpetu.hub.validation.Documentos.TIPOS;
+  }
+
   // Item do menu principal destacado conforme a página atual.
   @ModelAttribute("secaoAtual")
   public String secao(HttpServletRequest req) {

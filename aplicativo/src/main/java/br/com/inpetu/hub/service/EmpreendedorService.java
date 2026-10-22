@@ -15,11 +15,13 @@ public class EmpreendedorService {
 
   public Empreendedor vincular(ReservaForm f) {
     br.com.inpetu.hub.validation.ContactRules.validate(f.nome,f.email,f.telefone);
-    return repo.findByCnpj(f.cnpj)
+    var doc = br.com.inpetu.hub.validation.Documentos.normalizar(f.tipoDocumento, f.cnpj);
+    return repo.doPedido(f)
         .orElseGet(
             () -> {
               Empreendedor e = new Empreendedor();
-              e.cnpj = f.cnpj;
+              e.tipoDocumento = doc.tipo();
+              e.cnpj = doc.numero();
               e.nome = f.nome;
               e.email = f.email;
               e.telefone = f.telefone;
