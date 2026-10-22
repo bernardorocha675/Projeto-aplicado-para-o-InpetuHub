@@ -27,6 +27,12 @@ public class GlobalModel {
     return a != null && a.isAuthenticated() && !(a instanceof AnonymousAuthenticationToken);
   }
 
+  // Seletor de país dos campos de telefone (lista fixa, montada uma vez).
+  @ModelAttribute("paisesTelefone")
+  public java.util.List<br.com.inpetu.hub.validation.Telefones.Pais> paisesTelefone() {
+    return br.com.inpetu.hub.validation.Telefones.PAISES;
+  }
+
   // Item do menu principal destacado conforme a página atual.
   @ModelAttribute("secaoAtual")
   public String secao(HttpServletRequest req) {

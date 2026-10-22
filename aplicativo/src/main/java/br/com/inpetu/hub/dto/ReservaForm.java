@@ -31,8 +31,13 @@ public class ReservaForm {
 
   @NotBlank
   @Size(max = 255)
-  @Pattern(groups = ContactRules.Input.class, regexp = ContactRules.PHONE, message = "Informe o telefone com DDD ou, fora do Brasil, com + e o código do país, sem letras.")
   public String telefone;
+
+  // País do seletor do telefone (ISO, ex.: BR, PT); só serve para conferir o número em Telefones.
+  // Não é gravado: o telefone já sai com o formato do país (+351 ... fora do Brasil).
+  @Size(max = 3)
+  @jakarta.persistence.Transient
+  public String telefonePais = "BR";
 
   @NotBlank
   @Size(max = 255)
@@ -138,6 +143,14 @@ public class ReservaForm {
 
   public void setTelefone(String v) {
     telefone = v;
+  }
+
+  public String getTelefonePais() {
+    return telefonePais;
+  }
+
+  public void setTelefonePais(String v) {
+    telefonePais = v;
   }
 
   public String getEmpresa() {

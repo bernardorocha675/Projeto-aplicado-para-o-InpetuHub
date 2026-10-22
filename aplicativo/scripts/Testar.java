@@ -48,7 +48,7 @@ class Testar {
         JAVA.toString(),
         "-Dfile.encoding=UTF-8",
         "-jar",
-        ROOT.resolve("target/inpetu-hub-0.5.5.jar").toString(),
+        ROOT.resolve("target/inpetu-hub-0.5.6.jar").toString(),
         "--" + mode + "-acessos");
   }
 
@@ -378,7 +378,7 @@ class Testar {
             JAVA.toString(),
             "-Dfile.encoding=UTF-8",
             "-jar",
-            ROOT.resolve("target/inpetu-hub-0.5.5.jar").toString(),
+            ROOT.resolve("target/inpetu-hub-0.5.6.jar").toString(),
             "--spring.profiles.active=local",
             // Permite encerrar como o iniciador faz, salvando o banco antes de sair.
             "--app.launcher.enabled=true",
@@ -771,7 +771,7 @@ class Testar {
             + " 0;border-radius:10px}table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:12px;text-align:left;border-bottom:1px"
             + " solid"
             + " #dde6e8;vertical-align:top}.pass{color:#17603b;font-weight:bold}.fail{color:#a02323;font-weight:bold}.scroll{overflow:auto}code{background:#eef3f3;padding:2px"
-            + " 5px}li{margin:10px 0}</style><main><p>INPETU HUB / VERSÃO 0.5.5</p><h1>"
+            + " 5px}li{margin:10px 0}</style><main><p>INPETU HUB / VERSÃO 0.5.6</p><h1>"
             + html(outcome)
             + "</h1><p>"
             + passed

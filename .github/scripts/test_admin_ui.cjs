@@ -94,7 +94,7 @@ function city(responses) {
 }
 
 test('cidade busca sugestões do mundo pelo servidor local e aceita texto livre sem resposta', async () => {
-  const c = city([['Lisboa, Lisboa, Portugal', 'Lisboa, Paraíba, Brasil'], new Error('offline')]);
+  const c = city([[{nome: 'Lisboa, Lisboa, Portugal', pais: 'PT'}, {nome: 'Lisboa, Paraíba, Brasil', pais: 'BR'}], new Error('offline')]);
   assert.equal(c.input.attributes.list, c.input.sibling.id);
   await c.type('L');
   assert.equal(c.requests.length, 0);
@@ -106,4 +106,57 @@ test('cidade busca sugestões do mundo pelo servidor local e aceita texto livre 
   await c.type('São José');
   assert.equal(c.requests[1], '/cidades?q=S%C3%A3o%20Jos%C3%A9');
   assert.equal(c.input.value, 'São José');
+});
+
+function phoneForm(region = 'BR', phoneValue = '') {
+  const listeners = {}, countryListeners = {}, cityListeners = {}, timers = [];
+  const options = [['BR', '55', 'true'], ['PT', '351', 'true'], ['US', '1', 'true'], ['CA', '1', 'false'], ['AO', '244', 'true']]
+    .map(([value, dial, principal]) => ({value, dataset: {dial, principal}}));
+  const country = {value: region, options, addEventListener: (name, fn) => { countryListeners[name] = fn; }};
+  const form = {querySelector: selector => selector.includes('telefonePais') ? country : selector.includes('telefone') ? input : null};
+  const input = {value: phoneValue, form, attributes: {}, setAttribute(n, v) { this.attributes[n] = v; },
+    addEventListener: (name, fn) => {listeners[name] = fn;}};
+  const cityInput = {value: '', form, attributes: {}, setAttribute(n, v) { this.attributes[n] = v; },
+    addEventListener: (name, fn) => {cityListeners[name] = fn;}, after() {}};
+  vm.runInNewContext(source, {
+    document: {
+      querySelectorAll: s => s.includes('tel') ? [input] : s.includes('cidade') ? [cityInput] : [],
+      createElement: () => ({replaceChildren() {}})
+    },
+    window: {addEventListener: () => {}},
+    setTimeout: fn => { timers.push(fn); return 1; }, clearTimeout: () => {},
+    fetch: () => Promise.resolve({ok: true, json: () => [{nome: 'Lisboa, Distrito de Lisboa, Portugal', pais: 'PT'}]})
+  });
+  const type = value => { input.value = value; listeners.input(); return input.value; };
+  const typeCity = async value => { cityInput.value = value; cityListeners.input(); timers.splice(0).forEach(fn => fn()); await new Promise(r => setImmediate(r)); };
+  return {input, country, countryListeners, type, typeCity};
+}
+
+test('digitar + e o código do país escolhe o país no seletor', () => {
+  const p = phoneForm();
+  assert.equal(p.type('+351 912 345 678'), '+351 912 345 678');
+  assert.equal(p.country.value, 'PT');
+  p.type('+1 650 253 0000');
+  assert.equal(p.country.value, 'US');
+  p.type('+244 923 000 000');
+  assert.equal(p.country.value, 'AO');
+});
+
+test('país fora do Brasil não recebe a máscara de DDD e trocar o país reformata', () => {
+  const p = phoneForm('PT');
+  assert.equal(p.type('912 345 678'), '912 345 678');
+  p.country.value = 'BR';
+  p.countryListeners.change();
+  assert.equal(p.input.value, '(91) 2345-678');
+});
+
+test('escolher a cidade marca o país do telefone só se o telefone estiver vazio', async () => {
+  const p = phoneForm();
+  await p.typeCity('Lisb');
+  await p.typeCity('Lisboa, Distrito de Lisboa, Portugal');
+  assert.equal(p.country.value, 'PT');
+  const q = phoneForm('BR', '(48) 99808-2043');
+  await q.typeCity('Lisb');
+  await q.typeCity('Lisboa, Distrito de Lisboa, Portugal');
+  assert.equal(q.country.value, 'BR');
 });

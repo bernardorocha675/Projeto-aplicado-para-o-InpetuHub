@@ -13,4 +13,4 @@
 .agenda-intro,.agenda-calendar{min-width:0}
 .weekdays,.calendar-grid{grid-template-columns:repeat(7,minmax(0,1fr))}
 @media(max-width:760px){.agenda-intro h1{overflow-wrap:anywhere}.space-slots{overflow-wrap:anywhere}}
-.objetivos{grid-column:1/-1;border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:0}.objetivos legend{font-size:.88rem;font-weight:600;padding:0 6px}.objetivos p{margin:0 0 8px}.objetivos .check{margin-bottom:6px}.objetivos label:not(.check){margin-top:8px}
+.objetivos{grid-column:1/-1;border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:0}.objetivos legend{font-size:.88rem;font-weight:600;padding:0 6px}.objetivos p{margin:0 0 8px}.objetivos .check{margin-bottom:6px}.objetivos label:not(.check){margin-top:8px}.phone-field{display:flex;gap:8px}.phone-field select{flex:0 0 42%;max-width:220px}.phone-field input{flex:1}

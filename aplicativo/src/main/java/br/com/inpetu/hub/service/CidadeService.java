@@ -21,6 +21,9 @@ import tools.jackson.databind.json.JsonMapper;
  */
 @Service
 public class CidadeService {
+  /** Nome para o campo Cidade e país (ISO, ex.: PT) para o seletor do telefone. */
+  public record Cidade(String nome, String pais) {}
+
   private static final String TERMO = "[\\p{L}\\p{M} .'’\\x2d]{2,60}";
   private static final int LIMITE = 10;
   private final HttpClient http =
@@ -30,11 +33,11 @@ public class CidadeService {
           .build();
   private final JsonMapper json = JsonMapper.builder().build();
   private final String api;
-  private final Map<String, List<String>> cache =
+  private final Map<String, List<Cidade>> cache =
       Collections.synchronizedMap(
           new LinkedHashMap<>(64, 0.75f, true) {
             @Override
-            protected boolean removeEldestEntry(Map.Entry<String, List<String>> eldest) {
+            protected boolean removeEldestEntry(Map.Entry<String, List<Cidade>> eldest) {
               return size() > 200;
             }
           });
@@ -44,12 +47,12 @@ public class CidadeService {
     this.api = api;
   }
 
-  public List<String> buscar(String termo) {
+  public List<Cidade> buscar(String termo) {
     if (termo == null || api.isBlank()) return List.of();
     String q = termo.strip();
     if (!q.matches(TERMO)) return List.of();
     String chave = q.toLowerCase(Locale.ROOT);
-    List<String> salvo = cache.get(chave);
+    List<Cidade> salvo = cache.get(chave);
     if (salvo != null) return salvo;
     try {
       HttpRequest request =
@@ -66,7 +69,7 @@ public class CidadeService {
       HttpResponse<String> response = http.send(request, HttpResponse.BodyHandlers.ofString());
       if (response.statusCode() != 200 || response.body().length() > 1_000_000)
         throw new IllegalStateException("resposta inesperada");
-      Set<String> nomes = new LinkedHashSet<>();
+      Map<String, Cidade> nomes = new LinkedHashMap<>();
       for (JsonNode item : json.readTree(response.body()).path("results")) {
         // Só localidades habitadas (PPL...): sem aeroportos, parques ou outros pontos com o mesmo nome.
         String tipo = item.path("feature_code").asString("");
@@ -76,10 +79,15 @@ public class CidadeService {
           String valor = item.path(campo).asString("").strip();
           if (!valor.isEmpty() && !partes.contains(valor)) partes.add(valor);
         }
-        if (!partes.isEmpty()) nomes.add(String.join(", ", partes));
+        String pais = item.path("country_code").asString("").strip().toUpperCase(Locale.ROOT);
+        if (!pais.matches("[A-Z]{2}")) pais = "";
+        if (!partes.isEmpty()) {
+          String nome = String.join(", ", partes);
+          nomes.putIfAbsent(nome, new Cidade(nome, pais));
+        }
         if (nomes.size() == LIMITE) break;
       }
-      List<String> resultado = List.copyOf(nomes);
+      List<Cidade> resultado = List.copyOf(nomes.values());
       cache.put(chave, resultado);
       return resultado;
     } catch (InterruptedException e) {

@@ -482,6 +482,62 @@ class FluxosIntegrationTest {
 
   @Test
   @WithMockUser(username = "fixture-admin", roles = "ADMIN")
+  void cadastroDeEmpreendedorUsaOPaisDoTelefoneEMantemNumeroAntigo() throws Exception {
+    var r = service.solicitar(form("P6", LocalDate.of(2026, 10, 20)));
+    var e = r.empreendedor;
+    e.telefone = "00000000000";
+    empreendedores.saveAndFlush(e);
+    var salvar =
+        post("/admin/cadastros/empreendedores/salvar")
+            .with(csrf())
+            .param("id", e.id.toString())
+            .param("nome", "Maria")
+            .param("cnpj", "12345678000190")
+            .param("empresa", "Empresa")
+            .param("email", "maria@example.com")
+            .param("cidade", "Lisboa, Portugal")
+            .param("ativo", "on");
+    // Número antigo, sem alteração, não impede salvar o restante do cadastro.
+    mvc.perform(salvar.param("telefone", "00000000000").param("telefonePais", "BR"))
+        .andExpect(status().is3xxRedirection());
+    mvc.perform(
+            post("/admin/cadastros/empreendedores/salvar")
+                .with(csrf())
+                .param("id", e.id.toString())
+                .param("nome", "Maria")
+                .param("cnpj", "12345678000190")
+                .param("empresa", "Empresa")
+                .param("email", "maria@example.com")
+                .param("telefone", "912345678")
+                .param("telefonePais", "PT")
+                .param("cidade", "Lisboa, Portugal")
+                .param("ativo", "on"))
+        .andExpect(status().is3xxRedirection());
+    assertEquals("+351 912 345 678", empreendedores.findById(e.id).orElseThrow().telefone);
+    String html =
+        mvc.perform(get("/admin/cadastros/empreendedores/editar").param("id", e.id.toString()))
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    assertTrue(html.matches("(?s).*<option value=\"PT\"[^>]*selected.*"), "Portugal não veio marcado");
+    mvc.perform(
+            post("/admin/cadastros/empreendedores/salvar")
+                .with(csrf())
+                .param("id", e.id.toString())
+                .param("nome", "Maria")
+                .param("cnpj", "12345678000190")
+                .param("empresa", "Empresa")
+                .param("email", "maria@example.com")
+                .param("telefone", "4899")
+                .param("telefonePais", "BR")
+                .param("cidade", "Florianópolis")
+                .param("ativo", "on"))
+        .andExpect(status().isBadRequest());
+    assertEquals("+351 912 345 678", empreendedores.findById(e.id).orElseThrow().telefone);
+  }
+
+  @Test
+  @WithMockUser(username = "fixture-admin", roles = "ADMIN")
   void crudValidaEmailESalvaVisita() throws Exception {
     var r = service.solicitar(form("P6", LocalDate.of(2026, 10, 20)));
     mvc.perform(

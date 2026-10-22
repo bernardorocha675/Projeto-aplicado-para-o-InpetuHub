@@ -14,7 +14,7 @@ public class CidadeController {
   }
 
   @GetMapping("/cidades")
-  public List<String> sugestoes(@RequestParam(name = "q", required = false) String q) {
+  public List<CidadeService.Cidade> sugestoes(@RequestParam(name = "q", required = false) String q) {
     return cidades.buscar(q);
   }
 }
