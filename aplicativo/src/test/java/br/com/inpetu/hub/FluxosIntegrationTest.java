@@ -696,6 +696,60 @@ class FluxosIntegrationTest {
   }
 
   @Test
+  void pedidoPublicoSemEmpresaERevisadoComoNaoInformada() throws Exception {
+    mvc.perform(
+            post("/reservas/resumo")
+                .with(csrf())
+                .param("espacoId", sala.id.toString())
+                .param("personaId", personas.findByCodigo("P6").orElseThrow().id.toString())
+                .param("data", "2026-10-20")
+                .param("horaInicio", "08:00")
+                .param("horaFim", "12:00")
+                .param("nome", "Ana")
+                .param("tipoDocumento", "NENHUM")
+                .param("email", "ana@example.com")
+                .param("telefone", "48999999999")
+                .param("empresa", "")
+                .param("cidade", "Lisboa, Portugal")
+                .param("titulo", "Encontro")
+                .param("objetivo", "Conectar")
+                .param("numeroParticipantes", "10"))
+        .andExpect(status().isOk())
+        .andExpect(view().name("public/reserva-resumo"))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("<dt>Empresa</dt><dd>Não informada</dd>")));
+  }
+
+  @Test
+  @WithMockUser(username = "fixture-admin", roles = "ADMIN")
+  void empresaOpcionalNoCadastroENasTelasInternas() throws Exception {
+    long antes = empreendedores.count();
+    mvc.perform(
+            post("/admin/cadastros/empreendedores/salvar")
+                .with(csrf())
+                .param("nome", "Pessoa sem empresa")
+                .param("tipoDocumento", "NENHUM")
+                .param("email", "sem.empresa@example.com")
+                .param("telefone", "48999999999")
+                .param("cidade", "Florianópolis")
+                .param("ativo", "on"))
+        .andExpect(status().is3xxRedirection());
+    assertEquals(antes + 1, empreendedores.count());
+    var f = form("P6", LocalDate.of(2026, 10, 21));
+    f.empresa = null;
+    var r = service.solicitar(f);
+    mvc.perform(get("/admin/reservas/" + r.id))
+        .andExpect(status().isOk())
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("<dd>Não informada / CNPJ 12345678000190</dd>")));
+    var pedido = form("P6", LocalDate.of(2026, 10, 23));
+    pedido.empresa = "";
+    pedido.nome = "Pedido sem empresa";
+    pedidos.submit(pedido, "chave-sem-empresa-00001");
+    mvc.perform(get("/admin/solicitacoes"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("Pedido sem empresa · CNPJ 12345678000190")));
+  }
+
+  @Test
   @WithMockUser(roles = "COLABORADOR")
   void colaboradorNaoPodeAdministrar() throws Exception {
     mvc.perform(get("/admin/config")).andExpect(status().isForbidden());

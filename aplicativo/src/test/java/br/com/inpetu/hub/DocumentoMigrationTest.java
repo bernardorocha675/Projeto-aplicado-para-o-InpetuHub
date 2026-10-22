@@ -39,10 +39,14 @@ class DocumentoMigrationTest {
         assertEquals("CNPJ", r.getString(2));
       }
       // Sem documento: vários cadastros com número vazio; documento estrangeiro de até 30 caracteres.
-      s.execute(
-          "INSERT INTO empreendedor (cnpj, tipo_documento, nome, email, ativo) VALUES"
-              + " (NULL, 'NENHUM', 'Ana', 'ana@example.com', TRUE), (NULL, 'NENHUM', 'Bia', 'bia@example.com', TRUE),"
-              + " ('" + "A".repeat(30) + "', 'ESTRANGEIRO', 'John', 'john@example.com', TRUE)");
+      try (PreparedStatement p =
+          c.prepareStatement(
+              "INSERT INTO empreendedor (cnpj, tipo_documento, nome, email, ativo) VALUES"
+                  + " (NULL, 'NENHUM', 'Ana', 'ana@example.com', TRUE), (NULL, 'NENHUM', 'Bia', 'bia@example.com', TRUE),"
+                  + " (?, 'ESTRANGEIRO', 'John', 'john@example.com', TRUE)")) {
+        p.setString(1, "A".repeat(30));
+        p.executeUpdate();
+      }
       // O mesmo número continua único.
       assertThrows(
           SQLException.class,

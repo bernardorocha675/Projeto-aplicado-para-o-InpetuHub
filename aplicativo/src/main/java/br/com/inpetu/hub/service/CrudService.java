@@ -82,7 +82,7 @@ public class CrudService {
                       false,
                       br.com.inpetu.hub.validation.Documentos.TIPOS),
                   opcional("cnpj", "Documento (CNPJ 14 dígitos, CPF 11 ou estrangeiro)", "text"),
-                  campo("empresa", "Empresa/instituição", "text"),
+                  opcional("empresa", "Empresa/instituição", "text"),
                   campo("email", "Email", "email"),
                   campo("telefone", "Telefone", "text"),
                   campo("cidade", "Cidade", "text"),

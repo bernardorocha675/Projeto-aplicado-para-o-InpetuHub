@@ -109,7 +109,7 @@ public class AdminController {
             .filter(r -> persona == null || r.persona.id.equals(persona))
             .filter(
                 r ->
-                    (r.empreendedor.nome + " " + r.empreendedor.empresa + " " + Objects.toString(r.empreendedor.cnpj, ""))
+                    (r.empreendedor.nome + " " + Objects.toString(r.empreendedor.empresa, "") + " " + Objects.toString(r.empreendedor.cnpj, ""))
                         .toLowerCase(Locale.ROOT)
                         .contains(q))
             .sorted(Comparator.comparing((Reserva r) -> r.data).thenComparing(r -> r.horaInicio))

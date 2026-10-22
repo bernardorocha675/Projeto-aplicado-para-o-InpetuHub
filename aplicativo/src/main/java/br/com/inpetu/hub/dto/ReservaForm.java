@@ -43,7 +43,7 @@ public class ReservaForm {
   @jakarta.persistence.Transient
   public String telefonePais = "BR";
 
-  @NotBlank
+  // Opcional: estrangeiros e pessoas sem empresa também pedem reserva.
   @Size(max = 255)
   public String empresa;
 
