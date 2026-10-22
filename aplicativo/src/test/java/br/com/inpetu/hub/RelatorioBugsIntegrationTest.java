@@ -64,6 +64,20 @@ class RelatorioBugsIntegrationTest {
    .andExpect(model().attributeHasFieldErrors("form",field)).andReturn();
   dateRendered(result.getResponse().getContentAsString());assertEquals(before,requests.count());
  }
+ // 0.5.6: telefone conferido pelo país escolhido e gravado no formato do país.
+ @Test void phoneUsesTheChosenCountry()throws Exception{
+  var p=fields();p.set("telefonePais","PT");p.set("telefone","912345678");
+  var result=mvc.perform(summary(p).with(r->{r.setRemoteAddr("198.51.100.56");return r;})).andExpect(status().isOk()).andExpect(view().name("public/reserva-resumo")).andReturn();
+  var form=(br.com.inpetu.hub.dto.ReservaForm)result.getRequest().getSession().getAttribute("solicitacao");
+  assertEquals("+351 912 345 678",form.telefone);
+  p.set("telefone","48999991234");
+  mvc.perform(summary(p).with(r->{r.setRemoteAddr("198.51.100.56");return r;})).andExpect(status().isBadRequest()).andExpect(model().attributeHasFieldErrors("form","telefone"));
+  p.set("telefonePais","BR");
+  result=mvc.perform(summary(p).with(r->{r.setRemoteAddr("198.51.100.56");return r;})).andExpect(status().isOk()).andReturn();
+  assertEquals("(48) 99999-1234",((br.com.inpetu.hub.dto.ReservaForm)result.getRequest().getSession().getAttribute("solicitacao")).telefone);
+  var html=mvc.perform(get("/reserva")).andReturn().getResponse().getContentAsString();
+  assertTrue(html.contains("name=\"telefonePais\""));assertTrue(html.contains("Portugal (+351)"));
+ }
  @Test void agendaSelectionRendersIsoDateAndCapacityEvenInPortuguese()throws Exception{
   var html=mvc.perform(get("/reserva").locale(Locale.forLanguageTag("pt-BR")).param("data",date.toString()).param("espacoId",room.id.toString()).param("horaInicio","09:00").param("horaFim","10:00"))
    .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();

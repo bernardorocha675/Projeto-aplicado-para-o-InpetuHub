@@ -92,6 +92,7 @@ public class CrudController {
         values.put(field.nome(),field.tipo().equals("checkbox")
             ? String.valueOf(Set.of("on","true").contains(value)) : value);
       }
+      values.put("telefonePais", dados.getOrDefault("telefonePais", ""));
       m.addAttribute("registro",values);
       m.addAttribute("erro", ex.getMessage());
       response.setStatus(400);

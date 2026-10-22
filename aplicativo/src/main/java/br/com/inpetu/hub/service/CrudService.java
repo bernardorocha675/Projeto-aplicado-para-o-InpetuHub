@@ -217,6 +217,13 @@ public class CrudService {
     }
   }
 
+  public String telefonePais(Object o) {
+    // Formulário reapresentado após erro: mantém o país escolhido.
+    if (o instanceof Map<?, ?> dados && dados.get("telefonePais") instanceof String pais && !pais.isBlank())
+      return pais;
+    return br.com.inpetu.hub.validation.Telefones.regiao(valor(o, "telefone"));
+  }
+
   public List<String> objetivoOpcoes() {
     return VisitaObjetivos.OPCOES;
   }
@@ -259,6 +266,15 @@ public class CrudService {
             campo.tipo.equals("objetivos")
                 ? VisitaObjetivos.compor(dados, campo.nome)
                 : dados.getOrDefault(campo.nome, "").trim();
+        // Telefone com o país do seletor; gravado no formato do país. Um número antigo que não foi
+        // alterado na edição continua como está (pode não seguir o formato novo).
+        if (o instanceof Empreendedor emp
+            && campo.nome.equals("telefone")
+            && !raw.isBlank()
+            && !raw.equals(emp.telefone))
+          raw =
+              br.com.inpetu.hub.validation.Telefones.normalizar(
+                  dados.getOrDefault("telefonePais", br.com.inpetu.hub.validation.Telefones.PADRAO), raw);
         Field f = s.classe.getField(campo.nome);
         Class<?> t = f.getType();
         if (campo.obrigatorio && !campo.tipo.equals("checkbox") && raw.isBlank())

@@ -106,6 +106,13 @@ public class PublicController {
       HttpSession session,
       jakarta.servlet.http.HttpServletResponse response) {
     formModel(m, f);
+    if (!erros.hasFieldErrors("telefone")) {
+      try {
+        f.telefone = Telefones.normalizar(f.telefonePais, f.telefone);
+      } catch (RegraException ex) {
+        erros.rejectValue("telefone", "telefone", ex.getMessage());
+      }
+    }
     if (erros.hasErrors()) {
       response.setStatus(400);
       br.com.inpetu.hub.observability.OperationalEvents.validation("/reservas/resumo",

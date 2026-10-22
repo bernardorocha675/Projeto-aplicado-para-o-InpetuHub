@@ -119,3 +119,7 @@ O responsável enviou o documento “Nome dos Espaços” e pediu os 10 espaços
 ## Cidades do mundo e telefone internacional (21/10/2026)
 
 No lote 4 o responsável trocou a lista do IBGE por uma API de cidades do mundo todo e pediu telefone internacional. Escolha técnica: geocodificação pública do Open-Meteo (gratuita, sem chave nem conta), consultada pelo servidor local em `/cidades` (a CSP impede o navegador de chamar sites externos). Só o termo digitado (2 a 60 letras) sai do computador; sem internet ou com a API fora do ar, o campo continua aceitando texto livre. O sistema não usa o proxy do sistema operacional nessa consulta. Telefone: Brasil com DDD (10 a 15 dígitos, máscara mantida); outros países começam com + e o código do país (8 a 15 dígitos, E.164), sem máscara. Cidades e telefones já cadastrados não mudam.
+
+## Telefone com país (22/10/2026)
+
+O responsável pediu escolher o país do telefone e preenchê-lo automaticamente, e autorizou a dependência libphonenumber (Google, Apache 2.0) para conferir o número por país. Regras: seletor de país com Brasil padrão; `+código` digitado escolhe o país; cidade escolhida nas sugestões marca o país se o telefone estiver vazio; Brasil gravado no formato nacional, como (48) 99808-2043, e outros países no internacional, como +351 912 345 678. A conferência rígida vale só para números novos (formulário público e cadastro); telefones gravados antes continuam aceitos na aprovação e na edição sem alteração do número. Substitui a regra de 21/10/2026 de conferir só a quantidade de dígitos.

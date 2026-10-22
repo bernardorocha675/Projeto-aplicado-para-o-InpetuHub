@@ -9,7 +9,7 @@
   </parent>
   <groupId>br.com.inpetu</groupId>
   <artifactId>inpetu-hub</artifactId>
-  <version>0.5.5</version>
+  <version>0.5.6</version>
   <name>InPETU Hub</name>
   <properties>
     <java.version>17</java.version>
@@ -17,6 +17,12 @@
     <jackson-bom.version>3.1.7</jackson-bom.version>
   </properties>
   <dependencies>
+    <!-- Telefones de todos os países: validação e formato por país (Google, Apache 2.0). -->
+    <dependency>
+      <groupId>com.googlecode.libphonenumber</groupId>
+      <artifactId>libphonenumber</artifactId>
+      <version>9.0.41</version>
+    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-webmvc</artifactId>
