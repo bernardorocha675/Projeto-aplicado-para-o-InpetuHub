@@ -52,6 +52,7 @@ class FluxosIntegrationTest {
   @Autowired ColaboradorRepository colaboradores;
   @Autowired ConfiguracaoRepository configuracoes;
   @Autowired ReservaRepository reservas;
+  @Autowired VisitaRepository visitas;
   @Autowired MockMvc mvc;
   Espaco sala;
   Colaborador admin;
@@ -427,6 +428,56 @@ class FluxosIntegrationTest {
           "/admin/config/cadastros/configuracao/editar?id=1",
           "/admin/config/cotas"
         }) mvc.perform(get(url)).andExpect(status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "fixture-admin", roles = "ADMIN")
+  void visitaGravaObjetivosMarcadosEOutroEMostraNaEdicao() throws Exception {
+    var r = service.solicitar(form("P6", LocalDate.of(2026, 10, 20)));
+    mvc.perform(get("/admin/cadastros/visitas/editar"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("Objetivos da visita")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("Mentoria/apoio ao negócio")));
+    mvc.perform(
+            post("/admin/cadastros/visitas/salvar")
+                .with(csrf())
+                .param("empreendedor", r.empreendedor.id.toString())
+                .param("colaborador", admin.id.toString())
+                .param("data", "2026-10-21")
+                .param("horario", "14:00")
+                .param("objetivo__form", "1")
+                .param("objetivo__1", "on")
+                .param("objetivo__4", "on")
+                .param("objetivo__outro", "Conhecer o laboratório")
+                .param("participantes", "3")
+                .param("status", "AGENDADA"))
+        .andExpect(status().is3xxRedirection());
+    var salva =
+        visitas.findAll().stream().filter(v -> v.horario.equals(LocalTime.of(14, 0))).findFirst().orElseThrow();
+    assertEquals(
+        "Reunião/parceria; Visita técnica/acadêmica; Outro: Conhecer o laboratório", salva.objetivo);
+    String html =
+        mvc.perform(get("/admin/cadastros/visitas/editar").param("id", salva.id.toString()))
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    assertTrue(html.matches("(?s).*name=\"objetivo__1\" value=\"on\" checked.*"), "Reunião desmarcada");
+    assertFalse(html.matches("(?s).*name=\"objetivo__0\" value=\"on\" checked.*"), "Conhecer marcado");
+    assertTrue(html.contains("value=\"Conhecer o laboratório\""));
+    long antes = visitas.count();
+    mvc.perform(
+            post("/admin/cadastros/visitas/salvar")
+                .with(csrf())
+                .param("empreendedor", r.empreendedor.id.toString())
+                .param("colaborador", admin.id.toString())
+                .param("data", "2026-10-22")
+                .param("horario", "15:00")
+                .param("objetivo__form", "1")
+                .param("participantes", "3")
+                .param("status", "AGENDADA"))
+        .andExpect(status().isBadRequest())
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("Preencha: Objetivos da visita")));
+    assertEquals(antes, visitas.count());
   }
 
   @Test

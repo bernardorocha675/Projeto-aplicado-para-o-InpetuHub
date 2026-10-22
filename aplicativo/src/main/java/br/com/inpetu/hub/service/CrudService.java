@@ -112,7 +112,7 @@ public class CrudService {
                   escolha("colaborador", "Colaborador", relacao(Colaborador.class, "nome")),
                   campo("data", "Data", "date"),
                   campo("horario", "Horário", "time"),
-                  campo("objetivo", "Objetivo", "textarea"),
+                  campo("objetivo", "Objetivos da visita", "objetivos"),
                   campo("participantes", "Participantes", "number"),
                   escolha(
                       "status",
@@ -217,6 +217,18 @@ public class CrudService {
     }
   }
 
+  public List<String> objetivoOpcoes() {
+    return VisitaObjetivos.OPCOES;
+  }
+
+  public boolean objetivoMarcado(Object o, String campo, String opcao) {
+    return VisitaObjetivos.marcados(valor(o, campo)).contains(opcao);
+  }
+
+  public String objetivoOutro(Object o, String campo) {
+    return VisitaObjetivos.outro(valor(o, campo));
+  }
+
   public String exibicao(Object o, String campo) {
     try {
       Object v = o.getClass().getField(campo).get(o);
@@ -243,12 +255,15 @@ public class CrudService {
               ? "ativo=" + e.ativo + ",disponibilidade=" + e.disponibilidade
               : null;
       for (Campo campo : s.campos) {
-        String raw = dados.getOrDefault(campo.nome, "").trim();
+        String raw =
+            campo.tipo.equals("objetivos")
+                ? VisitaObjetivos.compor(dados, campo.nome)
+                : dados.getOrDefault(campo.nome, "").trim();
         Field f = s.classe.getField(campo.nome);
         Class<?> t = f.getType();
         if (campo.obrigatorio && !campo.tipo.equals("checkbox") && raw.isBlank())
           throw new RegraException("Preencha: " + campo.rotulo);
-        if (raw.length() > (campo.tipo.equals("textarea") ? 2000 : 255))
+        if (raw.length() > (Set.of("textarea", "objetivos").contains(campo.tipo) ? 2000 : 255))
           throw new RegraException("Campo muito longo: " + campo.rotulo);
         // Mesmo formato do formulário público e do cadastro de empreendedores.
         if (campo.tipo.equals("email")

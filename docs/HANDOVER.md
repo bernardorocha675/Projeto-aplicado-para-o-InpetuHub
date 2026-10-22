@@ -1,6 +1,10 @@
-# Handover técnico — InPETU Hub 0.5.4
+# Handover técnico — InPETU Hub 0.5.5
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
+
+## 0.5.5 — objetivos da visita — em revisão
+
+Pedido de 22/10/2026 (lote 5 do Caça bugs 2). Decisões do responsável: no cadastro interno de visitas e como lista de opções + Outro. Mudanças: `VisitaObjetivos` (opções Conhecer o Hub, Reunião/parceria, Evento, Mentoria/apoio ao negócio, Visita técnica/acadêmica; mais de uma por visita e Outro com até 500 caracteres) grava no mesmo campo `objetivo` como “Opção; Opção; Outro: texto”, sem migration; objetivo antigo escrito à mão aparece em Outro ao editar e não muda na lista; envio sem as caixas (campo `objetivo` simples) continua aceito. `CrudService`: campo “Objetivos da visita” do tipo `objetivos` (obrigatório, até 2000 caracteres) e auxiliares para o formulário; `admin/crud/form.html`: grupo de caixas de marcar + Outro; `style.css`: estilo do grupo. Testes locais (Linux x64, 22/10/2026): 135 Java (novos: composição/leitura dos objetivos e objetivo antigo preservado; cadastro grava marcados + Outro, edição volta com as caixas marcadas e o Outro preenchido, sem objetivo é recusado com 400 e nada é gravado), Node de cadastros (6) e da agenda (11), Testar 14/14, pacote Linux x64 e smoke aprovados; captura do formulário no pacote 0.5.5 com o login de demonstração. Windows, macOS e ARM64 ficam com a matriz.
 
 ## 0.5.4 — cidades do mundo e telefone internacional — publicada e verificada
 
