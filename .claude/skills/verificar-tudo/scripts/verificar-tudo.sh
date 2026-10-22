@@ -20,6 +20,13 @@ export PATH
 log="$(mktemp -d)"; trap 'rm -rf "$log"' EXIT
 resumo=(); falhas=0
 tem() { command -v "$1" >/dev/null 2>&1; }
+# Python 3 de verdade: python3, python ou py -3 (no Windows, "python" pode ser o atalho da Microsoft Store).
+py=()
+for candidato in "python3" "python" "py -3"; do
+  set -- $candidato
+  tem "$1" || continue
+  if "$@" -c 'import sys; sys.exit(0 if sys.version_info[0] == 3 else 1)' </dev/null >/dev/null 2>&1; then py=("$@"); break; fi
+done
 registra() { resumo+=("$1"); }
 falhou() { resumo+=("$1"); falhas=$((falhas + 1)); }
 
@@ -61,10 +68,19 @@ if tem go; then
 else registra "Go não rodado (sem go)"; fi
 
 echo "== Segredos e hook de proteção"
-python3 -I aplicativo/scripts/check_secrets.py >"$log/seg.txt" 2>&1 && registra "segredos sem problemas" || { falhou "segredos FALHOU"; cat "$log/seg.txt"; }
-python3 -I .claude/hooks/test_protecao.py >"$log/hook.txt" 2>&1 && registra "hook de proteção ok" || { falhou "hook de proteção FALHOU"; tail -15 "$log/hook.txt"; }
+if [ ${#py[@]} -eq 0 ]; then
+  # Sem Python 3 estas etapas não rodam: contam como falha, nunca como aprovadas.
+  falhou "segredos IGNORADO (Python 3 não encontrado)"
+  falhou "hook de proteção IGNORADO (Python 3 não encontrado)"
+else
+  "${py[@]}" -I aplicativo/scripts/check_secrets.py >"$log/seg.txt" 2>&1 && registra "segredos sem problemas" || { falhou "segredos FALHOU"; cat "$log/seg.txt"; }
+  "${py[@]}" -I .claude/hooks/test_protecao.py >"$log/hook.txt" 2>&1 && registra "hook de proteção ok" || { falhou "hook de proteção FALHOU"; tail -15 "$log/hook.txt"; }
+fi
 
 echo
 echo "RESUMO ($(uname -s) $(uname -m), $(date +%d/%m/%Y)): $(IFS=';'; echo "${resumo[*]}" | sed 's/;/, /g')"
-[ "$falhas" = 0 ] && echo "RESULTADO: tudo aprovado." || echo "RESULTADO: $falhas etapa(s) com falha."
+naorodadas=$(printf '%s\n' "${resumo[@]}" | grep -c 'não rodado')
+if [ "$falhas" != 0 ]; then echo "RESULTADO: $falhas etapa(s) com falha."
+elif [ "$naorodadas" != 0 ]; then echo "RESULTADO: nada falhou, mas $naorodadas etapa(s) não rodaram; não as declare como testadas."
+else echo "RESULTADO: tudo aprovado."; fi
 [ "$falhas" = 0 ]

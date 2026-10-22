@@ -72,6 +72,56 @@ class Protecao(unittest.TestCase):
         self.libera('Bash', {'command': 'git push'}, branch='fix/algo')
         self.libera('Bash', {'command': 'git log origin/main --oneline -5'}, branch='main')
 
+    def test_main_com_opcoes_globais_do_git(self):
+        self.bloqueia('Bash', {'command': 'git -C . push origin HEAD:main'}, branch='fix/algo')
+        self.bloqueia('Bash', {'command': 'git -c core.x=y push origin main'}, branch='fix/algo')
+        self.bloqueia('Bash', {'command': 'git -C . commit -m x'}, branch='main')
+        self.libera('Bash', {'command': 'git -C . push origin HEAD:minha-branch'}, branch='fix/algo')
+        # Outras formas do mesmo contorno.
+        self.bloqueia('Bash', {'command': 'git --no-pager --git-dir=.git --work-tree . push origin +main'}, branch='fix/algo')
+        self.bloqueia('Bash', {'command': 'git -P push -o ci.skip origin HEAD:refs/heads/main'}, branch='fix/algo')
+        self.bloqueia('Bash', {'command': 'git push --mirror origin'}, branch='fix/algo')
+        self.bloqueia('Bash', {'command': 'git -C . rm -r Testes/teste01'})
+        self.libera('Bash', {'command': 'git -C . push -u origin fix/algo'}, branch='fix/algo')
+        self.libera('Bash', {'command': 'git -c color.ui=never log --oneline main'}, branch='main')
+
+    def wrapper(self, programas):
+        """Roda protecao.sh com um PATH que só tem bash, dirname e os programas pedidos."""
+        import shutil
+        import tempfile
+        pasta = Path(tempfile.mkdtemp(dir=RAIZ / 'aplicativo/.tools'))
+        try:
+            for nome in ('bash', 'dirname'):
+                (pasta / nome).symlink_to(shutil.which(nome))
+            for nome, conteudo in programas.items():
+                (pasta / nome).write_text('#!/bin/bash\n' + conteudo + '\n')
+                (pasta / nome).chmod(0o755)
+            dados = json.dumps({'tool_name': 'Write', 'tool_input': {'file_path': 'Testes/x.txt'}, 'cwd': str(RAIZ)})
+            env = {'PATH': str(pasta), 'CLAUDE_PROJECT_DIR': str(RAIZ)}
+            r = subprocess.run([str(pasta / 'bash'), str(RAIZ / '.claude/hooks/protecao.sh')], input=dados,
+                               capture_output=True, text=True, env=env)
+            return r.returncode, r.stderr
+        finally:
+            shutil.rmtree(pasta)
+
+    def test_wrapper_escolhe_um_python3_de_verdade(self):
+        real = sys.executable
+        loja = 'echo "Python was not found; run without arguments to install from the Microsoft Store" >&2; exit 9009'
+        # Só o atalho da Microsoft Store: avisa e libera, sem fingir que protegeu.
+        codigo, erro = self.wrapper({'python3': loja, 'python': loja})
+        self.assertEqual(codigo, 0)
+        self.assertIn('proteção desativada: Python 3 não encontrado', erro)
+        # python3 quebrado, python real: usa o python e bloqueia.
+        codigo, erro = self.wrapper({'python3': loja, 'python': f'exec "{real}" "$@"'})
+        self.assertEqual(codigo, 2, erro)
+        # Só o "py -3" do Windows.
+        codigo, erro = self.wrapper({'py': f'[ "$1" = "-3" ] || exit 1; shift; exec "{real}" "$@"'})
+        self.assertEqual(codigo, 2, erro)
+        # Um Python 2 não serve.
+        codigo, erro = self.wrapper({'python': 'case "$*" in *sys.version_info*) exit 1;; esac; exit 0'})
+        self.assertEqual(codigo, 0)
+        self.assertIn('proteção desativada', erro)
+
     def test_falha_do_hook_libera(self):
         r = subprocess.run([sys.executable, '-I', str(HOOK)], input='isto não é json', capture_output=True, text=True)
         self.assertEqual(r.returncode, 0)

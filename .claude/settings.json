@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 -I \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protecao.py",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/protecao.sh\"",
             "timeout": 15
           }
         ]

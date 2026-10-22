@@ -70,24 +70,64 @@ def checar_arquivo(raiz, caminho):
                  'usuários deixaria de iniciar. Crie uma migration nova (aditiva).')
 
 
+# Opções globais do git que vêm antes do subcomando e levam um valor separado (git -C <dir> push).
+GIT_GLOBAIS_COM_VALOR = {'-C', '-c', '--git-dir', '--work-tree', '--namespace', '--config-env', '--super-prefix', '--list-cmds'}
+# Opções do push que levam um valor separado; o valor não é o remoto nem um refspec.
+PUSH_COM_VALOR = {'-o', '--push-option', '--repo', '--receive-pack', '--exec'}
+
+
+def analisar_git(partes):
+    """De ['git', ...] devolve (pasta do -C ou None, subcomando, argumentos do subcomando)."""
+    pasta, i = None, 1
+    while i < len(partes) and partes[i].startswith('-'):
+        opcao = partes[i]
+        if opcao in GIT_GLOBAIS_COM_VALOR:
+            if opcao == '-C' and i + 1 < len(partes):
+                pasta = partes[i + 1] if pasta is None else str(Path(pasta) / partes[i + 1])
+            i += 2
+        else:  # --git-dir=x, --work-tree=x, --no-pager, -P, -p, --bare...
+            i += 1
+    if i >= len(partes):
+        return pasta, None, []
+    return pasta, partes[i], partes[i + 1:]
+
+
+def refspecs_do_push(args):
+    posicionais, i = [], 0
+    while i < len(args):
+        a = args[i]
+        if a in PUSH_COM_VALOR:
+            i += 2
+            continue
+        if not a.startswith('-'):
+            posicionais.append(a)
+        i += 1
+    return posicionais[1:]  # o primeiro é o remoto
+
+
 def checar_bash(raiz, comando):
-    _, branch = git(raiz, 'branch', '--show-current')
     for trecho in re.split(r'&&|\|\||;|\|', comando):
         try:
             partes = shlex.split(trecho)
         except ValueError:
             partes = trecho.split()
-        if len(partes) >= 2 and partes[0] == 'git':
-            sub = [p for p in partes[1:] if not p.startswith('-') or p in ('--force', '-f')]
-            if sub[:1] == ['commit'] and branch == 'main':
-                bloquear('commit direto na main. Crie uma branch a partir da origin/main.')
-            if sub[:1] == ['push']:
-                alvos = [p for p in sub[1:] if p not in ('--force', '-f')]
-                refspecs = alvos[1:] if alvos else []
-                if any(r.split(':')[-1] in ('main', 'refs/heads/main') for r in refspecs):
-                    bloquear('push para a main. Envie a branch e abra um PR.')
-                if not refspecs and branch == 'main':
-                    bloquear('push estando na main. Envie uma branch própria e abra um PR.')
+        if len(partes) < 2 or partes[0].rsplit('/', 1)[-1] not in ('git', 'git.exe'):
+            continue
+        pasta, sub, args = analisar_git(partes)
+        if sub not in ('commit', 'push'):
+            continue
+        alvo = raiz / pasta if pasta and not Path(pasta).is_absolute() else Path(pasta or raiz)
+        _, branch = git(alvo, 'branch', '--show-current')
+        if sub == 'commit' and branch == 'main':
+            bloquear('commit direto na main. Crie uma branch a partir da origin/main.')
+        if sub == 'push':
+            if any(a in ('--mirror', '--all') for a in args):
+                bloquear('push com --mirror/--all também envia a main. Envie só a sua branch.')
+            refspecs = refspecs_do_push(args)
+            if any(r.lstrip('+').split(':')[-1] in ('main', 'refs/heads/main') for r in refspecs):
+                bloquear('push para a main. Envie a branch e abra um PR.')
+            if not refspecs and branch == 'main':
+                bloquear('push estando na main. Envie uma branch própria e abra um PR.')
     # Escrita ou exclusão por shell: só os destinos reais contam (alvo de > e >>, argumentos de
     # comandos que gravam ou apagam). Textos de mensagens e corpos de heredoc não são destinos.
     for alvo in destinos_de_escrita(comando):
@@ -125,8 +165,10 @@ def destinos_de_escrita(comando):
             destinos += args[1:]
         elif nome == 'dd':
             destinos += [p[3:] for p in partes[1:] if p.startswith('of=')]
-        elif nome == 'git' and partes[1:2] in (['rm'], ['mv']):
-            destinos += args[1:]
+        elif nome in ('git', 'git.exe'):
+            pasta, sub, resto = analisar_git(partes)
+            if sub in ('rm', 'mv'):
+                destinos += [str(Path(pasta) / a) if pasta else a for a in resto if not a.startswith('-')]
     return destinos
 
 
