@@ -38,3 +38,9 @@ As conexões do ChatGPT não são transferidas ao Claude Code. Verifique as inte
 Entregas e evidências anteriores estão em `continuidade/HISTORICO.md`, no handover e nas releases. O envio dos PCs ao GitHub ainda não foi ativado: a integração Render exige identificar explicitamente o workspace, e nada nesta área autoriza selecionar My Workspace sem a resposta do usuário. Não declarar envio real como concluído. Cada lote termina ao ser entregue: parar e aguardar nova autorização.
 
 Em 18/10/2026, o responsável retirou o suporte Android do projeto ativo. Manter somente desktop Windows/macOS/Linux. Histórico, releases Android já publicadas e materiais privados de recuperação permanecem preservados; não retomar Android sem nova autorização.
+
+## Commits
+
+- Escreva sempre as mensagens de commit em português do Brasil.
+- Faça commit somente depois que os testes pertinentes passarem.
+- Trabalhe sempre em uma branch própria; nunca faça commit nem push direto na `main`.
