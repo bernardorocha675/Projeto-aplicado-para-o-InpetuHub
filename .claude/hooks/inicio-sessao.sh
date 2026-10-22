@@ -6,11 +6,26 @@ cd "${CLAUDE_PROJECT_DIR:-$(dirname "$0")/../..}" 2>/dev/null || { echo "Aviso: 
 
 aviso() { echo "Aviso: $*"; }
 
+# Limite de tempo para comandos de rede: timeout (Linux) ou gtimeout (macOS com coreutils).
+# Sem nenhum dos dois, os comandos rodam sem limite.
+if command -v timeout >/dev/null 2>&1; then
+  limitador=timeout
+elif command -v gtimeout >/dev/null 2>&1; then
+  limitador=gtimeout
+else
+  limitador=
+  aviso "timeout e gtimeout não encontrados; git fetch, git pull e gh rodam sem limite de tempo."
+fi
+com_limite() {
+  local segundos=$1; shift
+  if [ -n "$limitador" ]; then "$limitador" "$segundos" "$@"; else "$@"; fi
+}
+
 echo "== Repositório =="
 if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   aviso "esta pasta não é um repositório Git."
 else
-  if ! timeout 30 git fetch --prune origin >/dev/null 2>&1; then
+  if ! com_limite 30 git fetch --prune origin >/dev/null 2>&1; then
     aviso "git fetch falhou (sem internet ou sem acesso ao GitHub). Usando dados locais."
   fi
 
@@ -21,7 +36,7 @@ else
     aviso "HEAD destacado; o pull não foi feito."
   elif ! git rev-parse --abbrev-ref '@{u}' >/dev/null 2>&1; then
     aviso "a branch '$branch' não acompanha uma branch remota; o pull não foi feito."
-  elif ! timeout 30 git pull --ff-only --quiet >/dev/null 2>&1; then
+  elif ! com_limite 30 git pull --ff-only --quiet >/dev/null 2>&1; then
     aviso "git pull --ff-only falhou (histórico divergente ou sem conexão)."
   fi
 
@@ -51,7 +66,7 @@ fi
 echo
 echo "== Versão =="
 if command -v gh >/dev/null 2>&1; then
-  timeout 20 gh release view --json tagName,publishedAt 2>/dev/null \
+  com_limite 20 gh release view --json tagName,publishedAt 2>/dev/null \
     || aviso "não foi possível consultar a release mais recente (gh sem login ou sem internet)."
 else
   aviso "gh não está instalado; release mais recente não consultada."

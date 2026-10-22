@@ -13,27 +13,27 @@ Review files for compliance with Web Interface Guidelines.
 
 ## How It Works
 
-1. Fetch the latest guidelines from the source URL below
+1. Read the guidelines from the local file below
 2. Read the specified files (or prompt user for files/pattern)
-3. Check against all rules in the fetched guidelines
+3. Check against all rules in the guidelines
 4. Output findings in the terse `file:line` format
 
 ## Guidelines Source
 
-Fetch fresh guidelines before each review:
+The guidelines are stored locally, next to this file:
 
 ```
-https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md
+command.md
 ```
 
-Use WebFetch to retrieve the latest rules. The fetched content contains all the rules and output format instructions.
+Read `command.md` from this skill's directory with the Read tool. Do not fetch the guidelines from the internet. The file contains all the rules and output format instructions. It is a copy of `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md`; the copy date is recorded in `.claude/LEIA-ME.md`.
 
 ## Usage
 
 When a user provides a file or pattern argument:
-1. Fetch guidelines from the source URL above
+1. Read the guidelines from `command.md`
 2. Read the specified files
-3. Apply all rules from the fetched guidelines
+3. Apply all rules from the guidelines
 4. Output findings using the format specified in the guidelines
 
 If no files specified, ask the user which files to review.

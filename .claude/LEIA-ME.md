@@ -2,25 +2,7 @@
 
 Cada pasta dentro de `skills/` é uma skill completa, com o `SKILL.md` e os arquivos extras dela (scripts, guias e exemplos).
 
-## Onde colocar
-
-**Só neste projeto (recomendado):** copie as pastas de `skills/` para `.claude/skills/` na raiz do repositório. Exemplo:
-
-```
-Projeto-aplicado-para-o-InpetuHub/
-└── .claude/
-    └── skills/
-        ├── tdd/
-        │   └── SKILL.md
-        ├── webapp-testing/
-        └── ...
-```
-
-Se as pastas forem para o Git, o time inteiro passa a ter as mesmas skills.
-
-**Em todos os seus projetos:** copie as pastas para `~/.claude/skills/`.
-
-Os arquivos `LICENSE-*.txt` não precisam ir para a pasta de skills. Eles registram as licenças das origens.
+As skills já estão em `.claude/skills/` e valem para todos que usam este repositório com o Claude Code.
 
 ## O que tem aqui
 
@@ -40,7 +22,7 @@ Os arquivos `LICENSE-*.txt` não precisam ir para a pasta de skills. Eles regist
 ## Observações
 
 - A **webapp-testing** precisa do Python com Playwright (`pip install playwright` e `playwright install chromium`). O script `with_server.py` sobe o servidor, espera ele responder e roda o teste.
-- A **web-design-guidelines** baixa as regras atualizadas do GitHub da Vercel a cada revisão, então precisa de internet.
+- A **web-design-guidelines** usa a cópia local das regras em `skills/web-design-guidelines/command.md`, sem acessar a internet. A cópia foi baixada em 22/10/2026 de https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md e lida por inteiro antes de entrar no repositório. Para atualizar as regras, baixe de novo, leia o arquivo e registre a nova data aqui.
 - A **code-review** usa sub-agentes e pede a configuração da `setup-matt-pocock-skills` (onde ficam as issues, por exemplo GitHub).
 - Os arquivos `agents/openai.yaml` de algumas pastas servem para outras ferramentas. O Claude Code ignora esses arquivos.
-- Todas as skills foram copiadas em 22/10/2026 dos repositórios originais, sem alterações. Os SKILL.md e scripts foram lidos e não têm comandos perigosos.
+- Todas as skills foram copiadas em 22/10/2026 dos repositórios originais. A única alteração é no `SKILL.md` da web-design-guidelines, que passou a ler o `command.md` local. Os SKILL.md e scripts foram lidos e não têm comandos perigosos.
