@@ -55,6 +55,12 @@ public class InpetuApplication {
       return;
     }
     br.com.inpetu.hub.observability.PrivateLogDirectory.prepare();
-    SpringApplication.run(InpetuApplication.class, args);
+    SpringApplication app = new SpringApplication(InpetuApplication.class);
+    // Falha ao iniciar: um evento com a categoria da causa (a cadeia vai no log, sem mensagens).
+    app.addListeners(
+        (org.springframework.context.ApplicationListener<
+                org.springframework.boot.context.event.ApplicationFailedEvent>)
+            e -> br.com.inpetu.hub.observability.OperationalEvents.startFailed(e.getException()));
+    app.run(args);
   }
 }

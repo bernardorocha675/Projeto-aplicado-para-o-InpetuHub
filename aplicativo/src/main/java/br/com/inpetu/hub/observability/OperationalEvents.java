@@ -11,8 +11,26 @@ public final class OperationalEvents {
 
   private OperationalEvents() {}
 
+  /** Marca a requisição respondida com 503 porque o servidor ainda está iniciando (AbuseFilter). */
+  public static final String STARTING_ATTRIBUTE = "inpetu.startupWait";
+
+  // O iniciador consulta /login até o sistema ficar pronto: cada 503 da espera não é um erro.
+  private static final java.util.concurrent.atomic.AtomicInteger startupWaits =
+      new java.util.concurrent.atomic.AtomicInteger();
+
   public static void lifecycle(boolean started) {
-    LOG.info("event={}", started ? "SERVER_READY" : "SERVER_STOPPED");
+    if (started) LOG.info("event=SERVER_READY startupWaits={}", startupWaits.getAndSet(0));
+    else LOG.info("event=SERVER_STOPPED");
+  }
+
+  /** Um aviso na primeira espera; a contagem sai no SERVER_READY. */
+  public static void startupWait() {
+    if (startupWaits.getAndIncrement() == 0) LOG.warn("event=SERVER_STARTING_WAIT");
+  }
+
+  /** O sistema não iniciou: a categoria vem de FailureCause e a cadeia de causas vai pelo encoder. */
+  public static void startFailed(Throwable failure) {
+    LOG.error("event=SERVER_START_FAILED failure={}", FailureCause.of(failure).failure(), failure);
   }
 
   public static void retentionFailure(Throwable failure) {

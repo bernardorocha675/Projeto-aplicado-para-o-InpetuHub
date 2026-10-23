@@ -29,7 +29,9 @@
     return n;
   };
 
-  async function render() {
+  // automatic === true só na atualização periódica: sem cookie, ela não renova a sessão de quem
+  // está logado (o tempo de inatividade continua valendo). A resposta é a mesma para todos.
+  async function render(automatic) {
     const seq = ++request;
     const shown = dateISO(month).slice(0, 7);
     previous.disabled = shown <= minMonth;
@@ -42,7 +44,7 @@
       const ym = dateISO(month).slice(0, 7);
       const query = new URLSearchParams({mes: ym});
       if (filter.value) query.set('espacoId', filter.value);
-      const response = await fetch('/disponibilidade?' + query);
+      const response = await fetch('/disponibilidade?' + query, automatic === true ? {credentials: 'omit'} : undefined);
       if (!response.ok) throw new Error('Não foi possível consultar a agenda.');
       const json = await response.json();
       if (seq !== request) return;
@@ -206,6 +208,6 @@
   filter.addEventListener('change', render);
   render();
   setInterval(() => {
-    if (!document.hidden) render();
+    if (!document.hidden) render(true);
   }, 30000);
 })();
