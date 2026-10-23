@@ -25,6 +25,7 @@ var sessionIDPattern = regexp.MustCompile(`^[a-f0-9]{32}$`)
 var codePattern = regexp.MustCompile(`^[A-Z][A-Z0-9_]{0,63}$`)
 var symbolPattern = regexp.MustCompile(`^[a-zA-Z_$*][a-zA-Z0-9_.$*]{0,159}$`)
 var framePattern = regexp.MustCompile(`^[a-zA-Z_$][a-zA-Z0-9_.$<>]*:[0-9]{1,7}$`)
+var sqlStatePattern = regexp.MustCompile(`^[0-9A-Z]{5}$`)
 var routePattern = regexp.MustCompile(`^/[a-zA-Z0-9_/{}/-]{0,120}$`)
 
 type SessionEvent struct {
@@ -90,12 +91,12 @@ func safeFields(input map[string]any) map[string]any {
 	out := map[string]any{}
 	for key, value := range input {
 		switch key {
-		case "status", "durationMs", "actorId", "targetId", "exitCode", "pid":
+		case "status", "durationMs", "actorId", "targetId", "exitCode", "pid", "startupWaits", "sqlErrorCode":
 			n, e := strconv.ParseInt(fmt.Sprint(value), 10, 64)
 			if e == nil && n >= -1 && n <= 1_000_000_000 {
 				out[key] = n
 			}
-		case "action", "result", "phase":
+		case "action", "result", "phase", "failure":
 			if v, ok := value.(string); ok && codePattern.MatchString(v) {
 				out[key] = v
 			}
@@ -115,34 +116,51 @@ func safeFields(input map[string]any) map[string]any {
 			if v, ok := value.(string); ok && (v == "OTHER" || v == "ASSET" || routePattern.MatchString(v)) {
 				out[key] = v
 			}
+		case "sqlState":
+			if v, ok := value.(string); ok && sqlStatePattern.MatchString(v) {
+				out[key] = v
+			}
+		case "causes":
+			if clean := cleanList(value, symbolPattern, 8); len(clean) > 0 {
+				out[key] = clean
+			}
+		case "rootFrames":
+			if clean := cleanList(value, framePattern, 10); len(clean) > 0 {
+				out[key] = clean
+			}
 		case "requestId":
 			if v, ok := value.(string); ok && regexp.MustCompile(`^[a-f0-9-]{36}$`).MatchString(v) {
 				out[key] = v
 			}
 		case "frames":
-			var values []string
-			switch v := value.(type) {
-			case []string:
-				values = v
-			case []any:
-				for _, item := range v {
-					if s, ok := item.(string); ok {
-						values = append(values, s)
-					}
-				}
-			}
-			clean := []string{}
-			for _, s := range values {
-				if framePattern.MatchString(s) && len(clean) < 20 {
-					clean = append(clean, s)
-				}
-			}
-			if len(clean) > 0 {
+			if clean := cleanList(value, framePattern, 20); len(clean) > 0 {
 				out[key] = clean
 			}
 		}
 	}
 	return out
+}
+
+// Lista de textos curtos que seguem um padrão (classes, linhas de código); o resto é descartado.
+func cleanList(value any, pattern *regexp.Regexp, max int) []string {
+	var values []string
+	switch v := value.(type) {
+	case []string:
+		values = v
+	case []any:
+		for _, item := range v {
+			if s, ok := item.(string); ok {
+				values = append(values, s)
+			}
+		}
+	}
+	clean := []string{}
+	for _, s := range values {
+		if pattern.MatchString(s) && len(clean) < max {
+			clean = append(clean, s)
+		}
+	}
+	return clean
 }
 func openSessionFile(folder string, report SessionReport) (*Session, error) {
 	if e := privateDir(folder); e != nil {
@@ -409,11 +427,20 @@ func (w *javaSessionSink) line(line []byte) {
 		Message       string   `json:"message"`
 		ExceptionType string   `json:"exceptionType"`
 		Frames        []string `json:"frames"`
+		Causes        []string `json:"causes"`
+		RootFrames    []string `json:"rootFrames"`
+		Failure       string   `json:"failure"`
+		SQLState      string   `json:"sqlState"`
+		SQLErrorCode  *int64   `json:"sqlErrorCode"`
 	}
 	if json.Unmarshal(line, &input) != nil {
 		return
 	}
-	fields := map[string]any{"logger": input.Logger, "requestId": input.RequestID, "errorType": input.ExceptionType, "frames": input.Frames}
+	fields := map[string]any{"logger": input.Logger, "requestId": input.RequestID, "errorType": input.ExceptionType, "frames": input.Frames,
+		"causes": input.Causes, "rootFrames": input.RootFrames, "failure": input.Failure, "sqlState": input.SQLState}
+	if input.SQLErrorCode != nil {
+		fields["sqlErrorCode"] = *input.SQLErrorCode
+	}
 	event := "FRAMEWORK_EVENT"
 	if input.Logger == "br.com.inpetu.hub.observability.OperationalEvents" {
 		for _, part := range strings.Fields(input.Message) {

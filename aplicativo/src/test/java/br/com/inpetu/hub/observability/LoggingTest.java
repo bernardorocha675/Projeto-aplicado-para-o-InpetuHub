@@ -160,6 +160,179 @@ class LoggingTest {
     assertEquals("a\n\"b", json.readTree(SafeLogEncoder.quote("a\n\"b")).asString());
   }
 
+  private tools.jackson.databind.JsonNode encodeFailure(Throwable failure) {
+    var e = new LoggingEvent();
+    e.setTimeStamp(0);
+    e.setLevel(Level.ERROR);
+    e.setLoggerName("org.springframework.boot.SpringApplication");
+    e.setMessage("Application run failed");
+    e.setMDCPropertyMap(Map.of());
+    e.setThrowableProxy(new ThrowableProxy(failure));
+    String line = new String(new SafeLogEncoder().encode(e), StandardCharsets.UTF_8);
+    // Nada das mensagens da cadeia pode sair: SQL com valores, caminhos com nome de usuário, senhas.
+    for (String secret :
+        List.of(
+            "12345678000190",
+            "maria@example.com",
+            "Fulano",
+            "/home/fulano",
+            "senha-secreta",
+            "inpetu-v02.mv.db",
+            "bean-secret",
+            "VALUES"))
+      assertFalse(line.contains(secret), secret + " vazou: " + line);
+    return json.readTree(line);
+  }
+
+  @Test
+  void startupFailureKeepsTheRealCauseWithoutMessages() {
+    var sql =
+        new java.sql.SQLException(
+            "Unique index violation: VALUES ('12345678000190', 'maria@example.com')", "23505", 23505);
+    var node =
+        encodeFailure(
+            new IllegalStateException(
+                "bean-secret C:\\Users\\Fulano\\InPETU-Hub", new RuntimeException("senha-secreta", sql)));
+    assertEquals("java.lang.IllegalStateException", node.get("exceptionType").asString());
+    var causes = new ArrayList<String>();
+    node.get("causes").forEach(c -> causes.add(c.asString()));
+    assertEquals(List.of("java.lang.RuntimeException", "java.sql.SQLException"), causes);
+    assertFalse(node.get("rootFrames").isEmpty());
+    assertEquals("DATABASE_ERROR", node.get("failure").asString());
+    assertEquals("23505", node.get("sqlState").asString());
+    assertEquals(23505, node.get("sqlErrorCode").asInt());
+  }
+
+  @Test
+  void startupFailureIsClassifiedByItsCause() {
+    assertEquals(
+        "PORT_IN_USE",
+        encodeFailure(new RuntimeException(new java.net.BindException("Address in use /home/fulano")))
+            .get("failure")
+            .asString());
+    assertEquals(
+        "DATABASE_IN_USE",
+        encodeFailure(
+                new RuntimeException(
+                    new java.sql.SQLException(
+                        "Database may be already in use: /home/fulano/inpetu-v02.mv.db", "90020", 90020)))
+            .get("failure")
+            .asString());
+    assertEquals(
+        "MIGRATION_FAILED",
+        encodeFailure(new RuntimeException(new org.flywaydb.core.api.FlywayException("senha-secreta")))
+            .get("failure")
+            .asString());
+    assertEquals(
+        "FILE_ACCESS",
+        encodeFailure(new java.nio.file.AccessDeniedException("/home/fulano/.secrets/mfa.key"))
+            .get("failure")
+            .asString());
+    var other = encodeFailure(new IllegalArgumentException("bean-secret"));
+    assertEquals("OTHER", other.get("failure").asString());
+    assertNull(other.get("causes"));
+    assertNull(other.get("sqlState"));
+    // Um SQLState fora do padrão não é gravado (pode vir de um driver com texto livre).
+    assertNull(
+        encodeFailure(new java.sql.SQLException("x", "senha-secreta", 1)).get("sqlState"));
+  }
+
+  @Test
+  void startupWaitIsOneWarningAndTheReadyEventCountsIt() throws Exception {
+    var logger = (Logger) LoggerFactory.getLogger(OperationalEvents.class);
+    var capture = new ListAppender<ILoggingEvent>();
+    capture.start();
+    logger.addAppender(capture);
+    try {
+      var log = new RequestLogFilter();
+      var starting =
+          new br.com.inpetu.hub.security.AbuseFilter(null, null, false, () -> false);
+      for (int i = 0; i < 3; i++) {
+        var response = new MockHttpServletResponse();
+        log.doFilter(
+            new MockHttpServletRequest("GET", "/login"),
+            response,
+            (a, b) -> starting.doFilter(a, b, (c, d) -> fail("não deveria passar enquanto inicia")));
+        assertEquals(503, response.getStatus());
+      }
+      OperationalEvents.lifecycle(true);
+      var waits = capture.list.stream().filter(e -> e.getFormattedMessage().startsWith("event=SERVER_STARTING_WAIT")).toList();
+      assertEquals(1, waits.size());
+      assertEquals(Level.WARN, waits.get(0).getLevel());
+      assertTrue(capture.list.stream().noneMatch(e -> e.getLevel() == Level.ERROR), capture.list.toString());
+      assertTrue(
+          capture.list.stream().anyMatch(e -> e.getFormattedMessage().equals("event=SERVER_READY startupWaits=3")),
+          capture.list.toString());
+      // Um 503 que não é a espera da inicialização continua sendo erro.
+      capture.list.clear();
+      log.doFilter(
+          new MockHttpServletRequest("GET", "/admin"),
+          new MockHttpServletResponse(),
+          (a, b) -> ((jakarta.servlet.http.HttpServletResponse) b).setStatus(503));
+      assertEquals(Level.ERROR, capture.list.get(0).getLevel());
+    } finally {
+      logger.detachAppender(capture);
+      capture.stop();
+    }
+  }
+
+  @Test
+  void causeChainAndRootFramesAreLimited() {
+    Throwable deep = new IllegalStateException("bean-secret");
+    deep.setStackTrace(
+        java.util.stream.IntStream.range(0, 30)
+            .mapToObj(i -> new StackTraceElement("example.Deep", "step" + i, "Deep.java", i + 1))
+            .toArray(StackTraceElement[]::new));
+    Throwable top = deep;
+    for (int i = 0; i < 12; i++) top = new RuntimeException("bean-secret", top);
+    var node = encodeFailure(top);
+    assertEquals(8, node.get("causes").size());
+    assertEquals(10, node.get("rootFrames").size());
+    // Código de erro negativo (estilo DB2) fica fora: o iniciador e o receptor só aceitam 0 a 1e9.
+    assertNull(encodeFailure(new java.sql.SQLException("x", "23505", -803)).get("sqlErrorCode"));
+  }
+
+  @Test
+  void a503AfterTheServerWasReadyIsStillAnError() throws Exception {
+    var logger = (Logger) LoggerFactory.getLogger(OperationalEvents.class);
+    var capture = new ListAppender<ILoggingEvent>();
+    capture.start();
+    logger.addAppender(capture);
+    try {
+      boolean[] accepting = {true};
+      var crypto = new br.com.inpetu.hub.security.SecretCrypto("", br.com.inpetu.hub.security.SecretCrypto.random(32));
+      var filter = new br.com.inpetu.hub.security.AbuseFilter(null, crypto, false, () -> accepting[0]);
+      var log = new RequestLogFilter();
+      log.doFilter(new MockHttpServletRequest("GET", "/agenda"), new MockHttpServletResponse(), (a, b) -> filter.doFilter(a, b, (c, d) -> {}));
+      accepting[0] = false; // encerramento: o readiness volta a recusar tráfego
+      capture.list.clear();
+      var response = new MockHttpServletResponse();
+      log.doFilter(new MockHttpServletRequest("GET", "/agenda"), response, (a, b) -> filter.doFilter(a, b, (c, d) -> {}));
+      assertEquals(503, response.getStatus());
+      assertTrue(capture.list.stream().noneMatch(e -> e.getFormattedMessage().startsWith("event=SERVER_STARTING_WAIT")), capture.list.toString());
+      assertEquals(Level.ERROR, capture.list.get(0).getLevel());
+    } finally {
+      logger.detachAppender(capture);
+      capture.stop();
+    }
+  }
+
+  @Test
+  void startFailedEventNamesTheCategory() {
+    var logger = (Logger) LoggerFactory.getLogger(OperationalEvents.class);
+    var capture = new ListAppender<ILoggingEvent>();
+    capture.start();
+    logger.addAppender(capture);
+    try {
+      OperationalEvents.startFailed(new RuntimeException(new java.net.BindException("bean-secret")));
+      assertEquals("event=SERVER_START_FAILED failure=PORT_IN_USE", capture.list.get(0).getFormattedMessage());
+      assertEquals(Level.ERROR, capture.list.get(0).getLevel());
+    } finally {
+      logger.detachAppender(capture);
+      capture.stop();
+    }
+  }
+
   @Test
   void requestIdIsGeneratedAndMdcIsClearedEvenOnFailure() throws Exception {
     var filter = new RequestLogFilter();

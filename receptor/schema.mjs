@@ -18,14 +18,18 @@ export function cleanFields(fields){
  const out={};if(!object(fields))return out;
  for(const key of Object.keys(fields).sort()){
   const value=fields[key];
-  if(['status','durationMs','actorId','targetId','exitCode','pid'].includes(key)&&Number.isSafeInteger(value)&&value>=-1&&value<=1e9)out[key]=value;
-  if(['action','result','phase'].includes(key)&&typeof value==='string'&&code.test(value))out[key]=value;
+  if(['status','durationMs','actorId','targetId','exitCode','pid','startupWaits','sqlErrorCode'].includes(key)&&Number.isSafeInteger(value)&&value>=-1&&value<=1e9)out[key]=value;
+  if(['action','result','phase','failure'].includes(key)&&typeof value==='string'&&code.test(value))out[key]=value;
   if(key==='method'&&['GET','POST','PUT','PATCH','DELETE','HEAD','OPTIONS','OTHER'].includes(value))out[key]=value;
   if(key==='target'&&typeof value==='string'&&/^[a-z_]{1,40}$/.test(value))out[key]=value;
   if(['logger','errorType'].includes(key)&&typeof value==='string'&&symbol.test(value))out[key]=value;
   if(key==='requestId'&&typeof value==='string'&&/^[a-f0-9-]{36}$/.test(value))out[key]=value;
   if(key==='route'&&typeof value==='string'&&(value==='OTHER'||value==='ASSET'||/^\/[a-zA-Z_/{}/-]{0,120}$/.test(value)))out[key]=value;
   if(key==='frames'&&Array.isArray(value)){const frames=value.filter(s=>typeof s==='string'&&frame.test(s)).slice(0,20);if(frames.length)out[key]=frames;}
+  // Causa de falha: só nomes de classe, linhas de código e o SQLState; nunca mensagens.
+  if(key==='rootFrames'&&Array.isArray(value)){const frames=value.filter(s=>typeof s==='string'&&frame.test(s)).slice(0,10);if(frames.length)out[key]=frames;}
+  if(key==='causes'&&Array.isArray(value)){const causes=value.filter(s=>typeof s==='string'&&symbol.test(s)).slice(0,8);if(causes.length)out[key]=causes;}
+  if(key==='sqlState'&&typeof value==='string'&&/^[0-9A-Z]{5}$/.test(value))out[key]=value;
  }
  return out;
 }

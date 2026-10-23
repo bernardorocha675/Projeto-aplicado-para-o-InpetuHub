@@ -68,16 +68,36 @@ public class SafeLogEncoder extends EncoderBase<ILoggingEvent> {
     IThrowableProxy t = e.getThrowableProxy();
     if (t != null) {
       out.append(",\"exceptionType\":").append(quote(t.getClassName()));
-      out.append(",\"frames\":[");
-      var frames = t.getStackTraceElementProxyArray();
-      if (frames != null)
-        for (int i = 0; i < Math.min(frames.length, 20); i++) {
-          if (i != 0) out.append(',');
-          var f = frames[i].getStackTraceElement();
-          out.append(quote(f.getClassName() + "." + f.getMethodName() + ":" + f.getLineNumber()));
+      appendFrames(out, "frames", t, 20);
+      // A causa real (o sistema que não inicia esconde-a atrás de BeanCreationException): só nomes de
+      // classe, linhas do código, uma categoria e o SQLState; as mensagens da cadeia continuam fora.
+      var chain = FailureCause.chain(t);
+      var cause = FailureCause.of(t);
+      if (chain.size() > 1) {
+        out.append(",\"causes\":[");
+        for (int i = 1; i < chain.size(); i++) {
+          if (i != 1) out.append(',');
+          out.append(quote(chain.get(i).getClassName()));
         }
-      out.append(']');
+        out.append(']');
+        appendFrames(out, "rootFrames", chain.get(chain.size() - 1), 10);
+      }
+      out.append(",\"failure\":").append(quote(cause.failure()));
+      if (cause.sqlState() != null) out.append(",\"sqlState\":").append(quote(cause.sqlState()));
+      if (cause.sqlErrorCode() != null) out.append(",\"sqlErrorCode\":").append(cause.sqlErrorCode());
     }
     return out.append("}\n").toString().getBytes(StandardCharsets.UTF_8);
+  }
+
+  private static void appendFrames(StringBuilder out, String name, IThrowableProxy t, int max) {
+    out.append(",\"").append(name).append("\":[");
+    var frames = t.getStackTraceElementProxyArray();
+    if (frames != null)
+      for (int i = 0; i < Math.min(frames.length, max); i++) {
+        if (i != 0) out.append(',');
+        var f = frames[i].getStackTraceElement();
+        out.append(quote(f.getClassName() + "." + f.getMethodName() + ":" + f.getLineNumber()));
+      }
+    out.append(']');
   }
 }
