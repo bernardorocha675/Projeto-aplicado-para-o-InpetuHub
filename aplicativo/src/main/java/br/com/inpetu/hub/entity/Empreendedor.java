@@ -12,8 +12,12 @@ public class Empreendedor {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
 
-  @Column(nullable = false, unique = true, length = 14)
+  // Número do documento (CNPJ, CPF ou estrangeiro); vazio quando o tipo é NENHUM.
+  @Column(unique = true, length = 30)
   public String cnpj;
+
+  @Column(length = 20)
+  public String tipoDocumento;
 
   @Column(nullable = false)
   public String nome;
@@ -38,6 +42,14 @@ public class Empreendedor {
 
   public void setCnpj(String value) {
     cnpj = value;
+  }
+
+  public String getTipoDocumento() {
+    return tipoDocumento;
+  }
+
+  public void setTipoDocumento(String value) {
+    tipoDocumento = value;
   }
 
   public String getNome() {

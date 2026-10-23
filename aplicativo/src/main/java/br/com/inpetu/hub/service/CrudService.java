@@ -74,8 +74,15 @@ public class CrudService {
               Empreendedor.class,
               List.of(
                   campo("nome", "Nome", "text"),
-                  campo("cnpj", "CNPJ (14 dígitos)", "text"),
-                  campo("empresa", "Empresa/instituição", "text"),
+                  // Sem tipo (formulário antigo) vale como CNPJ; ver Documentos.normalizar.
+                  new Campo(
+                      "tipoDocumento",
+                      "Tipo de documento",
+                      "select",
+                      false,
+                      br.com.inpetu.hub.validation.Documentos.TIPOS),
+                  opcional("cnpj", "Documento (CNPJ 14 dígitos, CPF 11 ou estrangeiro)", "text"),
+                  opcional("empresa", "Empresa/instituição", "text"),
                   campo("email", "Email", "email"),
                   campo("telefone", "Telefone", "text"),
                   campo("cidade", "Cidade", "text"),
@@ -241,6 +248,8 @@ public class CrudService {
       Object v = o.getClass().getField(campo).get(o);
       if (v instanceof Empreendedor e) return e.nome;
       if (v instanceof Colaborador c) return c.nome;
+      if (o instanceof Empreendedor && campo.equals("tipoDocumento"))
+        return br.com.inpetu.hub.validation.Documentos.TIPOS.getOrDefault((String) v, valor(o, campo));
       return valor(o, campo);
     } catch (Exception ex) {
       throw new IllegalStateException(ex);
@@ -287,7 +296,9 @@ public class CrudService {
             && !raw.matches(br.com.inpetu.hub.validation.ContactRules.EMAIL))
           throw new RegraException(
               "Email: informe um endereço completo, como nome@instituicao.com.br.");
-        if (campo.tipo.equals("select") && !campo.opcoes.containsKey(raw))
+        if (campo.tipo.equals("select")
+            && !(raw.isBlank() && !campo.obrigatorio)
+            && !campo.opcoes.containsKey(raw))
           throw new RegraException("Opção inválida: " + campo.rotulo);
         if (campo.nome.equals("senha")) {
           if (raw.isBlank() && id != null) continue;
@@ -365,16 +376,21 @@ public class CrudService {
   private void validar(Object o, Colaborador autor) {
     if (o instanceof Empreendedor e) {
       br.com.inpetu.hub.validation.ContactRules.validate(e.nome,e.email,e.telefone);
-      if (!e.cnpj.matches("[0-9]{14}")) throw new RegraException("CNPJ deve conter 14 dígitos.");
+      var doc = br.com.inpetu.hub.validation.Documentos.normalizar(e.tipoDocumento, e.cnpj);
+      e.tipoDocumento = doc.tipo();
+      e.cnpj = doc.numero();
+      // Sem documento não há número a comparar; vários cadastros podem ficar sem documento.
       long duplicados =
-          em.createQuery(
-                  "select count(e) from Empreendedor e where e.cnpj=:cnpj and (:id is null or"
-                      + " e.id<>:id)",
-                  Long.class)
-              .setParameter("cnpj", e.cnpj)
-              .setParameter("id", e.id)
-              .getSingleResult();
-      if (duplicados > 0) throw new RegraException("CNPJ já cadastrado.");
+          e.cnpj == null
+              ? 0
+              : em.createQuery(
+                      "select count(e) from Empreendedor e where e.cnpj=:cnpj and (:id is null or"
+                          + " e.id<>:id)",
+                      Long.class)
+                  .setParameter("cnpj", e.cnpj)
+                  .setParameter("id", e.id)
+                  .getSingleResult();
+      if (duplicados > 0) throw new RegraException("Documento já cadastrado.");
     }
     if (o instanceof Espaco e && e.capacidade < 1)
       throw new RegraException("Capacidade deve ser positiva.");
