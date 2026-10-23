@@ -32,7 +32,9 @@ public class RequestLogFilter extends OncePerRequestFilter {
       throw ex;
     } finally {
       try {
-        OperationalEvents.request(
+        if (failure == null && Boolean.TRUE.equals(request.getAttribute(OperationalEvents.STARTING_ATTRIBUTE)))
+          OperationalEvents.startupWait();
+        else OperationalEvents.request(
             request.getMethod(),
             request.getRequestURI(),
             failure == null ? response.getStatus() : 500,

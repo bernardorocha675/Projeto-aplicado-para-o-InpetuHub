@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -337,5 +338,56 @@ func TestPendingReportsAndConfigFailuresRemainDiagnosable(t *testing.T) {
 	data, _ := os.ReadFile(filepath.Join(active.folder, "relatorio.json"))
 	if !strings.Contains(string(data), "REPORT_CONFIG_FAILED") || strings.Contains(string(data), "synthetic-secret") {
 		t.Fatal("diagnostico ausente ou vazou segredo")
+	}
+}
+func TestJavaStartupFailureKeepsTheCauseFieldsAndDropsFreeText(t *testing.T) {
+	s, e := beginSession(t.TempDir(), "")
+	if e != nil {
+		t.Fatal(e)
+	}
+	sink := &javaSessionSink{session: s}
+	line := `{"level":"ERROR","logger":"br.com.inpetu.hub.observability.OperationalEvents","message":"event=SERVER_START_FAILED failure=DATABASE_ERROR","exceptionType":"java.lang.IllegalStateException","frames":["example.Boot.run:7"],` +
+		`"causes":["java.lang.RuntimeException","java.sql.SQLException","VALUES ('12345678000190') /home/fulano"],"rootFrames":["org.h2.Engine.open:42","/home/fulano/.secrets/mfa.key:1"],` +
+		`"failure":"DATABASE_ERROR","sqlState":"23505","sqlErrorCode":23505}` + "\n" +
+		`{"level":"WARN","logger":"br.com.inpetu.hub.observability.OperationalEvents","message":"event=SERVER_STARTING_WAIT","sqlState":"senha-secreta","failure":"maria@example.com"}` + "\n" +
+		`{"level":"INFO","logger":"br.com.inpetu.hub.observability.OperationalEvents","message":"event=SERVER_READY startupWaits=3"}` + "\n"
+	_, _ = sink.Write([]byte(line))
+	if e = s.finish("CONCLUIDO"); e != nil {
+		t.Fatal(e)
+	}
+	report := readSessionReport(t, s)
+	seen := map[string]map[string]any{}
+	for _, event := range report.Events {
+		seen[event.Event] = event.Fields
+	}
+	failed := seen["SERVER_START_FAILED"]
+	if failed == nil || failed["failure"] != "DATABASE_ERROR" || failed["sqlState"] != "23505" || fmt.Sprint(failed["sqlErrorCode"]) != "23505" {
+		t.Fatalf("campos da causa ausentes: %v", failed)
+	}
+	if fmt.Sprint(failed["causes"]) != "[java.lang.RuntimeException java.sql.SQLException]" || fmt.Sprint(failed["rootFrames"]) != "[org.h2.Engine.open:42]" {
+		t.Fatalf("cadeia de causas nao filtrada: %v", failed)
+	}
+	if wait := seen["SERVER_STARTING_WAIT"]; wait == nil || wait["sqlState"] != nil || wait["failure"] != nil {
+		t.Fatalf("campos invalidos deveriam sair: %v", wait)
+	}
+	if ready := seen["SERVER_READY"]; ready == nil || fmt.Sprint(ready["startupWaits"]) != "3" {
+		t.Fatalf("contagem de esperas ausente: %v", ready)
+	}
+	data, _ := os.ReadFile(filepath.Join(s.folder, "relatorio.json"))
+	for _, secret := range []string{"12345678000190", "/home/fulano", "senha-secreta", "maria@example.com"} {
+		if strings.Contains(string(data), secret) {
+			t.Fatalf("vazou %q", secret)
+		}
+	}
+}
+func TestCauseNumbersOutsideTheRangeAreDropped(t *testing.T) {
+	for _, value := range []any{int64(-5), int64(2_000_000_000), "abc", "1e3", 3.5} {
+		out := safeFields(map[string]any{"startupWaits": value, "sqlErrorCode": value})
+		if len(out) != 0 {
+			t.Fatalf("%v deveria ser descartado: %v", value, out)
+		}
+	}
+	if out := safeFields(map[string]any{"startupWaits": int64(3), "sqlErrorCode": "23505"}); fmt.Sprint(out) != "map[sqlErrorCode:23505 startupWaits:3]" {
+		t.Fatalf("valores validos perdidos: %v", out)
 	}
 }

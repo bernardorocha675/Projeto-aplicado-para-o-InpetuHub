@@ -37,10 +37,12 @@ async function calendar(state, rooms = [], staff = true) {
   const nodes = Object.fromEntries(ids.filter(id => staff || id !== 'agenda-aviso').map(id => [id, new Element()]));
   let current = state;
   let failed = false;
+  const intervals = [], calls = [];
   const context = {
     document: {getElementById: id => nodes[id] || null, createElement: tag => new Element(tag)},
-    URLSearchParams, Date: CalendarDate, setInterval: () => {},
-    fetch: async url => {
+    URLSearchParams, Date: CalendarDate, setInterval: fn => { intervals.push(fn); },
+    fetch: async (url, options) => {
+      calls.push({url, options});
       if (failed) return {ok: false};
       const month = new URLSearchParams(url.split('?')[1]).get('mes');
       return {ok: true, json: async () => ({dias: [{data: month + '-20', estado: current, feriado: false, espacos: rooms}]})};
@@ -49,7 +51,8 @@ async function calendar(state, rooms = [], staff = true) {
   vm.runInNewContext(source, context);
   const flush = () => new Promise(setImmediate);
   await flush();
-  return {nodes, flush, fail: () => { failed = true; }, setState: value => {current = value;}, day: () => nodes.calendario.children.find(n => !n.disabled)};
+  const tick = async () => { intervals.forEach(fn => fn()); await flush(); };
+  return {nodes, flush, calls, tick, fail: () => { failed = true; }, setState: value => {current = value;}, day: () => nodes.calendario.children.find(n => !n.disabled)};
 }
 
 const room = (ocupados = []) => ({id: 1, nome: 'Sala', capacidade: 5, ocupados, livres: [{inicio: '09:00', fim: '10:00'}]});
@@ -144,4 +147,19 @@ test('visitante sem login vê a agenda vazia sem o aviso destinado à equipe', a
   const page = await calendar('SEM_ESPACOS', [], false);
   assert.equal(page.nodes['agenda-aviso'], undefined);
   assert.equal(page.day().children.length, 1);
+});
+
+test('atualização automática da agenda não envia o cookie, para não renovar a sessão de quem está logado', async () => {
+  const page = await calendar('LIVRE');
+  assert.equal(page.calls.length, 1);
+  assert.notEqual(page.calls[0].options && page.calls[0].options.credentials, 'omit', 'a primeira carga é ação da pessoa');
+  await page.tick();
+  assert.equal(page.calls.length, 2);
+  assert.equal(page.calls[1].options.credentials, 'omit');
+  page.nodes['filtro-espaco'].listeners.change({type: 'change'});
+  await page.flush();
+  assert.notEqual(page.calls[2].options && page.calls[2].options.credentials, 'omit', 'trocar o filtro é ação da pessoa');
+  page.nodes['mes-proximo'].listeners.click({type: 'click'});
+  await page.flush();
+  assert.notEqual(page.calls[3].options && page.calls[3].options.credentials, 'omit', 'mudar de mês é ação da pessoa');
 });

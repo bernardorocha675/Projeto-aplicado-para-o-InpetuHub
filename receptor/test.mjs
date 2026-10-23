@@ -79,3 +79,10 @@ test('fila e tamanho têm limites; entrada não dá acesso à leitura ou a camin
   assert.equal((await fetch(base+'/v1/reports',{method:'POST',headers:{Origin:'https://external.invalid'}})).status,403);
  }finally{server.closeAllConnections();await new Promise(resolve=>server.close(resolve));}
 });
+test('campos da causa de falha e da espera ao iniciar passam só no formato esperado',()=>{
+ const raw=report();
+ raw.events[0].fields={failure:'DATABASE_ERROR',causes:['java.lang.RuntimeException','java.sql.SQLException',"VALUES ('12345678000190')"],rootFrames:['org.h2.Engine.open:42','/home/fulano/.secrets/mfa.key:1'],sqlState:'23505',sqlErrorCode:23505,startupWaits:3};
+ assert.deepEqual(normalizeReport(raw).events[0].fields,{causes:['java.lang.RuntimeException','java.sql.SQLException'],failure:'DATABASE_ERROR',rootFrames:['org.h2.Engine.open:42'],sqlErrorCode:23505,sqlState:'23505',startupWaits:3});
+ raw.events[0].fields={failure:'maria@example.com',sqlState:'senha-secreta',sqlErrorCode:'23505',startupWaits:-5,causes:'java.lang.RuntimeException'};
+ assert.deepEqual(normalizeReport(raw).events[0].fields,{});
+});

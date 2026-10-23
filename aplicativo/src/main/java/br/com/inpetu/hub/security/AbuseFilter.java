@@ -11,6 +11,8 @@ public class AbuseFilter extends OncePerRequestFilter {
   private final SecretCrypto crypto;
   private final boolean prod;
   private final java.util.function.BooleanSupplier ready;
+  // Só antes da primeira vez que fica pronto o 503 é a espera da inicialização; no encerramento é erro.
+  private volatile boolean everReady;
 
   public AbuseFilter(
       RateLimits l, SecretCrypto c, boolean p, java.util.function.BooleanSupplier ready) {
@@ -24,7 +26,11 @@ public class AbuseFilter extends OncePerRequestFilter {
   protected void doFilterInternal(
       HttpServletRequest req, HttpServletResponse res, FilterChain chain)
       throws ServletException, IOException {
-    if (!ready.getAsBoolean()) {
+    boolean accepting = ready.getAsBoolean();
+    if (accepting) everReady = true;
+    if (!accepting) {
+      if (!everReady)
+        req.setAttribute(br.com.inpetu.hub.observability.OperationalEvents.STARTING_ATTRIBUTE, Boolean.TRUE);
       res.setHeader("Retry-After", "1");
       res.sendError(503, "Inicialização em andamento.");
       return;

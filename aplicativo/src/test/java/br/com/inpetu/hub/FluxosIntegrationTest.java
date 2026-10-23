@@ -750,6 +750,15 @@ class FluxosIntegrationTest {
   }
 
   @Test
+  void consultaAutomaticaDaAgendaSemCookieNaoCriaSessao() throws Exception {
+    // O agenda.js faz a atualização periódica sem cookie: ela não pode renovar nem criar sessão.
+    mvc.perform(get("/disponibilidade").param("mes", "2026-10"))
+        .andExpect(status().isOk())
+        .andExpect(header().doesNotExist("Set-Cookie"))
+        .andExpect(r -> assertNull(r.getRequest().getSession(false), "a consulta criou uma sessão"));
+  }
+
+  @Test
   @WithMockUser(roles = "COLABORADOR")
   void colaboradorNaoPodeAdministrar() throws Exception {
     mvc.perform(get("/admin/config")).andExpect(status().isForbidden());
