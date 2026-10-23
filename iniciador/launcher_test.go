@@ -111,7 +111,8 @@ func TestLatestPaginates(t *testing.T) {
 			}
 			_ = json.NewEncoder(w).Encode(list)
 		} else {
-			_ = json.NewEncoder(w).Encode([]githubRelease{{Tag_name: "v0.4.12"}})
+			// Completa: a mais nova so vale com o pacote deste sistema e o SHA256SUMS.txt.
+			_ = json.NewEncoder(w).Encode([]githubRelease{{Tag_name: "v0.4.12", Assets: []releaseAsset{{Name: archiveName("0.4.12"), State: "uploaded", Browser_download_url: "http://x/zip"}, {Name: "SHA256SUMS.txt", State: "uploaded", Browser_download_url: "http://x/sums"}}}})
 		}
 	}))
 	defer server.Close()

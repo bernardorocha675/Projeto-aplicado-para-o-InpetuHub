@@ -23,6 +23,52 @@ var errIncompleteRelease = errors.New("release ainda incompleta; tente novamente
 var errIntegrity = errors.New("integridade invalida; pacote nao instalado")
 var errNoPackage = errors.New("nao foi possivel baixar o pacote; confira a internet e tente novamente")
 
+// Falha de rede ou resposta do GitHub guardando so o tipo e o status: nunca a URL, os cabecalhos ou
+// o corpo da resposta. Continua sendo errNetwork para quem so precisa saber que a rede falhou.
+type networkError struct {
+	kind   string // RATE_LIMITED, HTTP_STATUS, TIMEOUT ou NETWORK
+	status int
+}
+
+func (e *networkError) Error() string { return errNetwork.Error() }
+func (e *networkError) Unwrap() error { return errNetwork }
+
+func requestFailure(e error) *networkError {
+	var timeout net.Error
+	if errors.Is(e, context.DeadlineExceeded) || (errors.As(e, &timeout) && timeout.Timeout()) {
+		return &networkError{kind: "TIMEOUT"}
+	}
+	return &networkError{kind: "NETWORK"}
+}
+
+// 403 e 429 sao o limite de consultas sem login do GitHub (60 por hora por IP).
+func statusFailure(code int) *networkError {
+	if code == http.StatusForbidden || code == http.StatusTooManyRequests {
+		return &networkError{kind: "RATE_LIMITED", status: code}
+	}
+	return &networkError{kind: "HTTP_STATUS", status: code}
+}
+
+// Codigo fixo da falha da consulta de versoes; respostas que nao sao uma lista valida viram INVALID_RESPONSE.
+func checkFailure(e error) (string, int) {
+	var failure *networkError
+	if errors.As(e, &failure) {
+		return failure.kind, failure.status
+	}
+	return "INVALID_RESPONSE", 0
+}
+
+func checkFailureMessage(code, version string) string {
+	switch code {
+	case "RATE_LIMITED":
+		return "Nao foi possivel verificar atualizacoes agora: limite de consultas do GitHub atingido. Tente de novo em alguns minutos. Usando a versao " + version + "."
+	case "TIMEOUT", "NETWORK":
+		return "Nao foi possivel verificar atualizacoes: sem conexao com o GitHub. Confira a internet. Usando a versao " + version + "."
+	default:
+		return "Nao foi possivel verificar atualizacoes agora: o GitHub respondeu com erro. Tente de novo mais tarde. Usando a versao " + version + "."
+	}
+}
+
 // Somente falhas de leitura da rede permitem usar a versao instalada.
 // Erros de escrita local e de validacao continuam interrompendo a troca.
 type downloadReader struct{ io.Reader }
@@ -131,11 +177,11 @@ func (m *Manager) get(ctx context.Context, address string, asset bool) (*http.Re
 	req.Header.Set("User-Agent", "InPETU-Hub-Desktop/0.4")
 	response, e := m.client.Do(req)
 	if e != nil {
-		return nil, fmt.Errorf("%w: %v", errNetwork, e)
+		return nil, requestFailure(e)
 	}
 	if response.StatusCode != http.StatusOK {
 		response.Body.Close()
-		return nil, errNetwork
+		return nil, statusFailure(response.StatusCode)
 	}
 	return response, nil
 }
@@ -170,6 +216,19 @@ func (m *Manager) latest() (*release, error) {
 }
 func (m *Manager) queryLatest() (*release, error) {
 	var best *release
+	// A mais nova sem o pacote deste sistema ou sem SHA256SUMS.txt e ignorada: instalar dela falharia
+	// sempre. A escolha cai para a anterior completa, e o log diz que isso aconteceu.
+	var incomplete *release
+	finish := func() (*release, error) {
+		if incomplete != nil && (best == nil || newer(incomplete.Version, best.Version)) {
+			missing := "MISSING_PACKAGE"
+			if incomplete.ZipURL != "" {
+				missing = "MISSING_SUMS"
+			}
+			m.record("WARN", "UPDATE_RELEASE_INCOMPLETE", map[string]any{"result": missing})
+		}
+		return best, nil
+	}
 	for page := 1; page <= 10; page++ {
 		ctx, cancel := context.WithTimeout(context.Background(), 8*time.Second)
 		response, e := m.get(ctx, fmt.Sprintf("%s?per_page=100&page=%d", m.api, page), false)
@@ -181,7 +240,7 @@ func (m *Manager) queryLatest() (*release, error) {
 		response.Body.Close()
 		cancel()
 		if e != nil {
-			return nil, e
+			return nil, requestFailure(e)
 		}
 		var list []githubRelease
 		if e = json.Unmarshal(data, &list); e != nil {
@@ -207,12 +266,18 @@ func (m *Manager) queryLatest() (*release, error) {
 					candidate.SumURL = asset.Browser_download_url
 				}
 			}
+			if candidate.ZipURL == "" || candidate.SumURL == "" {
+				if incomplete == nil || newer(version, incomplete.Version) {
+					incomplete = candidate
+				}
+				continue
+			}
 			if best == nil || newer(version, best.Version) {
 				best = candidate
 			}
 		}
 		if len(list) < 100 {
-			return best, nil
+			return finish()
 		}
 	}
 	return nil, errors.New("lista de releases excedeu o limite de consulta")
@@ -535,18 +600,39 @@ func (m *Manager) installLatest() error {
 		return m.ready(root, current)
 	}
 	next, e := m.latest()
-	if e != nil || next == nil {
+	if e != nil {
+		// Sem a consulta nao ha como saber se existe versao nova: dizer o motivo, sem URL nem resposta.
+		code, status := checkFailure(e)
+		fields := map[string]any{"result": code}
+		if status > 0 {
+			fields["status"] = status
+		}
+		m.record("WARN", "UPDATE_CHECK_FAILED", fields)
 		if !hasCurrent {
 			return errNoPackage
 		}
 		if e = m.ready(root, current); e != nil {
 			return e
 		}
-		m.message("Pronto", "Usando a versao instalada; nenhuma atualizacao disponivel ou consulta offline.")
+		m.message("Pronto", checkFailureMessage(code, current.Version))
+		return nil
+	}
+	if next == nil {
+		if !hasCurrent {
+			return errNoPackage
+		}
+		if e = m.ready(root, current); e != nil {
+			return e
+		}
+		m.message("Pronto", "Nenhuma versao completa publicada para este sistema. Usando a versao "+current.Version+".")
 		return nil
 	}
 	if hasCurrent && !newer(next.Version, current.Version) {
-		return m.ready(root, current)
+		if e = m.ready(root, current); e != nil {
+			return e
+		}
+		m.message("Pronto", "Voce ja esta na versao mais recente ("+current.Version+"). Clique em Iniciar.")
+		return nil
 	}
 	m.mu.RLock()
 	skipped := m.skippedUpdates[next.Version]
