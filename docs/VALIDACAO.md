@@ -4,9 +4,11 @@ Junta dois PRs preparados pelo Claude local e revisados: [#33](https://github.co
 
 ---
 
-# 0.5.7 — em publicação
+# 0.5.7 — publicada e verificada
 
 Pedido de 22/10/2026: documento e empresa opcionais (PR [#31](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/31), preparado pelo Claude local e revisado). Tipo de documento (CNPJ, CPF, estrangeiro ou Sem documento) no pedido público e no cadastro de empreendedores; sem documento, o pedido acha o empreendedor pelo email; empresa/instituição opcional. Migration aditiva `V6__documento_opcional.sql` (documento aceita vazio e até 30 caracteres, continua único; coluna `tipo_documento`, registros antigos marcados como CNPJ). Testes do PR (Linux x64, 22/10/2026): 149 Java, Node 11 + 11, Testar e segredos aprovados; matriz do PR verde no [run 39853275671](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39853275671), CodeQL incluído. Merge e publicação autorizados pelo responsável em 23/10/2026. Não testado: MySQL real (só H2 em modo MySQL, como o executável).
+
+A [0.5.7](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.5.7) foi publicada e verificada em 23/10/2026 pelo [run 39880751586](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39880751586), na primeira tentativa, após o PR [#35](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/35) (matriz verde de primeira no run 39879362355; merge e publicação autorizados pelo responsável). Tag/código testado `9f41037a6822332194bfac7e203bb89fd003d2f8` (merge em main). Conferidos os 12 assets e os 11 checksums contra digests públicos; v0.5.7 é a latest; as 30 releases anteriores mantêm arquivos, tamanhos e digests; os 8 links do README respondem. Relatório da CI: `Testes/teste34-2026-10-22_21-53-04-ef9ccbda/log.txt`. Depois da publicação, o pacote Linux x64 da 0.5.6 publicado, numa pasta nova com espaço e acento, atualizou sozinho pelo GitHub para a 0.5.7 (backup criado), passou para o iniciador da 0.5.7 e iniciou o sistema; o pedido de reserva mostra o seletor de documento (CPF, estrangeiro, Sem documento).
 
 ---
 
