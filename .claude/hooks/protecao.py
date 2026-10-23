@@ -105,6 +105,13 @@ def refspecs_do_push(args):
     return posicionais[1:]  # o primeiro é o remoto
 
 
+def destino_do_refspec(refspec, branch):
+    """Branch remota que o refspec atualiza. HEAD, HEAD: e @ (sem destino) são a branch atual."""
+    origem, _, destino = refspec.lstrip('+').partition(':')
+    destino = destino or origem
+    return branch if destino in ('HEAD', '@') else destino
+
+
 def checar_bash(raiz, comando):
     for trecho in re.split(r'&&|\|\||;|\|', comando):
         try:
@@ -124,7 +131,7 @@ def checar_bash(raiz, comando):
             if any(a in ('--mirror', '--all') for a in args):
                 bloquear('push com --mirror/--all também envia a main. Envie só a sua branch.')
             refspecs = refspecs_do_push(args)
-            if any(r.lstrip('+').split(':')[-1] in ('main', 'refs/heads/main') for r in refspecs):
+            if any(destino_do_refspec(r, branch) in ('main', 'refs/heads/main') for r in refspecs):
                 bloquear('push para a main. Envie a branch e abra um PR.')
             if not refspecs and branch == 'main':
                 bloquear('push estando na main. Envie uma branch própria e abra um PR.')

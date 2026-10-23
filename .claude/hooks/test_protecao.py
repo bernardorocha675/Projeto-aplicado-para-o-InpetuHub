@@ -11,9 +11,9 @@ RAIZ = Path(__file__).resolve().parents[2]
 HOOK = RAIZ / '.claude/hooks/protecao.py'
 
 
-def rodar(ferramenta, entrada, branch=None):
-    env = dict(os.environ, CLAUDE_PROJECT_DIR=str(RAIZ))
-    dados = json.dumps({'tool_name': ferramenta, 'tool_input': entrada, 'cwd': str(RAIZ)})
+def rodar(ferramenta, entrada, branch=None, raiz=RAIZ):
+    env = dict(os.environ, CLAUDE_PROJECT_DIR=str(raiz))
+    dados = json.dumps({'tool_name': ferramenta, 'tool_input': entrada, 'cwd': str(raiz)})
     if branch:  # simula a branch atual com um git falso que só responde a branch --show-current
         falso = RAIZ / 'aplicativo/.tools/git-falso'
         falso.mkdir(parents=True, exist_ok=True)
@@ -84,6 +84,26 @@ class Protecao(unittest.TestCase):
         self.bloqueia('Bash', {'command': 'git -C . rm -r Testes/teste01'})
         self.libera('Bash', {'command': 'git -C . push -u origin fix/algo'}, branch='fix/algo')
         self.libera('Bash', {'command': 'git -c color.ui=never log --oneline main'}, branch='main')
+
+    def test_push_de_head_segue_a_branch_atual(self):
+        # Repositórios de verdade (sem git falso): um na main e outro numa branch qualquer.
+        import shutil
+        import tempfile
+        base = Path(tempfile.mkdtemp(dir=RAIZ / 'aplicativo/.tools'))
+        try:
+            na_main, na_branch = base / 'na-main', base / 'na-branch'
+            for repo in (na_main, na_branch):
+                subprocess.run(['git', 'init', '-q', '-b', 'main', str(repo)], check=True)
+            subprocess.run(['git', '-C', str(na_branch), 'checkout', '-q', '-b', 'qualquer'], check=True)
+            for comando in ['git push origin HEAD', 'git push -u origin HEAD', 'git push origin HEAD:',
+                            'git push origin @', 'git push origin +HEAD', 'git -C . push origin HEAD']:
+                self.bloqueia('Bash', {'command': comando}, raiz=na_main)
+                self.libera('Bash', {'command': comando}, raiz=na_branch)
+            # HEAD com destino explícito vale pelo destino, em qualquer branch.
+            self.libera('Bash', {'command': 'git push origin HEAD:outra'}, raiz=na_main)
+            self.bloqueia('Bash', {'command': 'git push origin HEAD:main'}, raiz=na_branch)
+        finally:
+            shutil.rmtree(base)
 
     def wrapper(self, programas):
         """Roda protecao.sh com um PATH que só tem bash, dirname e os programas pedidos."""
