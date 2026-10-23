@@ -18,6 +18,14 @@ As skills já estão em `.claude/skills/` e valem para todos que usam este repos
 | frontend-design | Direção visual, tipografia e layout para telas novas | anthropics/skills (Apache 2.0) |
 | web-design-guidelines | Revisar templates e CSS e apontar problemas como `arquivo:linha` | vercel-labs/agent-skills |
 | accessibility-a11y | Boas práticas de acessibilidade (WCAG, HTML semântico, ARIA) | mindrally/skills (Apache 2.0) |
+| verificar-tudo | Rodar toda a verificação local e gerar o resumo para o ESTADO-ATUAL.md (`/verificar-tudo`) | este projeto |
+
+## Automações do projeto
+
+- **Hook de início de sessão** (`hooks/inicio-sessao.sh`): atualiza o repositório e mostra branch, release, VERSION e ferramentas.
+- **Hook de proteção** (`hooks/protecao.sh` → `hooks/protecao.py`, antes de cada edição ou comando): bloqueia edição de migrations já publicadas na `origin/main` (migrations novas são permitidas), commit na `main`, push para a `main` (também com `git -C`, `-c`, `--git-dir`, `+main`, `--mirror`/`--all`) e escrita ou exclusão em `Testes/`, `.secrets/` e `.env*`. O `protecao.sh` procura um Python 3 de verdade (`python3`, `python` ou `py -3`, recusando o atalho da Microsoft Store); sem Python 3 ele avisa "proteção desativada" e libera. Se o próprio hook falhar, ele deixa passar e avisa. Testes: `python3 -I .claude/hooks/test_protecao.py`.
+- **Subagente `revisor-privacidade-logs`** (`agents/`): só lê; revisa diffs de logs, relatórios e telemetria (aplicativo, iniciador, receptor, `Testes/`) e aponta o que pode vazar dados privados. Use antes de PRs que mexam nessas áreas.
+- **Context7** (`../.mcp.json`): documentação atualizada de bibliotecas (Spring Boot, Thymeleaf, Flyway…) pelo servidor público `https://mcp.context7.com/mcp`, sem chave. O Claude Code pede aprovação na primeira vez. As consultas (nome da biblioteca e o assunto) vão para o serviço do Context7; não mande código nem dados do projeto nelas.
 
 ## Observações
 
