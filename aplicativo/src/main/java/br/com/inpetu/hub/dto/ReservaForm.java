@@ -19,8 +19,12 @@ public class ReservaForm {
   @Pattern(groups = ContactRules.Input.class, regexp = ContactRules.NAME, message = "Informe um nome com letras, sem números.")
   public String nome;
 
-  @NotBlank
-  @Pattern(regexp = "[0-9]{14}", message = "Informe 14 dígitos no CNPJ")
+  // Tipo do documento (Documentos.TIPOS); vazio nos pedidos gravados antes, que eram só CNPJ.
+  @Size(max = 20)
+  public String tipoDocumento;
+
+  // Número do documento; conferido por Documentos conforme o tipo, vazio com "Sem documento".
+  @Size(max = 30)
   public String cnpj;
 
   @NotBlank
@@ -39,7 +43,7 @@ public class ReservaForm {
   @jakarta.persistence.Transient
   public String telefonePais = "BR";
 
-  @NotBlank
+  // Opcional: estrangeiros e pessoas sem empresa também pedem reserva.
   @Size(max = 255)
   public String empresa;
 
@@ -119,6 +123,14 @@ public class ReservaForm {
 
   public void setNome(String v) {
     nome = v;
+  }
+
+  public String getTipoDocumento() {
+    return tipoDocumento;
+  }
+
+  public void setTipoDocumento(String v) {
+    tipoDocumento = v;
   }
 
   public String getCnpj() {

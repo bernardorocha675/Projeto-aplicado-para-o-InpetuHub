@@ -65,7 +65,7 @@ public class PublicRequestService {
     s.expiraEm = s.criadaEm.plusHours(24);
     s.codigoExpiraEm = s.criadaEm.plusMinutes(10);
     s.estado = "RECEBIDA";
-    String destination = people.findByCnpj(form.cnpj).map(p -> p.email).orElse(form.email);
+    String destination = people.doPedido(form).map(p -> p.email).orElse(form.email);
     if (emailRequired && !mail.configurado())
       throw new RegraException("Envio de confirmação indisponível. Entre em contato com a equipe.");
     if (mail.configurado()) {
