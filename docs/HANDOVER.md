@@ -1,6 +1,10 @@
-# Handover técnico — InPETU Hub 0.5.7
+# Handover técnico — InPETU Hub 0.5.8
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
+
+## 0.5.8 — logs e verificação de versões — em publicação
+
+Junta dois PRs preparados pelo Claude local e revisados: [#33](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/33) (logs: causa real das falhas com `FailureCause`, só nomes de classe, linhas, categoria fixa e SQLState; `SERVER_START_FAILED`; 503 da inicialização como um único `SERVER_STARTING_WAIT` e `startupWaits` no `SERVER_READY`; atualização automática da agenda sem cookie; iniciador e receptor aceitam os campos novos só no formato esperado) e [#34](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/34) (iniciador: `UPDATE_CHECK_FAILED` com código fixo e status, mensagens separadas na tela, release incompleta ignorada com `UPDATE_RELEASE_INCOMPLETE`). Matrizes verdes nos PRs: [run 39876852612](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39876852612) (#33) e [run 39878366006](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/39878366006) (#34). Conflitos só em `ESTADO-ATUAL.md`, `docs/RELATORIOS.md` e em testes vizinhos de `FluxosIntegrationTest` (os dois lados mantidos). Merge e publicação autorizados pelo responsável em 23/10/2026. Sem migration.
 
 ## 0.5.7 — documento e empresa opcionais — em publicação
 
