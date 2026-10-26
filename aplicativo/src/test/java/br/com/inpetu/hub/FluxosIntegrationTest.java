@@ -279,8 +279,8 @@ class FluxosIntegrationTest {
     String home =
         mvc.perform(get("/")).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
     assertTrue(home.contains("InPETU hub: inovação conectando pessoas, ideias e soluções"));
-    assertTrue(home.contains("<a href=\"/\" class=\"active\">INÍCIO</a>"));
-    assertTrue(home.contains("<a href=\"/agenda\">AGENDA</a>") && home.contains("<a href=\"/admin\">ÁREA INTERNA</a>"));
+    assertTrue(Html.compacto(home).contains("<a href=\"/\" class=\"active\">INÍCIO</a>"));
+    assertTrue(Html.compacto(home).contains("<a href=\"/agenda\">AGENDA</a>") && Html.compacto(home).contains("<a href=\"/admin\">ÁREA INTERNA</a>"));
     assertTrue(home.contains("href=\"https://inpetuhub.sites.ufsc.br/contato/\" target=\"_blank\" rel=\"noopener\""));
     // Links que no site oficial levam a páginas inexistentes não são reproduzidos.
     assertFalse(home.contains("inpetuhub.sites.ufsc.br/sobre") || home.contains("termos-de-uso"));
@@ -295,7 +295,7 @@ class FluxosIntegrationTest {
                         org.hamcrest.Matchers.containsString("agenda-aviso"))))
         .andExpect(
             content()
-                .string(org.hamcrest.Matchers.containsString("<a href=\"/agenda\" class=\"active\">AGENDA</a>")))
+                .string(Html.contem("<a href=\"/agenda\" class=\"active\">AGENDA</a>")))
         .andExpect(
             content()
                 .string(
@@ -463,8 +463,8 @@ class FluxosIntegrationTest {
             .andReturn()
             .getResponse()
             .getContentAsString();
-    assertTrue(html.matches("(?s).*name=\"objetivo__1\" value=\"on\" checked.*"), "Reunião desmarcada");
-    assertFalse(html.matches("(?s).*name=\"objetivo__0\" value=\"on\" checked.*"), "Conhecer marcado");
+    assertTrue(Html.compacto(html).matches("(?s).*name=\"objetivo__1\" value=\"on\" checked.*"), "Reunião desmarcada");
+    assertFalse(Html.compacto(html).matches("(?s).*name=\"objetivo__0\" value=\"on\" checked.*"), "Conhecer marcado");
     assertTrue(html.contains("value=\"Conhecer o laboratório\""));
     long antes = visitas.count();
     mvc.perform(
@@ -521,7 +521,7 @@ class FluxosIntegrationTest {
             .andReturn()
             .getResponse()
             .getContentAsString();
-    assertTrue(html.matches("(?s).*<option value=\"PT\"[^>]*selected.*"), "Portugal não veio marcado");
+    assertTrue(Html.compacto(html).matches("(?s).*<option value=\"PT\"[^>]*selected.*"), "Portugal não veio marcado");
     mvc.perform(
             post("/admin/cadastros/empreendedores/salvar")
                 .with(csrf())
@@ -630,13 +630,13 @@ class FluxosIntegrationTest {
     var comCnpj = service.solicitar(form("P6", LocalDate.of(2026, 10, 22)));
     mvc.perform(get("/admin/empreendedores/" + semDocumento.empreendedor.id))
         .andExpect(status().isOk())
-        .andExpect(content().string(org.hamcrest.Matchers.containsString("<dt>Documento</dt><dd>Sem documento</dd>")));
+        .andExpect(content().string(Html.contem("<dt>Documento</dt><dd>Sem documento</dd>")));
     mvc.perform(get("/admin/reservas/" + semDocumento.id))
         .andExpect(status().isOk())
-        .andExpect(content().string(org.hamcrest.Matchers.containsString("<dd>Empresa / Sem documento</dd>")));
+        .andExpect(content().string(Html.contem("<dd>Empresa / Sem documento</dd>")));
     mvc.perform(get("/admin/empreendedores/" + comCnpj.empreendedor.id))
         .andExpect(status().isOk())
-        .andExpect(content().string(org.hamcrest.Matchers.containsString("<dt>Documento</dt><dd>CNPJ 12345678000190</dd>")));
+        .andExpect(content().string(Html.contem("<dt>Documento</dt><dd>CNPJ 12345678000190</dd>")));
     var pedido = form("P6", LocalDate.of(2026, 10, 23));
     pedido.cnpj = null;
     pedido.tipoDocumento = "NENHUM";
@@ -692,7 +692,7 @@ class FluxosIntegrationTest {
             .andReturn()
             .getResponse()
             .getContentAsString();
-    assertTrue(html.matches("(?s).*<option value=\"NENHUM\"[^>]*selected.*"), "Sem documento não veio marcado");
+    assertTrue(Html.compacto(html).matches("(?s).*<option value=\"NENHUM\"[^>]*selected.*"), "Sem documento não veio marcado");
   }
 
   @Test
@@ -716,7 +716,7 @@ class FluxosIntegrationTest {
                 .param("numeroParticipantes", "10"))
         .andExpect(status().isOk())
         .andExpect(view().name("public/reserva-resumo"))
-        .andExpect(content().string(org.hamcrest.Matchers.containsString("<dt>Empresa</dt><dd>Não informada</dd>")));
+        .andExpect(content().string(Html.contem("<dt>Empresa</dt><dd>Não informada</dd>")));
   }
 
   @Test
@@ -739,7 +739,7 @@ class FluxosIntegrationTest {
     var r = service.solicitar(f);
     mvc.perform(get("/admin/reservas/" + r.id))
         .andExpect(status().isOk())
-        .andExpect(content().string(org.hamcrest.Matchers.containsString("<dd>Não informada / CNPJ 12345678000190</dd>")));
+        .andExpect(content().string(Html.contem("<dd>Não informada / CNPJ 12345678000190</dd>")));
     var pedido = form("P6", LocalDate.of(2026, 10, 23));
     pedido.empresa = "";
     pedido.nome = "Pedido sem empresa";

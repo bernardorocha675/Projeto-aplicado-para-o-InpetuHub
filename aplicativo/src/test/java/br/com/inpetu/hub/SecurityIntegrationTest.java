@@ -262,8 +262,8 @@ class SecurityIntegrationTest {
     solicitacoes.flush();
     String html =
         mvc.perform(get("/admin").session(session)).andReturn().getResponse().getContentAsString();
-    assertTrue(html.contains("<a href=\"/admin\" class=\"active\">ÁREA INTERNA</a>"), html);
-    assertTrue(html.contains("<a href=\"/agenda\">AGENDA</a>"));
+    assertTrue(Html.compacto(html).contains("<a href=\"/admin\" class=\"active\">ÁREA INTERNA</a>"), html);
+    assertTrue(Html.compacto(html).contains("<a href=\"/agenda\">AGENDA</a>"));
     assertFalse(html.contains("pending-dot"));
     var pendente = new SolicitacaoPublica();
     pendente.estado = "RECEBIDA";

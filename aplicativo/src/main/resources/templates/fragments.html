@@ -1,7 +1,143 @@
-<!DOCTYPE html><html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"><head th:fragment="head(titulo)"><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title th:text="${titulo} + ' | InPETU Hub'">InPETU Hub</title><link rel="icon" href="/images/site/favicon.jpg"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/admin.css"><link rel="stylesheet" href="/css/site.css"><script th:src="@{/js/password-toggle.js}" defer></script></head><body>
-<header th:fragment="topo" class="topo"><a class="logo" href="/"><img src="/images/site/logo.png" alt="InPETU hub" width="200" height="33"></a><nav aria-label="Menu principal"><a href="/" th:classappend="${secaoAtual=='inicio'}?'active'">INÍCIO</a><a href="https://inpetuhub.sites.ufsc.br/aa_rasunho_sobre/" target="_blank" rel="noopener">SOBRE</a><div class="menu-group"><a href="https://inpetuhub.sites.ufsc.br/acoes-mobilizadoras/" target="_blank" rel="noopener">INICIATIVAS</a><ul class="submenu"><li><a href="https://inpetuhub.sites.ufsc.br/inpetu-api-energias/" target="_blank" rel="noopener">InPETU API Energias</a></li><li><a href="https://inpetuhub.sites.ufsc.br/inpetu-distrito-de-inovacao/" target="_blank" rel="noopener">InPETU Distrito de Inovação</a></li><li><a href="https://inpetuhub.sites.ufsc.br/inpetu-ecossistema/" target="_blank" rel="noopener">InPETU Ecossistema</a></li><li><a href="https://inpetuhub.sites.ufsc.br/escritorio-de-promocao-da-inovacao-epi/" target="_blank" rel="noopener">InPETU EPI</a></li><li><a href="https://inpetuhub.sites.ufsc.br/inpetu-genius/" target="_blank" rel="noopener">InPETU GENIUS</a></li><li><a href="https://inpetuhub.sites.ufsc.br/inpetu-lidus/" target="_blank" rel="noopener">InPETU LIDUS</a></li><li><a href="https://inpetuhub.sites.ufsc.br/inpetu-living-lab-sapiens/" target="_blank" rel="noopener">InPETU living Lab Sapiens</a></li><li><a href="https://inpetuhub.sites.ufsc.br/inpetu-lumen/" target="_blank" rel="noopener">InPETU Lumen</a></li><li><a href="https://inpetuhub.sites.ufsc.br/inpetu-maker/" target="_blank" rel="noopener">InPETU Maker</a></li><li><a href="https://inpetuhub.sites.ufsc.br/inpetu-open-lab/" target="_blank" rel="noopener">InPETU Open Lab</a></li></ul></div><div class="menu-group"><a href="https://inpetuhub.sites.ufsc.br/category/eventos/" target="_blank" rel="noopener">NOTÍCIAS E EVENTOS</a><ul class="submenu"><li><a href="https://inpetuhub.sites.ufsc.br/category/oportunidades/" target="_blank" rel="noopener">Oportunidades</a></li><li><a href="https://inpetuhub.sites.ufsc.br/noticias/" target="_blank" rel="noopener">Notícias</a></li><li><a href="https://inpetuhub.sites.ufsc.br/category/eventos/futuros/" target="_blank" rel="noopener">Eventos futuros</a></li></ul></div><a href="/agenda" th:classappend="${secaoAtual=='agenda'}?'active'">AGENDA</a><a href="https://inpetuhub.sites.ufsc.br/contato/" target="_blank" rel="noopener">CONTATO</a><a href="/admin" th:classappend="${secaoAtual=='interna'}?'active'">ÁREA INTERNA</a></nav></header>
-<aside th:fragment="menu" class="sidebar"><span class="eyebrow">GESTÃO DO HUB</span><nav aria-label="Menu interno"><a href="/admin">Dashboard</a><a href="/admin/reservas">Reservas</a><a href="/admin/solicitacoes">Solicitações recebidas<span th:if="${solicitacoesPendentes}" class="pending-dot" title="Há solicitações aguardando análise"><span class="visually-hidden"> (há solicitações aguardando análise)</span></span></a><a href="/admin/cadastros/empreendedores">Empreendedores</a><a href="/admin/cadastros/espacos">Espaços</a><a href="/admin/cadastros/atendimentos">Atendimentos</a><a href="/admin/cadastros/visitas">Visitas</a><a th:if="${gestorGlobal}" href="/admin/config">Administração</a><a href="/conta/senha">Alterar senha</a></nav><form th:action="@{/logout}" method="post"><button class="secondary" type="submit">Sair</button></form></aside>
-<div th:fragment="mensagens"><p th:if="${sucesso}" class="alert success" role="status" th:text="${sucesso}"></p><p th:if="${erro}" class="alert error" role="alert" th:text="${erro}"></p></div>
-<footer th:fragment="rodape" class="rodape site-footer"><div class="footer-main"><strong>InPETU hub</strong><p>Sapiens Parque – Florianópolis/SC – Brasil</p><p>E-mail: <a href="mailto:contato@inpetu.com.br">contato@inpetu.com.br</a> | Telefone: <a href="tel:+554832392030">+55 (48) 3239-2030</a></p><p>© 2025 InPETU Hub. Todos os direitos reservados.</p><p><a href="https://inpetuhub.sites.ufsc.br/politica-de-privacidade" target="_blank" rel="noopener">Política de Privacidade</a> | Termos de Uso</p><p class="footer-project">InPETU Hub CRM · Agenda e conexões · Projeto aplicado UniSENAI</p></div><div class="footer-bottom"><a href="https://www.facebook.com/InPETUhub?locale=pt_BR" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-2.8 0-4.5 1.8-4.5 4.6V11H7v4h2.5v8h4v-8h3l.5-4h-3.5V8.8c0-.5.3-.8.5-.8z"/></svg></a><a href="https://www.instagram.com/inpetuhub/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7.3A4.7 4.7 0 1 0 12 16.7 4.7 4.7 0 0 0 12 7.3zm0 7.7a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm4.9-8.9a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2zM20.9 7c-.1-1.5-.4-2.9-1.5-4S16.9 1.6 15.4 1.5C13.9 1.4 10.1 1.4 8.6 1.5 7.1 1.6 5.7 1.9 4.6 3S3.2 5.5 3.1 7C3 8.5 3 12.3 3.1 13.8c.1 1.5.4 2.9 1.5 4s2.5 1.4 4 1.5c1.5.1 5.3.1 6.8 0 1.5-.1 2.9-.4 4-1.5s1.4-2.5 1.5-4c.1-1.5.1-5.3 0-6.8zm-2 8.4a2.8 2.8 0 0 1-1.6 1.6c-1.1.4-3.7.3-4.9.3s-3.8.1-4.9-.3a2.8 2.8 0 0 1-1.6-1.6c-.4-1.1-.3-3.7-.3-4.9s-.1-3.8.3-4.9A2.8 2.8 0 0 1 7.5 4c1.1-.4 3.7-.3 4.9-.3s3.8-.1 4.9.3a2.8 2.8 0 0 1 1.6 1.6c.4 1.1.3 3.7.3 4.9s.1 3.8-.3 4.9z"/></svg></a><a href="https://www.youtube.com/@InPETUhub" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22.5 7.2a2.8 2.8 0 0 0-2-2C18.8 4.8 12 4.8 12 4.8s-6.8 0-8.5.4a2.8 2.8 0 0 0-2 2C1.1 8.9 1.1 12 1.1 12s0 3.1.4 4.8a2.8 2.8 0 0 0 2 2c1.7.4 8.5.4 8.5.4s6.8 0 8.5-.4a2.8 2.8 0 0 0 2-2c.4-1.7.4-4.8.4-4.8s0-3.1-.4-4.8zM9.8 15.2V8.8l5.7 3.2-5.7 3.2z"/></svg></a></div></footer>
-<div th:fragment="tabelaReservas(lista)" class="table-scroll"><table><thead><tr><th>Data / horário</th><th>Empreendedor / empresa</th><th>Espaço</th><th>Persona</th><th>Status</th><th>Ações</th></tr></thead><tbody><tr th:each="r : ${lista}"><td><strong th:text="${#temporals.format(r.data,'dd/MM/yyyy')}"></strong><small th:text="${r.horaInicio}+' – '+${r.horaFim}"></small></td><td><a th:href="@{/admin/empreendedores/{id}(id=${r.empreendedor.id})}" th:text="${r.empreendedor.nome}"></a><small th:text="${r.empreendedor.empresa}"></small></td><td th:text="${r.espaco.nomeEspaco}"></td><td th:text="${r.persona.codigo}"></td><td><span class="badge" th:classappend="${r.statusReserva}" th:text="${r.statusReserva}"></span></td><td><a class="button small secondary" th:href="@{/admin/reservas/{id}(id=${r.id})}">Analisar</a></td></tr><tr th:if="${#lists.isEmpty(lista)}"><td colspan="6" class="empty">Nenhuma reserva encontrada.</td></tr></tbody></table></div>
-</body></html>
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+  <head th:fragment="head(titulo)">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title th:text="${titulo} + ' | InPETU Hub'">InPETU Hub</title>
+    <link rel="icon" href="/images/site/favicon.jpg" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/admin.css" />
+    <link rel="stylesheet" href="/css/site.css" />
+    <script th:src="@{/js/password-toggle.js}" defer></script>
+  </head>
+  <body>
+    <header th:fragment="topo" class="topo">
+      <a class="logo" href="/"><img src="/images/site/logo.png" alt="InPETU hub" width="200" height="33" /></a>
+      <nav aria-label="Menu principal">
+        <a href="/" th:classappend="${secaoAtual=='inicio'}?'active'">INÍCIO</a
+        ><a href="https://inpetuhub.sites.ufsc.br/aa_rasunho_sobre/" target="_blank" rel="noopener">SOBRE</a>
+        <div class="menu-group">
+          <a href="https://inpetuhub.sites.ufsc.br/acoes-mobilizadoras/" target="_blank" rel="noopener">INICIATIVAS</a>
+          <ul class="submenu">
+            <li><a href="https://inpetuhub.sites.ufsc.br/inpetu-api-energias/" target="_blank" rel="noopener">InPETU API Energias</a></li>
+            <li>
+              <a href="https://inpetuhub.sites.ufsc.br/inpetu-distrito-de-inovacao/" target="_blank" rel="noopener"
+                >InPETU Distrito de Inovação</a
+              >
+            </li>
+            <li><a href="https://inpetuhub.sites.ufsc.br/inpetu-ecossistema/" target="_blank" rel="noopener">InPETU Ecossistema</a></li>
+            <li>
+              <a href="https://inpetuhub.sites.ufsc.br/escritorio-de-promocao-da-inovacao-epi/" target="_blank" rel="noopener"
+                >InPETU EPI</a
+              >
+            </li>
+            <li><a href="https://inpetuhub.sites.ufsc.br/inpetu-genius/" target="_blank" rel="noopener">InPETU GENIUS</a></li>
+            <li><a href="https://inpetuhub.sites.ufsc.br/inpetu-lidus/" target="_blank" rel="noopener">InPETU LIDUS</a></li>
+            <li>
+              <a href="https://inpetuhub.sites.ufsc.br/inpetu-living-lab-sapiens/" target="_blank" rel="noopener"
+                >InPETU living Lab Sapiens</a
+              >
+            </li>
+            <li><a href="https://inpetuhub.sites.ufsc.br/inpetu-lumen/" target="_blank" rel="noopener">InPETU Lumen</a></li>
+            <li><a href="https://inpetuhub.sites.ufsc.br/inpetu-maker/" target="_blank" rel="noopener">InPETU Maker</a></li>
+            <li><a href="https://inpetuhub.sites.ufsc.br/inpetu-open-lab/" target="_blank" rel="noopener">InPETU Open Lab</a></li>
+          </ul>
+        </div>
+        <div class="menu-group">
+          <a href="https://inpetuhub.sites.ufsc.br/category/eventos/" target="_blank" rel="noopener">NOTÍCIAS E EVENTOS</a>
+          <ul class="submenu">
+            <li><a href="https://inpetuhub.sites.ufsc.br/category/oportunidades/" target="_blank" rel="noopener">Oportunidades</a></li>
+            <li><a href="https://inpetuhub.sites.ufsc.br/noticias/" target="_blank" rel="noopener">Notícias</a></li>
+            <li><a href="https://inpetuhub.sites.ufsc.br/category/eventos/futuros/" target="_blank" rel="noopener">Eventos futuros</a></li>
+          </ul>
+        </div>
+        <a href="/agenda" th:classappend="${secaoAtual=='agenda'}?'active'">AGENDA</a
+        ><a href="https://inpetuhub.sites.ufsc.br/contato/" target="_blank" rel="noopener">CONTATO</a
+        ><a href="/admin" th:classappend="${secaoAtual=='interna'}?'active'">ÁREA INTERNA</a>
+      </nav>
+    </header>
+    <aside th:fragment="menu" class="sidebar">
+      <span class="eyebrow">GESTÃO DO HUB</span>
+      <nav aria-label="Menu interno">
+        <a href="/admin">Dashboard</a><a href="/admin/reservas">Reservas</a
+        ><a href="/admin/solicitacoes"
+          >Solicitações recebidas<span th:if="${solicitacoesPendentes}" class="pending-dot" title="Há solicitações aguardando análise"
+            ><span class="visually-hidden"> (há solicitações aguardando análise)</span></span
+          ></a
+        ><a href="/admin/cadastros/empreendedores">Empreendedores</a><a href="/admin/cadastros/espacos">Espaços</a
+        ><a href="/admin/cadastros/atendimentos">Atendimentos</a><a href="/admin/cadastros/visitas">Visitas</a
+        ><a th:if="${gestorGlobal}" href="/admin/config">Administração</a><a href="/conta/senha">Alterar senha</a>
+      </nav>
+      <form th:action="@{/logout}" method="post"><button class="secondary" type="submit">Sair</button></form>
+    </aside>
+    <div th:fragment="mensagens">
+      <p th:if="${sucesso}" class="alert success" role="status" th:text="${sucesso}"></p>
+      <p th:if="${erro}" class="alert error" role="alert" th:text="${erro}"></p>
+    </div>
+    <footer th:fragment="rodape" class="rodape site-footer">
+      <div class="footer-main">
+        <strong>InPETU hub</strong>
+        <p>Sapiens Parque – Florianópolis/SC – Brasil</p>
+        <p>
+          E-mail: <a href="mailto:contato@inpetu.com.br">contato@inpetu.com.br</a> | Telefone:
+          <a href="tel:+554832392030">+55 (48) 3239-2030</a>
+        </p>
+        <p>© 2025 InPETU Hub. Todos os direitos reservados.</p>
+        <p>
+          <a href="https://inpetuhub.sites.ufsc.br/politica-de-privacidade" target="_blank" rel="noopener">Política de Privacidade</a> |
+          Termos de Uso
+        </p>
+        <p class="footer-project">InPETU Hub CRM · Agenda e conexões · Projeto aplicado UniSENAI</p>
+      </div>
+      <div class="footer-bottom">
+        <a href="https://www.facebook.com/InPETUhub?locale=pt_BR" target="_blank" rel="noopener" aria-label="Facebook"
+          ><svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M14 8h3V4h-3c-2.8 0-4.5 1.8-4.5 4.6V11H7v4h2.5v8h4v-8h3l.5-4h-3.5V8.8c0-.5.3-.8.5-.8z" /></svg></a
+        ><a href="https://www.instagram.com/inpetuhub/" target="_blank" rel="noopener" aria-label="Instagram"
+          ><svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M12 7.3A4.7 4.7 0 1 0 12 16.7 4.7 4.7 0 0 0 12 7.3zm0 7.7a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm4.9-8.9a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2zM20.9 7c-.1-1.5-.4-2.9-1.5-4S16.9 1.6 15.4 1.5C13.9 1.4 10.1 1.4 8.6 1.5 7.1 1.6 5.7 1.9 4.6 3S3.2 5.5 3.1 7C3 8.5 3 12.3 3.1 13.8c.1 1.5.4 2.9 1.5 4s2.5 1.4 4 1.5c1.5.1 5.3.1 6.8 0 1.5-.1 2.9-.4 4-1.5s1.4-2.5 1.5-4c.1-1.5.1-5.3 0-6.8zm-2 8.4a2.8 2.8 0 0 1-1.6 1.6c-1.1.4-3.7.3-4.9.3s-3.8.1-4.9-.3a2.8 2.8 0 0 1-1.6-1.6c-.4-1.1-.3-3.7-.3-4.9s-.1-3.8.3-4.9A2.8 2.8 0 0 1 7.5 4c1.1-.4 3.7-.3 4.9-.3s3.8-.1 4.9.3a2.8 2.8 0 0 1 1.6 1.6c.4 1.1.3 3.7.3 4.9s.1 3.8-.3 4.9z"
+            /></svg></a
+        ><a href="https://www.youtube.com/@InPETUhub" target="_blank" rel="noopener" aria-label="YouTube"
+          ><svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M22.5 7.2a2.8 2.8 0 0 0-2-2C18.8 4.8 12 4.8 12 4.8s-6.8 0-8.5.4a2.8 2.8 0 0 0-2 2C1.1 8.9 1.1 12 1.1 12s0 3.1.4 4.8a2.8 2.8 0 0 0 2 2c1.7.4 8.5.4 8.5.4s6.8 0 8.5-.4a2.8 2.8 0 0 0 2-2c.4-1.7.4-4.8.4-4.8s0-3.1-.4-4.8zM9.8 15.2V8.8l5.7 3.2-5.7 3.2z"
+            /></svg
+        ></a>
+      </div>
+    </footer>
+    <div th:fragment="tabelaReservas(lista)" class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Data / horário</th>
+            <th>Empreendedor / empresa</th>
+            <th>Espaço</th>
+            <th>Persona</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="r : ${lista}">
+            <td>
+              <strong th:text="${#temporals.format(r.data,'dd/MM/yyyy')}"></strong
+              ><small th:text="${r.horaInicio}+' – '+${r.horaFim}"></small>
+            </td>
+            <td>
+              <a th:href="@{/admin/empreendedores/{id}(id=${r.empreendedor.id})}" th:text="${r.empreendedor.nome}"></a
+              ><small th:text="${r.empreendedor.empresa}"></small>
+            </td>
+            <td th:text="${r.espaco.nomeEspaco}"></td>
+            <td th:text="${r.persona.codigo}"></td>
+            <td><span class="badge" th:classappend="${r.statusReserva}" th:text="${r.statusReserva}"></span></td>
+            <td><a class="button small secondary" th:href="@{/admin/reservas/{id}(id=${r.id})}">Analisar</a></td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(lista)}">
+            <td colspan="6" class="empty">Nenhuma reserva encontrada.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

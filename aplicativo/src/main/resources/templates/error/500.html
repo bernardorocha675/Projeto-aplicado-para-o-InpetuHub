@@ -1,2 +1,18 @@
-<!DOCTYPE html><html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"><head th:replace="~{fragments :: head('Erro de execução')}"></head><body>
- <header th:replace="~{fragments :: topo}"></header><main class="public-main"><div th:replace="~{fragments :: mensagens}"></div><section class="card confirmation"><h1>Não foi possível concluir</h1><p>Tente novamente. Se persistir, consulte o log local do servidor.</p><button class="voltar">Voltar</button><p th:if="${requestId}" class="muted">Referência para suporte: <span th:text="${requestId}"></span></p></section></main><footer th:replace="~{fragments :: rodape}"></footer><script src="/js/admin.js" defer></script></body></html>
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments :: head('Erro de execução')}"></head>
+  <body>
+    <header th:replace="~{fragments :: topo}"></header>
+    <main class="public-main">
+      <div th:replace="~{fragments :: mensagens}"></div>
+      <section class="card confirmation">
+        <h1>Não foi possível concluir</h1>
+        <p>Tente novamente. Se persistir, consulte o log local do servidor.</p>
+        <button class="voltar">Voltar</button>
+        <p th:if="${requestId}" class="muted">Referência para suporte: <span th:text="${requestId}"></span></p>
+      </section>
+    </main>
+    <footer th:replace="~{fragments :: rodape}"></footer>
+    <script src="/js/admin.js" defer></script>
+  </body>
+</html>
