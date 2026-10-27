@@ -45,6 +45,8 @@ jobs:
           cache: false
       - name: Testar e conferir o iniciador
         working-directory: iniciador
+        # bash para o passo falhar em qualquer comando; no Windows o PowerShell só olhava o último (go vet).
+        shell: bash
         run: |
           go test -v ./...
           go vet ./...

@@ -21,6 +21,8 @@ func checkManager(t *testing.T) (*Manager, *Session) {
 		t.Fatal(e)
 	}
 	m.session = s
+	// Fecha o eventos.jsonl antes de apagar a pasta temporaria; no Windows, arquivo aberto impede a limpeza.
+	t.Cleanup(func() { _ = s.finish("CONCLUIDO") })
 	return m, s
 }
 
