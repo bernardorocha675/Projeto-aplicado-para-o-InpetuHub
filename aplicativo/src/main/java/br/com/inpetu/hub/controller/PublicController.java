@@ -28,6 +28,19 @@ public class PublicController {
   private final ReservaService service;
   private final Clock clock;
   private final PublicRequestService requests;
+  // Rótulos do pedido de reserva, na ordem do formulário, para o resumo de erros apontar o campo.
+  private static final Map<String, String> ROTULOS = new LinkedHashMap<>();
+
+  static {
+    String[][] campos = {
+      {"data", "Data"}, {"espacoId", "Espaço"}, {"horaInicio", "Hora inicial"}, {"horaFim", "Hora final"},
+      {"nome", "Nome"}, {"tipoDocumento", "Documento"}, {"cnpj", "Número do documento"}, {"empresa", "Empresa/instituição"},
+      {"email", "Email"}, {"telefone", "Telefone"}, {"cidade", "Cidade"}, {"segmento", "Segmento"}, {"cargo", "Cargo"},
+      {"titulo", "Nome do evento"}, {"personaId", "Persona declarada"}, {"numeroParticipantes", "Quantidade de participantes"},
+      {"objetivo", "Objetivo"}, {"observacoes", "Observações"}
+    };
+    for (String[] c : campos) ROTULOS.put(c[0], c[1]);
+  }
 
   public PublicController(
       EspacoRepository e,
@@ -95,6 +108,25 @@ public class PublicController {
     m.addAttribute("form", f);
     m.addAttribute("espacos", espacos.findByAtivoTrueAndDisponibilidadeTrueOrderByNomeEspaco());
     m.addAttribute("personas", personas.findAll());
+    m.addAttribute("rotulos", ROTULOS);
+    if (!m.containsAttribute("errosCampo")) m.addAttribute("errosCampo", Map.of());
+  }
+
+  // Primeira mensagem de cada campo, na ordem do formulário; conversão inválida não mostra a mensagem técnica.
+  private static Map<String, String> errosPorCampo(BindingResult erros) {
+    Map<String, String> porCampo = new LinkedHashMap<>();
+    for (var e : erros.getFieldErrors())
+      porCampo.putIfAbsent(
+          e.getField(),
+          e.isBindingFailure()
+              ? "Confira a data, o horário ou o número informado."
+              : "NotBlank".equals(e.getCode()) || "NotNull".equals(e.getCode())
+                  ? "Preencha este campo."
+                  : e.getDefaultMessage());
+    Map<String, String> ordenado = new LinkedHashMap<>();
+    ROTULOS.keySet().stream().filter(porCampo::containsKey).forEach(c -> ordenado.put(c, porCampo.get(c)));
+    porCampo.forEach(ordenado::putIfAbsent);
+    return ordenado;
   }
 
   @PostMapping("/reservas/resumo")
@@ -127,8 +159,7 @@ public class PublicController {
       br.com.inpetu.hub.observability.OperationalEvents.validation("/reservas/resumo",
           erros.getFieldErrors().stream().anyMatch(e -> e.isBindingFailure()));
       m.addAttribute("erro", "Confira os campos indicados. A data deve estar entre hoje e o fim do próximo ano.");
-      m.addAttribute("fieldErrors", erros.getFieldErrors().stream().map(e ->
-          e.isBindingFailure() ? "Confira a data, o horário ou o número informado." : e.getDefaultMessage()).distinct().toList());
+      m.addAttribute("errosCampo", errosPorCampo(erros));
       return "public/reserva-form";
     }
     try {

@@ -64,6 +64,39 @@ class RelatorioBugsIntegrationTest {
    .andExpect(model().attributeHasFieldErrors("form",field)).andReturn();
   dateRendered(result.getResponse().getContentAsString());assertEquals(before,requests.count());
  }
+ // Endereço próprio para os pedidos destes testes não gastarem o limite de pedidos dos outros.
+ static final org.springframework.test.web.servlet.request.RequestPostProcessor proprioEndereco=r->{r.setRemoteAddr("198.51.100.77");return r;};
+ // 0.5.10: cada erro aparece junto do campo, ligado a ele por aria-describedby, e o resumo leva até o campo.
+ @Test void errorsAreLinkedToTheirFields()throws Exception{
+  var p=fields();p.set("nome","João 123");p.set("email","11231231@a");
+  String html=Html.compacto(mvc.perform(summary(p).with(proprioEndereco)).andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString());
+  for(String campo:new String[]{"nome","email"}){
+   var input=java.util.regex.Pattern.compile("<input[^>]*id=\""+campo+"\"[^>]*>").matcher(html);
+   assertTrue(input.find(),campo+" não renderizado");
+   assertTrue(input.group().contains("aria-invalid=\"true\"")&&input.group().contains("aria-describedby=\"erro-"+campo+"\""),input.group());
+  }
+  assertTrue(html.contains("<span class=\"erro-campo\" id=\"erro-nome\">Informe um nome com letras, sem números.</span>"),"mensagem do nome fora do campo");
+  assertTrue(html.contains("<a href=\"#nome\">Nome: Informe um nome com letras, sem números.</a>"),"resumo sem link para o campo");
+  assertTrue(html.contains("<a href=\"#email\">Email: Informe um email completo, como nome@instituicao.com.br.</a>"));
+  var titulo=java.util.regex.Pattern.compile("<input[^>]*id=\"titulo\"[^>]*>").matcher(html);
+  assertTrue(titulo.find());assertFalse(titulo.group().contains("aria-invalid"),"campo válido marcado como inválido");
+  // Campo obrigatório vazio: mensagem clara em vez do padrão "não deve estar em branco".
+  p=fields();p.set("titulo","");p.remove("personaId");
+  html=Html.compacto(mvc.perform(summary(p).with(proprioEndereco)).andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString());
+  assertTrue(html.contains("<span class=\"erro-campo\" id=\"erro-titulo\">Preencha este campo.</span>"),"campo vazio sem mensagem clara");
+  assertTrue(html.contains("<a href=\"#personaId\">Persona declarada: Preencha este campo.</a>"));
+  p=fields();p.set("data","not-a-date");
+  html=Html.compacto(mvc.perform(summary(p).with(proprioEndereco)).andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString());
+  assertTrue(html.contains("id=\"erro-data\">Confira a data, o horário ou o número informado.</span>"));
+  assertFalse(html.contains("Failed to convert"));
+ }
+ @Test void requestFormAsksTheBrowserToFillTheContact()throws Exception{
+  String html=Html.compacto(mvc.perform(get("/reserva")).andReturn().getResponse().getContentAsString());
+  for(String[] c:new String[][]{{"nome","name"},{"email","email"},{"telefone","tel-national"},{"empresa","organization"},{"cargo","organization-title"}}){
+   var input=java.util.regex.Pattern.compile("<input[^>]*id=\""+c[0]+"\"[^>]*>").matcher(html);
+   assertTrue(input.find(),c[0]);assertTrue(input.group().contains("autocomplete=\""+c[1]+"\""),input.group());
+  }
+ }
  // 0.5.6: telefone conferido pelo país escolhido e gravado no formato do país.
  @Test void phoneUsesTheChosenCountry()throws Exception{
   var p=fields();p.set("telefonePais","PT");p.set("telefone","912345678");

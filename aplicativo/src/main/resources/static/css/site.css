@@ -25,6 +25,11 @@
   --site-navy: #02569a;
   --site-cyan: #00c3ff;
   --site-text: #2d2d2d;
+  /* Formulário de contato oficial: fundo e texto dos campos. A borda #e2e8f0 do site tem 1,2:1; esta passa nos 3:1 do WCAG. */
+  --site-fundo-campo: #fdfdfd;
+  --site-texto-campo: #333;
+  --site-borda-campo: #8592a0;
+  --site-erro: #9d2934;
 }
 body {
   font-family: "Lato", Helvetica, Arial, sans-serif;
@@ -552,5 +557,134 @@ h4 {
   }
   .participe-hero p {
     font-size: 14px;
+  }
+}
+
+/* Telas públicas do pedido de reserva: faixa da agenda oficial e formulário de contato oficial. */
+.faixa-pagina {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 40px;
+  padding: 56px 64px;
+  border-radius: 40px;
+  background: var(--site-blue);
+  color: #fff;
+}
+.faixa-pagina .eyebrow {
+  margin-bottom: 16px;
+}
+.faixa-pagina h1 {
+  margin: 0 0 12px;
+  font-size: clamp(26px, 3vw, 40px);
+  font-weight: 800;
+  line-height: 1.2;
+}
+.faixa-pagina p {
+  max-width: 60ch;
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+.faixa-pagina .button.secondary {
+  background: #fff;
+  border-color: #fff;
+  color: var(--site-blue);
+}
+.cartao-oficial {
+  border: 0;
+  border-radius: 60px;
+  padding: 80px 115px;
+  background: #fff;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
+}
+.grid-2 .cartao-oficial {
+  border-radius: 40px;
+  padding: 48px;
+}
+.form-oficial :where(input:not([type="checkbox"]), select, textarea) {
+  min-height: 65px;
+  padding: 0 22px;
+  border: 1px solid var(--site-borda-campo);
+  border-radius: 12px;
+  background: var(--site-fundo-campo);
+  color: var(--site-texto-campo);
+  font-size: 16px;
+}
+.form-oficial textarea {
+  min-height: 200px;
+  padding: 20px 22px;
+}
+.form-oficial [aria-invalid="true"] {
+  border-color: var(--site-erro);
+  box-shadow: 0 0 0 1px var(--site-erro);
+}
+.erro-campo {
+  color: var(--site-erro);
+  font-size: 0.88rem;
+  font-weight: 400;
+}
+.form-oficial .alert ul {
+  margin: 6px 0 0;
+  padding-left: 20px;
+}
+.form-oficial .alert p {
+  margin: 0;
+}
+.form-oficial .alert a {
+  color: inherit;
+  text-decoration: underline;
+}
+.form-oficial .checks input[type="checkbox"] {
+  width: 24px;
+  height: 24px;
+  flex: none;
+}
+.form-oficial .checks label {
+  min-height: 44px;
+  gap: 12px;
+}
+/* Botão "Enviar mensagem" do contato oficial (o site usa Lato 500; aqui só há 400 e 700). */
+.botao-grande {
+  min-height: 64px;
+  padding: 20px 50px;
+  border-radius: 6px;
+  background: var(--site-blue);
+  font-size: 20px;
+  font-weight: 700;
+}
+.botao-grande:hover {
+  background: var(--site-navy);
+  filter: none;
+}
+.acoes-pedido {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+@media (max-width: 980px) {
+  .faixa-pagina,
+  .cartao-oficial,
+  .grid-2 .cartao-oficial {
+    border-radius: 30px;
+    padding: 40px 32px;
+  }
+}
+@media (max-width: 760px) {
+  .faixa-pagina,
+  .cartao-oficial,
+  .grid-2 .cartao-oficial {
+    border-radius: 24px;
+    padding: 28px 18px;
+  }
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .botao-grande {
+    width: 100%;
+    padding: 18px 24px;
   }
 }

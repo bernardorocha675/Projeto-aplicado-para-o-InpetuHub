@@ -5,15 +5,15 @@
     <header th:replace="~{fragments :: topo}"></header>
     <main id="conteudo" class="public-main">
       <div th:replace="~{fragments :: mensagens}"></div>
-      <div class="page-heading">
+      <div class="faixa-pagina">
         <div>
-          <span class="eyebrow blue">QUASE PRONTO</span>
+          <span class="eyebrow">INPETU HUB</span>
           <h1>Confira sua solicitação</h1>
           <p>O envio registra uma solicitação para conferência, sem bloquear a agenda.</p>
         </div>
       </div>
       <div class="grid-2">
-        <section class="card">
+        <section class="card cartao-oficial">
           <h2>Dados da reserva</h2>
           <dl>
             <dt>Solicitante</dt>
@@ -49,7 +49,7 @@
             <dd th:text="${orcamento.cota.saldoDevedor}+'h'"></dd>
           </dl>
         </section>
-        <section class="card">
+        <section class="card cartao-oficial">
           <h2>Estimativa financeira</h2>
           <p th:unless="${orcamento.taxasConfiguradas}" class="alert warning">
             Operação/limpeza ainda não foram configuradas. A estimativa abaixo contempla os valores já disponíveis e será conferida antes da
@@ -76,8 +76,8 @@
             <dd th:text="'R$ '+${#numbers.formatDecimal(orcamento.valorRestante,1,'POINT',2,'COMMA')}"></dd>
           </dl>
           <p class="muted">O envio revalida horário, cota e preços. A disponibilidade e o orçamento serão recalculados na aprovação.</p>
-          <form th:action="@{/reservas/solicitar}" method="post">
-            <button type="submit">Confirmar solicitação</button>
+          <form th:action="@{/reservas/solicitar}" method="post" class="acoes-pedido">
+            <button type="submit" class="botao-grande">Confirmar solicitação</button>
             <a href="/reserva?editar=true" class="button secondary">Voltar para editar</a>
           </form>
         </section>
