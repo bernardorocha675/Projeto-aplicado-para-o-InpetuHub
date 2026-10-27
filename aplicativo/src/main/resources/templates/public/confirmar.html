@@ -4,8 +4,13 @@
   <body>
     <header th:replace="~{fragments :: topo}"></header>
     <main id="conteudo" class="public-main">
-      <section class="card login-card">
-        <h1 th:text="${mode=='NONE'?'Consultar solicitação':'Solicitação recebida'}">Solicitação recebida</h1>
+      <div class="faixa-pagina">
+        <div>
+          <span class="eyebrow">INPETU HUB</span>
+          <h1 th:text="${mode=='NONE'?'Consultar solicitação':'Solicitação recebida'}">Solicitação recebida</h1>
+        </div>
+      </div>
+      <section class="card cartao-oficial form-oficial confirmation">
         <p th:if="${mode=='NONE'}">
           Nenhuma solicitação foi enviada neste navegador. Consulte a agenda e preencha o formulário de reserva.
         </p>
@@ -26,13 +31,21 @@
               navegador. Confira também a pasta de spam. Se não receber, entre em contato com a equipe.
             </p>
             <form th:action="@{/solicitacoes/confirmar}" method="post">
-              <label>Código de confirmação *<input name="code" inputmode="numeric" pattern="[0-9]{8}" maxlength="8" required /></label
-              ><button>Confirmar email</button>
+              <label
+                >Código de confirmação *<input
+                  name="code"
+                  inputmode="numeric"
+                  autocomplete="one-time-code"
+                  pattern="[0-9]{8}"
+                  maxlength="8"
+                  required /></label
+              ><button class="botao-grande">Confirmar email</button>
             </form>
           </div>
         </div>
-        <a href="/">Voltar à agenda</a>
+        <a href="/agenda">Voltar à agenda</a>
       </section>
     </main>
+    <footer th:replace="~{fragments :: rodape}"></footer>
   </body>
 </html>

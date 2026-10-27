@@ -5,32 +5,73 @@
     <header th:replace="~{fragments :: topo}"></header>
     <main id="conteudo" class="public-main">
       <div th:replace="~{fragments :: mensagens}"></div>
-      <div class="page-heading">
+      <div class="faixa-pagina">
         <div>
-          <span class="eyebrow blue">AGENDA PÚBLICA</span>
+          <span class="eyebrow">INPETU HUB</span>
           <h1>Solicitar uma reserva</h1>
           <p>Informe os dados para consultar o orçamento antes de confirmar.</p>
         </div>
         <a href="/agenda" class="button secondary">Voltar à agenda</a>
       </div>
-      <form th:action="@{/reservas/resumo}" th:object="${form}" method="post" class="card" data-repeat-submit="true">
+      <form
+        th:action="@{/reservas/resumo}"
+        th:object="${form}"
+        method="post"
+        class="card cartao-oficial form-oficial"
+        data-repeat-submit="true"
+      >
         <p class="muted">Campos com * são obrigatórios.</p>
-        <ul th:if="${fieldErrors}" class="alert error" role="alert">
-          <li th:each="message:${fieldErrors}" th:text="${message}"></li>
-        </ul>
+        <div th:unless="${errosCampo.isEmpty()}" class="alert error" role="alert">
+          <p>Confira os campos abaixo:</p>
+          <ul>
+            <li th:each="e:${errosCampo}">
+              <a th:href="'#' + ${e.key}" th:text="${rotulos.getOrDefault(e.key, e.key)} + ': ' + ${e.value}"></a>
+            </li>
+          </ul>
+        </div>
         <h2>Espaço e horário</h2>
         <div class="form-grid">
-          <label>Data *<input type="date" th:field="*{data}" th:attr="min=${minDate},max=${maxDate}" required /></label
+          <label
+            >Data *<input
+              type="date"
+              th:field="*{data}"
+              th:attr="min=${minDate},max=${maxDate}"
+              th:aria-invalid="${errosCampo.containsKey('data')} ? 'true'"
+              th:aria-describedby="${errosCampo.containsKey('data')} ? 'erro-data'"
+              required /><span th:replace="~{fragments :: erroCampo('data')}"></span></label
           ><label
-            >Espaço *<select th:field="*{espacoId}" required>
+            >Espaço *<select
+              th:field="*{espacoId}"
+              required
+              th:aria-invalid="${errosCampo.containsKey('espacoId')} ? 'true'"
+              th:aria-describedby="${errosCampo.containsKey('espacoId')} ? 'erro-espacoId'"
+            >
               <option value="">Selecione</option>
               <option
                 th:each="e:${espacos}"
                 th:value="${e.id}"
                 th:text="${e.nomeEspaco}+' · '+(${#strings.isEmpty(e.mobiliario)} ? ${e.capacidade}+' pessoas' : ${e.mobiliario})"
-              ></option></select></label
-          ><label>Hora inicial *<input type="time" th:field="*{horaInicio}" required /></label
-          ><label>Hora final *<input type="time" th:field="*{horaFim}" required /></label>
+              ></option></select
+            ><span th:replace="~{fragments :: erroCampo('espacoId')}"></span></label
+          ><label
+            >Hora inicial *<input
+              type="time"
+              th:field="*{horaInicio}"
+              required
+              th:aria-invalid="${errosCampo.containsKey('horaInicio')} ? 'true'"
+              th:aria-describedby="${errosCampo.containsKey('horaInicio')} ? 'erro-horaInicio'" /><span
+              th:replace="~{fragments :: erroCampo('horaInicio')}"
+            ></span></label
+          ><label
+            >Hora final *<input
+              type="time"
+              th:field="*{horaFim}"
+              required
+              th:aria-invalid="${errosCampo.containsKey('horaFim')} ? 'true'"
+              th:aria-describedby="${errosCampo.containsKey('horaFim')} ? 'erro-horaFim'" /><span
+              th:replace="~{fragments :: erroCampo('horaFim')}"
+            ></span
+          ></label>
         </div>
         <h2>Dados do solicitante</h2>
         <div class="form-grid">
@@ -41,18 +82,42 @@
               th:pattern="${contactPatterns.nome}"
               title="Use letras, acentos, espaços, apóstrofos ou hífens, sem números."
               required
-              maxlength="255" /></label
+              maxlength="255"
+              autocomplete="name"
+              th:aria-invalid="${errosCampo.containsKey('nome')} ? 'true'"
+              th:aria-describedby="${errosCampo.containsKey('nome')} ? 'erro-nome'" /><span
+              th:replace="~{fragments :: erroCampo('nome')}"
+            ></span></label
           ><label
-            >Documento *<select th:field="*{tipoDocumento}" required>
-              <option th:each="t:${tiposDocumento}" th:value="${t.key}" th:text="${t.value}"></option></select></label
+            >Documento *<select
+              th:field="*{tipoDocumento}"
+              required
+              th:aria-invalid="${errosCampo.containsKey('tipoDocumento')} ? 'true'"
+              th:aria-describedby="${errosCampo.containsKey('tipoDocumento')} ? 'erro-tipoDocumento'"
+            >
+              <option th:each="t:${tiposDocumento}" th:value="${t.key}" th:text="${t.value}"></option></select
+            ><span th:replace="~{fragments :: erroCampo('tipoDocumento')}"></span></label
           ><label
             >Número do documento<input
               type="text"
               th:field="*{cnpj}"
               maxlength="30"
               autocomplete="off"
-              title="CNPJ com 14 dígitos, CPF com 11 ou documento estrangeiro com letras e números. Em branco com “Sem documento”." /></label
-          ><label>Empresa/instituição<input type="text" th:field="*{empresa}" maxlength="255" /></label
+              title="CNPJ com 14 dígitos, CPF com 11 ou documento estrangeiro com letras e números. Em branco com “Sem documento”."
+              th:aria-invalid="${errosCampo.containsKey('cnpj')} ? 'true'"
+              th:aria-describedby="${errosCampo.containsKey('cnpj')} ? 'erro-cnpj'" /><span
+              th:replace="~{fragments :: erroCampo('cnpj')}"
+            ></span></label
+          ><label
+            >Empresa/instituição<input
+              type="text"
+              th:field="*{empresa}"
+              maxlength="255"
+              autocomplete="organization"
+              th:aria-invalid="${errosCampo.containsKey('empresa')} ? 'true'"
+              th:aria-describedby="${errosCampo.containsKey('empresa')} ? 'erro-empresa'" /><span
+              th:replace="~{fragments :: erroCampo('empresa')}"
+            ></span></label
           ><label
             >Email *<input
               type="email"
@@ -60,7 +125,12 @@
               th:pattern="${contactPatterns.email}"
               title="Informe um email completo, como nome@instituicao.com.br."
               required
-              maxlength="255" /></label
+              maxlength="255"
+              autocomplete="email"
+              th:aria-invalid="${errosCampo.containsKey('email')} ? 'true'"
+              th:aria-describedby="${errosCampo.containsKey('email')} ? 'erro-email'" /><span
+              th:replace="~{fragments :: erroCampo('email')}"
+            ></span></label
           ><label
             >Telefone *<span class="phone-field"
               ><select name="telefonePais" aria-label="País do telefone">
@@ -78,7 +148,11 @@
                 required
                 maxlength="20"
                 inputmode="tel"
-                placeholder="(48) 99999-9999" /></span></label
+                autocomplete="tel-national"
+                placeholder="(48) 99999-9999"
+                th:aria-invalid="${errosCampo.containsKey('telefone')} ? 'true'"
+                th:aria-describedby="${errosCampo.containsKey('telefone')} ? 'erro-telefone'" /></span
+            ><span th:replace="~{fragments :: erroCampo('telefone')}"></span></label
           ><label
             >Cidade *<input
               type="text"
@@ -86,18 +160,80 @@
               required
               maxlength="255"
               autocomplete="off"
-              placeholder="Digite e escolha: Florianópolis, Santa Catarina, Brasil" /></label
-          ><label>Segmento<input type="text" th:field="*{segmento}" maxlength="255" /></label
-          ><label>Cargo<input type="text" th:field="*{cargo}" maxlength="255" /></label
-          ><label>Nome do evento *<input type="text" th:field="*{titulo}" required maxlength="255" /></label
+              placeholder="Digite e escolha: Florianópolis, Santa Catarina, Brasil"
+              th:aria-invalid="${errosCampo.containsKey('cidade')} ? 'true'"
+              th:aria-describedby="${errosCampo.containsKey('cidade')} ? 'erro-cidade'" /><span
+              th:replace="~{fragments :: erroCampo('cidade')}"
+            ></span></label
           ><label
-            >Persona declarada *<select th:field="*{personaId}" required>
+            >Segmento<input
+              type="text"
+              th:field="*{segmento}"
+              maxlength="255"
+              th:aria-invalid="${errosCampo.containsKey('segmento')} ? 'true'"
+              th:aria-describedby="${errosCampo.containsKey('segmento')} ? 'erro-segmento'" /><span
+              th:replace="~{fragments :: erroCampo('segmento')}"
+            ></span></label
+          ><label
+            >Cargo<input
+              type="text"
+              th:field="*{cargo}"
+              maxlength="255"
+              autocomplete="organization-title"
+              th:aria-invalid="${errosCampo.containsKey('cargo')} ? 'true'"
+              th:aria-describedby="${errosCampo.containsKey('cargo')} ? 'erro-cargo'" /><span
+              th:replace="~{fragments :: erroCampo('cargo')}"
+            ></span></label
+          ><label
+            >Nome do evento *<input
+              type="text"
+              th:field="*{titulo}"
+              required
+              maxlength="255"
+              th:aria-invalid="${errosCampo.containsKey('titulo')} ? 'true'"
+              th:aria-describedby="${errosCampo.containsKey('titulo')} ? 'erro-titulo'" /><span
+              th:replace="~{fragments :: erroCampo('titulo')}"
+            ></span></label
+          ><label
+            >Persona declarada *<select
+              th:field="*{personaId}"
+              required
+              th:aria-invalid="${errosCampo.containsKey('personaId')} ? 'true'"
+              th:aria-describedby="${errosCampo.containsKey('personaId')} ? 'erro-personaId'"
+            >
               <option value="">Selecione</option>
-              <option th:each="p:${personas}" th:value="${p.id}" th:text="${p.codigo}+' — '+${p.nome}"></option></select></label
-          ><label>Quantidade de participantes *<input type="number" min="1" th:field="*{numeroParticipantes}" required /></label>
+              <option th:each="p:${personas}" th:value="${p.id}" th:text="${p.codigo}+' — '+${p.nome}"></option></select
+            ><span th:replace="~{fragments :: erroCampo('personaId')}"></span></label
+          ><label
+            >Quantidade de participantes *<input
+              type="number"
+              min="1"
+              th:field="*{numeroParticipantes}"
+              required
+              th:aria-invalid="${errosCampo.containsKey('numeroParticipantes')} ? 'true'"
+              th:aria-describedby="${errosCampo.containsKey('numeroParticipantes')} ? 'erro-numeroParticipantes'" /><span
+              th:replace="~{fragments :: erroCampo('numeroParticipantes')}"
+            ></span
+          ></label>
         </div>
-        <label>Objetivo *<textarea th:field="*{objetivo}" maxlength="2000" required></textarea></label
-        ><label>Observações<textarea th:field="*{observacoes}" maxlength="2000"></textarea></label>
+        <label
+          >Objetivo *<textarea
+            th:field="*{objetivo}"
+            maxlength="2000"
+            required
+            th:aria-invalid="${errosCampo.containsKey('objetivo')} ? 'true'"
+            th:aria-describedby="${errosCampo.containsKey('objetivo')} ? 'erro-objetivo'"
+          ></textarea
+          ><span th:replace="~{fragments :: erroCampo('objetivo')}"></span></label
+        ><label
+          >Observações<textarea
+            th:field="*{observacoes}"
+            maxlength="2000"
+            th:aria-invalid="${errosCampo.containsKey('observacoes')} ? 'true'"
+            th:aria-describedby="${errosCampo.containsKey('observacoes')} ? 'erro-observacoes'"
+          ></textarea
+          ><span th:replace="~{fragments :: erroCampo('observacoes')}"></span
+        ></label>
         <div class="checks">
           <label><input type="checkbox" th:field="*{inscricaoPaga}" /> O evento possui inscrição paga</label
           ><label><input type="checkbox" th:field="*{financiado}" /> O evento possui patrocínio/financiamento</label
@@ -107,7 +243,7 @@
           A persona será conferida pela equipe. Cadastro com o mesmo documento (ou, sem documento, com o mesmo email) será vinculado sem
           sobrescrever seus dados.
         </p>
-        <button type="submit">Calcular e revisar solicitação</button>
+        <button type="submit" class="botao-grande">Calcular e revisar solicitação</button>
       </form>
     </main>
     <footer th:replace="~{fragments :: rodape}"></footer>
