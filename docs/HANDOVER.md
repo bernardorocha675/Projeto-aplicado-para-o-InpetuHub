@@ -1,6 +1,10 @@
-# Handover técnico — InPETU Hub 0.5.9
+# Handover técnico — InPETU Hub 0.5.10
 
 Base desta reorganização: `1d7f8b0ff9bb97d1cf74fef1e195b01f674d4a0a` (main após 0.4.2 e continuidade). A release 0.4.2 permanece no commit `c9a63fd60ff8583edcceb30287eefc1ca494209f`. Base da linha 0.4: `12abbbcf9956ea68804229ac37ea527fb181f9df` (0.3.3). Entrega acadêmica de Projeto Aplicado do UniSENAI com o InPETU Hub. Equipe: Bernardo Rocha, João Mussiol, João Feitosa e Guilherme Batista. O responsável operacional e o aceite do parceiro ainda precisam ser definidos.
+
+## 0.5.10 — pedido de reserva no estilo do contato oficial (lote 2 da interface) — em publicação
+
+Lote 2 do plano de interface (PR [#41](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/pull/41), preparado pelo Claude local e revisado na nuvem): faixa da página e cartão do formulário de contato oficial nas quatro telas do pedido (formulário, resumo, sucesso, confirmação); campos de 65 px com borda `#8592a0` (3,1:1); botão grande de 64 px; caixas de marcar de 24 px; erros ligados aos campos (`aria-invalid`, `aria-describedby`, mensagem abaixo do campo e resumo com links, “Preencha este campo.” para obrigatório vazio); preenchimento automático (`name`, `email`, `tel-national`, `organization`, `organization-title`, `one-time-code`); confirmação com rodapé e volta para `/agenda`; `docs/PLANO-INTERFACE.md` com o lote 4 preparado, sem aplicar. axe nas telas do pedido: 0 violações. Testes do PR (Linux x64, 27/10/2026): 168 Java, Testar sem falhas, Node 11 + 12 + 8, 60 Go, segredos e hook; matriz do PR verde no [run 40550802241](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/actions/runs/40550802241). Revisão na nuvem: 168 Java aprovados e os 18 campos do pedido conferidos com o alvo do link do resumo e o `aria-describedby`. Merge (`6111943`) e publicação autorizados pelo responsável em 27/10/2026. Sem migration. Primeira versão com dois dígitos no último número; conferido que o iniciador, o receptor, o filtro de versão dos logs e o script de publicação aceitam `0.5.10` e o ordenam depois da 0.5.9.
 
 ## 0.5.9 — agenda legível (lote 1 da interface) — publicada e verificada
 
