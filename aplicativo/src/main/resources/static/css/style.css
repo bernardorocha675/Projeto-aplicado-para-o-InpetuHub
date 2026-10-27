@@ -2,10 +2,10 @@
   box-sizing: border-box;
 }
 :root {
-  --blue: #087fc5;
-  --light-blue: #61a4df;
+  /* Azul do site oficial; o cinza escurecido passa no contraste WCAG AA sobre branco e sobre o fundo do calendário. */
+  --blue: #0077cc;
   --ink: #213345;
-  --muted: #74818e;
+  --muted: #5f6b77;
   --line: #e1e8ef;
   --bg: #f4f7fa;
   --soft: #e8f3fd;
@@ -125,7 +125,7 @@ textarea:focus-visible {
   background: #f9fbfe;
 }
 .agenda-intro {
-  background: var(--light-blue);
+  background: var(--blue);
   color: white;
   padding: 78px 55px;
 }
@@ -139,10 +139,11 @@ textarea:focus-visible {
 .blue {
   color: var(--blue);
 }
+/* Medidas do título da agenda oficial. */
 .agenda-intro h1 {
-  font-size: clamp(34px, 3.4vw, 57px);
-  line-height: 1.17;
-  letter-spacing: -1px;
+  font-size: clamp(26px, 3vw, 40px);
+  font-weight: 800;
+  line-height: 1.2;
   margin: 40px 0;
 }
 .agenda-intro p {
@@ -151,7 +152,6 @@ textarea:focus-visible {
 }
 .agenda-intro .intro-note {
   font-size: 1rem;
-  opacity: 0.9;
 }
 .agenda-calendar {
   padding: 45px 42px;
@@ -171,10 +171,10 @@ textarea:focus-visible {
   background: #fff;
   border: 1px solid var(--line);
   padding: 0;
-  width: 26px;
-  height: 26px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  font-size: 0.85rem;
+  font-size: 1.25rem;
 }
 .calendar-filter {
   margin: 0 0 25px;
@@ -196,7 +196,7 @@ textarea:focus-visible {
   gap: 7px;
 }
 .weekdays {
-  color: #828c95;
+  color: var(--muted);
   text-align: center;
   font-size: 0.72rem;
   margin-bottom: 12px;
@@ -214,6 +214,11 @@ textarea:focus-visible {
   justify-content: center;
   gap: 0;
   font-size: 0.8rem;
+}
+.weekdays,
+.calendar-grid,
+.day-details {
+  font-variant-numeric: tabular-nums;
 }
 .calendar-grid .day strong {
   font-weight: 400;
@@ -581,11 +586,7 @@ form + form {
     padding: 35px;
   }
   .agenda-intro h1 {
-    font-size: 38px;
     margin: 20px 0;
-  }
-  .agenda-intro h1 br {
-    display: none;
   }
   .agenda-intro p {
     font-size: 1rem;
