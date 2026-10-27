@@ -3,7 +3,7 @@
   <head th:replace="~{fragments :: head('Confirmar solicitação')}"></head>
   <body>
     <header th:replace="~{fragments :: topo}"></header>
-    <main class="public-main">
+    <main id="conteudo" class="public-main">
       <section class="card login-card">
         <h1 th:text="${mode=='NONE'?'Consultar solicitação':'Solicitação recebida'}">Solicitação recebida</h1>
         <p th:if="${mode=='NONE'}">

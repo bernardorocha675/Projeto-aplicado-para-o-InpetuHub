@@ -37,8 +37,24 @@ h4 {
 }
 
 /* Cabeçalho */
+/* Primeiro link da página: escondido até receber o foco do teclado. */
+.pular {
+  position: absolute;
+  left: 16px;
+  top: -80px;
+  z-index: 30;
+  padding: 12px 18px;
+  background: #fff;
+  color: var(--site-blue);
+  font-weight: 700;
+  border-radius: 6px;
+  box-shadow: 0 2px 12px #0000002e;
+}
+.pular:focus {
+  top: 12px;
+}
 .topo {
-  background: #fafafa;
+  background: #fff;
   box-shadow: 0 2px 12px #0000001f;
   padding: 0 max(5vw, 24px);
   min-height: 80px;

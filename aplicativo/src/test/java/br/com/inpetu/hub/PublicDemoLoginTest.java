@@ -87,6 +87,10 @@ class PublicDemoLoginTest {
   for(String path:new String[]{"/","/agenda","/reserva","/login"}){
    var html=mvc.perform(get(path)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
    assertLocalHeader(html,path);
+   String compacto=Html.compacto(html);
+   int primeiroLink=compacto.indexOf("<a ");
+   assertTrue(compacto.startsWith("<a class=\"pular\" href=\"#conteudo\">Pular para o conteúdo</a>",primeiroLink),path+": o primeiro link deve pular o menu");
+   assertTrue(compacto.contains("<main id=\"conteudo\""),path+" sem o alvo do link de pular");
   }
  }
  @Test void restoredManagementScreensKeepLocalNavigationAfterLogin() throws Exception {

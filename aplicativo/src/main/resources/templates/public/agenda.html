@@ -3,12 +3,12 @@
   <head th:replace="~{fragments :: head('Agenda')}"></head>
   <body>
     <header th:replace="~{fragments :: topo}"></header>
-    <main class="public-main">
+    <main id="conteudo" class="public-main">
       <div th:replace="~{fragments :: mensagens}"></div>
       <section class="agenda-shell">
         <div class="agenda-intro">
           <span class="eyebrow">INPETU HUB</span>
-          <h1>Agenda de <br />Eventos, <br />Visitações e <br />Conexões</h1>
+          <h1>Agenda de Eventos, Visitações e Conexões</h1>
           <p>Encontre um espaço para sua próxima conexão. Consulte a disponibilidade e envie sua solicitação de reserva.</p>
           <p class="intro-note">As solicitações são analisadas pela equipe do Hub.</p>
         </div>
@@ -42,6 +42,7 @@
             id="calendario"
             class="calendar-grid"
             th:attr="data-today=${today},data-max-date=${maxDate}"
+            role="group"
             aria-label="Calendário de disponibilidade"
           ></div>
           <p class="calendar-hint">Clique em um dia marcado para ver os eventos.</p>
