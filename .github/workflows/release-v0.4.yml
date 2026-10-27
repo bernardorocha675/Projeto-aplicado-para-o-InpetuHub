@@ -159,14 +159,14 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-      - uses: github/codeql-action/init@24c54180a607b1449ed407dd24f251e4e9147c8d
+      - uses: github/codeql-action/init@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee
         with:
           languages: java-kotlin
           build-mode: manual
           queries: security-extended
       - run: mvn -B -ntp -DskipTests clean package
         working-directory: aplicativo
-      - uses: github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d
+      - uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee
         with:
           category: /language:java-v03
           output: ${{ github.workspace }}/results
