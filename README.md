@@ -25,11 +25,11 @@ O projeto continua em desenvolvimento, com melhorias entregues em novas versões
 
 ## Download do Projeto
 
-Os arquivos ficam na [página de Releases](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.5.8) da versão oficial.
+Os arquivos ficam na [página de Releases](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v0.5.9) da versão oficial.
 
 ### 1. Baixar o projeto completo
 
-[**InPETU-Hub-codigo-v0.5.8.zip**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.8/InPETU-Hub-codigo-v0.5.8.zip): todos os arquivos do sistema, compactados, com o código-fonte, a documentação e os testes. Indicado para quem quer estudar ou continuar o desenvolvimento.
+[**InPETU-Hub-codigo-v0.5.9.zip**](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.9/InPETU-Hub-codigo-v0.5.9.zip): todos os arquivos do sistema, compactados, com o código-fonte, a documentação e os testes. Indicado para quem quer estudar ou continuar o desenvolvimento.
 
 ### 2. Baixar o executável
 
@@ -37,12 +37,12 @@ Para usar o sistema sem abrir o código-fonte, baixe o pacote do seu computador.
 
 | Computador | Download |
 | --- | --- |
-| Windows (Intel/AMD) | [InPETU-Hub-Windows-x64-v0.5.8.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.8/InPETU-Hub-Windows-x64-v0.5.8.zip) |
-| Windows ARM | [InPETU-Hub-Windows-ARM64-v0.5.8.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.8/InPETU-Hub-Windows-ARM64-v0.5.8.zip) |
-| Mac Apple Silicon (M1 ou mais recente) | [InPETU-Hub-macOS-ARM64-v0.5.8.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.8/InPETU-Hub-macOS-ARM64-v0.5.8.zip) |
-| Mac Intel | [InPETU-Hub-macOS-x64-v0.5.8.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.8/InPETU-Hub-macOS-x64-v0.5.8.zip) |
-| Linux (Intel/AMD) | [InPETU-Hub-Linux-x64-v0.5.8.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.8/InPETU-Hub-Linux-x64-v0.5.8.zip) |
-| Linux ARM | [InPETU-Hub-Linux-ARM64-v0.5.8.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.8/InPETU-Hub-Linux-ARM64-v0.5.8.zip) |
+| Windows (Intel/AMD) | [InPETU-Hub-Windows-x64-v0.5.9.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.9/InPETU-Hub-Windows-x64-v0.5.9.zip) |
+| Windows ARM | [InPETU-Hub-Windows-ARM64-v0.5.9.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.9/InPETU-Hub-Windows-ARM64-v0.5.9.zip) |
+| Mac Apple Silicon (M1 ou mais recente) | [InPETU-Hub-macOS-ARM64-v0.5.9.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.9/InPETU-Hub-macOS-ARM64-v0.5.9.zip) |
+| Mac Intel | [InPETU-Hub-macOS-x64-v0.5.9.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.9/InPETU-Hub-macOS-x64-v0.5.9.zip) |
+| Linux (Intel/AMD) | [InPETU-Hub-Linux-x64-v0.5.9.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.9/InPETU-Hub-Linux-x64-v0.5.9.zip) |
+| Linux ARM | [InPETU-Hub-Linux-ARM64-v0.5.9.zip](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.9/InPETU-Hub-Linux-ARM64-v0.5.9.zip) |
 
 No macOS, é necessário o macOS 13 Ventura ou mais recente.
 
@@ -61,7 +61,7 @@ O passo a passo completo está em [Instalação e execução](docs/COMO-INICIAR.
 
 ## Versão oficial
 
-**Versão 0.5.8**, a referência para os downloads acima.
+**Versão 0.5.9**, a referência para os downloads acima.
 
 O iniciador verifica novas versões ao abrir e atualiza o sistema automaticamente, mantendo os dados já cadastrados. As versões anteriores continuam disponíveis em [Releases](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases).
 
