@@ -42,6 +42,16 @@ A CI usa `python .github/scripts/setup_maven.py` para baixar Maven 3.9.9 em `apl
 
 Depois do roteiro, o empacotamento usa JAVA_HOME e INPETU_GOOS/INPETU_GOARCH coerentes com a máquina. A referência completa é `.github/workflows/release-v0.4.yml`. `package_v04.py` gera o pacote, e `smoke_v04.py` testa o executável real com dados descartáveis.
 
+## Formatar templates e CSS
+
+Templates (`aplicativo/src/main/resources/templates`) e CSS (`static/css`) ficam formatados com o Prettier 3.6.2, sem configuração no repositório. O teste `TemplatesFormatadosTest` recusa linhas compactadas. O Prettier é ferramenta de desenvolvimento e não entra no pacote. Na pasta `aplicativo/src/main/resources`:
+
+```sh
+npx prettier@3.6.2 --no-config --print-width 140 --html-whitespace-sensitivity css --end-of-line lf --write "templates/**/*.html" "static/css/*.css"
+```
+
+`--html-whitespace-sensitivity css` mantém os espaços que aparecem na tela; por isso algumas tags terminam com `>` no começo da linha seguinte. O parser do Prettier não aceita `<th:block>`: troque por `<th-block>` antes de formatar e volte depois (hoje só em `admin/crud/form.html`). Em `admin/crud/lista.html`, as ações da linha ficam com `<!-- prettier-ignore -->`: o `<form>` de Excluir é `inline-block` no CSS e o Prettier, que o trata como bloco, poria entre ele e Editar um espaço que aparece na tela. Testes que comparam trechos do HTML usam `Html.compacto`/`Html.contem`, que ignoram recuo e quebras de linha.
+
 ## O que permanece estável
 
 Banco e configurações ficam no perfil do usuário, em `InPETU-Hub/0.4`. Os nomes dos assets e o protocolo bundle.json permanecem compatíveis com a atualização da família 0.4.x. Reorganizar fontes não altera os diretórios das instalações existentes.
