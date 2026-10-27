@@ -1,5 +1,169 @@
-<!DOCTYPE html><html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"><head th:replace="~{fragments :: head('Analisar reserva')}"></head><body class="admin-body">
- <header th:replace="~{fragments :: topo}"></header><aside th:replace="~{fragments :: menu}"></aside><main class="admin-main"><div th:replace="~{fragments :: mensagens}"></div><div class="page-heading"><div><span class="eyebrow blue" th:text="'RESERVA #'+${r.id}"></span><h1 th:text="${r.titulo}"></h1><span class="badge" th:classappend="${r.statusReserva}" th:text="${r.statusReserva}"></span></div><a href="/admin/reservas" class="button secondary">Voltar</a></div><div class="grid-2"><section class="card"><h2>Solicitante e evento</h2><dl><dt>Nome</dt><dd><a th:href="@{/admin/empreendedores/{id}(id=${r.empreendedor.id})}" th:text="${r.empreendedor.nome}"></a></dd><dt>Empresa / Documento</dt><dd th:text="(${#strings.isEmpty(r.empreendedor.empresa)} ? 'Não informada' : ${r.empreendedor.empresa})+' / '+${T(br.com.inpetu.hub.validation.Documentos).exibir(r.empreendedor.tipoDocumento,r.empreendedor.cnpj)}"></dd><dt>Email</dt><dd th:text="${r.empreendedor.email}"></dd><dt>Telefone / cidade</dt><dd th:text="${r.empreendedor.telefone}+' / '+${r.empreendedor.cidade}"></dd><dt>Segmento / cargo</dt><dd th:text="${r.empreendedor.segmento}+' / '+${r.empreendedor.cargo}"></dd><dt>Objetivo</dt><dd th:text="${r.objetivo}"></dd><dt>Observações</dt><dd th:text="${r.observacoes}"></dd><dt>Participantes</dt><dd th:text="${r.numeroParticipantes}"></dd><dt>Data / horário</dt><dd th:text="${#temporals.format(r.data,'dd/MM/yyyy')}+' · '+${r.horaInicio}+'–'+${r.horaFim}"></dd><dt>Espaço</dt><dd th:text="${r.espaco.nomeEspaco}"></dd><dt>Persona declarada</dt><dd th:text="${r.persona.codigo}+' — '+${r.persona.nome}"></dd><dt>Antecedência na solicitação</dt><dd th:text="${antecedencia}+' dias'"></dd><dt>Pago / financiado / acadêmico</dt><dd th:text="${r.inscricaoPaga}+' / '+${r.financiado}+' / '+${r.academico}"></dd></dl></section><section class="card"><h2>Cota e financeiro</h2><dl><dt>Cota mensal total</dt><dd th:text="${cota.horasTotais}+'h'"></dd><dt>Utilizada / pendente</dt><dd th:text="${cota.horasUtilizadas}+'h / '+${cota.horasReservadasPendentes}+'h'"></dd><dt>Saldo / dívida</dt><dd th:text="${cota.saldo}+'h / '+${cota.saldoDevedor}+'h'"></dd><dt>Horas de cota desta reserva</dt><dd th:text="${r.horasCota}+'h'"></dd><dt>Locação / operação / limpeza</dt><dd th:text="${r.percentualLocacao}+'% / '+${r.percentualOperacao}+'% / '+${r.percentualLimpeza}+'%'"></dd><dt>Valor base da locação</dt><dd th:text="'R$ '+${r.valorBase}"></dd><dt>Operação / limpeza aplicadas</dt><dd th:text="'R$ '+${r.valorOperacao}+' / R$ '+${r.valorLimpeza}"></dd><dt>Valor final</dt><dd class="total" th:text="'R$ '+${#numbers.formatDecimal(r.valorFinal,1,'POINT',2,'COMMA')}"></dd><dt>Sinal</dt><dd th:text="${r.percentualSinal}+'% · R$ '+${r.valorSinal}"></dd><dt>Restante</dt><dd th:text="'R$ '+${r.valorRestante}"></dd><dt>Status pagamento</dt><dd th:text="${r.statusPagamento}"></dd><dt>Colaborador responsável</dt><dd th:text="${r.colaboradorResponsavel != null ? r.colaboradorResponsavel.nome : 'Ainda não atribuído'}"></dd></dl><p th:unless="${r.taxasConfiguradas}" class="alert warning">Estimativa preliminar: configure as taxas antes de aprovar.</p><p th:if="${r.motivoRecusa}" class="alert error" th:text="${r.motivoRecusa}"></p></section></div>
-<section class="card" th:if="${r.statusReserva.name()=='PENDENTE'}"><h2>Análise da solicitação</h2><p>Confira a persona declarada e os dados do evento antes de aprovar. Valores e disponibilidade serão revalidados.</p><form th:action="@{/admin/reservas/{id}/aprovar(id=${r.id})}" method="post"><button>Aprovar reserva</button></form><details><summary>Recusar solicitação</summary><form th:action="@{/admin/reservas/{id}/recusar(id=${r.id})}" method="post"><label>Motivo da recusa *<textarea name="motivo" maxlength="2000" required></textarea></label><button class="danger">Recusar e liberar horário</button></form></details></section>
-<section class="card" th:if="${r.statusReserva.name()=='PENDENTE'||r.statusReserva.name()=='APROVADA'}"><h2>Alterar reserva</h2><form th:action="@{/admin/reservas/{id}/alterar(id=${r.id})}" method="post"><div class="form-grid"><label>Data *<input name="data" type="date" th:value="${r.data}" required></label><label>Espaço<select name="espacoId"><option th:each="e:${espacos}" th:value="${e.id}" th:text="${e.nomeEspaco}" th:selected="${e.id==r.espaco.id}"></option></select></label><label>Hora inicial *<input name="horaInicio" type="time" th:value="${r.horaInicio}" required></label><label>Hora final *<input name="horaFim" type="time" th:value="${r.horaFim}" required></label><label>Persona conferida<select name="personaId"><option th:each="p:${personas}" th:value="${p.id}" th:text="${p.codigo}+' — '+${p.nome}" th:selected="${p.id==r.persona.id}"></option></select></label></div><button>Salvar e recalcular</button></form><details><summary>Cancelar reserva</summary><form th:action="@{/admin/reservas/{id}/cancelar(id=${r.id})}" method="post"><p class="alert warning">Com menos de 30 dias de antecedência, o cancelamento de reserva que utilizou cota gera penalidade de 2× as horas.</p><label th:if="${gestor}" class="check"><input type="checkbox" name="forcaMaior" value="true"> Força maior / exceção do gestor (justificar)</label><label>Justificativa<textarea name="justificativa" maxlength="2000"></textarea></label><button class="danger">Cancelar reserva</button></form></details></section>
-<section class="card" th:if="${r.statusReserva.name()=='APROVADA'||r.statusReserva.name()=='CONCLUIDA'}"><h2>Registro financeiro</h2><p class="muted">Registro manual. O sistema não cobra nem processa pagamentos.</p><form th:action="@{/admin/reservas/{id}/pagamento(id=${r.id})}" method="post"><label>Status<select name="status"><option th:each="s:${T(br.com.inpetu.hub.enums.StatusPagamento).values()}" th:value="${s}" th:text="${s}" th:selected="${s==r.statusPagamento}"></option></select></label><button>Registrar pagamento</button></form><form th:if="${r.statusReserva.name()=='APROVADA'}" th:action="@{/admin/reservas/{id}/concluir(id=${r.id})}" method="post"><button class="secondary">Marcar como concluída após o evento</button></form></section><section class="card"><h2>Histórico de alterações</h2><ol class="timeline"><li th:each="h:${historico}"><strong th:text="${h.acao}"></strong><small th:text="${#temporals.format(h.dataHora,'dd/MM/yyyy HH:mm')}+' · '+${h.colaborador != null ? h.colaborador.nome : 'Solicitação pública'}"></small><p th:text="${h.descricao}"></p></li></ol></section></main><footer th:replace="~{fragments :: rodape}"></footer><script src="/js/admin.js" defer></script></body></html>
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments :: head('Analisar reserva')}"></head>
+  <body class="admin-body">
+    <header th:replace="~{fragments :: topo}"></header>
+    <aside th:replace="~{fragments :: menu}"></aside>
+    <main class="admin-main">
+      <div th:replace="~{fragments :: mensagens}"></div>
+      <div class="page-heading">
+        <div>
+          <span class="eyebrow blue" th:text="'RESERVA #'+${r.id}"></span>
+          <h1 th:text="${r.titulo}"></h1>
+          <span class="badge" th:classappend="${r.statusReserva}" th:text="${r.statusReserva}"></span>
+        </div>
+        <a href="/admin/reservas" class="button secondary">Voltar</a>
+      </div>
+      <div class="grid-2">
+        <section class="card">
+          <h2>Solicitante e evento</h2>
+          <dl>
+            <dt>Nome</dt>
+            <dd><a th:href="@{/admin/empreendedores/{id}(id=${r.empreendedor.id})}" th:text="${r.empreendedor.nome}"></a></dd>
+            <dt>Empresa / Documento</dt>
+            <dd
+              th:text="(${#strings.isEmpty(r.empreendedor.empresa)} ? 'Não informada' : ${r.empreendedor.empresa})+' / '+${T(br.com.inpetu.hub.validation.Documentos).exibir(r.empreendedor.tipoDocumento,r.empreendedor.cnpj)}"
+            ></dd>
+            <dt>Email</dt>
+            <dd th:text="${r.empreendedor.email}"></dd>
+            <dt>Telefone / cidade</dt>
+            <dd th:text="${r.empreendedor.telefone}+' / '+${r.empreendedor.cidade}"></dd>
+            <dt>Segmento / cargo</dt>
+            <dd th:text="${r.empreendedor.segmento}+' / '+${r.empreendedor.cargo}"></dd>
+            <dt>Objetivo</dt>
+            <dd th:text="${r.objetivo}"></dd>
+            <dt>Observações</dt>
+            <dd th:text="${r.observacoes}"></dd>
+            <dt>Participantes</dt>
+            <dd th:text="${r.numeroParticipantes}"></dd>
+            <dt>Data / horário</dt>
+            <dd th:text="${#temporals.format(r.data,'dd/MM/yyyy')}+' · '+${r.horaInicio}+'–'+${r.horaFim}"></dd>
+            <dt>Espaço</dt>
+            <dd th:text="${r.espaco.nomeEspaco}"></dd>
+            <dt>Persona declarada</dt>
+            <dd th:text="${r.persona.codigo}+' — '+${r.persona.nome}"></dd>
+            <dt>Antecedência na solicitação</dt>
+            <dd th:text="${antecedencia}+' dias'"></dd>
+            <dt>Pago / financiado / acadêmico</dt>
+            <dd th:text="${r.inscricaoPaga}+' / '+${r.financiado}+' / '+${r.academico}"></dd>
+          </dl>
+        </section>
+        <section class="card">
+          <h2>Cota e financeiro</h2>
+          <dl>
+            <dt>Cota mensal total</dt>
+            <dd th:text="${cota.horasTotais}+'h'"></dd>
+            <dt>Utilizada / pendente</dt>
+            <dd th:text="${cota.horasUtilizadas}+'h / '+${cota.horasReservadasPendentes}+'h'"></dd>
+            <dt>Saldo / dívida</dt>
+            <dd th:text="${cota.saldo}+'h / '+${cota.saldoDevedor}+'h'"></dd>
+            <dt>Horas de cota desta reserva</dt>
+            <dd th:text="${r.horasCota}+'h'"></dd>
+            <dt>Locação / operação / limpeza</dt>
+            <dd th:text="${r.percentualLocacao}+'% / '+${r.percentualOperacao}+'% / '+${r.percentualLimpeza}+'%'"></dd>
+            <dt>Valor base da locação</dt>
+            <dd th:text="'R$ '+${r.valorBase}"></dd>
+            <dt>Operação / limpeza aplicadas</dt>
+            <dd th:text="'R$ '+${r.valorOperacao}+' / R$ '+${r.valorLimpeza}"></dd>
+            <dt>Valor final</dt>
+            <dd class="total" th:text="'R$ '+${#numbers.formatDecimal(r.valorFinal,1,'POINT',2,'COMMA')}"></dd>
+            <dt>Sinal</dt>
+            <dd th:text="${r.percentualSinal}+'% · R$ '+${r.valorSinal}"></dd>
+            <dt>Restante</dt>
+            <dd th:text="'R$ '+${r.valorRestante}"></dd>
+            <dt>Status pagamento</dt>
+            <dd th:text="${r.statusPagamento}"></dd>
+            <dt>Colaborador responsável</dt>
+            <dd th:text="${r.colaboradorResponsavel != null ? r.colaboradorResponsavel.nome : 'Ainda não atribuído'}"></dd>
+          </dl>
+          <p th:unless="${r.taxasConfiguradas}" class="alert warning">Estimativa preliminar: configure as taxas antes de aprovar.</p>
+          <p th:if="${r.motivoRecusa}" class="alert error" th:text="${r.motivoRecusa}"></p>
+        </section>
+      </div>
+      <section class="card" th:if="${r.statusReserva.name()=='PENDENTE'}">
+        <h2>Análise da solicitação</h2>
+        <p>Confira a persona declarada e os dados do evento antes de aprovar. Valores e disponibilidade serão revalidados.</p>
+        <form th:action="@{/admin/reservas/{id}/aprovar(id=${r.id})}" method="post"><button>Aprovar reserva</button></form>
+        <details>
+          <summary>Recusar solicitação</summary>
+          <form th:action="@{/admin/reservas/{id}/recusar(id=${r.id})}" method="post">
+            <label>Motivo da recusa *<textarea name="motivo" maxlength="2000" required></textarea></label
+            ><button class="danger">Recusar e liberar horário</button>
+          </form>
+        </details>
+      </section>
+      <section class="card" th:if="${r.statusReserva.name()=='PENDENTE'||r.statusReserva.name()=='APROVADA'}">
+        <h2>Alterar reserva</h2>
+        <form th:action="@{/admin/reservas/{id}/alterar(id=${r.id})}" method="post">
+          <div class="form-grid">
+            <label>Data *<input name="data" type="date" th:value="${r.data}" required /></label
+            ><label
+              >Espaço<select name="espacoId">
+                <option
+                  th:each="e:${espacos}"
+                  th:value="${e.id}"
+                  th:text="${e.nomeEspaco}"
+                  th:selected="${e.id==r.espaco.id}"
+                ></option></select></label
+            ><label>Hora inicial *<input name="horaInicio" type="time" th:value="${r.horaInicio}" required /></label
+            ><label>Hora final *<input name="horaFim" type="time" th:value="${r.horaFim}" required /></label
+            ><label
+              >Persona conferida<select name="personaId">
+                <option
+                  th:each="p:${personas}"
+                  th:value="${p.id}"
+                  th:text="${p.codigo}+' — '+${p.nome}"
+                  th:selected="${p.id==r.persona.id}"
+                ></option></select
+            ></label>
+          </div>
+          <button>Salvar e recalcular</button>
+        </form>
+        <details>
+          <summary>Cancelar reserva</summary>
+          <form th:action="@{/admin/reservas/{id}/cancelar(id=${r.id})}" method="post">
+            <p class="alert warning">
+              Com menos de 30 dias de antecedência, o cancelamento de reserva que utilizou cota gera penalidade de 2× as horas.
+            </p>
+            <label th:if="${gestor}" class="check"
+              ><input type="checkbox" name="forcaMaior" value="true" /> Força maior / exceção do gestor (justificar)</label
+            ><label>Justificativa<textarea name="justificativa" maxlength="2000"></textarea></label
+            ><button class="danger">Cancelar reserva</button>
+          </form>
+        </details>
+      </section>
+      <section class="card" th:if="${r.statusReserva.name()=='APROVADA'||r.statusReserva.name()=='CONCLUIDA'}">
+        <h2>Registro financeiro</h2>
+        <p class="muted">Registro manual. O sistema não cobra nem processa pagamentos.</p>
+        <form th:action="@{/admin/reservas/{id}/pagamento(id=${r.id})}" method="post">
+          <label
+            >Status<select name="status">
+              <option
+                th:each="s:${T(br.com.inpetu.hub.enums.StatusPagamento).values()}"
+                th:value="${s}"
+                th:text="${s}"
+                th:selected="${s==r.statusPagamento}"
+              ></option></select></label
+          ><button>Registrar pagamento</button>
+        </form>
+        <form th:if="${r.statusReserva.name()=='APROVADA'}" th:action="@{/admin/reservas/{id}/concluir(id=${r.id})}" method="post">
+          <button class="secondary">Marcar como concluída após o evento</button>
+        </form>
+      </section>
+      <section class="card">
+        <h2>Histórico de alterações</h2>
+        <ol class="timeline">
+          <li th:each="h:${historico}">
+            <strong th:text="${h.acao}"></strong
+            ><small
+              th:text="${#temporals.format(h.dataHora,'dd/MM/yyyy HH:mm')}+' · '+${h.colaborador != null ? h.colaborador.nome : 'Solicitação pública'}"
+            ></small>
+            <p th:text="${h.descricao}"></p>
+          </li>
+        </ol>
+      </section>
+    </main>
+    <footer th:replace="~{fragments :: rodape}"></footer>
+    <script src="/js/admin.js" defer></script>
+  </body>
+</html>
