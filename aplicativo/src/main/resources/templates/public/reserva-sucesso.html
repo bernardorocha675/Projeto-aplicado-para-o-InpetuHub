@@ -5,13 +5,18 @@
     <header th:replace="~{fragments :: topo}"></header>
     <main id="conteudo" class="public-main">
       <div th:replace="~{fragments :: mensagens}"></div>
-      <section class="card confirmation">
-        <span class="confirmation-icon">✓</span>
-        <h1>Solicitação recebida!</h1>
+      <div class="faixa-pagina">
+        <div>
+          <span class="eyebrow">INPETU HUB</span>
+          <h1>Solicitação recebida!</h1>
+        </div>
+      </div>
+      <section class="card cartao-oficial confirmation">
+        <span class="confirmation-icon" aria-hidden="true">✓</span>
         <p th:if="${numero}" th:text="'Sua reserva é a #'+${numero}+'.'"></p>
         <p>A equipe do InPETU Hub analisará a solicitação. Seu horário está reservado provisoriamente.</p>
         <p class="muted">Você receberá email quando o envio estiver configurado.</p>
-        <a href="/agenda" class="button">Voltar à agenda</a>
+        <a href="/agenda" class="button botao-grande">Voltar à agenda</a>
       </section>
     </main>
     <footer th:replace="~{fragments :: rodape}"></footer>

@@ -11,6 +11,14 @@
     <script th:src="@{/js/password-toggle.js}" defer></script>
   </head>
   <body>
+    <!-- Mensagem de erro de um campo do pedido; o campo aponta para ela com aria-describedby="erro-<campo>". -->
+    <span
+      th:fragment="erroCampo(campo)"
+      th:if="${errosCampo.containsKey(campo)}"
+      class="erro-campo"
+      th:id="'erro-' + ${campo}"
+      th:text="${errosCampo.get(campo)}"
+    ></span>
     <header th:fragment="topo" class="topo">
       <a class="pular" href="#conteudo">Pular para o conteúdo</a>
       <a class="logo" href="/"><img src="/images/site/logo.png" alt="InPETU hub" width="200" height="33" /></a>
