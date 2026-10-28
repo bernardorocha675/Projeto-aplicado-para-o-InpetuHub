@@ -51,6 +51,6 @@ class PedidoReservaOficialTest {
   void confirmacaoVoltaParaAAgendaESugereOCodigoRecebido() throws Exception {
     String html = Html.compacto(Files.readString(TEMPLATES.resolve("confirmar.html")));
     assertTrue(html.contains("autocomplete=\"one-time-code\""));
-    assertTrue(html.contains("<a href=\"/agenda\">Voltar à agenda</a>"), "o link dizia agenda, mas levava ao início");
+    assertTrue(html.contains("<a href=\"/agenda\" class=\"link-toque\">Voltar à agenda</a>"), "o link dizia agenda, mas levava ao início");
   }
 }

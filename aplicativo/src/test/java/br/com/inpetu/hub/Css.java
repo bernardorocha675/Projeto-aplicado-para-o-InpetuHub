@@ -24,6 +24,15 @@ final class Css {
     return m.group(1);
   }
 
+  // Regras de todos os blocos com essa consulta (ex.: "@media (max-width: 980px)"), sem o recuo, para usar com regra().
+  static String media(String css, String consulta) {
+    StringBuilder dentro = new StringBuilder();
+    Matcher m = Pattern.compile("(?m)^" + Pattern.quote(consulta) + " \\{\\n((?:  .*\\n|\\n)*?)\\}").matcher(css);
+    while (m.find()) dentro.append(m.group(1).replaceAll("(?m)^  ", ""));
+    assertFalse(dentro.isEmpty(), "bloco não encontrado: " + consulta);
+    return dentro.toString();
+  }
+
   static String propriedade(String css, String seletor, String nome) {
     Matcher m = Pattern.compile("(?m)^\\s*" + Pattern.quote(nome) + ":\\s*([^;]+);").matcher(regra(css, seletor));
     assertTrue(m.find(), nome + " ausente em " + seletor);

@@ -218,10 +218,14 @@ td strong {
     gap: 5px;
   }
   .sidebar nav a {
-    padding: 6px 10px;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 6px 12px;
     font-size: 0.8rem;
   }
   .sidebar form button {
+    min-height: 44px;
     padding: 7px 14px;
     font-size: 0.8rem;
   }

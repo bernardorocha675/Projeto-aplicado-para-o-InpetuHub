@@ -47,7 +47,7 @@ else registra "Testar não rodado (sem java/mvn)"; fi
 
 echo "== Node (interface e receptor)"
 if tem node; then
-  for alvo in ".github/scripts/test_admin_ui.cjs:cadastros" ".github/scripts/test_agenda_ui.cjs:agenda" "receptor/test.mjs:receptor"; do
+  for alvo in ".github/scripts/test_admin_ui.cjs:cadastros" ".github/scripts/test_agenda_ui.cjs:agenda" ".github/scripts/test_menu_ui.cjs:menu" "receptor/test.mjs:receptor"; do
     arq="${alvo%%:*}"; nome="${alvo##*:}"
     node --test "$arq" >"$log/node.txt" 2>&1; st=$?
     n=$(grep -oE '^ℹ tests [0-9]+' "$log/node.txt" | grep -oE '[0-9]+$')
