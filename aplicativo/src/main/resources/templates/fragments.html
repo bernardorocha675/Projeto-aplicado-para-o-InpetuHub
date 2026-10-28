@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/css/admin.css" />
     <link rel="stylesheet" href="/css/site.css" />
     <script th:src="@{/js/password-toggle.js}" defer></script>
+    <script th:src="@{/js/menu.js}" defer></script>
   </head>
   <body>
     <!-- Mensagem de erro de um campo do pedido; o campo aponta para ela com aria-describedby="erro-<campo>". -->
@@ -22,12 +23,23 @@
     <header th:fragment="topo" class="topo">
       <a class="pular" href="#conteudo">Pular para o conteúdo</a>
       <a class="logo" href="/"><img src="/images/site/logo.png" alt="InPETU hub" width="200" height="33" /></a>
-      <nav aria-label="Menu principal">
+      <button type="button" class="menu-botao" aria-expanded="false" aria-controls="menu-principal" aria-label="Menu" hidden>
+        <span class="menu-icone" aria-hidden="true"></span>
+      </button>
+      <nav id="menu-principal" aria-label="Menu principal">
         <a href="/" th:classappend="${secaoAtual=='inicio'}?'active'">INÍCIO</a
         ><a href="https://inpetuhub.sites.ufsc.br/aa_rasunho_sobre/" target="_blank" rel="noopener">SOBRE</a>
         <div class="menu-group">
-          <a href="https://inpetuhub.sites.ufsc.br/acoes-mobilizadoras/" target="_blank" rel="noopener">INICIATIVAS</a>
-          <ul class="submenu">
+          <a href="https://inpetuhub.sites.ufsc.br/acoes-mobilizadoras/" target="_blank" rel="noopener">INICIATIVAS</a
+          ><button
+            type="button"
+            class="submenu-botao"
+            aria-expanded="false"
+            aria-controls="submenu-iniciativas"
+            aria-label="Abrir submenu de Iniciativas"
+            hidden
+          ></button>
+          <ul class="submenu" id="submenu-iniciativas">
             <li><a href="https://inpetuhub.sites.ufsc.br/inpetu-api-energias/" target="_blank" rel="noopener">InPETU API Energias</a></li>
             <li>
               <a href="https://inpetuhub.sites.ufsc.br/inpetu-distrito-de-inovacao/" target="_blank" rel="noopener"
@@ -53,8 +65,16 @@
           </ul>
         </div>
         <div class="menu-group">
-          <a href="https://inpetuhub.sites.ufsc.br/category/eventos/" target="_blank" rel="noopener">NOTÍCIAS E EVENTOS</a>
-          <ul class="submenu">
+          <a href="https://inpetuhub.sites.ufsc.br/category/eventos/" target="_blank" rel="noopener">NOTÍCIAS E EVENTOS</a
+          ><button
+            type="button"
+            class="submenu-botao"
+            aria-expanded="false"
+            aria-controls="submenu-noticias"
+            aria-label="Abrir submenu de Notícias e Eventos"
+            hidden
+          ></button>
+          <ul class="submenu" id="submenu-noticias">
             <li><a href="https://inpetuhub.sites.ufsc.br/category/oportunidades/" target="_blank" rel="noopener">Oportunidades</a></li>
             <li><a href="https://inpetuhub.sites.ufsc.br/noticias/" target="_blank" rel="noopener">Notícias</a></li>
             <li><a href="https://inpetuhub.sites.ufsc.br/category/eventos/futuros/" target="_blank" rel="noopener">Eventos futuros</a></li>

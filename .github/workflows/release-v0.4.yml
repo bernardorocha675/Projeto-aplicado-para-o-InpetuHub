@@ -116,10 +116,11 @@ jobs:
           unformatted="$(gofmt -l iniciador)"
           if [ -n "$unformatted" ]; then echo "Arquivos fora do gofmt:"; echo "$unformatted"; exit 1; fi
           for file in aplicativo/src/main/resources/static/js/*.js; do node --check "$file"; done
-      - name: Testar interfaces da agenda e cadastros
+      - name: Testar interfaces da agenda, cadastros e menu
         run: |
           node .github/scripts/test_agenda_ui.cjs
           node .github/scripts/test_admin_ui.cjs
+          node .github/scripts/test_menu_ui.cjs
       - name: Testar receptor, identidade e publicação dos relatórios
         run: node --test 'receptor/test.mjs'
       - name: Verificar exclusão de dados privados
