@@ -17,10 +17,10 @@ class AreaInternaTest {
 
   @Test
   void umSoRootComOsTokens() throws Exception {
-    int roots = 0;
+    long roots = 0;
     for (String f : new String[] {"style.css", "admin.css", "site.css"})
       roots += Pattern.compile("(?m)^:root \\{").matcher(Css.arquivo(f)).results().count();
-    assertEquals(1, roots, "os tokens ficam num só :root (em site.css)");
+    assertEquals(1L, roots, "os tokens ficam num só :root (em site.css)");
     for (String f : new String[] {"style.css", "admin.css"}) {
       Matcher m = COR_SOLTA.matcher(Css.arquivo(f));
       var soltas = new java.util.ArrayList<String>();
