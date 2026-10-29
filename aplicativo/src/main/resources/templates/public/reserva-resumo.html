@@ -51,7 +51,7 @@
         </section>
         <section class="card cartao-oficial">
           <h2>Estimativa financeira</h2>
-          <p th:unless="${orcamento.taxasConfiguradas}" class="alert warning">
+          <p th:unless="${orcamento.taxasConfiguradas}" class="alert warning" role="status">
             Operação/limpeza ainda não foram configuradas. A estimativa abaixo contempla os valores já disponíveis e será conferida antes da
             aprovação.
           </p>

@@ -84,7 +84,7 @@
                 th:readonly="${tipo=='personas'&&c.nome=='codigo'}" /></label
           ></th:block>
         </div>
-        <p th:if="${tipo=='configuracao'}" class="alert warning">
+        <p th:if="${tipo=='configuracao'}" class="alert warning" role="status">
           Valores de operação/limpeza não foram definidos no prompt. Informe os valores aprovados pelo Hub. Zero deve ser informado
           explicitamente quando não houver cobrança.
         </p>
