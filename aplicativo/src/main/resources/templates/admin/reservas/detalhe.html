@@ -76,8 +76,10 @@
             <dt>Colaborador responsável</dt>
             <dd th:text="${r.colaboradorResponsavel != null ? r.colaboradorResponsavel.nome : 'Ainda não atribuído'}"></dd>
           </dl>
-          <p th:unless="${r.taxasConfiguradas}" class="alert warning">Estimativa preliminar: configure as taxas antes de aprovar.</p>
-          <p th:if="${r.motivoRecusa}" class="alert error" th:text="${r.motivoRecusa}"></p>
+          <p th:unless="${r.taxasConfiguradas}" class="alert warning" role="status">
+            Estimativa preliminar: configure as taxas antes de aprovar.
+          </p>
+          <p th:if="${r.motivoRecusa}" class="alert error" th:text="${r.motivoRecusa}" role="alert"></p>
         </section>
       </div>
       <section class="card" th:if="${r.statusReserva.name()=='PENDENTE'}">
@@ -122,7 +124,7 @@
         <details>
           <summary>Cancelar reserva</summary>
           <form th:action="@{/admin/reservas/{id}/cancelar(id=${r.id})}" method="post">
-            <p class="alert warning">
+            <p class="alert warning" role="status">
               Com menos de 30 dias de antecedência, o cancelamento de reserva que utilizou cota gera penalidade de 2× as horas.
             </p>
             <label th:if="${gestor}" class="check"

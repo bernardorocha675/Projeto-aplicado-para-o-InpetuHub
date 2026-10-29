@@ -48,7 +48,7 @@
                 th:selected="${p.id==filtroPersona}"
               ></option></select></label
           ><label>Empreendedor<input name="busca" th:value="${busca}" placeholder="Nome, empresa ou documento" /></label
-          ><button>Filtrar</button><a href="/admin/reservas">Limpar</a>
+          ><button>Filtrar</button><a href="/admin/reservas" class="link-toque">Limpar</a>
         </form>
         <div th:replace="~{fragments :: tabelaReservas(${reservas})}"></div>
       </section>

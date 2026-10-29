@@ -21,8 +21,8 @@ Regras de cada PR:
 | 0 | — | Templates e CSS formatados, sem mudar a tela | Feito (PR #37) |
 | 1 | 0.5.9 | Agenda legível, setas de 44 px, link para pular o menu | Publicado (PR #39) |
 | 2 | 0.5.10 | Pedido de reserva no estilo do contato oficial, erros ligados aos campos, preenchimento automático | Publicado (PR #41) |
-| 3 | 0.5.11 | Menu hambúrguer no celular e toques de 44 px | Em revisão |
-| 4 | 0.5.12 | Paleta única e componentes oficiais na Área Interna | Preparado (abaixo) |
+| 3 | 0.5.11 | Menu hambúrguer no celular e toques de 44 px | Feito (PR #43) |
+| 4 | 0.5.12 | Paleta única e componentes oficiais na Área Interna | Em revisão (itens abaixo aplicados) |
 | 5 | 0.5.13 | Tabelas no celular (foco, título, linhas em blocos) | A fazer |
 | 6 | 0.5.14 | Detalhes do início (tamanho das imagens, menos movimento) | A fazer |
 | — | — | Arquitetura, com plano próprio, depois de todos os lotes | A fazer |
@@ -53,4 +53,6 @@ Achados próximos, fora do visual. Ficam fora do lote 4, salvo novo pedido:
 
 - A ordem das opções de Percentual (preços), Status (visitas) e Perfil (contas) muda a cada inicialização, porque vem de `Map.of` em `CrudService`. A correção é um mapa com ordem fixa e um teste da ordem.
 - O perfil do empreendedor mostra "null / null" em Segmento/cargo vazios.
+- O detalhe da reserva mostra "false / false / false" em Pago / financiado / acadêmico, em vez de Sim/Não.
+- Lote 5: links das tabelas (Editar, Perfil, nome do empreendedor) com 22 px de altura e `.table-scroll` sem foco em cotas a 390 px (único achado do axe que sobrou depois do lote 4).
 - No pedido de reserva, o erro do número do documento repete o rótulo ("Número do documento: Documento: informe…"), porque a mensagem de `Documentos` já começa com "Documento:".
