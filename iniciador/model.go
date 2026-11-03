@@ -20,7 +20,7 @@ import (
 	"time"
 )
 
-var buildVersion = "0.5.10"
+var buildVersion = "0.5.11"
 
 const repository = "bernardorocha675/Projeto-aplicado-para-o-InpetuHub"
 
