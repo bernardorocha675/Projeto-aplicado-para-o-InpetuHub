@@ -21,8 +21,8 @@ Regras de cada PR:
 | 0 | — | Templates e CSS formatados, sem mudar a tela | Feito (PR #37) |
 | 1 | 0.5.9 | Agenda legível, setas de 44 px, link para pular o menu | Publicado (PR #39) |
 | 2 | 0.5.10 | Pedido de reserva no estilo do contato oficial, erros ligados aos campos, preenchimento automático | Publicado (PR #41) |
-| 3 | 0.5.11 | Menu hambúrguer no celular e toques de 44 px | Feito (PR #43) |
-| 4 | 0.5.12 | Paleta única e componentes oficiais na Área Interna | Em revisão (itens abaixo aplicados) |
+| 3 | 0.5.11 | Menu hambúrguer no celular e toques de 44 px | Publicado (PR #43) |
+| 4 | 0.5.12 | Paleta única e componentes oficiais na Área Interna | Em publicação (PR #44, com as dependências do #49) |
 | 5 | 0.5.13 | Tabelas no celular (foco, título, linhas em blocos) | A fazer |
 | 6 | 0.5.14 | Detalhes do início (tamanho das imagens, menos movimento) | A fazer |
 | — | — | Arquitetura, com plano próprio, depois de todos os lotes | A fazer |
