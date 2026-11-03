@@ -18,8 +18,23 @@ final class Css {
   }
 
   // Primeira regra com exatamente esse seletor, fora de @media (as regras gerais vêm antes no arquivo).
+  // Seletores múltiplos ("a, b") também casam quando o Prettier os quebra um por linha.
   static String regra(String css, String seletor) {
-    Matcher m = Pattern.compile("(?m)^" + Pattern.quote(seletor) + " \\{([^}]*)\\}").matcher(css);
+    var lista = new java.util.ArrayList<String>();
+    int nivel = 0, inicio = 0;
+    for (int i = 0; i < seletor.length(); i++) {
+      char c = seletor.charAt(i);
+      if (c == '(') nivel++;
+      else if (c == ')') nivel--;
+      else if (c == ',' && nivel == 0) {
+        lista.add(seletor.substring(inicio, i).trim());
+        inicio = i + 1;
+      }
+    }
+    lista.add(seletor.substring(inicio).trim());
+    String partes = lista.stream().map(Pattern::quote).collect(java.util.stream.Collectors.joining(",\\s*"));
+    // (?<!,\n): o seletor começa a regra, e não é a continuação de outro seletor múltiplo.
+    Matcher m = Pattern.compile("(?m)(?<!,\n)^" + partes + " \\{([^}]*)\\}").matcher(css);
     assertTrue(m.find(), "regra não encontrada: " + seletor);
     return m.group(1);
   }
@@ -47,9 +62,10 @@ final class Css {
     return propriedade(css, ":root", nome);
   }
 
+  // Resolve var(--x), inclusive tokens que apontam para outros tokens.
   static String cor(String valor, String css) {
     Matcher v = Pattern.compile("var\\((--[\\w-]+)\\)").matcher(valor);
-    return v.matches() ? variavel(css, v.group(1)) : valor;
+    return v.matches() ? cor(variavel(css, v.group(1)), css) : valor;
   }
 
   static int px(String valor) {
