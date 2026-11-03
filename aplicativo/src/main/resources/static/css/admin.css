@@ -30,13 +30,12 @@
 }
 .sidebar nav a {
   padding: 11px 15px;
-  color: #596d80;
-  border-radius: 9px;
+  color: var(--muted);
+  border-radius: 8px;
 }
-.sidebar nav a.current,
-.sidebar nav a:hover {
+.sidebar nav :is(a.current, a:hover) {
   background: var(--soft);
-  color: var(--blue);
+  color: var(--navy);
   text-decoration: none;
 }
 .admin-main {
@@ -79,8 +78,8 @@ table {
 }
 th {
   text-align: left;
-  background: #f7fafd;
-  color: #687e90;
+  background: var(--bg-claro);
+  color: var(--muted);
   font-weight: 600;
   padding: 14px;
   white-space: nowrap;
@@ -105,28 +104,28 @@ td strong {
   letter-spacing: 0.5px;
   padding: 5px 9px;
   font-weight: 700;
-  background: #edf1f5;
-  color: #576b7c;
+  background: var(--bg);
+  color: var(--muted);
 }
 .badge.PENDENTE {
-  background: #fff4d8;
-  color: #986b0a;
+  background: var(--aviso-fundo);
+  color: var(--aviso);
 }
 .badge.APROVADA {
-  background: #dff3e8;
-  color: #287653;
+  background: var(--sucesso-fundo);
+  color: var(--sucesso);
 }
 .badge.RECUSADA {
-  background: #ffe5e8;
-  color: #af3647;
+  background: var(--erro-fundo);
+  color: var(--erro);
 }
 .badge.CANCELADA {
-  background: #e9edf2;
-  color: #677281;
+  background: var(--bg);
+  color: var(--muted);
 }
 .badge.CONCLUIDA {
-  background: #dfedff;
-  color: #2961a6;
+  background: var(--soft);
+  color: var(--navy);
 }
 .tabs {
   display: flex;
@@ -223,6 +222,9 @@ td strong {
     min-height: 44px;
     padding: 6px 12px;
     font-size: 0.8rem;
+  }
+  .admin-main :where(button, .button, summary, .check) {
+    min-height: 44px;
   }
   .sidebar form button {
     min-height: 44px;

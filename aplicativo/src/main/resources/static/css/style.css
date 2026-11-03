@@ -1,15 +1,6 @@
 * {
   box-sizing: border-box;
 }
-:root {
-  /* Azul do site oficial; o cinza escurecido passa no contraste WCAG AA sobre branco e sobre o fundo do calendário. */
-  --blue: #0077cc;
-  --ink: #213345;
-  --muted: #5f6b77;
-  --line: #e1e8ef;
-  --bg: #f4f7fa;
-  --soft: #e8f3fd;
-}
 body {
   margin: 0;
   color: var(--ink);
@@ -36,7 +27,7 @@ button,
   align-items: center;
   justify-content: center;
   border: 1px solid transparent;
-  border-radius: 9px;
+  border-radius: 8px;
   padding: 11px 20px;
   background: var(--blue);
   color: white;
@@ -54,12 +45,10 @@ button:disabled {
   cursor: not-allowed;
   opacity: 0.45;
 }
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-  outline: 3px solid #ffb14d;
+/* Contorno de foco no tom do texto do site: 3:1 ou mais sobre branco, sobre o fundo cinza e sobre a faixa azul. */
+:is(a, button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid;
+  outline-color: var(--ink);
   outline-offset: 3px;
 }
 .secondary {
@@ -68,7 +57,7 @@ textarea:focus-visible {
   border-color: var(--line);
 }
 .danger {
-  background: #b83843;
+  background: var(--erro);
 }
 .small {
   padding: 7px 12px;
@@ -76,7 +65,7 @@ textarea:focus-visible {
 }
 .topo {
   background: #fff;
-  box-shadow: 0 8px 24px #2133450e;
+  box-shadow: 0 8px 24px #1c1c1c0e;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -87,7 +76,7 @@ textarea:focus-visible {
   font-size: 40px;
   letter-spacing: -2px;
   font-weight: 800;
-  color: #191f37;
+  color: var(--ink);
   line-height: 1.2;
 }
 .logo span {
@@ -120,9 +109,9 @@ textarea:focus-visible {
   grid-template-columns: 40% 60%;
   border-radius: 65px;
   overflow: hidden;
-  box-shadow: 0 15px 55px #20344912;
+  box-shadow: 0 15px 55px #1c1c1c12;
   min-height: 740px;
-  background: #f9fbfe;
+  background: var(--bg-claro);
 }
 .agenda-intro {
   background: var(--blue);
@@ -137,7 +126,7 @@ textarea:focus-visible {
   margin-bottom: 28px;
 }
 .blue {
-  color: var(--blue);
+  color: var(--navy);
 }
 /* Medidas do título da agenda oficial. */
 .agenda-intro h1 {
@@ -203,7 +192,7 @@ textarea:focus-visible {
 }
 .calendar-grid .day {
   padding: 4px 3px;
-  border: 1px solid #e3e9f0;
+  border: 1px solid var(--line);
   background: #fff;
   color: var(--ink);
   height: 44px;
@@ -224,21 +213,21 @@ textarea:focus-visible {
   font-weight: 400;
 }
 .calendar-grid .day.has-events {
-  background: #e3effb;
-  border-color: #8dbbe6;
+  background: var(--soft);
+  border-color: var(--azul-medio);
 }
 .calendar-grid .day .event-dot {
-  color: #1f5f99;
+  color: var(--navy);
   font-size: 0.95rem;
   line-height: 0.55;
 }
 .calendar-grid .day.other {
-  color: #b9c2cb;
+  color: var(--cinza-claro);
   background: #fff;
   cursor: default;
 }
 .calendar-grid .day.today {
-  border: 2px solid #5d9fdc;
+  border: 2px solid var(--azul-medio);
 }
 .calendar-grid .day.selected {
   outline: 2px solid var(--blue);
@@ -275,9 +264,9 @@ textarea:focus-visible {
   padding: 7px 10px;
 }
 .busy {
-  border-left: 3px solid #9aa8b7;
+  border-left: 3px solid var(--cinza-claro);
   padding: 5px 10px;
-  background: #f4f7fa;
+  background: var(--bg);
   margin: 6px 0;
 }
 .slot-form {
@@ -325,10 +314,10 @@ textarea:focus-visible {
 .card {
   background: white;
   border: 1px solid var(--line);
-  border-radius: 20px;
-  padding: 28px;
+  border-radius: 12px;
+  padding: 24px;
   margin-bottom: 24px;
-  box-shadow: 0 4px 20px #22334403;
+  box-shadow: 0 4px 20px #1c1c1c03;
 }
 .card h2 {
   font-size: 1.15rem;
@@ -364,17 +353,31 @@ textarea {
   width: 100%;
   padding: 11px 13px;
   color: var(--ink);
-  background: #fff;
-  border: 1px solid #cfdbe6;
-  border-radius: 8px;
+  background: var(--site-fundo-campo);
+  border: 1px solid;
+  border-color: var(--site-borda-campo);
+  border-radius: 12px;
   min-width: 0;
+}
+/* Campos da Área Interna e do login: 48 px, a versão compacta do campo de 65 px do contato oficial. */
+:where(.admin-main, .login-card) :where(input:not([type="checkbox"]), select) {
+  min-height: 48px;
+}
+/* Botões da Área Interna com a altura e a sombra do botão da página inicial oficial. */
+.admin-main :where(button, .button):not(.link, .small) {
+  min-height: 46px;
+}
+.admin-main :where(button, .button):not(.link, .small, .secondary) {
+  box-shadow: 6px 6px 18px 0 #0000004d;
 }
 textarea {
   min-height: 90px;
   resize: vertical;
 }
 input[type="checkbox"] {
-  width: auto;
+  width: 24px;
+  height: 24px;
+  flex: none;
   accent-color: var(--blue);
 }
 .check,
@@ -393,25 +396,30 @@ input[type="checkbox"] {
   color: var(--muted);
   font-size: 0.88rem;
 }
+/* Aviso: borda esquerda na cor do estado. */
 .alert {
+  border-left: 4px solid;
   border-radius: 10px;
   padding: 15px 18px;
   font-size: 0.9rem;
 }
 .error {
-  background: #fff0f0;
-  color: #9d2934;
-  border: 1px solid #f1c6cc;
+  background: var(--erro-fundo);
+  color: var(--erro);
+  border: 1px solid var(--erro-borda);
+  border-left: 4px solid var(--erro);
 }
 .success {
-  background: #eaf7ef;
-  color: #23683d;
-  border: 1px solid #c7e5d2;
+  background: var(--sucesso-fundo);
+  color: var(--sucesso);
+  border: 1px solid var(--sucesso-borda);
+  border-left: 4px solid var(--sucesso);
 }
 .warning {
-  background: #fff7e8;
-  color: #825c19;
-  border: 1px solid #f5d99e;
+  background: var(--aviso-fundo);
+  color: var(--aviso);
+  border: 1px solid var(--aviso-borda);
+  border-left: 4px solid var(--aviso);
 }
 dl {
   display: grid;
@@ -511,7 +519,7 @@ dd {
   padding: 0;
 }
 .timeline li {
-  border-left: 2px solid #cfe4f7;
+  border-left: 2px solid var(--azul-medio);
   padding: 5px 18px;
   margin-bottom: 20px;
 }
@@ -545,7 +553,7 @@ form + form {
   font-weight: 400;
 }
 .danger-text {
-  color: #ad3542;
+  color: var(--erro);
 }
 @media (max-width: 1050px) {
   .agenda-intro {
@@ -624,19 +632,19 @@ form + form {
 
 .calendar-grid .day.empty-day {
   border-style: dashed;
-  background: #f9fbfe;
+  background: var(--bg-claro);
   color: var(--muted);
 }
 
 /* Agenda: branco livre, azul ocupado e metade azul para ocupação parcial. */
 .calendar-grid .day.full {
-  background: #e5f1fc;
-  border-color: #62a8e7;
-  color: #175d96;
+  background: var(--soft);
+  border-color: var(--azul-medio);
+  color: var(--navy);
 }
 .calendar-grid .day.partial {
-  background: linear-gradient(135deg, #e5f1fc 50%, #fff 50%);
-  border-color: #62a8e7;
+  background: linear-gradient(135deg, var(--soft) 50%, #fff 50%);
+  border-color: var(--azul-medio);
 }
 .legend span {
   padding: 3px 7px;
@@ -644,13 +652,13 @@ form + form {
   border-radius: 5px;
 }
 .legend .legend-full {
-  background: #e5f1fc;
-  border-color: #62a8e7;
-  color: #175d96;
+  background: var(--soft);
+  border-color: var(--azul-medio);
+  color: var(--navy);
 }
 .legend .legend-partial {
-  background: linear-gradient(135deg, #e5f1fc 50%, #fff 50%);
-  border-color: #62a8e7;
+  background: linear-gradient(135deg, var(--soft) 50%, #fff 50%);
+  border-color: var(--azul-medio);
 }
 .calendar-filter input {
   max-width: 260px;

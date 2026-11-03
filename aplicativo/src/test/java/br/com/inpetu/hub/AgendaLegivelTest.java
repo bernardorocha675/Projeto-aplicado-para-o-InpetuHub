@@ -17,13 +17,13 @@ class AgendaLegivelTest {
   void textosDaAgendaEDoCabecalhoTemContrasteAA() throws Exception {
     String style = Css.arquivo("style.css");
     String site = Css.arquivo("site.css");
-    String azul = Css.variavel(style, "--blue");
-    String cinza = Css.variavel(style, "--muted");
-    String faixa = Css.cor(Css.propriedade(style, ".agenda-intro", "background"), style);
-    String calendario = Css.propriedade(style, ".agenda-shell", "background");
+    String azul = Css.cor(Css.variavel(site, "--blue"), site);
+    String cinza = Css.variavel(site, "--muted");
+    String faixa = Css.cor(Css.propriedade(style, ".agenda-intro", "background"), site);
+    String calendario = Css.cor(Css.propriedade(style, ".agenda-shell", "background"), site);
     assertContraste("menu sobre o cabeçalho", Css.variavel(site, "--site-blue"), Css.propriedade(site, ".topo", "background"));
     assertContraste("texto branco da faixa", "#ffffff", faixa);
-    assertContraste("dias da semana", Css.cor(Css.propriedade(style, ".weekdays", "color"), style), calendario);
+    assertContraste("dias da semana", Css.cor(Css.propriedade(style, ".weekdays", "color"), site), calendario);
     assertContraste("rótulos e dica do calendário", cinza, calendario);
     assertContraste("texto cinza no detalhe do dia", cinza, "#ffffff");
     assertContraste("botão secundário", azul, "#ffffff");

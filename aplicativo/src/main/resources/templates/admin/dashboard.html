@@ -17,12 +17,12 @@
       <div class="stats">
         <article class="card">
           <span>Reservas pendentes</span><strong th:text="${pendentes}"></strong
-          ><a href="/admin/reservas?status=PENDENTE">Analisar solicitações →</a>
+          ><a href="/admin/reservas?status=PENDENTE" class="link-toque">Analisar solicitações →</a>
         </article>
         <article class="card"><span>Reservas de hoje</span><strong th:text="${hoje}"></strong></article>
         <article class="card">
           <span>Empreendedores</span><strong th:text="${totalEmpreendedores}"></strong
-          ><a href="/admin/cadastros/empreendedores">Consultar CRM →</a>
+          ><a href="/admin/cadastros/empreendedores" class="link-toque">Consultar CRM →</a>
         </article>
       </div>
       <section class="card">

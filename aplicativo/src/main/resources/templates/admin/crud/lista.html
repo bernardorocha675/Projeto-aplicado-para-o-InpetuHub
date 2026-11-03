@@ -16,7 +16,7 @@
       <section class="card">
         <form th:action="${rota}" method="get" class="filters">
           <label>Buscar<input name="busca" th:value="${busca}" placeholder="Nome, documento, empresa, email..." /></label
-          ><button>Buscar</button><a th:href="${rota}">Limpar</a>
+          ><button>Buscar</button><a th:href="${rota}" class="link-toque">Limpar</a>
         </form>
         <div class="table-scroll">
           <table>
