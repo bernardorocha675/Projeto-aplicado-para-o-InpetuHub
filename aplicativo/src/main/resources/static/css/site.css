@@ -30,6 +30,26 @@
   --site-texto-campo: #333;
   --site-borda-campo: #8592a0;
   --site-erro: #9d2934;
+  /* Sistema (agenda, pedido e Área Interna): tons do site oficial, todos com contraste WCAG AA onde são texto. */
+  --blue: var(--site-blue);
+  --navy: var(--site-navy);
+  --ink: #1c1c1c;
+  --muted: #5f6b77;
+  --line: #e2e8f0;
+  --bg: #f4f7fa;
+  --bg-claro: #f9fbfe;
+  --soft: #e8f3fd;
+  --azul-medio: #62a8e7;
+  --cinza-claro: #9aa8b7;
+  --erro: var(--site-erro);
+  --erro-fundo: #fff0f0;
+  --erro-borda: #f1c6cc;
+  --sucesso: #23683d;
+  --sucesso-fundo: #eaf7ef;
+  --sucesso-borda: #c7e5d2;
+  --aviso: #825c19;
+  --aviso-fundo: #fff7e8;
+  --aviso-borda: #f5d99e;
 }
 body {
   font-family: "Lato", Helvetica, Arial, sans-serif;
@@ -239,6 +259,10 @@ h4 {
 .site-footer a {
   color: #fff;
   text-decoration: underline;
+}
+/* O contorno escuro de foco some no rodapé escuro: aqui ele é branco. */
+.site-footer :focus-visible {
+  outline-color: #fff;
 }
 .site-footer .footer-project {
   color: #9e9e9e;
