@@ -75,6 +75,7 @@ if [ ${#py[@]} -eq 0 ]; then
 else
   "${py[@]}" -I aplicativo/scripts/check_secrets.py >"$log/seg.txt" 2>&1 && registra "segredos sem problemas" || { falhou "segredos FALHOU"; cat "$log/seg.txt"; }
   "${py[@]}" -I .claude/hooks/test_protecao.py >"$log/hook.txt" 2>&1 && registra "hook de proteção ok" || { falhou "hook de proteção FALHOU"; tail -15 "$log/hook.txt"; }
+  "${py[@]}" -I .github/scripts/test_setup_maven.py >"$log/maven.txt" 2>&1 && registra "download do Maven ok" || { falhou "download do Maven FALHOU"; tail -15 "$log/maven.txt"; }
 fi
 
 echo

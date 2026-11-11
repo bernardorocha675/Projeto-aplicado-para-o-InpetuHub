@@ -41,6 +41,11 @@ class Testar {
   static String base;
   static Process server;
   static int sequence;
+  // A CI corta o job em 35 min e, cortado, o GitHub não guarda o log. A rodada termina antes, com FALHA e o ponto onde parou.
+  static final long INICIO = System.nanoTime();
+  static final long LIMITE_SEG = limiteSegundos();
+  static volatile String etapaAtual = "preparação";
+  static volatile boolean tempoEsgotado;
   static String accessFixture;
 
   static List<String> accessCommand(String mode) {
@@ -93,12 +98,28 @@ class Testar {
     if (!condition) throw new ExpectedFailure(message);
   }
 
+  static long limiteSegundos() {
+    String valor = System.getenv("INPETU_TESTAR_LIMITE_SEG");
+    try {
+      long segundos = valor == null || valor.isBlank() ? 900 : Long.parseLong(valor.trim());
+      return segundos > 0 ? segundos : 900;
+    } catch (NumberFormatException e) {
+      return 900;
+    }
+  }
+
+  static String relogio() {
+    long s = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - INICIO);
+    return String.format(Locale.ROOT, "[%02d:%02d]", s / 60, s % 60);
+  }
+
   static boolean check(String title, Check action) {
-    System.out.println("Verificando: " + title);
+    etapaAtual = title;
+    System.out.println(relogio() + " Verificando: " + title);
     try {
       action.run();
       RESULTS.add(new Result(title, "PASSOU", "Verificação concluída."));
-      System.out.println("  PASSOU");
+      System.out.println(relogio() + "  PASSOU");
       return true;
     } catch (Exception ex) {
       // Não copiar respostas HTML, segredos ou mensagens de processos para o relatório.
@@ -177,12 +198,82 @@ class Testar {
       }
       long end = System.nanoTime() + TimeUnit.SECONDS.toNanos(seconds);
       while (!p.waitFor(15, TimeUnit.SECONDS)) {
-        System.out.println("  Ainda executando; aguarde...");
+        System.out.println(relogio() + "  Ainda executando; aguarde...");
         if (System.nanoTime() > end) throw new IOException("Prazo de execução excedido.");
       }
       return p.exitValue();
     } finally {
       stop(p);
+    }
+  }
+
+  // Quando o tempo-limite estoura: diz a etapa, mostra onde os processos Java estavam e os encerra, para a rodada terminar.
+  static void vigiarTempo() {
+    var vigia =
+        new Thread(
+            () -> {
+              try {
+                Thread.sleep(TimeUnit.SECONDS.toMillis(LIMITE_SEG));
+              } catch (InterruptedException e) {
+                return;
+              }
+              tempoEsgotado = true;
+              System.out.println(
+                  relogio() + " Tempo-limite de " + LIMITE_SEG + " s da rodada atingido durante: " + etapaAtual);
+              for (Process p : List.copyOf(CHILDREN)) mostrarThreads(p);
+              for (Process p : List.copyOf(CHILDREN)) stop(p);
+              try {
+                Thread.sleep(120_000);
+              } catch (InterruptedException e) {
+                return;
+              }
+              System.out.println("A rodada não terminou 2 min depois do tempo-limite; encerrando sem relatório.");
+              Runtime.getRuntime().halt(1);
+            },
+            "vigia-do-tempo");
+    vigia.setDaemon(true);
+    vigia.start();
+  }
+
+  // Só nomes de threads e linhas de código (sem valores, argumentos nem dados) dos processos Java da rodada.
+  static void mostrarThreads(Process p) {
+    Path jcmd = JAVA.resolveSibling(WINDOWS ? "jcmd.exe" : "jcmd");
+    if (!Files.isExecutable(jcmd)) return;
+    var processos = new ArrayList<ProcessHandle>();
+    processos.add(p.toHandle());
+    p.descendants().forEach(processos::add);
+    for (ProcessHandle h : processos) {
+      try {
+        Path arquivo = logs.resolve("threads-" + h.pid() + ".txt");
+        Process dump =
+            new ProcessBuilder(jcmd.toString(), Long.toString(h.pid()), "Thread.print")
+                .redirectErrorStream(true)
+                .redirectOutput(arquivo.toFile())
+                .start();
+        if (!dump.waitFor(20, TimeUnit.SECONDS)) {
+          dump.destroyForcibly();
+          continue;
+        }
+        if (dump.exitValue() != 0) continue;
+        String saida = Files.readString(arquivo, StandardCharsets.UTF_8);
+        var linhas = new ArrayList<String>();
+        String cabecalho = null;
+        int quadros = 0;
+        for (String linha : saida.split("\\R")) {
+          if (linha.startsWith("\"")) {
+            cabecalho = linha.substring(0, linha.indexOf('"', 1) + 1);
+            quadros = 0;
+          } else if (cabecalho != null && linha.startsWith("\tat ") && quadros < 12) {
+            if (quadros == 0) linhas.add("  Thread " + cabecalho);
+            linhas.add("    " + linha.trim());
+            quadros++;
+          }
+        }
+        System.out.println("  Processo Java " + h.pid() + ", onde as threads estavam:");
+        linhas.stream().limit(200).forEach(System.out::println);
+      } catch (Exception ignorada) {
+        // Processo já encerrado ou sem Java: nada a mostrar.
+      }
     }
   }
 
@@ -846,6 +937,8 @@ class Testar {
                   for (Process p : List.copyOf(CHILDREN)) stop(p);
                 }));
     System.out.println("InPETU: testes com dados descartáveis. Não feche este terminal.\n");
+    System.out.println("Tempo-limite da rodada: " + LIMITE_SEG + " s (variável INPETU_TESTAR_LIMITE_SEG).");
+    vigiarTempo();
     try {
       boolean built =
           check(
@@ -884,6 +977,16 @@ class Testar {
               "Uma etapa não pôde ser concluída. Consulte os logs privados e docs/TESTAR.md."));
     } finally {
       stop(server);
+      if (tempoEsgotado)
+        RESULTS.add(
+            new Result(
+                "Tempo-limite da rodada",
+                "FALHOU",
+                "A rodada passou de "
+                    + LIMITE_SEG
+                    + " s durante: "
+                    + etapaAtual
+                    + ". O log mostra onde os processos Java estavam."));
       if (!check("Limpeza dos bancos e contas descartáveis", Testar::removeWorkData)) {
         System.out.println(
             "Feche processos desta rodada e remova somente a pasta temporarios indicada no guia.");

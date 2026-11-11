@@ -14,6 +14,8 @@ Registre sistema, arquitetura, versão, passos, esperado e observado ao relatar 
 
 ## Validação automática do código
 
+O `Testar.java` mostra o tempo decorrido em cada etapa (`[mm:ss] Verificando: …`) e tem tempo-limite de 15 minutos por rodada (variável `INPETU_TESTAR_LIMITE_SEG`, em segundos). A rodada comum leva cerca de 2 minutos. Se o limite estourar, ele diz a etapa em que estava, mostra os nomes das threads e as linhas de código em que os processos Java da rodada estavam (sem valores nem dados), encerra esses processos e termina com FALHA, com relatório. Assim a CI guarda o log, o que não acontece quando o GitHub corta o job no teto de 35 minutos. O `setup_maven.py` repete até 3 vezes o download do Maven quando o Maven Central responde 404, 408, 429 ou 5xx, ou a conexão cai.
+
 A CI executa testes Node das interfaces da agenda/cadastros e do receptor/coletor, testes Go do iniciador e testes Java do aplicativo. O roteiro Java valida HTTP, segurança, perfis, contas, persistência e backup com dados descartáveis. Os números são a referência desta reorganização; confira Actions para o resultado efetivo.
 
 Depois, o smoke executa o próprio binário com seu Java privado: instalação, quinze logins, agenda vazia/livre, cadastro, reinício, troca real do iniciador e preservação de banco/chave. A sessão deve continuar única durante a troca, registrar as versões antiga/nova e conter eventos HTTP/auditoria sem senhas. As simulações usam rede local e não publicam releases falsas.

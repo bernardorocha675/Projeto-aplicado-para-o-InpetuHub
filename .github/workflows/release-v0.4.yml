@@ -125,6 +125,8 @@ jobs:
         run: node --test 'receptor/test.mjs'
       - name: Verificar exclusão de dados privados
         run: python 'aplicativo/scripts/check_secrets.py'
+      - name: Testar o download do Maven com novas tentativas
+        run: python '.github/scripts/test_setup_maven.py'
       - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
