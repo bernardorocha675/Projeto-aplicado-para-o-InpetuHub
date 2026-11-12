@@ -42,6 +42,29 @@ class Protecao(unittest.TestCase):
         self.bloqueia('Bash', {'command': 'sed -i s/a/b/ aplicativo/src/main/resources/db/migration/V2__personas_precos_configuracao.sql'})
         self.libera('Bash', {'command': 'cat aplicativo/src/main/resources/db/migration/V1__modelo_fisico.sql'})
 
+    def test_migrations_do_sistema_novo(self):
+        # Repositório de verdade com uma origin/main que já publicou a V1 do sistema/ (a reescrita).
+        import shutil
+        import tempfile
+        base = Path(tempfile.mkdtemp(dir=RAIZ / 'aplicativo/.tools'))
+        try:
+            pasta = 'sistema/src/main/resources/db/migration'
+            subprocess.run(['git', 'init', '-q', '-b', 'main', str(base)], check=True)
+            (base / pasta).mkdir(parents=True)
+            (base / pasta / 'V1__modelo.sql').write_text('create table t (id int);\n')
+            subprocess.run(['git', '-C', str(base), 'add', '.'], check=True)
+            subprocess.run(['git', '-C', str(base), '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'v1'],
+                           check=True)
+            subprocess.run(['git', '-C', str(base), 'update-ref', 'refs/remotes/origin/main', 'HEAD'], check=True)
+            self.bloqueia('Edit', {'file_path': str(base / pasta / 'V1__modelo.sql')}, raiz=base)
+            self.bloqueia('Write', {'file_path': f'{pasta}/V1__modelo.sql'}, raiz=base)
+            self.bloqueia('Bash', {'command': f'sed -i s/int/bigint/ {pasta}/V1__modelo.sql'}, raiz=base)
+            self.bloqueia('Bash', {'command': f'rm {pasta}/V1__modelo.sql'}, raiz=base)
+            self.libera('Write', {'file_path': f'{pasta}/V2__nova_aditiva.sql'}, raiz=base)
+            self.libera('Bash', {'command': f'cat {pasta}/V1__modelo.sql'}, raiz=base)
+        finally:
+            shutil.rmtree(base)
+
     def test_areas_protegidas(self):
         for caminho in ['Testes/README.md', 'Testes/teste99/log.txt', '.env', 'aplicativo/.env.local',
                         'aplicativo/.secrets/accounts.properties', str(RAIZ / '.secrets/mfa.key')]:

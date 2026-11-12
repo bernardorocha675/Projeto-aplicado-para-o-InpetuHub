@@ -1,0 +1,31 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Rodar sistema",
+      "type": "shell",
+      "command": "./mvnw -q compile exec:java",
+      "windows": { "command": ".\\mvnw.cmd -q compile exec:java" },
+      "options": { "cwd": "${workspaceFolder}/sistema" },
+      "isBackground": false,
+      "problemMatcher": []
+    },
+    {
+      "label": "Todos os testes",
+      "type": "shell",
+      "command": "./mvnw verify",
+      "windows": { "command": ".\\mvnw.cmd verify" },
+      "options": { "cwd": "${workspaceFolder}/sistema" },
+      "group": { "kind": "test", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "Formatar Java",
+      "type": "shell",
+      "command": "./mvnw -q spotless:apply",
+      "windows": { "command": ".\\mvnw.cmd -q spotless:apply" },
+      "options": { "cwd": "${workspaceFolder}/sistema" },
+      "problemMatcher": []
+    }
+  ]
+}

@@ -10,7 +10,11 @@ Este repositório é o projeto acadêmico de Projeto Aplicado do UniSENAI, em pa
 
 1. Leia `continuidade/CONTEXTO.md` e `continuidade/OPERACAO.md`; para detalhes da entrega, consulte `docs/HANDOVER.md`.
 2. Confira `git status`, `VERSION`, a release mais recente e os resultados de Actions. Este contexto tem data e pode ficar desatualizado; o código e as evidências atuais prevalecem sobre o resumo.
-3. Trabalhe nos fontes ativos: `aplicativo/` (Java), `iniciador/` (Go), `receptor/` (Node). Os guias ficam em `docs/`. Versões antigas estão nas tags/releases e no backup; não recrie pastas de versões na raiz.
+3. Fontes ativos:
+   - **Reescrita (linha 1.x), em andamento desde 11/11/2026:** `sistema/` (Java 25 puro: Jetty embutido, JDBC, JSP), seguindo `docs/PLANO-REESCRITA.md`. São 12 entregas, cada uma com uma branch `reescrita/…` e um PR. Cada entrega só começa com o ok do responsável e termina parando para aguardar. Decisões novas viram pergunta. Nenhuma biblioteca fora da lista autorizada (decisão 3b do plano).
+   - **Sistema antigo (linha 0.5.x), intacto e em uso:** `aplicativo/` (Java/Spring), `iniciador/` (Go), `receptor/` (Node, abandonado na reescrita). Só recebe correções pedidas. A reescrita não toca esses arquivos nem os dados em `InPETU-Hub/0.4`.
+
+   Os guias ficam em `docs/`. Versões antigas estão nas tags/releases e no backup; não recrie pastas de versões na raiz.
 4. Preserve mudanças de outras pessoas e limite as alterações ao pedido. Quando o pedido for somente analisar, não edite, faça commit, merge ou deploy.
 
 ## Decisões que devem ser preservadas
