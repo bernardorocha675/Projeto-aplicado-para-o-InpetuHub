@@ -1,0 +1,32 @@
+/* Cores do InPETU Hub: o único :root do sistema. Valores do site oficial e do sistema antigo (0.5.12),
+   todos com contraste WCAG AA onde são texto (conferido em TokensTest). */
+:root {
+  --site-blue: #0077cc;
+  --site-navy: #02569a;
+  --site-cyan: #00c3ff;
+  --site-text: #2d2d2d;
+  --site-fundo-campo: #fdfdfd;
+  --site-texto-campo: #333;
+  --site-borda-campo: #8592a0;
+  --site-erro: #9d2934;
+  --blue: var(--site-blue);
+  --navy: var(--site-navy);
+  --ink: #1c1c1c;
+  --muted: #5f6b77;
+  --line: #e2e8f0;
+  --bg: #f4f7fa;
+  --bg-claro: #f9fbfe;
+  --soft: #e8f3fd;
+  --azul-medio: #62a8e7;
+  --cinza-claro: #9aa8b7;
+  --erro: var(--site-erro);
+  --erro-fundo: #fff0f0;
+  --erro-borda: #f1c6cc;
+  --sucesso: #23683d;
+  --sucesso-fundo: #eaf7ef;
+  --sucesso-borda: #c7e5d2;
+  --aviso: #825c19;
+  --aviso-fundo: #fff7e8;
+  --aviso-borda: #f5d99e;
+  --rodape: #222;
+}
