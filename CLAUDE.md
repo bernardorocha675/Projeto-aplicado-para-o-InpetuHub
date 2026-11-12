@@ -20,7 +20,7 @@ Este repositório é o projeto acadêmico de Projeto Aplicado do UniSENAI, em pa
 ## Decisões que devem ser preservadas
 
 - O usuário final usa o executável; VS Code, Maven, Go e Java externo são ferramentas de desenvolvimento, não requisitos de uso da release.
-- Mantenha Windows, macOS e Linux, nas arquiteturas x64/ARM64. A instalação e os dados do usuário podem ter espaços e acentos; sempre use aspas nos comandos.
+- Mantenha Windows, macOS e Linux, nas arquiteturas x64/ARM64. Exceção, decidida em 12/11/2026: a reescrita (`sistema/` e o novo iniciador) é feita primeiro para Linux (x64 e ARM64), o Windows vem depois e o macOS fica fora; o sistema antigo segue com a matriz de hoje. A instalação e os dados do usuário podem ter espaços e acentos; sempre use aspas nos comandos.
 - Em 19/10/2026 o responsável autorizou a linha `0.5`: a 0.4.17 passa automaticamente para a 0.5, com os mesmos dados (pasta `InPETU-Hub/0.4`). Os fixes seguintes ficam na `0.5.x`; não migre automaticamente para `0.6` sem novo pedido.
 - Preserve banco, reservas, chave, ambiente e backups. Não redefina dados nem contas para corrigir um bug sem autorização específica para esse reset.
 - Existem cinco contas públicas de demonstração local. A decisão de simplificar o login não autoriza remover proteções dos outros perfis. Não reintroduza MFA obrigatório na demonstração sem novo pedido.

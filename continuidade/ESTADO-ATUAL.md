@@ -1,3 +1,9 @@
+# Reescrita: Linux primeiro, Windows depois, macOS fora (decisão de 12/11/2026)
+
+O responsável decidiu, em 12/11/2026, que a reescrita (`sistema/` e o novo iniciador) é feita primeiro para Linux, x64 e ARM64; o Windows vem depois, numa etapa própria, e o macOS fica fora. O sistema antigo (0.5.x) mantém a matriz de hoje. Registrado como decisão 11 em `docs/PLANO-REESCRITA.md` (escopo do executável e entrega 11 ajustados), em `CLAUDE.md` e na tabela de comandos de `sistema/README.md`. Conferido no Linux x64 (12/11/2026): `./mvnw clean verify` aprovado e o jar respondeu `ok` em `/saude`. Só documentação; commit na branch `reescrita/base` (PR #58). Entrega 2 autorizada em 12/11/2026.
+
+---
+
 # Reescrita, entrega 1 — Fundação da base nova `sistema/` (sem versão)
 
 Plano da reescrita aprovado pelo responsável em 11/11/2026 (`docs/PLANO-REESCRITA.md`); entrega 1 autorizada em 11/11/2026. Branch `reescrita/base`, sobre a `origin/main` cf986ba. O sistema antigo (`aplicativo/`, `iniciador/`, `receptor/`) e os dados em `InPETU-Hub/0.4` não foram tocados.

@@ -30,6 +30,7 @@ A equipe decidiu refazer o InPETU Hub do zero só com Java, SQL, Python e HTML/C
 | 8 | JDK / formatador | **Java 25 LTS**; **formato Eclipse XML** (`sistema/formatacao-java.xml`, 4 espaços, 120 colunas), lido nativamente pelo VS Code, importado no IntelliJ e conferido com `./mvnw spotless:check` |
 | 9 | Versão | Linha **1.0.0**, com pré-releases `1.0.0-alpha.N`; dados em `InPETU-Hub/1`. O iniciador Go antigo recusa versões fora de 0.4/0.5 (`iniciador/model.go:83`), então as instalações antigas não pulam para a nova |
 | 10 | Escopo da v1 | **Núcleo + Executável** (abaixo). CRM e Administração ficam para depois, antes de remover o antigo |
+| 11 | Sistemas (12/11/2026) | **Linux primeiro, x64 e ARM64**; **Windows depois**, numa etapa própria; **macOS fora** da reescrita. Vale só para `sistema/` e o novo iniciador: o sistema antigo (0.5.x) mantém a matriz de hoje |
 | 11 | GitHub | **Só o modelo de PR** (`.github/pull_request_template.md`); sem modelos de issue, rótulos nem quadro por enquanto |
 | 12 | Taxas e preços sem Administração | **Limitação aceita.** As regras ficam iguais às do antigo: a aprovação recusa reservas que precisam de taxas ainda não configuradas, e pedidos sem tabela de preços para o ano (2027) recebem uma mensagem amigável. Na prática, a v1 aprova reservas P1 (sem cobrança) e as que não dependem de taxa, em 2026. A tela de Configuração e Preços entra com a Administração |
 | 13 | Email | **Confirmação manual na v1**, como o modo local do antigo: a equipe confere a identidade e o contato ao aceitar. O código por email fica atrás da interface `EnviadorEmail`, para quando o Angus Mail for autorizado |
@@ -54,7 +55,7 @@ Consequências das bibliotecas recusadas:
 
 **Executável**
 - iniciador Python;
-- pacote por sistema (Windows, macOS e Linux, x64/ARM64);
+- pacote para Linux x64 e ARM64 primeiro; Windows depois (decisão 11); sem macOS;
 - atualização pelas Releases;
 - CI em matriz.
 
@@ -156,8 +157,8 @@ Regras: pacotes por assunto; entidades encapsuladas com métodos de regra (`rese
 11. **Pacote e CI de release:**
     - `scripts/build_pacote.py`: jar, jlink, PyInstaller, `bundle.json` com SHA-256 e ZIP;
     - `scripts/verificar.py`: tudo localmente;
-    - `sistema-release.yml`: matriz de 6 alvos, smoke do pacote e pré-release `1.0.0-alpha.N` só com o ok do responsável.
-    - **Risco a validar cedo:** PyInstaller no Windows ARM64 e o `.app` do macOS.
+    - `sistema-release.yml`: Linux x64 e ARM64 (Windows entra depois, decisão 11), smoke do pacote e pré-release `1.0.0-alpha.N` só com o ok do responsável.
+    - **Risco a validar quando o Windows entrar:** PyInstaller no Windows ARM64.
 12. **v1.0.0:** revisão (`code-review`, `revisor-privacidade-logs`, `web-design-guidelines`, `accessibility-a11y`) e release com notas simples, com o ok do responsável.
 
 Em toda entrega:
