@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Hook PreToolUse: bloqueia mudanças em áreas protegidas do InPETU Hub.
 
-- migrations já publicadas na origin/main (V*.sql existentes); migrations novas são permitidas;
+- migrations já publicadas na origin/main (V*.sql existentes), no aplicativo antigo e no sistema/ da reescrita;
+  migrations novas são permitidas;
 - commit na main e push para a main;
 - escrita ou exclusão em Testes/, .secrets/ e arquivos .env*.
 
@@ -16,7 +17,10 @@ import subprocess
 import sys
 from pathlib import Path
 
-MIGRATIONS = 'aplicativo/src/main/resources/db/migration/'
+MIGRATIONS = (
+    'aplicativo/src/main/resources/db/migration/',  # sistema antigo (0.5.x)
+    'sistema/src/main/resources/db/migration/',  # reescrita (1.x)
+)
 ESCRITA = {'Edit', 'Write', 'MultiEdit', 'NotebookEdit'}
 
 
