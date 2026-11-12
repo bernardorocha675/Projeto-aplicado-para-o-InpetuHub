@@ -17,6 +17,12 @@ Esta é a reescrita do InPETU Hub, em **Java puro**: Jakarta Servlet num Jetty e
 | Gerar o jar único | `./mvnw package` → `target/inpetu-hub-sistema.jar` | igual |
 | Rodar o jar | `java -jar target/inpetu-hub-sistema.jar 8080` | igual |
 
+O teste das migrations no MySQL roda só quando existe um MySQL de teste (na CI sempre existe). Para rodar na sua máquina, num banco **vazio e só de teste** (o teste apaga as tabelas dele):
+
+```
+INPETU_TESTE_MYSQL_URL="jdbc:mysql://127.0.0.1:3306/inpetu_teste" INPETU_TESTE_MYSQL_USUARIO="inpetu" INPETU_TESTE_MYSQL_SENHA="..." ./mvnw verify
+```
+
 Com o sistema de pé, `http://127.0.0.1:8080/saude` responde `ok`. Ele escuta só em `127.0.0.1`, nunca na rede.
 
 ## No editor
