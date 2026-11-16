@@ -6,6 +6,12 @@
     <p class="sobretitulo">Área Interna</p>
     <h1>Olá, <c:out value="${nomeDaConta}" /></h1>
     <p>Perfil: <c:out value="${perfilDaConta}" /></p>
+    <nav aria-label="Área Interna">
+      <ul class="lista-links">
+        <li><a href="/admin/cadastros/espacos">Espaços</a></li>
+        <li><a href="/agenda">Agenda pública</a></li>
+      </ul>
+    </nav>
     <div class="acoes">
       <a class="botao secundario" href="/conta/senha">Alterar senha</a>
       <form method="post" action="/sair">

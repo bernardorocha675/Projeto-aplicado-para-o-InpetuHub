@@ -11,17 +11,17 @@ import java.util.UUID;
 import javax.sql.DataSource;
 
 /** Apoio dos testes: cria contas de teste e lê a auditoria direto no banco. */
-final class Contas {
+public final class Contas {
 
-    static final String SENHA = "Senha-sintetica-de-teste-2026!";
+    public static final String SENHA = "Senha-sintetica-de-teste-2026!";
 
-    record Criada(long id, String login) {
+    public record Criada(long id, String login) {
     }
 
     private Contas() {
     }
 
-    static Criada criar(DataSource banco, Perfil perfil) throws Exception {
+    public static Criada criar(DataSource banco, Perfil perfil) throws Exception {
         String login = "teste-" + UUID.randomUUID();
         try (Connection c = banco.getConnection();
                 PreparedStatement sql = c.prepareStatement(
@@ -39,7 +39,7 @@ final class Contas {
         }
     }
 
-    static void executar(DataSource banco, String comando, Object... valores) throws Exception {
+    public static void executar(DataSource banco, String comando, Object... valores) throws Exception {
         try (Connection c = banco.getConnection(); PreparedStatement sql = c.prepareStatement(comando)) {
             for (int i = 0; i < valores.length; i++) {
                 sql.setObject(i + 1, valores[i]);
@@ -48,7 +48,7 @@ final class Contas {
         }
     }
 
-    static String texto(DataSource banco, String consulta, Object... valores) throws Exception {
+    public static String texto(DataSource banco, String consulta, Object... valores) throws Exception {
         try (Connection c = banco.getConnection(); PreparedStatement sql = c.prepareStatement(consulta)) {
             for (int i = 0; i < valores.length; i++) {
                 sql.setObject(i + 1, valores[i]);
@@ -60,7 +60,7 @@ final class Contas {
     }
 
     /** As linhas da auditoria, da mais antiga para a mais nova, como "EVENTO RESULTADO autor". */
-    static List<String> auditoria(DataSource banco) throws Exception {
+    public static List<String> auditoria(DataSource banco) throws Exception {
         List<String> linhas = new ArrayList<>();
         try (Connection c = banco.getConnection();
                 PreparedStatement sql = c.prepareStatement(

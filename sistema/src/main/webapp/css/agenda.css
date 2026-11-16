@@ -1,0 +1,257 @@
+/* Agenda pública: faixa azul à esquerda e calendário à direita, como a agenda do site oficial e a do antigo.
+   Só tokens de tokens.css; contraste conferido em AgendaLegivelTest. */
+.principal:has(.agenda) {
+  max-width: 1500px;
+}
+.agenda {
+  display: grid;
+  grid-template-columns: 40% 60%;
+  overflow: hidden;
+  border-radius: 65px;
+  background: var(--bg-claro);
+  box-shadow: 0 15px 55px #1c1c1c12;
+}
+.agenda-faixa {
+  min-width: 0;
+  padding: 78px 55px;
+  background: var(--blue);
+  color: #fff;
+}
+.agenda-faixa .sobretitulo {
+  color: #fff;
+}
+.agenda-faixa h1 {
+  margin: 40px 0;
+  font-size: clamp(26px, 3vw, 40px);
+  font-weight: 800;
+  line-height: 1.2;
+}
+.agenda-faixa p {
+  font-size: 1.18rem;
+  line-height: 1.8;
+}
+.agenda-faixa .nota {
+  font-size: 1rem;
+}
+.agenda-calendario {
+  min-width: 0;
+  padding: 45px 42px;
+}
+.mes {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 22px;
+}
+.mes h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.seta {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--muted);
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+.seta:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin: 0 0 25px;
+}
+.filtro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 15px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.filtro select,
+.filtro input {
+  min-height: 44px;
+  max-width: 260px;
+  padding: 0 10px;
+  border: 1px solid var(--site-borda-campo);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+}
+.agenda .alerta {
+  margin: 0 0 18px;
+}
+.agenda .alerta .botao {
+  margin: 10px 12px 0 0;
+}
+.semana,
+.calendario {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 7px;
+  font-variant-numeric: tabular-nums;
+}
+.semana {
+  margin-bottom: 12px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-align: center;
+}
+.calendario .dia {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 4px 3px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.calendario .dia strong {
+  font-weight: 400;
+}
+.calendario .dia.com-atividade {
+  border-color: var(--azul-medio);
+  background: var(--soft);
+}
+.calendario .dia .ponto {
+  color: var(--navy);
+  font-size: 0.95rem;
+  line-height: 0.55;
+}
+.calendario .dia.fora {
+  color: var(--cinza-claro);
+  cursor: default;
+}
+.calendario .dia.hoje {
+  border: 2px solid var(--azul-medio);
+}
+.calendario .dia.escolhido {
+  outline: 2px solid var(--blue);
+  outline-offset: 1px;
+}
+.calendario .mensagem {
+  grid-column: 1 / -1;
+}
+.dica {
+  margin: 16px 0 0;
+  padding: 14px 0 18px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.detalhe-dia {
+  padding-top: 24px;
+  font-variant-numeric: tabular-nums;
+}
+.detalhe-dia h3 {
+  margin: 0 0 12px;
+}
+.espaco-horarios {
+  margin: 12px 0;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  overflow-wrap: anywhere;
+}
+.espaco-horarios h4 {
+  margin: 0 0 10px;
+}
+.horarios {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.horario {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--site-borda-campo);
+  border-radius: 8px;
+  color: var(--navy);
+  font-weight: 700;
+  text-decoration: none;
+}
+a.horario:hover {
+  background: var(--soft);
+}
+.ocupado {
+  margin: 6px 0;
+  padding: 5px 10px;
+  border-left: 3px solid var(--cinza-claro);
+  background: var(--bg);
+  color: var(--ink);
+}
+.form-horario {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 10px;
+  margin-top: 12px;
+}
+.form-horario label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+}
+.form-horario input {
+  min-height: 44px;
+  padding: 0 8px;
+  border: 1px solid var(--site-borda-campo);
+  border-radius: 8px;
+  font: inherit;
+}
+.form-horario .botao {
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+@media (max-width: 1050px) {
+  .agenda {
+    border-radius: 35px;
+  }
+  .agenda-faixa {
+    padding: 50px 35px;
+  }
+  .agenda-calendario {
+    padding: 35px 25px;
+  }
+}
+@media (max-width: 760px) {
+  .principal:has(.agenda) {
+    padding: 24px 12px;
+  }
+  .agenda {
+    grid-template-columns: 1fr;
+  }
+  .agenda-faixa {
+    padding: 35px;
+  }
+  .agenda-faixa h1 {
+    margin: 20px 0;
+    overflow-wrap: anywhere;
+  }
+  .agenda-faixa p {
+    font-size: 1rem;
+  }
+  .agenda-calendario {
+    padding: 30px 16px;
+  }
+}

@@ -2,11 +2,7 @@ package br.com.inpetu.hub.conta;
 
 import java.io.IOException;
 import java.io.Serial;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
-import java.util.HexFormat;
 
 import br.com.inpetu.hub.comum.Ambiente;
 import br.com.inpetu.hub.comum.ErroServlet;
@@ -44,10 +40,10 @@ final class LimiteFilter extends HttpFilter {
             throws IOException, ServletException {
         if ("POST".equals(pedido.getMethod())) {
             String caminho = Telas.caminho(pedido);
-            String endereco = resumo(pedido.getRemoteAddr());
+            String endereco = Limites.resumo(pedido.getRemoteAddr());
             Duration espera = null;
             if (caminho.equals("/login") && !modoLocal) {
-                String conta = resumo(NomesDeLogin.normalizar(pedido.getParameter("usuario")));
+                String conta = Limites.resumo(NomesDeLogin.normalizar(pedido.getParameter("usuario")));
                 if (!limites.permite("login-endereco:" + endereco, 60, JANELA_LOGIN) || !limites.permite(
                         "login-conta:" + conta, 10, JANELA_LOGIN)) {
                     espera = JANELA_LOGIN;
@@ -62,15 +58,5 @@ final class LimiteFilter extends HttpFilter {
             }
         }
         cadeia.doFilter(pedido, resposta);
-    }
-
-    private static String resumo(String valor) {
-        try {
-            byte[] bytes = MessageDigest.getInstance("SHA-256").digest(String.valueOf(valor).getBytes(
-                    StandardCharsets.UTF_8));
-            return HexFormat.of().formatHex(bytes, 0, 16);
-        } catch (NoSuchAlgorithmException impossivel) {
-            throw new IllegalStateException(impossivel);
-        }
     }
 }

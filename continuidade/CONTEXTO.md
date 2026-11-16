@@ -127,3 +127,7 @@ O responsável pediu escolher o país do telefone e preenchê-lo automaticamente
 ## Documento do empreendedor (22/10/2026)
 
 O CNPJ deixou de ser obrigatório. O pedido de reserva e o cadastro de empreendedores escolhem o tipo: CNPJ (14 dígitos), CPF (11), documento estrangeiro (4 a 30 letras ou números) ou Sem documento; só a quantidade é conferida, sem dígito verificador. O número continua na coluna `cnpj` (nome mantido para não mexer nos dados) e segue único quando existe; o tipo fica em `tipo_documento`. Cadastros e pedidos de antes são CNPJ. Sem documento, o empreendedor é encontrado pelo email. Substitui a exigência de CNPJ de 14 dígitos.
+
+## Reescrita só para computador (16/11/2026)
+
+Antes da entrega 6, o responsável decidiu que a reescrita (`sistema/`) é feita só para computador, no Linux: nada de layout, testes ou conferências para celular (o CSS de celular que já existe fica como está, sem trabalho novo). A página inicial continua básica (`/` abre a agenda). O cabeçalho e o rodapé oficiais ficam para a entrega 8, só para computador e sem menu de celular. Os feriados de 2027 ficam como estão, sem ação, até novo pedido. Registrado como decisão 14 em `docs/PLANO-REESCRITA.md`. Não vale para o sistema antigo (0.5.x).
