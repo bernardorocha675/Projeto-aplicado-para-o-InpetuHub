@@ -46,7 +46,9 @@ src/main/java/br/com/inpetu/hub/
   auditoria/        auditoria gravada no banco
   espaco/           cadastro de espaços
   agenda/           agenda pública e /disponibilidade (JSON)
-  reserva/          regras de reserva sem banco: horário, preço, taxas, cota e situações
+  reserva/          regras de reserva (horário, preço, taxas, cota e situações) e a leitura dos dados delas
+  solicitacao/      pedido público: formulário, resumo, envio e vencimento em 24 h
+  empreendedor/     documento e contato (o cadastro vem depois da v1)
 src/test/java/…     espelha os pacotes
 formatacao-java.xml formatação Java (Eclipse XML: 4 espaços, 120 colunas)
 ```
