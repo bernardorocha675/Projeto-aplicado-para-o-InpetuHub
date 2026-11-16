@@ -51,6 +51,11 @@ public final class Eventos {
         LOG.log("NEGADO".equals(resultado) ? Level.WARNING : Level.INFO, texto);
     }
 
+    /** Uma tarefa periódica falhou: só o nome da tarefa e a causa (sem mensagem). */
+    public static void falhaEmTarefa(String tarefa, Throwable falha) {
+        LOG.log(Level.SEVERE, "event=TASK_FAILED task=" + palavra(tarefa), falha);
+    }
+
     // Os nomes vêm de constantes do código; ainda assim, qualquer coisa fora do formato vira OTHER.
     private static String palavra(String valor) {
         return valor != null && valor.matches("[A-Za-z_]{1,40}") ? valor : "OTHER";

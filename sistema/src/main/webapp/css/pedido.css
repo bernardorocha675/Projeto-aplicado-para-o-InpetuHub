@@ -1,0 +1,116 @@
+/* Pedido público no padrão do formulário de contato do site oficial (só computador, decisão 14), com a borda dos
+   campos a 3,1:1 em vez da do site (1,2:1). Só tokens; medidas e contraste conferidos em PedidoLegivelTest. */
+.faixa-pagina {
+  margin: 0 0 32px;
+  padding: 48px 55px;
+  border-radius: 40px;
+  background: var(--blue);
+  color: #fff;
+}
+.faixa-pagina .sobretitulo {
+  color: #fff;
+}
+.faixa-pagina h1 {
+  margin: 12px 0;
+  font-size: clamp(26px, 3vw, 40px);
+  font-weight: 800;
+  line-height: 1.2;
+}
+.cartao-oficial {
+  margin: 0 0 32px;
+  padding: 56px 72px;
+  border-radius: 40px;
+  background: #fff;
+  box-shadow: 0 25px 60px #0000001a;
+}
+.cartao-oficial h2 {
+  color: var(--navy);
+}
+.form-oficial .grade {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 24px;
+}
+.form-oficial .campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.form-oficial label {
+  font-weight: 700;
+}
+.form-oficial :where(input:not([type="checkbox"]), select, textarea) {
+  min-height: 65px;
+  padding: 0 22px;
+  border: 1px solid var(--site-borda-campo);
+  border-radius: 12px;
+  background: var(--site-fundo-campo);
+  color: var(--site-texto-campo);
+  font: inherit;
+}
+.form-oficial textarea {
+  min-height: 200px;
+  padding: 18px 22px;
+  resize: vertical;
+}
+.form-oficial [aria-invalid="true"] {
+  border: 2px solid var(--erro);
+}
+.form-oficial .caixas {
+  display: flex;
+  flex-direction: column;
+  margin: 12px 0;
+}
+.form-oficial .caixas label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  font-weight: 400;
+}
+.form-oficial .caixas input {
+  width: 24px;
+  height: 24px;
+}
+.botao-grande {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 64px;
+  padding: 0 32px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--blue);
+  color: #fff;
+  font: inherit;
+  font-size: 20px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+.botao-grande:hover {
+  background: var(--navy);
+}
+.acoes .botao.secundario {
+  min-height: 64px;
+  cursor: pointer;
+}
+.duas-colunas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 32px;
+}
+.dados {
+  display: grid;
+  grid-template-columns: 45% 55%;
+  gap: 10px 16px;
+  margin: 0 0 24px;
+}
+.dados dt {
+  color: var(--muted);
+}
+.dados dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
