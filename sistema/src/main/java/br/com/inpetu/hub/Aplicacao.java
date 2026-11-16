@@ -3,19 +3,22 @@ package br.com.inpetu.hub;
 import java.nio.file.Path;
 import java.time.Clock;
 import java.time.ZoneId;
+import java.util.Properties;
 
 import br.com.inpetu.hub.comum.Ambiente;
 import br.com.inpetu.hub.comum.Banco;
 import br.com.inpetu.hub.comum.Migracoes;
+import br.com.inpetu.hub.comum.Parada;
 import br.com.inpetu.hub.comum.Servidor;
 import br.com.inpetu.hub.comum.log.Eventos;
 import br.com.inpetu.hub.comum.log.Log;
 import br.com.inpetu.hub.conta.ContasDemonstracao;
 
 /**
- * Ponto de entrada: java -jar inpetu-hub-sistema.jar [porta]. Sem porta, usa a 8080. Modo local: banco H2 na pasta de
- * dados ({@code -Dinpetu.dados=<pasta>}, que o iniciador vai passar; sem ela, {@code target/dados-desenvolvimento}) e
- * as 5 contas de demonstração restauradas a cada início.
+ * Ponto de entrada: {@code java -jar inpetu-hub-sistema.jar [porta]}. Sem porta, usa a 8080. Modo local: banco H2 na
+ * pasta de dados ({@code -Dinpetu.dados=<pasta>}, que o iniciador passa; sem ela, {@code target/dados-desenvolvimento})
+ * e as 5 contas de demonstração restauradas a cada início. Com {@code -Dinpetu.parada=<arquivo>}, encerra em ordem
+ * quando o iniciador cria esse arquivo.
  */
 public final class Aplicacao {
 
@@ -28,21 +31,38 @@ public final class Aplicacao {
 
     public static void main(String[] argumentos) throws Exception {
         Log.configurar();
+        executar(argumentos, System.getProperties());
+    }
+
+    /** Sobe o sistema e só volta quando ele para (pelo arquivo de parada ou pelo fim do processo). */
+    static void executar(String[] argumentos, Properties propriedades) throws Exception {
         int porta = argumentos.length > 0 ? Integer.parseInt(argumentos[0]) : PORTA_PADRAO;
+        String arquivoParada = propriedades.getProperty("inpetu.parada");
         Servidor servidor;
+        Ambiente ambiente = null;
         try {
-            Path dados = Path.of(System.getProperty("inpetu.dados", PASTA_DESENVOLVIMENTO));
-            Ambiente ambiente = new Ambiente(Banco.h2Arquivo(dados.resolve("inpetu")), Clock.system(FUSO), true);
+            if (arquivoParada != null) {
+                Parada.limpar(Path.of(arquivoParada));
+            }
+            Path dados = Path.of(propriedades.getProperty("inpetu.dados", PASTA_DESENVOLVIMENTO));
+            ambiente = new Ambiente(Banco.h2Arquivo(dados.resolve("inpetu")), Clock.system(FUSO), true);
             Migracoes.aplicar(ambiente.banco());
             ContasDemonstracao.restaurar(ambiente);
             servidor = Servidor.iniciar(porta, ambiente);
         } catch (Exception falha) {
             Eventos.inicioFalhou(falha);
+            if (ambiente != null) {
+                Banco.fechar(ambiente.banco());
+            }
             throw falha;
         }
+        if (arquivoParada != null) {
+            Parada.vigiar(Path.of(arquivoParada), servidor::close);
+        }
         Eventos.servidorPronto();
-        System.out.println("InPETU Hub pronto em http://" + servidor.endereco() + ":" + servidor.porta() + "/login");
+        System.out.println("InPETU Hub pronto em http://" + servidor.endereco() + ":" + servidor.porta() + "/");
         servidor.aguardar();
+        Banco.fechar(ambiente.banco());
         Eventos.servidorParado();
     }
 }
