@@ -48,7 +48,8 @@ src/main/java/br/com/inpetu/hub/
   agenda/           agenda pública e /disponibilidade (JSON)
   reserva/          regras de reserva (horário, preço, taxas, cota e situações) e a leitura dos dados delas
   solicitacao/      pedido público: formulário, resumo, envio e vencimento em 24 h
-  empreendedor/     documento e contato (o cadastro vem depois da v1)
+  empreendedor/     documento, contato e o vínculo do pedido com o cadastro (o cadastro completo vem depois da v1)
+  interna/          Área Interna: painel, solicitações e reservas
 src/test/java/…     espelha os pacotes
 formatacao-java.xml formatação Java (Eclipse XML: 4 espaços, 120 colunas)
 ```

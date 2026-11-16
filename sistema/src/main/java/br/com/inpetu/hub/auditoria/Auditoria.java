@@ -31,10 +31,23 @@ public final class Auditoria {
     }
 
     public void registrar(Long autor, String evento, String alvo, Long alvoId, String resultado, String detalhes) {
-        try (Connection conexao = banco.getConnection();
-                PreparedStatement sql = conexao.prepareStatement(
-                        "insert into auditoria(instante, autor_id, evento, alvo, alvo_id, resultado, detalhes)"
-                                + " values (?, ?, ?, ?, ?, ?, ?)")) {
+        try (Connection conexao = banco.getConnection()) {
+            gravar(conexao, autor, evento, alvo, alvoId, resultado, detalhes);
+        } catch (SQLException falha) {
+            throw new IllegalStateException("Não foi possível gravar a auditoria.", falha);
+        }
+        Eventos.auditoria(evento, alvo, resultado);
+    }
+
+    /**
+     * Grava dentro de uma transação já aberta (some junto se ela for desfeita). O espelho no log fica com quem chama,
+     * depois de confirmar, por {@link Eventos#auditoria}.
+     */
+    public void gravar(Connection conexao, Long autor, String evento, String alvo, Long alvoId, String resultado,
+            String detalhes) throws SQLException {
+        try (PreparedStatement sql = conexao.prepareStatement(
+                "insert into auditoria(instante, autor_id, evento, alvo, alvo_id, resultado, detalhes)"
+                        + " values (?, ?, ?, ?, ?, ?, ?)")) {
             sql.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now(relogio)));
             definir(sql, 2, autor);
             sql.setString(3, evento);
@@ -43,10 +56,7 @@ public final class Auditoria {
             sql.setString(6, resultado);
             sql.setString(7, detalhes);
             sql.executeUpdate();
-        } catch (SQLException falha) {
-            throw new IllegalStateException("Não foi possível gravar a auditoria.", falha);
         }
-        Eventos.auditoria(evento, alvo, resultado);
     }
 
     /** Login, sessão e acesso: o alvo é a própria conta. */

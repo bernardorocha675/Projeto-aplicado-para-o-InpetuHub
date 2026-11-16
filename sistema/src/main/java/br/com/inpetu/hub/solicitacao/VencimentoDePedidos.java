@@ -10,17 +10,20 @@ import org.eclipse.jetty.util.component.AbstractLifeCycle;
 
 import br.com.inpetu.hub.comum.Ambiente;
 import br.com.inpetu.hub.comum.log.Eventos;
+import br.com.inpetu.hub.reserva.ReservaServico;
 
-/** A cada minuto, vence os pedidos com mais de 24 h. Começa e para junto com o servidor. */
+/** A cada minuto, vence os pedidos e as reservas pendentes com mais de 24 h. Começa e para junto com o servidor. */
 final class VencimentoDePedidos extends AbstractLifeCycle {
 
     private static final Logger LOG = Logger.getLogger(VencimentoDePedidos.class.getName());
 
     private final SolicitacaoServico servico;
+    private final ReservaServico reservas;
     private ScheduledExecutorService agenda;
 
     VencimentoDePedidos(Ambiente ambiente) {
         this.servico = new SolicitacaoServico(ambiente);
+        this.reservas = new ReservaServico(ambiente);
     }
 
     @Override
@@ -42,6 +45,7 @@ final class VencimentoDePedidos extends AbstractLifeCycle {
     private void vencer() {
         try {
             servico.expirarVencidas();
+            reservas.expirarPendentes();
         } catch (RuntimeException falha) {
             // Uma falha (banco ocupado, por exemplo) não pode parar as próximas rodadas.
             Eventos.falhaEmTarefa("PEDIDOS_VENCIDOS", falha);

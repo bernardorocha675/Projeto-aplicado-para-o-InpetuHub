@@ -35,18 +35,30 @@ public final class Reserva {
     private String motivoRecusa;
     private Long responsavel;
 
-    private Reserva(Pedido pedido, Orcamento orcamento, LocalDateTime agora) {
+    private Reserva(Pedido pedido, Orcamento orcamento, LocalDateTime solicitadaEm, LocalDateTime expiraEm) {
         this.pedido = Objects.requireNonNull(pedido);
         this.orcamento = Objects.requireNonNull(orcamento);
         this.situacao = SituacaoReserva.PENDENTE;
         this.pagamento = SituacaoPagamento.PENDENTE;
-        this.solicitadaEm = agora;
-        this.expiraEm = agora.plusHours(PRAZO_PENDENTE_HORAS);
+        this.solicitadaEm = solicitadaEm;
+        this.expiraEm = expiraEm;
+    }
+
+    /** A reserva como está gravada no banco. */
+    public static Reserva restaurar(Pedido pedido, Orcamento orcamento, SituacaoReserva situacao,
+            SituacaoPagamento pagamento, LocalDateTime solicitadaEm, LocalDateTime expiraEm, String motivoRecusa,
+            Long responsavel) {
+        Reserva reserva = new Reserva(pedido, orcamento, solicitadaEm, expiraEm);
+        reserva.situacao = Objects.requireNonNull(situacao);
+        reserva.pagamento = Objects.requireNonNull(pagamento);
+        reserva.motivoRecusa = motivoRecusa;
+        reserva.responsavel = responsavel;
+        return reserva;
     }
 
     /** Pedido conferido: nasce pendente, sem ocupar horário nem cota, e expira em 24 h se não for aprovado. */
     public static Reserva solicitar(Pedido pedido, Orcamento orcamento, LocalDateTime agora) {
-        return new Reserva(pedido, orcamento, agora);
+        return new Reserva(pedido, orcamento, agora, agora.plusHours(PRAZO_PENDENTE_HORAS));
     }
 
     /** {@code orcamento}: recalculado agora (preço e cota podem ter mudado desde o pedido). */
@@ -54,7 +66,7 @@ public final class Reserva {
         if (situacao != SituacaoReserva.PENDENTE) {
             throw new RegraException("Somente reservas pendentes podem ser aprovadas.");
         }
-        if (expiraEm.isBefore(agora)) {
+        if (expiraEm != null && expiraEm.isBefore(agora)) {
             throw new RegraException("Reserva pendente expirada.");
         }
         if (!recalculado.taxasConfiguradas()) {
@@ -151,7 +163,7 @@ public final class Reserva {
 
     /** Pendente que passou do prazo vira cancelada. Devolve se mudou. */
     public boolean expirar(LocalDateTime agora) {
-        if (situacao != SituacaoReserva.PENDENTE || expiraEm.isAfter(agora)) {
+        if (situacao != SituacaoReserva.PENDENTE || expiraEm == null || expiraEm.isAfter(agora)) {
             return false;
         }
         situacao = SituacaoReserva.CANCELADA;
