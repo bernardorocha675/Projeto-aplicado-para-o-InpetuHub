@@ -9,7 +9,8 @@ public final class RotasSeguras {
     private static final Set<String> CONHECIDAS = Set.of("/", "/saude", "/login", "/sair", "/admin", "/conta/senha",
             "/agenda", "/disponibilidade", "/admin/cadastros/espacos", "/admin/cadastros/espacos/editar",
             "/admin/cadastros/espacos/salvar", "/admin/cadastros/espacos/excluir", "/reserva", "/reservas/resumo",
-            "/reservas/solicitar", "/reservas/recebida");
+            "/reservas/solicitar", "/reservas/recebida", "/admin/reservas", "/admin/solicitacoes",
+            "/admin/solicitacoes/aceitar", "/admin/solicitacoes/recusar");
     private static final Set<String> ARQUIVOS = Set.of("/css/", "/js/", "/img/", "/fontes/");
 
     private RotasSeguras() {
@@ -21,6 +22,13 @@ public final class RotasSeguras {
         }
         if (CONHECIDAS.contains(caminho)) {
             return caminho;
+        }
+        // Números de reserva nunca vão para o log: só o tipo da tela ou da ação.
+        if (caminho.matches("/admin/reservas/[0-9]{1,18}")) {
+            return "/admin/reservas/{id}";
+        }
+        if (caminho.matches("/admin/reservas/[0-9]{1,18}/(aprovar|recusar|cancelar|alterar|pagamento|concluir)")) {
+            return "/admin/reservas/{id}/" + caminho.substring(caminho.lastIndexOf('/') + 1);
         }
         for (String pasta : ARQUIVOS) {
             if (caminho.startsWith(pasta)) {

@@ -6,7 +6,7 @@
     <h1>Alterar senha</h1>
     <p>A alteração encerra todas as suas sessões. Use de 8 a 64 caracteres.</p>
     <c:if test="${modoLocal}">
-      <p class="alerta aviso">Nesta demonstração local, as senhas das contas de demonstração voltam ao padrão quando o sistema reinicia.</p>
+      <p class="alerta aviso" role="status">Nesta demonstração local, as senhas das contas de demonstração voltam ao padrão quando o sistema reinicia.</p>
     </c:if>
     <c:if test="${not empty erro}">
       <p class="alerta erro" role="alert"><c:out value="${erro}" /></p>

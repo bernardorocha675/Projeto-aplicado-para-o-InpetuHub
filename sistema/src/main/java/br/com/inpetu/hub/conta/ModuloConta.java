@@ -22,6 +22,5 @@ public final class ModuloConta {
         contexto.addServlet(new ServletHolder(new LoginServlet(ambiente)), "/login");
         contexto.addServlet(new ServletHolder(new SairServlet(ambiente)), "/sair");
         contexto.addServlet(new ServletHolder(new SenhaServlet(ambiente)), "/conta/senha");
-        contexto.addServlet(new ServletHolder(new InicioInternoServlet()), "/admin");
     }
 }

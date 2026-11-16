@@ -104,9 +104,43 @@ a {
   color: var(--muted);
 }
 .rodape {
-  padding: 24px max(5vw, 24px);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 40px max(5vw, 24px);
   background: var(--rodape);
   color: #fff;
+}
+.rodape p {
+  margin: 0 0 8px;
+}
+.rodape a {
+  color: #fff;
+}
+.rodape-nome {
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+.rodape-projeto {
+  font-size: 0.9rem;
+}
+.rodape-redes {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.rodape-redes a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+}
+.rodape-redes svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
 }
 .rodape :focus-visible {
   outline-color: #fff;
@@ -279,4 +313,23 @@ a {
   cursor: pointer;
   font: inherit;
   font-weight: 700;
+}
+.dados {
+  display: grid;
+  grid-template-columns: 45% 55%;
+  gap: 10px 16px;
+  margin: 0 0 24px;
+}
+.dados dt {
+  color: var(--muted);
+}
+.dados dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.menu {
+  gap: 4px 20px;
+}
+.menu a {
+  font-size: 0.95rem;
 }

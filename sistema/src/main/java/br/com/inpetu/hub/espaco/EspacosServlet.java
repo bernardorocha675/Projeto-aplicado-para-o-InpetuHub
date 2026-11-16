@@ -9,6 +9,7 @@ import br.com.inpetu.hub.comum.Ambiente;
 import br.com.inpetu.hub.comum.Telas;
 import br.com.inpetu.hub.comum.log.Eventos;
 import br.com.inpetu.hub.conta.ContaSessao;
+import br.com.inpetu.hub.interna.MenuInterno;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,10 +27,12 @@ public final class EspacosServlet extends HttpServlet {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    private final transient Ambiente ambiente;
     private final transient EspacoRepositorio espacos;
     private final transient Auditoria auditoria;
 
     public EspacosServlet(Ambiente ambiente) {
+        this.ambiente = ambiente;
         this.espacos = new EspacoRepositorio(ambiente.banco());
         this.auditoria = new Auditoria(ambiente.banco(), ambiente.relogio());
     }
@@ -56,6 +59,7 @@ public final class EspacosServlet extends HttpServlet {
 
     private void lista(HttpServletRequest pedido, HttpServletResponse resposta) throws ServletException,
             IOException {
+        MenuInterno.preparar(pedido, ambiente, "espacos");
         pedido.setAttribute("espacos", espacos.todos());
         if (pedido.getParameter("salvo") != null) {
             pedido.setAttribute("aviso", "Espaço salvo.");
@@ -116,8 +120,9 @@ public final class EspacosServlet extends HttpServlet {
         Telas.redirecionar(resposta, RAIZ + "?excluido");
     }
 
-    private static void formulario(HttpServletRequest pedido, HttpServletResponse resposta,
-            EspacoFormulario formulario) throws ServletException, IOException {
+    private void formulario(HttpServletRequest pedido, HttpServletResponse resposta, EspacoFormulario formulario)
+            throws ServletException, IOException {
+        MenuInterno.preparar(pedido, ambiente, "espacos");
         pedido.setAttribute("formulario", formulario);
         Telas.mostrar(pedido, resposta, "espaco/formulario");
     }
