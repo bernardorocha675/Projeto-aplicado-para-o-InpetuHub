@@ -14,6 +14,8 @@ import jakarta.servlet.http.HttpServletResponse;
 public final class ErroServlet extends HttpServlet {
 
     static final String CAMINHO = "/erro";
+    /** Atributo do pedido com os segundos de espera de um 429 (vai no cabeçalho Retry-After). */
+    public static final String ESPERA = "inpetu.espera";
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -31,6 +33,9 @@ public final class ErroServlet extends HttpServlet {
                 : Erros.daSituacao(situacao instanceof Integer s ? s : 500);
         resposta.setStatus(tela.status());
         Cabecalhos.aplicar(resposta);
+        if (tela.status() == 429 && pedido.getAttribute(ESPERA) instanceof Long segundos) {
+            resposta.setHeader("Retry-After", segundos.toString());
+        }
         Object id = pedido.getAttribute(RequisicaoFilter.ATRIBUTO_ID);
         if (id != null) {
             resposta.setHeader("X-Request-ID", id.toString());

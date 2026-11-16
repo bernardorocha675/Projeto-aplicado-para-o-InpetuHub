@@ -44,6 +44,18 @@ public final class Eventos {
         LOG.log(status >= 500 ? Level.SEVERE : Level.WARNING, texto, falha);
     }
 
+    /** Espelho da auditoria gravada no banco: só a ação, o alvo e o resultado, nomes escritos no código. */
+    public static void auditoria(String acao, String alvo, String resultado) {
+        String texto = "event=AUDIT action=" + palavra(acao) + " target=" + palavra(alvo) + " result=" + palavra(
+                resultado);
+        LOG.log("NEGADO".equals(resultado) ? Level.WARNING : Level.INFO, texto);
+    }
+
+    // Os nomes vêm de constantes do código; ainda assim, qualquer coisa fora do formato vira OTHER.
+    private static String palavra(String valor) {
+        return valor != null && valor.matches("[A-Za-z_]{1,40}") ? valor : "OTHER";
+    }
+
     private static String metodo(String metodo) {
         return switch (metodo == null ? "" : metodo) {
             case "GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS" -> metodo;

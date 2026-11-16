@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.CookieManager;
+import java.net.HttpCookie;
+import java.net.URLEncoder;
 import java.net.Socket;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -13,28 +15,66 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
 /** Cliente HTTP dos testes, com cookies (sessão) guardados entre os pedidos. */
-final class Http {
+public final class Http {
 
     private final int porta;
     private final HttpClient cliente;
+    private final CookieManager cookies = new CookieManager();
 
-    Http(Servidor servidor) {
+    public Http(Servidor servidor) {
         this.porta = servidor.porta();
         this.cliente = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(5))
-                .cookieHandler(new CookieManager())
+                .cookieHandler(cookies)
                 .followRedirects(HttpClient.Redirect.NEVER)
                 .build();
     }
 
-    HttpResponse<String> get(String caminho) throws Exception {
+    public HttpResponse<String> get(String caminho) throws Exception {
         return enviar(pedido(caminho).GET().build());
     }
 
-    HttpResponse<String> post(String caminho, String formulario) throws Exception {
+    public HttpResponse<String> post(String caminho, String formulario) throws Exception {
         return enviar(pedido(caminho).header("Content-Type", "application/x-www-form-urlencoded")
                 .POST(HttpRequest.BodyPublishers.ofString(formulario))
                 .build());
+    }
+
+    /** Formulário com os campos na ordem dada (nome, valor, nome, valor...), já codificados. */
+    public static String formulario(String... pares) {
+        StringBuilder saida = new StringBuilder();
+        for (int i = 0; i < pares.length; i += 2) {
+            saida.append(i == 0 ? "" : "&")
+                    .append(URLEncoder.encode(pares[i], StandardCharsets.UTF_8))
+                    .append('=')
+                    .append(URLEncoder.encode(pares[i + 1], StandardCharsets.UTF_8));
+        }
+        return saida.toString();
+    }
+
+    /** O token CSRF escrito na tela (campo oculto {@code _csrf}). */
+    public static String csrf(String html) {
+        java.util.regex.Matcher m = java.util.regex.Pattern.compile("name=\"_csrf\" value=\"([^\"]+)\"").matcher(
+                html);
+        if (!m.find()) {
+            throw new AssertionError("Tela sem o campo _csrf.");
+        }
+        return m.group(1);
+    }
+
+    /** O valor do cookie de sessão guardado agora (null se não houver). */
+    public String sessao() {
+        for (HttpCookie cookie : cookies.getCookieStore().getCookies()) {
+            if (cookie.getName().equals("JSESSIONID")) {
+                return cookie.getValue();
+            }
+        }
+        return null;
+    }
+
+    /** Esquece os cookies, como um navegador novo. */
+    public void esquecerCookies() {
+        cookies.getCookieStore().removeAll();
     }
 
     private HttpRequest.Builder pedido(String caminho) {
@@ -47,12 +87,12 @@ final class Http {
     }
 
     /** Pedido escrito à mão, para mandar um cabeçalho Host qualquer (o HttpClient não deixa). */
-    String bruto(String host) throws Exception {
+    public String bruto(String host) throws Exception {
         return bruto(host, "/saude");
     }
 
     /** Pedido escrito à mão, com o caminho exatamente como veio (sem o cliente normalizar). */
-    String bruto(String host, String caminho) throws Exception {
+    public String bruto(String host, String caminho) throws Exception {
         try (Socket socket = new Socket("127.0.0.1", porta)) {
             socket.setSoTimeout(10_000);
             OutputStream saida = socket.getOutputStream();

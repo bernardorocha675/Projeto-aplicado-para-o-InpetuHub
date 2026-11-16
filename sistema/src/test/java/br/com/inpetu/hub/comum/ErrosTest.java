@@ -22,7 +22,7 @@ class ErrosTest {
 
     @BeforeAll
     static void subir() throws Exception {
-        servidor = Servidor.iniciar(0, RotasDeTeste.todas());
+        servidor = Servidor.iniciar(0, AmbienteDeTeste.novo(), RotasDeTeste.todas());
     }
 
     @AfterAll
