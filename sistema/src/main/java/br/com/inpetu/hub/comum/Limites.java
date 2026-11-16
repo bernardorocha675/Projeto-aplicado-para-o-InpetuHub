@@ -1,8 +1,12 @@
 package br.com.inpetu.hub.comum;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.HexFormat;
 import java.util.Map;
 
 /**
@@ -21,6 +25,17 @@ public final class Limites {
 
     public Limites(Clock relogio) {
         this.relogio = relogio;
+    }
+
+    /** Resumo (SHA-256, 16 bytes) para usar como chave sem guardar o endereço ou o usuário em texto. */
+    public static String resumo(String valor) {
+        try {
+            byte[] bytes = MessageDigest.getInstance("SHA-256").digest(String.valueOf(valor).getBytes(
+                    StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(bytes, 0, 16);
+        } catch (NoSuchAlgorithmException impossivel) {
+            throw new IllegalStateException(impossivel);
+        }
     }
 
     public synchronized boolean permite(String chave, int maximo, Duration periodo) {

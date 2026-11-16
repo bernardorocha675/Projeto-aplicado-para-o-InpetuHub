@@ -5,18 +5,19 @@ import java.net.http.HttpResponse;
 import br.com.inpetu.hub.comum.Http;
 
 /** Abre a tela de login (que traz o token CSRF) e envia o usuário e a senha. */
-final class Entrar {
+public final class Entrar {
 
     private Entrar() {
     }
 
-    static HttpResponse<String> com(Http http, String usuario, String senha) throws Exception {
+    public static HttpResponse<String> com(Http http, String usuario, String senha) throws Exception {
         String token = Http.csrf(http.get("/login").body());
         return http.post("/login", Http.formulario("_csrf", token, "usuario", usuario, "senha", senha));
     }
 
     /** Envia um formulário de uma tela já aberta, com o token dela. */
-    static HttpResponse<String> enviar(Http http, String tela, String destino, String... campos) throws Exception {
+    public static HttpResponse<String> enviar(Http http, String tela, String destino, String... campos)
+            throws Exception {
         String token = Http.csrf(http.get(tela).body());
         String[] pares = new String[campos.length + 2];
         pares[0] = "_csrf";
@@ -25,7 +26,7 @@ final class Entrar {
         return http.post(destino, Http.formulario(pares));
     }
 
-    static String destino(HttpResponse<String> resposta) {
+    public static String destino(HttpResponse<String> resposta) {
         return resposta.headers().firstValue("Location").orElse("");
     }
 }

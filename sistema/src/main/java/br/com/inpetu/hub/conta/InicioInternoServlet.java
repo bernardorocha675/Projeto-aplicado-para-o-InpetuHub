@@ -21,6 +21,7 @@ final class InicioInternoServlet extends HttpServlet {
         ContaSessao conta = (ContaSessao) pedido.getAttribute(SessaoFilter.NO_PEDIDO);
         pedido.setAttribute("nomeDaConta", conta.nome());
         pedido.setAttribute("perfilDaConta", conta.perfil() == Perfil.ADMIN ? "Administrador" : "Colaborador");
+        pedido.setAttribute("paginaAtual", "interna");
         Telas.mostrar(pedido, resposta, "interna/inicio");
     }
 }

@@ -175,3 +175,108 @@ a {
   font: inherit;
   font-weight: 700;
 }
+.topo {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+}
+.menu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+}
+.menu a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--navy);
+  font-weight: 700;
+  text-decoration: none;
+}
+.menu a[aria-current="page"] {
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+.so-leitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.erro-campo {
+  margin: 0;
+  color: var(--erro);
+}
+.formulario input[aria-invalid="true"] {
+  border-color: var(--erro);
+  border-width: 2px;
+}
+.formulario .caixa {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  font-weight: 400;
+}
+.formulario .caixa input {
+  width: 24px;
+  height: 24px;
+  min-height: 0;
+}
+.alerta a {
+  color: inherit;
+}
+.lista-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+  padding: 0;
+  list-style: none;
+}
+.lista-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 700;
+}
+/* relative: o texto só para leitor de tela (absolute) fica dentro da rolagem, sem alargar a página. */
+.rolagem-tabela {
+  position: relative;
+  margin-top: 24px;
+  overflow-x: auto;
+}
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+}
+.tabela caption {
+  text-align: left;
+  padding-bottom: 12px;
+}
+.tabela th,
+.tabela td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: middle;
+}
+.tabela thead th {
+  color: var(--muted);
+  background: var(--bg-claro);
+  font-size: 14px;
+}
+.acoes-linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.acoes-linha form {
+  margin: 0;
+}
+.acoes-linha .botao {
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
