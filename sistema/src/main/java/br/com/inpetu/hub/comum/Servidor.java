@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.tomcat.InstanceManager;
@@ -19,23 +20,28 @@ import org.eclipse.jetty.ee11.servlet.ErrorPageErrorHandler;
 import org.eclipse.jetty.ee11.servlet.FilterHolder;
 import org.eclipse.jetty.ee11.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee11.servlet.ServletHolder;
+import org.eclipse.jetty.ee11.servlet.SessionHandler;
+import org.eclipse.jetty.http.HttpCookie;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.resource.ResourceFactory;
 
+import br.com.inpetu.hub.conta.ModuloConta;
 import jakarta.servlet.DispatcherType;
+import jakarta.servlet.SessionTrackingMode;
 import jakarta.servlet.http.HttpServlet;
 
 /**
  * Jetty embutido, escutando só em 127.0.0.1 (a porta 0 pede uma porta livre). Telas em JSP, arquivos estáticos e os
- * filtros de segurança, na ordem: requisição/log, cabeçalhos, host local, CSRF.
+ * filtros, na ordem: requisição/log, cabeçalhos, host local, CSRF, limites e sessão (estes dois da conta).
  */
 public final class Servidor implements AutoCloseable {
 
     public static final String ENDERECO = "127.0.0.1";
     private static final String[] PASTAS_ESTATICAS = {"/css/*", "/js/*", "/img/*", "/fontes/*"};
+    private static final int PRAZO_SEM_USO_SEGUNDOS = 20 * 60;
 
     private final Server jetty;
     private final ServerConnector conector;
@@ -47,12 +53,13 @@ public final class Servidor implements AutoCloseable {
         this.rascunhoJsp = rascunhoJsp;
     }
 
-    public static Servidor iniciar(int porta) throws Exception {
-        return iniciar(porta, Map.of());
+    public static Servidor iniciar(int porta, Ambiente ambiente) throws Exception {
+        return iniciar(porta, ambiente, Map.of());
     }
 
     /** Sobe o servidor com as rotas do sistema e as rotas extras (caminho → servlet). */
-    public static Servidor iniciar(int porta, Map<String, ? extends HttpServlet> rotas) throws Exception {
+    public static Servidor iniciar(int porta, Ambiente ambiente, Map<String, ? extends HttpServlet> rotas)
+            throws Exception {
         if (porta < 0 || porta > 65535) {
             throw new IllegalArgumentException("Porta fora do intervalo 0–65535: " + porta);
         }
@@ -71,12 +78,13 @@ public final class Servidor implements AutoCloseable {
         Path rascunho = Files.createTempDirectory("inpetu-jsp-");
         ServletContextHandler contexto = new ServletContextHandler(ServletContextHandler.SESSIONS);
         contexto.setContextPath("/");
-        contexto.getSessionHandler().setHttpOnly(true);
+        configurarSessao(contexto.getSessionHandler());
         contexto.setBaseResource(ResourceFactory.of(contexto).newResource(webapp().toURI()));
         // Telas (.jsp), modelos (.tag) e o manifesto nunca são servidos direto.
         contexto.setProtectedTargets(new String[]{"/WEB-INF", "/META-INF"});
         configurarJsp(contexto, rascunho);
         configurarFiltros(contexto);
+        ModuloConta.registrar(contexto, ambiente);
         configurarErros(contexto);
 
         ServletHolder estaticos = new ServletHolder("estaticos", DefaultServlet.class);
@@ -107,6 +115,14 @@ public final class Servidor implements AutoCloseable {
             throw new IllegalStateException("Pasta webapp/ não encontrada no classpath.");
         }
         return url;
+    }
+
+    /** Sessão só por cookie, sem acesso por script, SameSite=Lax e 20 minutos sem uso (como no antigo). */
+    private static void configurarSessao(SessionHandler sessoes) {
+        sessoes.setHttpOnly(true);
+        sessoes.setSameSite(HttpCookie.SameSite.LAX);
+        sessoes.setSessionTrackingModes(Set.of(SessionTrackingMode.COOKIE));
+        sessoes.setMaxInactiveInterval(PRAZO_SEM_USO_SEGUNDOS);
     }
 
     private static void configurarJsp(ServletContextHandler contexto, Path rascunho) {

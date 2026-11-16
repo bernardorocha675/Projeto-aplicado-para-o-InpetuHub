@@ -23,7 +23,9 @@ O teste das migrations no MySQL roda só quando existe um MySQL de teste (na CI 
 INPETU_TESTE_MYSQL_URL="jdbc:mysql://127.0.0.1:3306/inpetu_teste" INPETU_TESTE_MYSQL_USUARIO="inpetu" INPETU_TESTE_MYSQL_SENHA="..." ./mvnw verify
 ```
 
-Com o sistema de pé, `http://127.0.0.1:8080/saude` responde `ok`. Ele escuta só em `127.0.0.1`, nunca na rede.
+Com o sistema de pé, `http://127.0.0.1:8080/saude` responde `ok` e `http://127.0.0.1:8080/login` abre a Área Interna. Ele escuta só em `127.0.0.1`, nunca na rede.
+
+**Dados e contas (modo local).** O banco H2 fica na pasta de `-Dinpetu.dados="<pasta>"`, que o iniciador vai passar (entrega 9). Sem essa opção, ele fica em `target/dados-desenvolvimento/` (apagado pelo `clean`). Ao subir, as 5 contas públicas de demonstração (as mesmas do antigo, em [`docs/ACESSOS.md`](../docs/ACESSOS.md)) são criadas ou voltam ao padrão: uma senha trocada vale até o sistema reiniciar.
 
 ## No editor
 
@@ -39,7 +41,9 @@ A CI (`.github/workflows/sistema.yml`) roda `./mvnw verify`, ou seja, testes e `
 ```
 src/main/java/br/com/inpetu/hub/
   Aplicacao.java    ponto de entrada (java -jar)
-  comum/            servidor, filtros, erros, log seguro (cresce a partir da entrega 3)
+  comum/            servidor, filtros, erros, log seguro, limites de tentativas
+  conta/            login, sessão, perfis, contas de demonstração e troca de senha
+  auditoria/        auditoria gravada no banco
 src/test/java/…     espelha os pacotes
 formatacao-java.xml formatação Java (Eclipse XML: 4 espaços, 120 colunas)
 ```
@@ -48,6 +52,6 @@ Os pacotes são separados por assunto (`conta/`, `espaco/`, `reserva/` …), e n
 
 ## Bibliotecas
 
-São só as autorizadas no plano (decisão 3b): Jetty, Flyway, H2, MySQL Connector/J e jBCrypt, mais JUnit 5 nos testes. Até agora (entrega 1) entraram apenas o **Jetty** e o **JUnit**. Para adicionar qualquer outra, é preciso o ok da equipe antes.
+São só as autorizadas no plano (decisão 3b): Jetty, Flyway, H2, MySQL Connector/J e jBCrypt, mais JUnit 5 nos testes. Até a entrega 4 entraram todas: Jetty (com JSP/JSTL), Flyway, H2, MySQL Connector/J, jBCrypt e JUnit. Para adicionar qualquer outra, é preciso o ok da equipe antes.
 
-Ao rodar, o Jetty mostra três avisos `SLF4J(W): No SLF4J providers were found`. Isso é esperado, porque o SLF4J/Logback não foi autorizado. O log do sistema (`java.util.logging`) entra na entrega 3.
+O log do sistema usa `java.util.logging`, em JSON, sem dados pessoais. Os avisos do SLF4J ficam silenciados, porque o SLF4J/Logback não foi autorizado.

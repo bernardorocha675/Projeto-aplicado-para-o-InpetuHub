@@ -38,6 +38,7 @@ final class Erros {
                     "Esta ação exige permissão ou uma sessão válida. Recarregue a página e tente de novo.");
             case 404 -> new Tela(404, "Página não encontrada", "O endereço pode ter mudado ou não existir mais.");
             case 405 -> new Tela(405, "Ação não permitida", "Esta ação não está disponível neste endereço.");
+            case 429 -> new Tela(429, "Muitas tentativas", "Aguarde alguns minutos antes de tentar de novo.");
             default -> status >= 500
                     ? new Tela(status, "Não foi possível concluir", TENTE_DE_NOVO)
                     : new Tela(status, "Não foi possível concluir", "Confira os dados e tente novamente.");
