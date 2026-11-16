@@ -37,6 +37,7 @@ A equipe decidiu refazer o InPETU Hub do zero só com Java, SQL, Python e HTML/C
 | 11 | Sistemas (12/11/2026) | **Linux primeiro, x64 e ARM64**; **Windows depois**, numa etapa própria; **macOS fora** da reescrita. Vale só para `sistema/` e o novo iniciador: o sistema antigo (0.5.x) mantém a matriz de hoje |
 | 11 | GitHub | **Só o modelo de PR** (`.github/pull_request_template.md`); sem modelos de issue, rótulos nem quadro por enquanto |
 | 12 | Taxas e preços sem Administração | **Limitação aceita.** As regras ficam iguais às do antigo: a aprovação recusa reservas que precisam de taxas ainda não configuradas, e pedidos sem tabela de preços para o ano (2027) recebem uma mensagem amigável. Na prática, a v1 aprova reservas P1 (sem cobrança) e as que não dependem de taxa, em 2026. A tela de Configuração e Preços entra com a Administração |
+| 14 | Telas só para computador (16/11/2026) | A reescrita é feita **só para computador (Linux)**: nada de layout, testes ou conferências para celular. O CSS de celular que já existe fica como está, mas não recebe trabalho novo. A página inicial continua **básica** (`/` abre a agenda). O cabeçalho e o rodapé oficiais entram na **entrega 8**, só para computador. Os **feriados de 2027** ficam como estão, sem ação, até novo pedido |
 | 13 | Email | **Confirmação manual na v1**, como o modo local do antigo: a equipe confere a identidade e o contato ao aceitar. O código por email fica atrás da interface `EnviadorEmail`, para quando o Angus Mail for autorizado |
 
 Consequências das bibliotecas recusadas:
@@ -142,8 +143,8 @@ Regras: pacotes por assunto; entidades encapsuladas com métodos de regra (`rese
    - solicitações (aceitar com conferência ou recusar);
    - reservas: lista, busca, detalhe com Sim/Não e histórico, e todas as ações;
    - auditoria gravada;
-   - menu com hambúrguer.
-   - **Testes portados:** o restante do `FluxosIntegrationTest`, `ConcorrenciaIntegrationTest`, `MenuCelularTest`, `AreaInternaTest`.
+   - cabeçalho e rodapé oficiais, só para computador (decisão 14: sem menu de celular).
+   - **Testes portados:** o restante do `FluxosIntegrationTest`, `ConcorrenciaIntegrationTest`, `AreaInternaTest` (sem as medidas de celular; o `MenuCelularTest` fica fora, decisão 14).
    - **Com isso a fatia de ponta a ponta fica completa:** login → espaços → pedido → aprovação.
 9. **Iniciador Python, parte 1:**
    - janela tkinter com Iniciar, Parar e Abrir navegador;
