@@ -54,7 +54,9 @@ class AtualizacaoTest(ComPasta):
         self.assertEqual("1.0.0-alpha.3", str(self.instalacao.atual()[0]))
         self.assertTrue(anterior.is_dir(), "a versão anterior continua lá")
         atual = self.instalacao.atual()[1]
-        self.assertTrue((atual / "runtime" / "bin" / "java").stat().st_mode & 0o111, "java continua executável")
+        self.assertTrue((atual / so.JAVA).is_file())
+        if not so.WINDOWS:
+            self.assertTrue((atual / so.JAVA).stat().st_mode & 0o111, "java continua executável")
         self.assertIn("Atualizado para a versão 1.0.0-alpha.3", resultado.mensagem)
         self.assertIn("UPDATE_INSTALLED", [e["event"] for e in self.eventos()])
 
@@ -182,7 +184,7 @@ class SomasDoBundleTest(ComPasta):
         import hashlib
         pastas = Pastas.do_ambiente(self.ambiente)
         pastas.criar()
-        bundle = {"versao": "1.0.0", "plataforma": "linux-x64", "java": "runtime/bin/java",
+        bundle = {"versao": "1.0.0", "plataforma": "linux-x64", "java": so.JAVA,
                   "jar": "app/inpetu-hub-sistema.jar",
                   "arquivos": {"app/inpetu-hub-sistema.jar": hashlib.sha256(b"outro conteudo").hexdigest()}}
         caminho = self.base / "p.zip"

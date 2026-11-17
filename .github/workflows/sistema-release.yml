@@ -68,10 +68,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - {os: ubuntu-24.04, plataforma: Linux-x64, python: python3}
-          - {os: ubuntu-24.04-arm, plataforma: Linux-ARM64, python: python3}
-          - {os: windows-2025, plataforma: Windows-x64, python: python}
-          - {os: windows-11-arm, plataforma: Windows-ARM64, python: python}
+          # O Temurin não publica o JDK 25 para Windows ARM64: lá, o Microsoft Build of OpenJDK 25.
+          - {os: ubuntu-24.04, plataforma: Linux-x64, python: python3, jdk: temurin}
+          - {os: ubuntu-24.04-arm, plataforma: Linux-ARM64, python: python3, jdk: temurin}
+          - {os: windows-2025, plataforma: Windows-x64, python: python, jdk: temurin}
+          - {os: windows-11-arm, plataforma: Windows-ARM64, python: python, jdk: microsoft}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 40
     env:
@@ -82,7 +83,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad
         with:
-          distribution: temurin
+          distribution: ${{ matrix.jdk }}
           java-version: '25'
       - name: Python com tkinter e venv (Linux)
         if: runner.os == 'Linux'
@@ -102,7 +103,7 @@ jobs:
         working-directory: inicializador
         env:
           INPETU_JAR: ${{ github.workspace }}/sistema/target/inpetu-hub-sistema.jar
-        run: $PY -m unittest discover -s testes -t . -v 2>&1 | tail -n 80; exit "${PIPESTATUS[0]}"
+        run: $PY -m unittest discover -s testes -t . -v
       - name: Testar os scripts
         timeout-minutes: 3
         run: $PY -m unittest discover -s scripts/tests -t scripts -v

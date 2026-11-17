@@ -39,9 +39,10 @@ class SistemaOperacionalTest(unittest.TestCase):
 
     def test_passagem_no_linux_troca_o_processo(self):
         chamadas = []
-        so.trocar_processo(pathlib.Path("/v/inpetu-hub"), ["-x"], "posix",
-                           trocar=lambda executavel, argv: chamadas.append((executavel, argv)))
-        self.assertEqual([("/v/inpetu-hub", ["/v/inpetu-hub", "-x"])], chamadas)
+        executavel = pathlib.Path("/v/inpetu-hub")
+        so.trocar_processo(executavel, ["-x"], "posix",
+                           trocar=lambda caminho, argv: chamadas.append((caminho, argv)))
+        self.assertEqual([(str(executavel), [str(executavel), "-x"])], chamadas)
 
 
 if __name__ == "__main__":
