@@ -17,7 +17,7 @@
 | 9 | Iniciador Python, parte 1 | `reescrita/iniciador` | Em revisão (PR aberto sobre a `reescrita/interna`, aguardando o ok) |
 | 10 | Iniciador Python, parte 2 (atualização) | `reescrita/atualizacao` | Em revisão (PR aberto sobre a `reescrita/iniciador`, aguardando o ok) |
 | 11 | Pacote e CI de release | `reescrita/pacote` | Em revisão (PR aberto sobre a `reescrita/atualizacao`, aguardando o ok; nenhuma pré-release publicada) |
-| — | Windows (etapa da decisão 11) | `reescrita/windows` | Em revisão (PR aberto sobre a `reescrita/pacote`, aguardando o ok; nenhuma pré-release publicada) |
+| — | Windows (etapa da decisão 11) | `reescrita/windows` | Integrada na `reescrita/pacote` (PR #69, 17/11/2026); segue no PR #68 |
 | 12 | — | — | Não iniciada; só começa com o ok do responsável |
 
 Versões fixadas na entrega 1 (todas publicadas há mais de 2 semanas em 11/11/2026): Java 25, Maven 3.9.16 (Maven Wrapper 3.3.4, com SHA-256), Jetty 12.1.14 (EE 11), JUnit 5.14.4, Spotless 3.10.4. Na entrega 2 (mais de 2 semanas em 12/11/2026): Flyway 13.11.1 (+ flyway-mysql), H2 2.5.252, MySQL Connector/J 26.10.0 (sem o protobuf, que só serve ao protocolo X). Na entrega 3: Jetty JSP (`jetty-ee11-apache-jsp`, com o compilador ECJ) e JSTL (`jetty-ee11-glassfish-jstl`), na mesma versão 12.1.14 do Jetty. Na entrega 4: jBCrypt 0.4 (`org.mindrot:jbcrypt`, licença ISC, sem alertas no OSV em 16/11/2026). Na entrega 11, só no build: PyInstaller 6.22.3 (`scripts/requisitos-pacote.txt`, de 12/09/2026).
