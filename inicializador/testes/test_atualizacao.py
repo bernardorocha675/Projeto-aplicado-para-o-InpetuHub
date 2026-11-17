@@ -170,3 +170,21 @@ class InstalacaoTest(ComPasta):
         self.instalacao.limpar_antigas(manter=3)
         restantes = sorted(p.name for p in self.pastas.versoes.iterdir() if p.is_dir())
         self.assertEqual(["1.0.0-alpha.1", "1.0.0-alpha.4", "1.0.0-alpha.5"], restantes)
+
+
+class SomasDoBundleTest(ComPasta):
+
+    def test_arquivo_alterado_depois_de_gerado_e_recusado(self):
+        import hashlib
+        pastas = Pastas.do_ambiente(self.ambiente)
+        pastas.criar()
+        bundle = {"versao": "1.0.0", "plataforma": "linux-x64", "java": "runtime/bin/java",
+                  "jar": "app/inpetu-hub-sistema.jar",
+                  "arquivos": {"app/inpetu-hub-sistema.jar": hashlib.sha256(b"outro conteudo").hexdigest()}}
+        caminho = self.base / "p.zip"
+        caminho.write_bytes(pacote_zip("1.0.0", bundle=bundle))
+        with self.assertRaises(Exception):
+            Instalacao(pastas).instalar_zip(caminho, "1.0.0")
+        bundle["arquivos"] = {"app/inpetu-hub-sistema.jar": hashlib.sha256(b"jar").hexdigest()}
+        caminho.write_bytes(pacote_zip("1.0.0", bundle=bundle))
+        self.assertTrue(Instalacao(pastas).instalar_zip(caminho, "1.0.0").is_dir())

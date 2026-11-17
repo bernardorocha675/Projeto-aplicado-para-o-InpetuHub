@@ -1,0 +1,107 @@
+name: Sistema (reescrita) — pacote e pré-release
+# Gera e testa o pacote do sistema novo para Linux x64 e ARM64 (decisão 11). Em PR, só gera e testa.
+# A pré-release só é publicada à mão (Actions → Run workflow) com "publicar" marcado, a partir da main,
+# depois do ok do responsável. Tags e assets publicados nunca são movidos nem substituídos.
+on:
+  pull_request:
+    paths: ['sistema/**', 'inicializador/**', 'scripts/**', '.github/workflows/sistema-release.yml']
+  workflow_dispatch:
+    inputs:
+      versao:
+        description: 'Versão da pré-release (1.0.0-alpha.N)'
+        required: true
+      publicar:
+        description: 'Publicar a pré-release no GitHub (só com o ok do responsável)'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: sistema-release-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  VERSAO: ${{ github.event.inputs.versao || '1.0.0-alpha.999' }}
+jobs:
+  pacote:
+    name: Pacote ${{ matrix.plataforma }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-24.04, plataforma: Linux-x64}
+          - {os: ubuntu-24.04-arm, plataforma: Linux-ARM64}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Conferir a versão
+        run: |
+          if ! [[ "$VERSAO" =~ ^1\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-(alpha|beta|rc)\.[1-9][0-9]*)?$ ]]; then
+            echo "Versão fora da linha 1.x: $VERSAO"; exit 1
+          fi
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+          cache-dependency-path: sistema/pom.xml
+      - name: Python com tkinter e venv
+        timeout-minutes: 5
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq python3-tk python3-venv
+      - name: Gerar o jar (até 3 tentativas de download)
+        timeout-minutes: 10
+        working-directory: sistema
+        run: |
+          for tentativa in 1 2 3; do
+            if ./mvnw -B -ntp -q clean package -DskipTests; then exit 0; fi
+            echo "Falhou; nova tentativa $((tentativa + 1)) de 3 em $((tentativa * 10)) s."
+            sleep $((tentativa * 10))
+          done
+          exit 1
+      - name: Testar os scripts
+        timeout-minutes: 3
+        run: python3 -m unittest discover -s scripts/tests -t scripts -v
+      - name: Gerar o pacote
+        timeout-minutes: 10
+        run: python3 scripts/build_pacote.py --versao "$VERSAO" --pular-maven --saida dist
+      - name: Conferir o nome do pacote
+        run: test -f "dist/InPETU-Hub-${{ matrix.plataforma }}-v$VERSAO.zip"
+      - name: Teste de fumaça do pacote
+        timeout-minutes: 10
+        run: python3 scripts/smoke_pacote.py "dist/InPETU-Hub-${{ matrix.plataforma }}-v$VERSAO.zip"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: pacote-${{ matrix.plataforma }}
+          path: dist/
+          retention-days: 7
+  publicar:
+    name: Publicar a pré-release
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.publicar == 'true' && github.ref == 'refs/heads/main'
+    needs: pacote
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          path: baixados
+      - name: Juntar os pacotes e o SHA256SUMS
+        run: |
+          mkdir publicar
+          mv baixados/*/*.zip publicar/
+          cd publicar && sha256sum *.zip > SHA256SUMS.txt && cat SHA256SUMS.txt
+          test "$(ls *.zip | wc -l)" = 2
+      - name: Publicar (sem mover tag nem substituir release existente)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORIO: ${{ github.repository }}
+        run: |
+          if gh release view "v$VERSAO" --repo "$REPOSITORIO" > /dev/null 2>&1; then
+            echo "A release v$VERSAO já existe: nada é substituído."; exit 1
+          fi
+          printf 'Pré-release do sistema novo (reescrita, linha 1.x), só para Linux x64 e ARM64.\n\nBaixe o pacote do seu computador, extraia e abra o inpetu-hub. Os dados ficam em ~/.config/InPETU-Hub/1 (o sistema antigo, em InPETU-Hub/0.4, não é tocado).\n' > notas.md
+          gh release create "v$VERSAO" --repo "$REPOSITORIO" --target "$GITHUB_SHA" --prerelease \
+            --title "InPETU Hub $VERSAO (pré-release)" --notes-file notas.md publicar/*.zip publicar/SHA256SUMS.txt

@@ -10,6 +10,7 @@ import pathlib
 import re
 import signal
 import subprocess
+import sys
 import time
 import urllib.request
 
@@ -77,14 +78,14 @@ class Sistema:
         numero = porta.livre()
         comando = [str(self.pacote.java), f"-Dinpetu.dados={self.pastas.dados}",
                    f"-Dinpetu.parada={self.pastas.parada}", f"-Dinpetu.session.id={self.sessao}",
-                   f"-Dinpetu.launcher.version={VERSAO}", "-Dfile.encoding=UTF-8", "-jar", str(self.pacote.jar),
+                   f"-Dinpetu.launcher.version={VERSAO}", f"-Dinpetu.app.version={VERSAO}", "-Dfile.encoding=UTF-8", "-jar", str(self.pacote.jar),
                    str(numero)]
         log = self.pastas.logs / "sistema.log"
         girar(log)
         self._saida = open(log, "ab")
         inicio = time.monotonic()
         self._processo = subprocess.Popen(comando, stdin=subprocess.DEVNULL, stdout=self._saida,
-                                          stderr=subprocess.STDOUT, start_new_session=True)
+                                          stderr=subprocess.STDOUT, start_new_session=True, env=ambiente_do_java())
         self.pastas.pid.write_text(str(self._processo.pid), encoding="utf-8")
         self.url = f"http://127.0.0.1:{numero}/"
         while time.monotonic() - inicio < self.prazo_subida:
@@ -154,6 +155,21 @@ class Sistema:
             return "OTHER"
         achados = FALHA.findall(fim)
         return achados[-1] if achados else "OTHER"
+
+
+def ambiente_do_java(origem=None):
+    """O ambiente do Java: com um idioma UTF-8 (sem ele, o Java não abre a própria pasta se ela tiver acento) e sem
+    as bibliotecas que o PyInstaller põe no LD_LIBRARY_PATH do iniciador."""
+    ambiente = dict(os.environ if origem is None else origem)
+    idioma = ambiente.get("LC_ALL") or ambiente.get("LC_CTYPE") or ambiente.get("LANG") or ""
+    if "utf-8" not in idioma.lower() and "utf8" not in idioma.lower():
+        ambiente["LC_ALL"] = "C.UTF-8"
+    original = ambiente.pop("LD_LIBRARY_PATH_ORIG", None)
+    if original is not None:
+        ambiente["LD_LIBRARY_PATH"] = original
+    elif getattr(sys, "frozen", False) or "_internal" in ambiente.get("LD_LIBRARY_PATH", ""):
+        ambiente.pop("LD_LIBRARY_PATH", None)
+    return ambiente
 
 
 def _responde(url):

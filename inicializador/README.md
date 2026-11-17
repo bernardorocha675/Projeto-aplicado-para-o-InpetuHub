@@ -34,15 +34,22 @@ instalada. A janela mostra o motivo, e o log guarda só o tipo (`RATE_LIMITED`, 
 `NETWORK`, `INVALID_RESPONSE`, `INTEGRITY`) e o status. Só são aceitos endereços do GitHub, também nos
 redirecionamentos.
 
-O pacote (gerado na entrega 11) tem, na raiz ou numa única pasta dentro do zip:
+O pacote (`python3 scripts/build_pacote.py --versao 1.0.0-alpha.N`) tem, numa única pasta dentro do zip:
 
 ```
 bundle.json                    {"versao": "1.0.0-alpha.1", "plataforma": "linux-x64", "iniciador": "inpetu-hub",
-                                "java": "runtime/bin/java", "jar": "app/inpetu-hub-sistema.jar"}
-inpetu-hub                     o iniciador (PyInstaller)
-runtime/                       o Java mínimo (jlink)
+                                "java": "runtime/bin/java", "jar": "app/inpetu-hub-sistema.jar",
+                                "arquivos": {"<caminho>": "<SHA-256>", ...}}
+inpetu-hub                     o iniciador (PyInstaller, pasta única)
+_internal/                     o Python e o tkinter do iniciador
+runtime/                       o Java mínimo (jlink, com os idiomas en, pt e pt-BR)
 app/inpetu-hub-sistema.jar
 ```
+
+Ao instalar, o iniciador confere o SHA-256 de cada arquivo listado em `arquivos` (um arquivo diferente recusa a
+versão). No pacote, a versão do iniciador vem do `bundle.json`. O Java recebe um idioma UTF-8 (sem ele, não abre a
+própria pasta quando ela tem acento) e não recebe as bibliotecas do PyInstaller. Teste de fumaça do pacote pronto:
+`python3 scripts/smoke_pacote.py dist/<pacote>.zip [--anterior <pacote mais velho>.zip]`.
 
 ## Rodar no desenvolvimento
 
@@ -56,7 +63,7 @@ python3 -m inpetu_iniciador --desenvolvimento --sem-janela   # sem janela; Ctrl+
 python3 -m inpetu_iniciador --pacote "PASTA DO PACOTE"        # como o executável: instala, atualiza e sobe
 ```
 
-`--desenvolvimento` usa o `java` do PATH (JDK 25) e o jar de `sistema/target`. O pacote para o usuário (entrega 11)
+`--desenvolvimento` usa o `java` do PATH (JDK 25) e o jar de `sistema/target`. O pacote para o usuário
 traz o Java mínimo em `runtime/` e o jar em `app/`, e o iniciador usa a pasta onde está.
 
 ## Testes

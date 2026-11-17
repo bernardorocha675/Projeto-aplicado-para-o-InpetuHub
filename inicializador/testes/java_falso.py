@@ -17,6 +17,8 @@ def main():
     argumentos = sys.argv[1:]
     if os.environ.get("FALSO_ARGS"):
         pathlib.Path(os.environ["FALSO_ARGS"]).write_text(json.dumps(argumentos), encoding="utf-8")
+        ambiente = {chave: os.environ.get(chave) for chave in ("LC_ALL", "LANG", "LD_LIBRARY_PATH")}
+        pathlib.Path(os.environ["FALSO_ARGS"] + ".ambiente").write_text(json.dumps(ambiente), encoding="utf-8")
     propriedades = dict(a[2:].split("=", 1) for a in argumentos if a.startswith("-D") and "=" in a)
     porta = int(argumentos[-1])
     modo = os.environ.get("FALSO_MODO", "normal")

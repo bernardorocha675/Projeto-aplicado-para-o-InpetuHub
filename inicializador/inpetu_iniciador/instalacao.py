@@ -3,6 +3,7 @@
 Uma versão nova é extraída numa pasta provisória, conferida (bundle.json da mesma versão, Java e jar presentes) e só
 então renomeada. A anterior nunca é apagada na hora: ficam as três mais novas e sempre a atual.
 """
+import hashlib
 import json
 import os
 import pathlib
@@ -109,6 +110,13 @@ class Instalacao:
             relativo = dados.get(chave)
             if not isinstance(relativo, str) or not (raiz / relativo).is_file():
                 raise PacoteInvalido("pacote incompleto")
+        somas = dados.get("arquivos", {})
+        if not isinstance(somas, dict):
+            raise PacoteInvalido("bundle.json inválido")
+        for relativo, esperada in somas.items():
+            arquivo = (raiz / relativo).resolve()
+            if raiz.resolve() not in arquivo.parents or not arquivo.is_file() or _sha256(arquivo) != esperada:
+                raise PacoteInvalido("arquivo do pacote diferente do bundle.json")
         destino = self.pasta / versao_esperada
         if destino.exists():
             shutil.rmtree(provisoria, ignore_errors=True)
@@ -116,6 +124,14 @@ class Instalacao:
         os.replace(raiz, destino)
         shutil.rmtree(provisoria, ignore_errors=True)
         return destino
+
+
+def _sha256(arquivo):
+    soma = hashlib.sha256()
+    with open(arquivo, "rb") as f:
+        for bloco in iter(lambda: f.read(1 << 20), b""):
+            soma.update(bloco)
+    return soma.hexdigest()
 
 
 def _raiz_do_pacote(pasta):
