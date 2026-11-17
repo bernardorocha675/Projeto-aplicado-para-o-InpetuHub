@@ -37,8 +37,26 @@ class BuildPacoteTest(unittest.TestCase):
     def test_nome_do_pacote_segue_o_do_antigo(self):
         self.assertEqual("InPETU-Hub-Linux-x64-v1.0.0-alpha.1.zip",
                          build_pacote.nome_do_zip("Linux-x64", "1.0.0-alpha.1"))
-        self.assertEqual("Linux-ARM64", build_pacote.plataforma("aarch64"))
-        self.assertEqual("Linux-x64", build_pacote.plataforma("x86_64"))
+        self.assertEqual("Linux-ARM64", build_pacote.plataforma("aarch64", "posix"))
+        self.assertEqual("Linux-x64", build_pacote.plataforma("x86_64", "posix"))
+        self.assertEqual("Windows-x64", build_pacote.plataforma("AMD64", "nt"))
+        self.assertEqual("Windows-ARM64", build_pacote.plataforma("ARM64", "nt"))
+        self.assertEqual("InPETU-Hub-Windows-x64-v1.0.0.zip", build_pacote.nome_do_zip("Windows-x64", "1.0.0"))
+
+    def test_no_windows_o_bundle_aponta_para_os_exe(self):
+        build_pacote.escrever_bundle(self.pasta, "1.0.0", "Windows-x64")
+        dados = json.loads((self.pasta / "bundle.json").read_text(encoding="utf-8"))
+        self.assertEqual(("windows-x64", "runtime/bin/java.exe", "inpetu-hub.exe"),
+                         (dados["plataforma"], dados["java"], dados["iniciador"]))
+
+    def test_opcoes_do_jlink_e_do_pyinstaller_por_sistema(self):
+        self.assertIn("--strip-native-debug-symbols=exclude-debuginfo-files", build_pacote.opcoes_jlink("Linux-x64"))
+        self.assertNotIn("--strip-native-debug-symbols=exclude-debuginfo-files",
+                         build_pacote.opcoes_jlink("Windows-x64"), "só existe no jlink do Linux")
+        self.assertIn("--windowed", build_pacote.opcoes_pyinstaller("Windows-ARM64"), "sem janela de console")
+        self.assertNotIn("--windowed", build_pacote.opcoes_pyinstaller("Linux-x64"))
+        self.assertEqual(pathlib.Path("v") / "Scripts" / "pip.exe", build_pacote.no_venv(pathlib.Path("v"), "pip", "nt"))
+        self.assertEqual(pathlib.Path("v") / "bin" / "pip", build_pacote.no_venv(pathlib.Path("v"), "pip", "posix"))
 
     def test_bundle_tem_a_versao_os_caminhos_e_a_soma_de_cada_arquivo(self):
         build_pacote.escrever_bundle(self.pasta, "1.0.0-alpha.1", "Linux-x64")
@@ -51,6 +69,7 @@ class BuildPacoteTest(unittest.TestCase):
         self.assertNotIn("bundle.json", dados["arquivos"])
         self.assertEqual(4, len(dados["arquivos"]))
 
+    @unittest.skipIf(sys.platform == "win32", "no Windows não há permissão de execução nem link sem privilégio")
     def test_zip_numa_pasta_com_as_permissoes_e_sem_links(self):
         build_pacote.escrever_bundle(self.pasta, "1.0.0-alpha.1", "Linux-x64")
         destino = build_pacote.zipar(self.pasta, self.base / "saida", "Linux-x64", "1.0.0-alpha.1")
@@ -65,6 +84,7 @@ class BuildPacoteTest(unittest.TestCase):
         with self.assertRaises(SystemExit):
             build_pacote.zipar(self.pasta, self.base / "outra", "Linux-x64", "1.0.0-alpha.1")
 
+    @unittest.skipIf(sys.platform == "win32", "criar link no Windows exige privilégio")
     def test_links_viram_copias_antes_de_montar(self):
         (self.pasta / "runtime" / "legal").mkdir()
         (self.pasta / "runtime" / "legal" / "LICENSE").symlink_to(self.pasta / "runtime" / "bin" / "java")

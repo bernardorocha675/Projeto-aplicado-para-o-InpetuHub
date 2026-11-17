@@ -20,7 +20,7 @@ class PastasTest(ComPasta):
         self.assertEqual(pastas.raiz / "sistema.parar", pastas.parada)
 
     def test_sem_xdg_usa_a_pasta_config_da_pessoa(self):
-        pastas = Pastas.do_ambiente({"HOME": str(self.base)})
+        pastas = Pastas.do_ambiente({"HOME": str(self.base)}, "posix")
         self.assertEqual(self.base / ".config" / "InPETU-Hub" / "1", pastas.raiz)
 
     def test_nunca_usa_a_pasta_do_sistema_antigo(self):

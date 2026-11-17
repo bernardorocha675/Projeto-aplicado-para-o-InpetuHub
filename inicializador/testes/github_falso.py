@@ -7,17 +7,20 @@ import threading
 import time
 import zipfile
 
+from inpetu_iniciador import so
 
-def pacote_zip(versao, plataforma="Linux-x64", extras=None, bundle=None, pasta_raiz=True):
+
+def pacote_zip(versao, plataforma=None, extras=None, bundle=None, pasta_raiz=True):
     """Um zip de pacote com bundle.json, runtime/bin/java, app/inpetu-hub-sistema.jar e o executável do iniciador."""
+    plataforma = plataforma or so.plataforma()
     buffer = io.BytesIO()
     raiz = f"InPETU-Hub-{plataforma}-v{versao}/" if pasta_raiz else ""
     with zipfile.ZipFile(buffer, "w") as z:
         dados = bundle if bundle is not None else {"versao": versao, "plataforma": plataforma.lower(),
-                                                    "iniciador": "inpetu-hub", "java": "runtime/bin/java",
+                                                    "iniciador": so.INICIADOR, "java": so.JAVA,
                                                     "jar": "app/inpetu-hub-sistema.jar"}
         z.writestr(raiz + "bundle.json", json.dumps(dados))
-        for nome, conteudo, executavel in [("runtime/bin/java", "#!/bin/sh\n", True), ("inpetu-hub", "#!/bin/sh\n", True),
+        for nome, conteudo, executavel in [(so.JAVA, "#!/bin/sh\n", True), (so.INICIADOR, "#!/bin/sh\n", True),
                                            ("app/inpetu-hub-sistema.jar", "jar", False)]:
             info = zipfile.ZipInfo(raiz + nome)
             info.external_attr = (0o100755 if executavel else 0o100644) << 16
@@ -81,9 +84,10 @@ class GitHubFalso:
         self.servidor.shutdown()
         self.servidor.server_close()
 
-    def publicar(self, versao, plataforma="Linux-x64", zip_bytes=None, sums=True, estado="uploaded",
+    def publicar(self, versao, plataforma=None, zip_bytes=None, sums=True, estado="uploaded",
                  rascunho=False, pre=None, soma_errada=False):
         """Acrescenta uma release com o pacote (e o SHA256SUMS) servidos pelo falso."""
+        plataforma = plataforma or so.plataforma()
         nome = f"InPETU-Hub-{plataforma}-v{versao}.zip"
         conteudo = zip_bytes if zip_bytes is not None else pacote_zip(versao, plataforma)
         caminho_zip = f"/download/v{versao}/{nome}"

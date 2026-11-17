@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Gera o pacote do InPETU Hub para Linux (decisão 11): jar, Java mínimo (jlink), iniciador (PyInstaller),
-bundle.json com o SHA-256 de cada arquivo e o zip InPETU-Hub-<Linux-x64|Linux-ARM64>-v<versão>.zip, mais a linha
-dele no SHA256SUMS.txt.
+"""Gera o pacote do InPETU Hub para Linux e Windows (decisão 11): jar, Java mínimo (jlink), iniciador (PyInstaller),
+bundle.json com o SHA-256 de cada arquivo e o zip InPETU-Hub-<Linux|Windows>-<x64|ARM64>-v<versão>.zip, mais a
+linha dele no SHA256SUMS.txt. Gera o pacote do sistema em que roda (o PyInstaller não gera para outro sistema).
 
 Uso: python3 scripts/build_pacote.py --versao 1.0.0-alpha.1 [--saida dist] [--pular-maven]
 Precisa do JDK 25 (jlink e jdeps; JAVA_HOME ou o PATH) e do Python com o venv e o tkinter (python3-tk).
@@ -36,9 +36,33 @@ def validar_versao(texto):
     return texto
 
 
-def plataforma(maquina=None):
+def plataforma(maquina=None, nome_do_so=None):
     maquina = (maquina or plataforma_do_sistema.machine()).lower()
-    return "Linux-ARM64" if maquina in ("aarch64", "arm64") else "Linux-x64"
+    sistema = "Windows" if (nome_do_so or os.name) == "nt" else "Linux"
+    return f"{sistema}-{'ARM64' if maquina in ('aarch64', 'arm64') else 'x64'}"
+
+
+def windows(plataforma_):
+    return plataforma_.startswith("Windows")
+
+
+def opcoes_jlink(plataforma_):
+    opcoes = [f"--include-locales={IDIOMAS}", "--strip-debug", "--no-header-files", "--no-man-pages",
+              "--compress=zip-6"]
+    if not windows(plataforma_):
+        opcoes.append("--strip-native-debug-symbols=exclude-debuginfo-files")
+    return opcoes
+
+
+def opcoes_pyinstaller(plataforma_):
+    # No Windows, sem a janela preta de console: a pessoa só vê a janela do iniciador.
+    return ["--windowed"] if windows(plataforma_) else []
+
+
+def no_venv(venv, programa, nome_do_so=None):
+    if (nome_do_so or os.name) == "nt":
+        return venv / "Scripts" / f"{programa}.exe"
+    return venv / "bin" / programa
 
 
 def nome_do_zip(plataforma_, versao):
@@ -85,8 +109,9 @@ def materializar(pasta):
 
 
 def escrever_bundle(pasta, versao, plataforma_):
-    dados = {"versao": versao, "plataforma": plataforma_.lower(), "iniciador": "inpetu-hub",
-             "java": "runtime/bin/java", "jar": f"app/{JAR}",
+    exe = ".exe" if windows(plataforma_) else ""
+    dados = {"versao": versao, "plataforma": plataforma_.lower(), "iniciador": f"inpetu-hub{exe}",
+             "java": f"runtime/bin/java{exe}", "jar": f"app/{JAR}",
              "arquivos": {c.relative_to(pasta).as_posix(): sha256(c) for c in arquivos(pasta)
                           if c.name != "bundle.json" or c.parent != pasta}}
     (pasta / "bundle.json").write_text(json.dumps(dados, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -123,33 +148,32 @@ def rodar(comando, **opcoes):
 
 def ferramenta(nome):
     java_home = os.environ.get("JAVA_HOME")
-    if java_home and (pathlib.Path(java_home) / "bin" / nome).exists():
-        return pathlib.Path(java_home) / "bin" / nome
+    if java_home and shutil.which(nome, path=str(pathlib.Path(java_home) / "bin")):
+        return pathlib.Path(shutil.which(nome, path=str(pathlib.Path(java_home) / "bin")))
     encontrada = shutil.which(nome)
     if not encontrada:
         raise SystemExit(f"{nome} não encontrado: instale o JDK 25 ou defina JAVA_HOME.")
     return pathlib.Path(encontrada)
 
 
-def java_minimo(jar, destino):
+def java_minimo(jar, destino, plataforma_):
     deps = rodar([ferramenta("jdeps"), "--print-module-deps", "--ignore-missing-deps", "--multi-release", "25", jar],
                  capture_output=True, text=True).stdout
-    rodar([ferramenta("jlink"), "--add-modules", modulos(deps), f"--include-locales={IDIOMAS}", "--strip-debug",
-           "--strip-native-debug-symbols=exclude-debuginfo-files", "--no-header-files", "--no-man-pages",
-           "--compress=zip-6", "--output", destino])
+    rodar([ferramenta("jlink"), "--add-modules", modulos(deps), *opcoes_jlink(plataforma_), "--output", destino])
     # O JDK de algumas distribuições traz os símbolos de depuração (centenas de MB) como links; não vão no pacote.
     for depuracao in destino.rglob("*.debuginfo"):
         depuracao.unlink()
 
 
-def iniciador(montagem, trabalho):
+def iniciador(montagem, trabalho, plataforma_):
     venv = trabalho / "venv"
     rodar([sys.executable, "-m", "venv", venv])
-    pip = venv / "bin" / "pip"
+    pip = no_venv(venv, "pip")
     rodar([pip, "install", "--disable-pip-version-check", "--quiet", "-r", RAIZ / "scripts" / "requisitos-pacote.txt"])
     entrada = trabalho / "inpetu_hub.py"
     entrada.write_text("from inpetu_iniciador.__main__ import main\nimport sys\nsys.exit(main())\n", encoding="utf-8")
-    rodar([venv / "bin" / "pyinstaller", "--noconfirm", "--clean", "--onedir", "--name", "inpetu-hub",
+    rodar([no_venv(venv, "pyinstaller"), "--noconfirm", "--clean", "--onedir", *opcoes_pyinstaller(plataforma_),
+           "--name", "inpetu-hub",
            "--paths", RAIZ / "inicializador", "--hidden-import", "tkinter", "--distpath", trabalho / "dist",
            "--workpath", trabalho / "build", "--specpath", trabalho, entrada])
     for item in (trabalho / "dist" / "inpetu-hub").iterdir():
@@ -166,7 +190,8 @@ def main(lista=None):
     plataforma_ = plataforma()
     jar = RAIZ / "sistema" / "target" / JAR
     if not argumentos.pular_maven:
-        rodar(["./mvnw", "-B", "-ntp", "-q", "clean", "package", "-DskipTests"], cwd=RAIZ / "sistema")
+        mvnw = str(RAIZ / "sistema" / "mvnw.cmd") if os.name == "nt" else "./mvnw"
+        rodar([mvnw, "-B", "-ntp", "-q", "clean", "package", "-DskipTests"], cwd=RAIZ / "sistema")
     if not jar.is_file():
         raise SystemExit("Jar não encontrado: rode sem --pular-maven.")
     with tempfile.TemporaryDirectory(prefix="inpetu-pacote-") as temporaria:
@@ -174,8 +199,8 @@ def main(lista=None):
         montagem = trabalho / "montagem"
         (montagem / "app").mkdir(parents=True)
         shutil.copy2(jar, montagem / "app" / JAR)
-        java_minimo(jar, montagem / "runtime")
-        iniciador(montagem, trabalho)
+        java_minimo(jar, montagem / "runtime", plataforma_)
+        iniciador(montagem, trabalho, plataforma_)
         materializar(montagem)
         escrever_bundle(montagem, versao, plataforma_)
         destino = zipar(montagem, argumentos.saida, plataforma_, versao)

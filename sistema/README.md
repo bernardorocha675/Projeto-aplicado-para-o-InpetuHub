@@ -9,7 +9,7 @@ Esta é a reescrita do InPETU Hub, em **Java puro**: Jakarta Servlet num Jetty e
 
 ## Comandos (dentro de `sistema/`)
 
-| Para | Linux | Windows (ainda não testado; vem depois) |
+| Para | Linux | Windows (o pacote é testado na CI; estes comandos de desenvolvimento não foram rodados no Windows) |
 |---|---|---|
 | Rodar todos os testes e conferir a formatação | `./mvnw verify` | `.\mvnw.cmd verify` |
 | Formatar o código Java | `./mvnw spotless:apply` | `.\mvnw.cmd spotless:apply` |

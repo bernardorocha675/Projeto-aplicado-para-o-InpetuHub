@@ -1,4 +1,5 @@
 """Passagem para o iniciador mais novo: só para uma versão maior, uma vez, e com a trava solta antes."""
+from inpetu_iniciador import so
 from inpetu_iniciador.entrega import precisa_entregar
 from inpetu_iniciador.versoes import Versao
 from testes.apoio import ComPasta
@@ -10,14 +11,14 @@ class EntregaTest(ComPasta):
         pasta = self.base / "versao"
         pasta.mkdir()
         if com_executavel:
-            (pasta / "inpetu-hub").write_text("#!/bin/sh\n", encoding="utf-8")
-            (pasta / "inpetu-hub").chmod(0o755)
+            (pasta / so.INICIADOR).write_text("#!/bin/sh\n", encoding="utf-8")
+            (pasta / so.INICIADOR).chmod(0o755)
         return pasta
 
     def test_entrega_so_para_um_iniciador_mais_novo_e_uma_vez(self):
         pasta = self.pasta()
         propria = Versao.de("1.0.0-alpha.1")
-        self.assertEqual(pasta / "inpetu-hub", precisa_entregar(propria, Versao.de("1.0.0-alpha.2"), pasta, []))
+        self.assertEqual(pasta / so.INICIADOR, precisa_entregar(propria, Versao.de("1.0.0-alpha.2"), pasta, []))
         self.assertIsNone(precisa_entregar(propria, Versao.de("1.0.0-alpha.1"), pasta, []), "mesma versão")
         self.assertIsNone(precisa_entregar(Versao.de("1.0.0-alpha.3"), Versao.de("1.0.0-alpha.2"), pasta, []))
         self.assertIsNone(precisa_entregar(propria, Versao.de("1.0.0-alpha.2"), pasta, ["--entregue"]),

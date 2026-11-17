@@ -17,6 +17,7 @@
 | 9 | Iniciador Python, parte 1 | `reescrita/iniciador` | Em revisão (PR aberto sobre a `reescrita/interna`, aguardando o ok) |
 | 10 | Iniciador Python, parte 2 (atualização) | `reescrita/atualizacao` | Em revisão (PR aberto sobre a `reescrita/iniciador`, aguardando o ok) |
 | 11 | Pacote e CI de release | `reescrita/pacote` | Em revisão (PR aberto sobre a `reescrita/atualizacao`, aguardando o ok; nenhuma pré-release publicada) |
+| — | Windows (etapa da decisão 11) | `reescrita/windows` | Em revisão (PR aberto sobre a `reescrita/pacote`, aguardando o ok; nenhuma pré-release publicada) |
 | 12 | — | — | Não iniciada; só começa com o ok do responsável |
 
 Versões fixadas na entrega 1 (todas publicadas há mais de 2 semanas em 11/11/2026): Java 25, Maven 3.9.16 (Maven Wrapper 3.3.4, com SHA-256), Jetty 12.1.14 (EE 11), JUnit 5.14.4, Spotless 3.10.4. Na entrega 2 (mais de 2 semanas em 12/11/2026): Flyway 13.11.1 (+ flyway-mysql), H2 2.5.252, MySQL Connector/J 26.10.0 (sem o protobuf, que só serve ao protocolo X). Na entrega 3: Jetty JSP (`jetty-ee11-apache-jsp`, com o compilador ECJ) e JSTL (`jetty-ee11-glassfish-jstl`), na mesma versão 12.1.14 do Jetty. Na entrega 4: jBCrypt 0.4 (`org.mindrot:jbcrypt`, licença ISC, sem alertas no OSV em 16/11/2026). Na entrega 11, só no build: PyInstaller 6.22.3 (`scripts/requisitos-pacote.txt`, de 12/09/2026).
@@ -40,7 +41,7 @@ A equipe decidiu refazer o InPETU Hub do zero só com Java, SQL, Python e HTML/C
 | 8 | JDK / formatador | **Java 25 LTS**; **formato Eclipse XML** (`sistema/formatacao-java.xml`, 4 espaços, 120 colunas), lido nativamente pelo VS Code, importado no IntelliJ e conferido com `./mvnw spotless:check` |
 | 9 | Versão | Linha **1.0.0**, com pré-releases `1.0.0-alpha.N`; dados em `InPETU-Hub/1`. O iniciador Go antigo recusa versões fora de 0.4/0.5 (`iniciador/model.go:83`), então as instalações antigas não pulam para a nova |
 | 10 | Escopo da v1 | **Núcleo + Executável** (abaixo). CRM e Administração ficam para depois, antes de remover o antigo |
-| 11 | Sistemas (12/11/2026) | **Linux primeiro, x64 e ARM64**; **Windows depois**, numa etapa própria; **macOS fora** da reescrita. Vale só para `sistema/` e o novo iniciador: o sistema antigo (0.5.x) mantém a matriz de hoje |
+| 11 | Sistemas (12/11/2026; Windows pedido em 17/11/2026) | **Linux primeiro, x64 e ARM64**; **Windows depois**, numa etapa própria (feita em 17/11/2026: Windows x64 e ARM64, branch `reescrita/windows`); **macOS fora** da reescrita. Vale só para `sistema/` e o novo iniciador: o sistema antigo (0.5.x) mantém a matriz de hoje |
 | 11 | GitHub | **Só o modelo de PR** (`.github/pull_request_template.md`); sem modelos de issue, rótulos nem quadro por enquanto |
 | 12 | Taxas e preços sem Administração | **Limitação aceita.** As regras ficam iguais às do antigo: a aprovação recusa reservas que precisam de taxas ainda não configuradas, e pedidos sem tabela de preços para o ano (2027) recebem uma mensagem amigável. Na prática, a v1 aprova reservas P1 (sem cobrança) e as que não dependem de taxa, em 2026. A tela de Configuração e Preços entra com a Administração |
 | 14 | Telas só para computador (16/11/2026) | A reescrita é feita **só para computador (Linux)**: nada de layout, testes ou conferências para celular. O CSS de celular que já existe fica como está, mas não recebe trabalho novo. A página inicial continua **básica** (`/` abre a agenda). O cabeçalho e o rodapé oficiais entram na **entrega 8**, só para computador. Os **feriados de 2027** ficam como estão, sem ação, até novo pedido |
@@ -169,7 +170,7 @@ Regras: pacotes por assunto; entidades encapsuladas com métodos de regra (`rese
     - `scripts/build_pacote.py`: jar, jlink, PyInstaller, `bundle.json` com SHA-256 e ZIP;
     - `scripts/verificar.py`: tudo localmente;
     - `sistema-release.yml`: Linux x64 e ARM64 (Windows entra depois, decisão 11), smoke do pacote e pré-release `1.0.0-alpha.N` só com o ok do responsável.
-    - **Risco a validar quando o Windows entrar:** PyInstaller no Windows ARM64.
+    - **Risco a validar quando o Windows entrar:** PyInstaller no Windows ARM64. Validado em 17/11/2026 na CI (pacote, janela e fumaça aprovados no windows-11-arm, com o Microsoft Build of OpenJDK 25, pois o Temurin não tem o JDK 25 para Windows ARM64).
 12. **v1.0.0:** revisão (`code-review`, `revisor-privacidade-logs`, `web-design-guidelines`, `accessibility-a11y`) e release com notas simples, com o ok do responsável.
 
 Em toda entrega:
