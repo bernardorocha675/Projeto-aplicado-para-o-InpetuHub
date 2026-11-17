@@ -30,7 +30,8 @@ def main():
     leitor.add_argument("--pacote", action="store_true", help="gera o pacote desta máquina e roda a fumaça")
     argumentos = leitor.parse_args()
     jar = RAIZ / "sistema" / "target" / "inpetu-hub-sistema.jar"
-    resultados = [etapa("Java: testes e formatação (./mvnw clean verify)", ["./mvnw", "-B", "-ntp", "clean", "verify"],
+    mvnw = str(RAIZ / "sistema" / "mvnw.cmd") if os.name == "nt" else "./mvnw"
+    resultados = [etapa("Java: testes e formatação (./mvnw clean verify)", [mvnw, "-B", "-ntp", "clean", "verify"],
                         RAIZ / "sistema")]
     resultados.append(etapa("Iniciador: testes (com o jar real)", [sys.executable, "-m", "unittest", "discover", "-s",
                                                                     "testes", "-t", "."], RAIZ / "inicializador",
