@@ -48,3 +48,30 @@ class ControleTest(ComPasta):
         modo_falso(self, "normal")
         controle.iniciar().result(timeout=30)
         self.assertEqual(Estado.RODANDO, controle.estado)
+
+
+class ControleComPreparoTest(ComPasta):
+
+    def test_prepara_antes_de_subir_e_passa_para_o_iniciador_novo_sem_subir(self):
+        pastas = Pastas.do_ambiente(self.ambiente)
+        pastas.criar()
+        sistema = Sistema(None, pastas, Registro(pastas, SESSAO), SESSAO, prazo_parada=5, prazo_subida=20)
+        pacote = Pacote.em(self.pacote_falso())
+        passagens = []
+
+        class Preparado:
+            entregar = None
+            mensagem = "Você já está na versão mais recente (1.0.0-alpha.1)."
+
+        Preparado.pacote = pacote
+        modo_falso(self, "normal")
+        controle = Controle(sistema, abrir=lambda url: None, preparar=lambda: Preparado, entregar=passagens.append)
+        self.addCleanup(lambda: controle.parar().result(timeout=20))
+        controle.iniciar().result(timeout=30)
+        self.assertEqual(Estado.RODANDO, controle.estado)
+        self.assertIn("versão mais recente", controle.mensagem)
+        controle.parar().result(timeout=30)
+        Preparado.entregar = self.base / "inpetu-hub"
+        controle.iniciar().result(timeout=30)
+        self.assertEqual([self.base / "inpetu-hub"], passagens)
+        self.assertFalse(sistema.rodando, "com a passagem, este iniciador não sobe o sistema")

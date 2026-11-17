@@ -7,16 +7,26 @@ import sys
 import threading
 import uuid
 
+from inpetu_iniciador import entrega
 from inpetu_iniciador.controle import Controle, Estado
+from inpetu_iniciador.github import Releases
+from inpetu_iniciador.preparo import preparar
 from inpetu_iniciador.pastas import Pastas
 from inpetu_iniciador.registro import Registro
 from inpetu_iniciador.sistema import ErroDeSubida, Pacote, Sistema
 from inpetu_iniciador.trava import Trava
 
 RAIZ_DO_REPOSITORIO = pathlib.Path(__file__).resolve().parents[2]
+REPOSITORIO = "bernardorocha675/Projeto-aplicado-para-o-InpetuHub"
+API = "https://api.github.com"
 
 
-def pacote(argumentos):
+def pasta_do_executavel(argumentos):
+    return argumentos.pacote or (pathlib.Path(sys.executable).parent if getattr(sys, "frozen", False)
+                                 else pathlib.Path.cwd())
+
+
+def pacote_de_desenvolvimento(argumentos):
     if argumentos.desenvolvimento:
         java = shutil.which("java")
         jar = RAIZ_DO_REPOSITORIO / "sistema" / "target" / "inpetu-hub-sistema.jar"
@@ -24,9 +34,7 @@ def pacote(argumentos):
             raise ErroDeSubida("Para o modo de desenvolvimento, gere o jar (cd sistema && ./mvnw package) e tenha"
                                " o JDK 25 no PATH.", "PACKAGE_INCOMPLETE")
         return Pacote(pathlib.Path(java), jar)
-    base = argumentos.pacote or (pathlib.Path(sys.executable).parent if getattr(sys, "frozen", False)
-                                 else pathlib.Path.cwd())
-    return Pacote.em(base)
+    return None
 
 
 def avisar(texto):
@@ -59,6 +67,8 @@ def main(lista=None):
     leitor.add_argument("--pacote", type=pathlib.Path, help="pasta com runtime/ e app/ (padrão: a do executável)")
     leitor.add_argument("--desenvolvimento", action="store_true", help="usa o java do PATH e sistema/target")
     leitor.add_argument("--sem-janela", action="store_true", help="sobe sem janela e para com Ctrl+C")
+    leitor.add_argument("--sem-atualizacao", action="store_true", help="não procura versão nova no GitHub")
+    leitor.add_argument(entrega.MARCA, action="store_true", help=argparse.SUPPRESS)
     argumentos = leitor.parse_args(lista)
     pastas = Pastas.do_ambiente()
     pastas.criar()
@@ -72,11 +82,25 @@ def main(lista=None):
     controle = None
     try:
         try:
-            controle = Controle(Sistema(pacote(argumentos), pastas, registro, sessao))
+            desenvolvimento = pacote_de_desenvolvimento(argumentos)
         except ErroDeSubida as erro:
             registro.evento("LAUNCHER_FAILED", failure=erro.falha)
             avisar(str(erro))
             return 1
+        sistema = Sistema(desenvolvimento, pastas, registro, sessao)
+        if desenvolvimento is not None:
+            controle = Controle(sistema)
+        else:
+            releases = None if argumentos.sem_atualizacao else Releases(API, REPOSITORIO)
+            repassar = [a for a in (lista if lista is not None else sys.argv[1:]) if a != entrega.MARCA]
+
+            def passar(executavel):
+                registro.evento("LAUNCHER_HANDOVER")
+                trava.liberar()
+                entrega.entregar(executavel, repassar)
+
+            controle = Controle(sistema, preparar=lambda: preparar(pastas, registro, pasta_do_executavel(argumentos),
+                                                                   releases, sys.argv[1:]), entregar=passar)
         if argumentos.sem_janela:
             return sem_janela(controle)
         from inpetu_iniciador.janela import Janela

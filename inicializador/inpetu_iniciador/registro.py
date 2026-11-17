@@ -8,7 +8,7 @@ import re
 
 from inpetu_iniciador import VERSAO
 
-CAMPOS = {"port", "durationMs", "exitCode", "result", "failure", "count", "attempt"}
+CAMPOS = {"port", "durationMs", "exitCode", "result", "failure", "count", "attempt", "status"}
 PALAVRA = re.compile(r"[A-Z][A-Z_]{0,39}")
 TAMANHO_MAXIMO = 1_000_000
 
