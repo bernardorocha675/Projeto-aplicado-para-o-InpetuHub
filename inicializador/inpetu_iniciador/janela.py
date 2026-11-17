@@ -2,6 +2,7 @@
 
 A janela só lê o estado do Controle a cada 200 ms (o tkinter não aceita chamadas de outras linhas).
 """
+import signal
 import tkinter as tk
 from tkinter import ttk
 
@@ -38,6 +39,9 @@ class Janela:
         self.atualizar()
 
     def rodar(self):
+        # Desligar o computador, sair da sessão ou fechar o terminal: fecha como o X (para o sistema em ordem).
+        for sinal in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
+            signal.signal(sinal, lambda *_: self.raiz.after(0, self.fechar))
         self.raiz.after(INTERVALO_MS, self._vigiar)
         self.raiz.mainloop()
 
