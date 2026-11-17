@@ -8,7 +8,7 @@ import urllib.request
 from inpetu_iniciador.pastas import Pastas
 from inpetu_iniciador.registro import Registro
 from inpetu_iniciador.sistema import ErroDeSubida, Pacote, Sistema
-from testes.apoio import ComPasta, modo_falso
+from testes.apoio import ComPasta, modo_falso, SO_LINUX
 
 SESSAO = "0123456789abcdef0123456789abcdef"
 
@@ -21,6 +21,7 @@ def saude(url):
         return 0
 
 
+@SO_LINUX
 class SistemaTest(ComPasta):
 
     def setUp(self):

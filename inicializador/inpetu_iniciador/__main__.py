@@ -53,8 +53,9 @@ def sem_janela(controle):
     """Sobe, mostra o endereço e para em ordem com Ctrl+C (ou o sinal de encerramento)."""
     controle.abrir = lambda endereco: None  # sem janela (testes e servidores): o navegador não abre sozinho
     fim = threading.Event()
-    signal.signal(signal.SIGTERM, lambda *_: fim.set())
-    signal.signal(signal.SIGINT, lambda *_: fim.set())
+    for nome in ("SIGTERM", "SIGINT", "SIGBREAK"):
+        if hasattr(signal, nome):
+            signal.signal(getattr(signal, nome), lambda *_: fim.set())
     controle.iniciar().result()
     print(controle.mensagem, flush=True)
     if controle.estado != Estado.RODANDO:

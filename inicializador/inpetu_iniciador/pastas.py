@@ -1,4 +1,5 @@
-"""Onde ficam os dados do sistema novo: InPETU-Hub/1 na pasta de configuração da pessoa (no Linux, ~/.config).
+"""Onde ficam os dados do sistema novo: InPETU-Hub/1 na pasta de configuração da pessoa (no Linux, ~/.config; no
+Windows, %LOCALAPPDATA%, a mesma base do sistema antigo).
 
 Nunca usa InPETU-Hub/0.4, a pasta do sistema antigo (decisão 4 do plano: começar limpo).
 """
@@ -6,16 +7,17 @@ import dataclasses
 import os
 import pathlib
 
+from inpetu_iniciador import so
+
 
 @dataclasses.dataclass(frozen=True)
 class Pastas:
     raiz: pathlib.Path
 
     @staticmethod
-    def do_ambiente(ambiente=None):
+    def do_ambiente(ambiente=None, nome_do_so=None):
         ambiente = os.environ if ambiente is None else ambiente
-        base = ambiente.get("XDG_CONFIG_HOME") or str(pathlib.Path(ambiente.get("HOME", "~")).expanduser() / ".config")
-        return Pastas(pathlib.Path(base) / "InPETU-Hub" / "1")
+        return Pastas(so.pasta_de_configuracao(ambiente, nome_do_so) / "InPETU-Hub" / "1")
 
     @property
     def dados(self):

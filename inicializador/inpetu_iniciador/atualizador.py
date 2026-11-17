@@ -4,9 +4,9 @@ Sem internet ou com o GitHub fora, o sistema sobe com a versão instalada; a fal
 """
 import dataclasses
 import hashlib
-import platform
 import tempfile
 
+from inpetu_iniciador import so
 from inpetu_iniciador.github import ErroDeAtualizacao
 from inpetu_iniciador.instalacao import PacoteInvalido
 from inpetu_iniciador.versoes import Versao
@@ -32,9 +32,8 @@ class Resultado:
 
 
 def plataforma():
-    """Linux-x64 ou Linux-ARM64, como no nome dos pacotes."""
-    maquina = platform.machine().lower()
-    return "Linux-ARM64" if maquina in ("aarch64", "arm64") else "Linux-x64"
+    """Linux-x64, Linux-ARM64, Windows-x64 ou Windows-ARM64, como no nome dos pacotes."""
+    return so.plataforma()
 
 
 class Atualizador:

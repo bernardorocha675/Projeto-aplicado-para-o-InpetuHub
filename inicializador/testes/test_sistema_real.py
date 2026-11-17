@@ -25,15 +25,40 @@ def status(url):
 @unittest.skipUnless(JAR and shutil.which("java"), "sem INPETU_JAR ou sem java no PATH")
 class SistemaRealTest(ComPasta):
 
+    def pacote_real(self):
+        """O java do PATH e o jar numa pasta com espaço e acento (no Windows não dá para ligar o java.exe)."""
+        pacote = self.base / "Pacote Ação"
+        (pacote / "app").mkdir(parents=True, exist_ok=True)
+        jar = pacote / "app" / "inpetu-hub-sistema.jar"
+        if not jar.exists():
+            shutil.copy(pathlib.Path(JAR), jar)
+        return Pacote(pathlib.Path(shutil.which("java")), jar)
+
+    def test_sistema_esquecido_por_um_iniciador_que_caiu_e_parado_antes_de_subir_de_novo(self):
+        pastas = Pastas.do_ambiente(self.ambiente)
+        pastas.criar()
+        esquecido = Sistema(self.pacote_real(), pastas, Registro(pastas, SESSAO), SESSAO, prazo_parada=30,
+                            prazo_subida=120)
+        self.addCleanup(esquecido.parar)
+        url_antiga = esquecido.iniciar()
+        novo = Sistema(self.pacote_real(), pastas, Registro(pastas, SESSAO), SESSAO, prazo_parada=30,
+                       prazo_subida=120)
+        self.addCleanup(novo.parar)
+        url = novo.iniciar()
+        self.assertEqual(0, status(url_antiga + "saude"), "o sistema esquecido parou")
+        self.assertEqual(200, status(url + "agenda"))
+        eventos = (pastas.logs / "iniciador.log").read_text(encoding="utf-8")
+        self.assertIn("ORPHAN_STOPPED", eventos)
+        self.assertNotIn("SYSTEM_STOP_FORCED", eventos, "parado em ordem, pelo arquivo de parada")
+
     def test_sobe_responde_para_em_ordem_e_sobe_de_novo_com_backup(self):
         pacote = self.base / "Pacote Ação"
         (pacote / "runtime" / "bin").mkdir(parents=True)
         (pacote / "app").mkdir()
-        (pacote / "runtime" / "bin" / "java").symlink_to(shutil.which("java"))
         shutil.copy(pathlib.Path(JAR), pacote / "app" / "inpetu-hub-sistema.jar")
         pastas = Pastas.do_ambiente(self.ambiente)
         pastas.criar()
-        sistema = Sistema(Pacote.em(pacote), pastas, Registro(pastas, SESSAO), SESSAO, prazo_parada=30,
+        sistema = Sistema(self.pacote_real(), pastas, Registro(pastas, SESSAO), SESSAO, prazo_parada=30,
                           prazo_subida=120)
         self.addCleanup(sistema.parar)
         for vez in (1, 2):

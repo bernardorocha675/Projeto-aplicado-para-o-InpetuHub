@@ -6,6 +6,10 @@ import sys
 import tempfile
 import unittest
 
+from inpetu_iniciador import so
+
+SO_LINUX = unittest.skipIf(so.WINDOWS, "Java falso em sh; no Windows o sistema é testado com o jar real e na fumaça")
+
 AQUI = pathlib.Path(__file__).resolve().parent
 
 
@@ -15,7 +19,8 @@ class ComPasta(unittest.TestCase):
     def setUp(self):
         self.base = pathlib.Path(tempfile.mkdtemp(prefix="inpetu ação "))
         self.addCleanup(shutil.rmtree, self.base, ignore_errors=True)
-        self.ambiente = {"XDG_CONFIG_HOME": str(self.base / "Configuração de Fulano")}
+        configuracao = str(self.base / "Configuração de Fulano")
+        self.ambiente = {"XDG_CONFIG_HOME": configuracao, "LOCALAPPDATA": configuracao}
 
     def pacote_falso(self):
         """Uma pasta de pacote com runtime/bin/java (o Java falso) e app/inpetu-hub-sistema.jar (vazio)."""

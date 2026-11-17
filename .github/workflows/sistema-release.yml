@@ -1,7 +1,7 @@
 name: Sistema (reescrita) — pacote e pré-release
-# Gera e testa o pacote do sistema novo para Linux x64 e ARM64 (decisão 11). Em PR, só gera e testa.
-# A pré-release só é publicada à mão (Actions → Run workflow) com "publicar" marcado, a partir da main,
-# depois do ok do responsável. Tags e assets publicados nunca são movidos nem substituídos.
+# Gera e testa o pacote do sistema novo para Linux e Windows, x64 e ARM64 (decisão 11; sem macOS).
+# Em PR, só gera e testa. A pré-release só é publicada à mão (Actions → Run workflow) com "publicar" marcado,
+# a partir da main, depois do ok do responsável. Tags e assets publicados nunca são movidos nem substituídos.
 on:
   pull_request:
     paths: ['sistema/**', 'inicializador/**', 'scripts/**', '.github/workflows/sistema-release.yml']
@@ -21,17 +21,16 @@ concurrency:
   cancel-in-progress: false
 env:
   VERSAO: ${{ github.event.inputs.versao || '1.0.0-alpha.999' }}
+  # Só em PR: um pacote de versão menor, para testar a passagem do executável antigo para o iniciador novo.
+  VERSAO_ANTERIOR: 1.0.0-alpha.998
+defaults:
+  run:
+    shell: bash
 jobs:
-  pacote:
-    name: Pacote ${{ matrix.plataforma }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - {os: ubuntu-24.04, plataforma: Linux-x64}
-          - {os: ubuntu-24.04-arm, plataforma: Linux-ARM64}
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 30
+  jar:
+    name: Jar do sistema
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -47,9 +46,6 @@ jobs:
           java-version: '25'
           cache: maven
           cache-dependency-path: sistema/pom.xml
-      - name: Python com tkinter e venv
-        timeout-minutes: 5
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq python3-tk python3-venv
       - name: Gerar o jar (até 3 tentativas de download)
         timeout-minutes: 10
         working-directory: sistema
@@ -60,17 +56,74 @@ jobs:
             sleep $((tentativa * 10))
           done
           exit 1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: jar
+          path: sistema/target/inpetu-hub-sistema.jar
+          retention-days: 1
+  pacote:
+    name: Pacote ${{ matrix.plataforma }}
+    needs: jar
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-24.04, plataforma: Linux-x64, python: python3}
+          - {os: ubuntu-24.04-arm, plataforma: Linux-ARM64, python: python3}
+          - {os: windows-2025, plataforma: Windows-x64, python: python}
+          - {os: windows-11-arm, plataforma: Windows-ARM64, python: python}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    env:
+      PY: ${{ matrix.python }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad
+        with:
+          distribution: temurin
+          java-version: '25'
+      - name: Python com tkinter e venv (Linux)
+        if: runner.os == 'Linux'
+        timeout-minutes: 5
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq python3-tk python3-venv
+      - name: Python com tkinter (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
+        with:
+          python-version: '3.13'
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: jar
+          path: sistema/target
+      - name: Testar o iniciador (com o jar de verdade)
+        timeout-minutes: 8
+        working-directory: inicializador
+        env:
+          INPETU_JAR: ${{ github.workspace }}/sistema/target/inpetu-hub-sistema.jar
+        run: $PY -m unittest discover -s testes -t . -v 2>&1 | tail -n 80; exit "${PIPESTATUS[0]}"
       - name: Testar os scripts
         timeout-minutes: 3
-        run: python3 -m unittest discover -s scripts/tests -t scripts -v
+        run: $PY -m unittest discover -s scripts/tests -t scripts -v
       - name: Gerar o pacote
-        timeout-minutes: 10
-        run: python3 scripts/build_pacote.py --versao "$VERSAO" --pular-maven --saida dist
+        timeout-minutes: 12
+        run: $PY scripts/build_pacote.py --versao "$VERSAO" --pular-maven --saida dist
       - name: Conferir o nome do pacote
         run: test -f "dist/InPETU-Hub-${{ matrix.plataforma }}-v$VERSAO.zip"
+      - name: Gerar um pacote anterior (para testar a passagem)
+        if: github.event_name == 'pull_request'
+        timeout-minutes: 12
+        run: $PY scripts/build_pacote.py --versao "$VERSAO_ANTERIOR" --pular-maven --saida anterior
       - name: Teste de fumaça do pacote
-        timeout-minutes: 10
-        run: python3 scripts/smoke_pacote.py "dist/InPETU-Hub-${{ matrix.plataforma }}-v$VERSAO.zip"
+        timeout-minutes: 12
+        run: |
+          pacote="dist/InPETU-Hub-${{ matrix.plataforma }}-v$VERSAO.zip"
+          if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
+            $PY scripts/smoke_pacote.py "$pacote" --anterior "anterior/InPETU-Hub-${{ matrix.plataforma }}-v$VERSAO_ANTERIOR.zip"
+          else
+            $PY scripts/smoke_pacote.py "$pacote"
+          fi
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: pacote-${{ matrix.plataforma }}
@@ -87,13 +140,14 @@ jobs:
     steps:
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
         with:
+          pattern: pacote-*
           path: baixados
       - name: Juntar os pacotes e o SHA256SUMS
         run: |
           mkdir publicar
           mv baixados/*/*.zip publicar/
           cd publicar && sha256sum *.zip > SHA256SUMS.txt && cat SHA256SUMS.txt
-          test "$(ls *.zip | wc -l)" = 2
+          test "$(ls *.zip | wc -l)" = 4
       - name: Publicar (sem mover tag nem substituir release existente)
         env:
           GH_TOKEN: ${{ github.token }}
@@ -102,6 +156,6 @@ jobs:
           if gh release view "v$VERSAO" --repo "$REPOSITORIO" > /dev/null 2>&1; then
             echo "A release v$VERSAO já existe: nada é substituído."; exit 1
           fi
-          printf 'Pré-release do sistema novo (reescrita, linha 1.x), só para Linux x64 e ARM64.\n\nBaixe o pacote do seu computador, extraia e abra o inpetu-hub. Os dados ficam em ~/.config/InPETU-Hub/1 (o sistema antigo, em InPETU-Hub/0.4, não é tocado).\n' > notas.md
+          printf 'Pré-release do sistema novo (reescrita, linha 1.x), para Linux e Windows (x64 e ARM64).\n\nBaixe o pacote do seu computador, extraia e abra o inpetu-hub (no Windows, inpetu-hub.exe). Os dados ficam em ~/.config/InPETU-Hub/1 no Linux e em %%LOCALAPPDATA%%\\InPETU-Hub\\1 no Windows (o sistema antigo, em InPETU-Hub/0.4, não é tocado).\n' > notas.md
           gh release create "v$VERSAO" --repo "$REPOSITORIO" --target "$GITHUB_SHA" --prerelease \
             --title "InPETU Hub $VERSAO (pré-release)" --notes-file notas.md publicar/*.zip publicar/SHA256SUMS.txt

@@ -95,7 +95,7 @@ class Instalacao:
             guardar.add(pasta)
         for _, pasta in versoes:
             if pasta not in guardar:
-                shutil.rmtree(pasta, ignore_errors=True)
+                _apagar_inteira(pasta)
 
     def _provisoria(self):
         self.pasta.mkdir(parents=True, exist_ok=True)
@@ -124,6 +124,17 @@ class Instalacao:
         os.replace(raiz, destino)
         shutil.rmtree(provisoria, ignore_errors=True)
         return destino
+
+
+def _apagar_inteira(pasta):
+    """Renomeia antes de apagar: no Windows, uma versão em uso não pode ser renomeada e fica inteira (sem isso, os
+    arquivos livres seriam apagados e a versão ficaria pela metade)."""
+    lixo = pasta.with_name(f".apagar-{pasta.name}")
+    try:
+        os.replace(pasta, lixo)
+    except OSError:
+        return
+    shutil.rmtree(lixo, ignore_errors=True)
 
 
 def _sha256(arquivo):

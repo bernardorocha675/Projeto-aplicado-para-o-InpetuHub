@@ -1,8 +1,11 @@
 """Atualização pelas Releases do GitHub: só a linha 1.x, pacote completo e conferido, falhas tipadas e a versão
 anterior preservada. Porta dos testes Go do iniciador antigo (403, 429, 500, tempo esgotado, release incompleta)."""
+import os
+import pathlib
 import json
 import zipfile
 
+from inpetu_iniciador import so
 from inpetu_iniciador.atualizador import Atualizador
 from inpetu_iniciador.github import Releases
 from inpetu_iniciador.instalacao import Instalacao
@@ -28,7 +31,7 @@ class AtualizacaoTest(ComPasta):
 
     def atualizador(self, tempo=5):
         releases = Releases(self.github.base, REPO, tempo=tempo, permitir_local=True)
-        return Atualizador(self.pastas, self.registro, "Linux-x64", releases, self.instalacao)
+        return Atualizador(self.pastas, self.registro, so.plataforma(), releases, self.instalacao)
 
     def eventos(self):
         return [json.loads(l) for l in self.registro.caminho.read_text(encoding="utf-8").splitlines()]
@@ -68,7 +71,8 @@ class AtualizacaoTest(ComPasta):
         self.github.publicar("1.0.0-alpha.1")
         self.github.publicar("1.0.0-alpha.2", sums=False)
         self.github.publicar("1.0.0-alpha.3", estado="starter")
-        self.github.publicar("1.0.0-alpha.4", plataforma="Linux-ARM64")
+        self.github.publicar("1.0.0-alpha.4", plataforma="Windows-ARM64" if so.plataforma() != "Windows-ARM64"
+                             else "Linux-x64")
         self.github.publicar("1.0.0-alpha.5", rascunho=True)
         resultado = self.atualizador().atualizar()
         self.assertEqual("1.0.0-alpha.1", str(resultado.versao), "a mais nova completa para este sistema")
@@ -156,7 +160,7 @@ class InstalacaoTest(ComPasta):
         pasta = self.base / "Pacote baixado"
         with zipfile.ZipFile(self.zip("p.zip", pacote_zip("1.0.0-alpha.4", pasta_raiz=False))) as z:
             z.extractall(pasta)
-        (pasta / "runtime" / "bin" / "java").chmod(0o755)
+        (pasta / so.JAVA).chmod(0o755)
         destino = self.instalacao.instalar_pasta(pasta)
         self.assertEqual("1.0.0-alpha.4", str(self.instalacao.versao_da_pasta(destino)))
         self.instalacao.marcar_atual("1.0.0-alpha.4")
@@ -188,3 +192,29 @@ class SomasDoBundleTest(ComPasta):
         bundle["arquivos"] = {"app/inpetu-hub-sistema.jar": hashlib.sha256(b"jar").hexdigest()}
         caminho.write_bytes(pacote_zip("1.0.0", bundle=bundle))
         self.assertTrue(Instalacao(pastas).instalar_zip(caminho, "1.0.0").is_dir())
+
+
+class LimpezaNoWindowsTest(ComPasta):
+
+    def test_versao_em_uso_que_nao_pode_ser_renomeada_fica_inteira(self):
+        from unittest import mock
+        pastas = Pastas.do_ambiente(self.ambiente)
+        pastas.criar()
+        instalacao = Instalacao(pastas)
+        for versao in ("1.0.0-alpha.1", "1.0.0-alpha.2", "1.0.0-alpha.3", "1.0.0-alpha.4"):
+            (pastas.versoes / versao).mkdir()
+            (pastas.versoes / versao / "bundle.json").write_text("{}", encoding="utf-8")
+        instalacao.marcar_atual("1.0.0-alpha.4")
+        original = os.replace
+
+        def replace(origem, destino):
+            if pathlib.Path(origem).name == "1.0.0-alpha.1":
+                raise PermissionError("em uso")
+            return original(origem, destino)
+
+        with mock.patch("inpetu_iniciador.instalacao.os.replace", replace):
+            instalacao.limpar_antigas()
+        self.assertTrue((pastas.versoes / "1.0.0-alpha.1" / "bundle.json").is_file(),
+                        "no Windows, uma versão em uso não pode ficar pela metade")
+        self.assertEqual(["1.0.0-alpha.1", "1.0.0-alpha.2", "1.0.0-alpha.3", "1.0.0-alpha.4", "atual"],
+                         sorted(p.name for p in pastas.versoes.iterdir()))
