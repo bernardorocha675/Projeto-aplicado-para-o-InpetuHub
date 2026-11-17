@@ -40,8 +40,11 @@ class Janela:
 
     def rodar(self):
         # Desligar o computador, sair da sessão ou fechar o terminal: fecha como o X (para o sistema em ordem).
-        for sinal in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
-            signal.signal(sinal, lambda *_: self.raiz.after(0, self.fechar))
+        # No Windows não há SIGHUP; o Tk avisa o fim da sessão pelo protocolo WM_SAVE_YOURSELF.
+        for nome in ("SIGTERM", "SIGINT", "SIGHUP", "SIGBREAK"):
+            if hasattr(signal, nome):
+                signal.signal(getattr(signal, nome), lambda *_: self.raiz.after(0, self.fechar))
+        self.raiz.protocol("WM_SAVE_YOURSELF", self.fechar)
         self.raiz.after(INTERVALO_MS, self._vigiar)
         self.raiz.mainloop()
 

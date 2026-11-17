@@ -1,4 +1,4 @@
-"""Sobe e para o sistema: runtime/bin/java -jar app/inpetu-hub-sistema.jar numa porta livre de 127.0.0.1.
+"""Sobe e para o sistema: runtime/bin/java[.exe] -jar app/inpetu-hub-sistema.jar numa porta livre de 127.0.0.1.
 
 Antes de subir: para um sistema esquecido por uma execução anterior e copia o banco. Para parar: cria o arquivo de
 parada (o sistema encerra em ordem e libera o banco) e só força depois do prazo.
@@ -8,12 +8,12 @@ import datetime
 import os
 import pathlib
 import re
-import signal
 import subprocess
+import sys
 import time
 import urllib.request
 
-from inpetu_iniciador import VERSAO, backup, porta
+from inpetu_iniciador import VERSAO, backup, porta, so
 from inpetu_iniciador.registro import girar
 
 JAR = "inpetu-hub-sistema.jar"
@@ -43,7 +43,7 @@ class Pacote:
     @staticmethod
     def em(base):
         base = pathlib.Path(base)
-        pacote = Pacote(base / "runtime" / "bin" / "java", base / "app" / JAR)
+        pacote = Pacote(base / so.JAVA, base / "app" / JAR)
         if not pacote.java.is_file() or not pacote.jar.is_file():
             raise ErroDeSubida("O pacote do sistema está incompleto. Baixe o pacote de novo.", "PACKAGE_INCOMPLETE")
         return pacote
@@ -77,14 +77,15 @@ class Sistema:
         numero = porta.livre()
         comando = [str(self.pacote.java), f"-Dinpetu.dados={self.pastas.dados}",
                    f"-Dinpetu.parada={self.pastas.parada}", f"-Dinpetu.session.id={self.sessao}",
-                   f"-Dinpetu.launcher.version={VERSAO}", "-Dfile.encoding=UTF-8", "-jar", str(self.pacote.jar),
+                   f"-Dinpetu.launcher.version={VERSAO}", f"-Dinpetu.app.version={VERSAO}", "-Dfile.encoding=UTF-8", "-jar", str(self.pacote.jar),
                    str(numero)]
         log = self.pastas.logs / "sistema.log"
         girar(log)
         self._saida = open(log, "ab")
         inicio = time.monotonic()
         self._processo = subprocess.Popen(comando, stdin=subprocess.DEVNULL, stdout=self._saida,
-                                          stderr=subprocess.STDOUT, start_new_session=True)
+                                          stderr=subprocess.STDOUT, env=ambiente_do_java(),
+                                          **so.opcoes_do_processo())
         self.pastas.pid.write_text(str(self._processo.pid), encoding="utf-8")
         self.url = f"http://127.0.0.1:{numero}/"
         while time.monotonic() - inicio < self.prazo_subida:
@@ -137,11 +138,8 @@ class Sistema:
         if not _e_o_sistema(pid):
             self.pastas.pid.unlink(missing_ok=True)
             return
-        if not _pedir_parada(self.pastas.parada, lambda: _colher(pid) or not _vivo(pid), self.prazo_parada):
-            try:
-                os.kill(pid, signal.SIGKILL)
-            except ProcessLookupError:
-                pass
+        if not _pedir_parada(self.pastas.parada, lambda: so.colher(pid) or not so.vivo(pid), self.prazo_parada):
+            so.matar(pid)
         self.pastas.pid.unlink(missing_ok=True)
         self.pastas.parada.unlink(missing_ok=True)
         self.registro.evento("ORPHAN_STOPPED")
@@ -156,26 +154,29 @@ class Sistema:
         return achados[-1] if achados else "OTHER"
 
 
+def ambiente_do_java(origem=None):
+    """O ambiente do Java: com um idioma UTF-8 (sem ele, o Java não abre a própria pasta se ela tiver acento) e sem
+    as bibliotecas que o PyInstaller põe no LD_LIBRARY_PATH do iniciador."""
+    ambiente = dict(os.environ if origem is None else origem)
+    if so.WINDOWS:
+        return ambiente  # no Windows o Java usa a API Unicode para os caminhos
+    idioma = ambiente.get("LC_ALL") or ambiente.get("LC_CTYPE") or ambiente.get("LANG") or ""
+    if "utf-8" not in idioma.lower() and "utf8" not in idioma.lower():
+        ambiente["LC_ALL"] = "C.UTF-8"
+    original = ambiente.pop("LD_LIBRARY_PATH_ORIG", None)
+    if original is not None:
+        ambiente["LD_LIBRARY_PATH"] = original
+    elif getattr(sys, "frozen", False) or "_internal" in ambiente.get("LD_LIBRARY_PATH", ""):
+        ambiente.pop("LD_LIBRARY_PATH", None)
+    return ambiente
+
+
 def _responde(url):
     try:
         with urllib.request.urlopen(url + "saude", timeout=2) as resposta:
             return resposta.status == 200
     except OSError:
         return False
-
-
-def _vivo(pid):
-    try:
-        os.kill(pid, 0)
-    except ProcessLookupError:
-        return False
-    except PermissionError:
-        return True
-    try:
-        estado = pathlib.Path(f"/proc/{pid}/stat").read_text().split(")")[-1].split()[0]
-        return estado != "Z"
-    except OSError:
-        return True
 
 
 def _pedir_parada(arquivo, saiu, prazo):
@@ -189,19 +190,6 @@ def _pedir_parada(arquivo, saiu, prazo):
     return saiu()
 
 
-def _colher(pid):
-    """Recolhe um processo que já saiu, se for filho deste (senão ele fica como zumbi e parece vivo). Devolve False."""
-    try:
-        os.waitpid(pid, os.WNOHANG)
-    except ChildProcessError:
-        pass
-    return False
-
-
 def _e_o_sistema(pid):
     """Só mexe num processo que é mesmo o sistema (pela linha de comando), nunca num pid reaproveitado."""
-    try:
-        linha = pathlib.Path(f"/proc/{pid}/cmdline").read_bytes().split(b"\0")
-    except OSError:
-        return False
-    return any(parte.endswith(JAR.encode()) for parte in linha) and _vivo(pid)
+    return JAR in so.linha_de_comando(pid) and so.vivo(pid)

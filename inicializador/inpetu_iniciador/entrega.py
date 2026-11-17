@@ -1,10 +1,12 @@
 """Passagem para o iniciador de uma versão mais nova instalada (o executável baixado pela pessoa fica antigo).
 
-A passagem troca o processo (exec): a trava do iniciador é solta junto, porque o arquivo dela fecha no exec.
+No Linux a passagem troca o processo (exec); no Windows abre o novo e encerra este. A trava é solta antes.
 """
 import os
 
-EXECUTAVEL = "inpetu-hub"
+from inpetu_iniciador import so
+
+EXECUTAVEL = so.INICIADOR
 MARCA = "--entregue"
 
 
@@ -19,4 +21,4 @@ def precisa_entregar(propria, instalada, pasta, argumentos):
 
 
 def entregar(executavel, argumentos):
-    os.execv(str(executavel), [str(executavel), *argumentos, MARCA])
+    so.trocar_processo(executavel, [*argumentos, MARCA])

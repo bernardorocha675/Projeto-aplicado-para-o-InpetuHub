@@ -1,6 +1,6 @@
 """A janela (tkinter): mostra o estado, liga os botões ao controle e fecha só depois de parar o sistema.
 
-Só roda com o tkinter e uma tela (DISPLAY); na CI, sem tela, é pulado.
+Só roda com o tkinter e uma tela (DISPLAY, ou o Windows); na CI do Linux, sem tela, é pulado.
 """
 import concurrent.futures
 import os
@@ -10,7 +10,7 @@ from inpetu_iniciador.controle import Estado
 
 try:
     import tkinter
-    TELA = bool(os.environ.get("DISPLAY")) and tkinter.TkVersion >= 8.6
+    TELA = (os.name == "nt" or bool(os.environ.get("DISPLAY"))) and tkinter.TkVersion >= 8.6
 except ImportError:
     TELA = False
 

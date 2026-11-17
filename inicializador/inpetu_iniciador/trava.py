@@ -1,6 +1,26 @@
-"""Instância única: só um iniciador por vez cuida do sistema e do banco (trava de arquivo do Linux)."""
-import fcntl
+"""Instância única: só um iniciador por vez cuida do sistema e do banco (trava de arquivo; no Windows, msvcrt)."""
 import os
+
+from inpetu_iniciador import so
+
+if so.WINDOWS:
+    import msvcrt
+
+    def _travar(arquivo):
+        arquivo.seek(0)
+        msvcrt.locking(arquivo.fileno(), msvcrt.LK_NBLCK, 1)
+
+    def _destravar(arquivo):
+        arquivo.seek(0)
+        msvcrt.locking(arquivo.fileno(), msvcrt.LK_UNLCK, 1)
+else:
+    import fcntl
+
+    def _travar(arquivo):
+        fcntl.flock(arquivo.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+
+    def _destravar(arquivo):
+        fcntl.flock(arquivo.fileno(), fcntl.LOCK_UN)
 
 
 class Trava:
@@ -14,7 +34,7 @@ class Trava:
         self.caminho.parent.mkdir(parents=True, exist_ok=True)
         arquivo = open(self.caminho, "a+", encoding="utf-8")
         try:
-            fcntl.flock(arquivo.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            _travar(arquivo)
         except OSError:
             arquivo.close()
             return False
@@ -27,6 +47,6 @@ class Trava:
 
     def liberar(self):
         if self._arquivo is not None:
-            fcntl.flock(self._arquivo.fileno(), fcntl.LOCK_UN)
+            _destravar(self._arquivo)
             self._arquivo.close()
             self._arquivo = None

@@ -8,7 +8,7 @@ import urllib.request
 from inpetu_iniciador.pastas import Pastas
 from inpetu_iniciador.registro import Registro
 from inpetu_iniciador.sistema import ErroDeSubida, Pacote, Sistema
-from testes.apoio import ComPasta, modo_falso
+from testes.apoio import ComPasta, modo_falso, SO_LINUX
 
 SESSAO = "0123456789abcdef0123456789abcdef"
 
@@ -21,6 +21,7 @@ def saude(url):
         return 0
 
 
+@SO_LINUX
 class SistemaTest(ComPasta):
 
     def setUp(self):
@@ -65,6 +66,24 @@ class SistemaTest(ComPasta):
         self.assertIn("SYSTEM_STOPPED", self.eventos())
         saida = (self.pastas.logs / "sistema.log").read_text(encoding="utf-8")
         self.assertIn("SERVER_READY", saida, "a saída do Java vai para o log local")
+
+    def test_java_recebe_um_idioma_utf8_e_nao_as_bibliotecas_do_iniciador(self):
+        argumentos = self.base / "args.json"
+        modo_falso(self, "normal", argumentos)
+        antes = {chave: os.environ.get(chave) for chave in ("LANG", "LC_ALL", "LD_LIBRARY_PATH", "LD_LIBRARY_PATH_ORIG")}
+        os.environ.update({"LANG": "C", "LD_LIBRARY_PATH": "/pacote/_internal"})
+        os.environ.pop("LC_ALL", None)
+        os.environ.pop("LD_LIBRARY_PATH_ORIG", None)
+
+        def restaurar():
+            for chave, valor in antes.items():
+                os.environ.pop(chave, None) if valor is None else os.environ.__setitem__(chave, valor)
+
+        self.addCleanup(restaurar)
+        self.sistema().iniciar()
+        ambiente = json.loads((self.base / "args.json.ambiente").read_text(encoding="utf-8"))
+        self.assertEqual("C.UTF-8", ambiente["LC_ALL"], "sem idioma UTF-8 o Java não abre caminhos com acento")
+        self.assertIsNone(ambiente["LD_LIBRARY_PATH"], "as bibliotecas do PyInstaller não vão para o Java")
 
     def test_sem_atender_a_parada_e_encerrado_a_forca_depois_do_prazo(self):
         modo_falso(self, "ignora_parada")
