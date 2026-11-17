@@ -15,7 +15,8 @@
 | 7 | Pedido público | `reescrita/pedido` | Em revisão (PR aberto sobre a `reescrita/regras`, aguardando o ok) |
 | 8 | Área Interna de reservas | `reescrita/interna` | Em revisão (PR aberto sobre a `reescrita/pedido`, aguardando o ok) |
 | 9 | Iniciador Python, parte 1 | `reescrita/iniciador` | Em revisão (PR aberto sobre a `reescrita/interna`, aguardando o ok) |
-| 10–12 | — | — | Não iniciadas; cada uma só começa com o ok do responsável |
+| 10 | Iniciador Python, parte 2 (atualização) | `reescrita/atualizacao` | Em revisão (PR aberto sobre a `reescrita/iniciador`, aguardando o ok) |
+| 11–12 | — | — | Não iniciadas; cada uma só começa com o ok do responsável |
 
 Versões fixadas na entrega 1 (todas publicadas há mais de 2 semanas em 11/11/2026): Java 25, Maven 3.9.16 (Maven Wrapper 3.3.4, com SHA-256), Jetty 12.1.14 (EE 11), JUnit 5.14.4, Spotless 3.10.4. Na entrega 2 (mais de 2 semanas em 12/11/2026): Flyway 13.11.1 (+ flyway-mysql), H2 2.5.252, MySQL Connector/J 26.10.0 (sem o protobuf, que só serve ao protocolo X). Na entrega 3: Jetty JSP (`jetty-ee11-apache-jsp`, com o compilador ECJ) e JSTL (`jetty-ee11-glassfish-jstl`), na mesma versão 12.1.14 do Jetty. Na entrega 4: jBCrypt 0.4 (`org.mindrot:jbcrypt`, licença ISC, sem alertas no OSV em 16/11/2026).
 
