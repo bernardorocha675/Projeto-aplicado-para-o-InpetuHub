@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <c:set var="f" value="${formulario}" />
-<t:pagina titulo="${empty f.id ? 'Cadastrar espaço' : 'Editar espaço'}">
+<t:interna titulo="${empty f.id ? 'Cadastrar espaço' : 'Editar espaço'}">
   <section class="cartao estreito">
     <p class="sobretitulo">Espaços</p>
     <h1>${empty f.id ? 'Cadastrar espaço' : 'Editar espaço'}</h1>
@@ -32,4 +32,4 @@
     </form>
     <a class="botao secundario" href="/admin/cadastros/espacos">Voltar sem salvar</a>
   </section>
-</t:pagina>
+</t:interna>

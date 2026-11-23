@@ -1,0 +1,172 @@
+/* Área Interna (só computador, decisão 14): menu lateral à esquerda e conteúdo à direita. Só tokens; contraste
+   conferido em AreaInternaLegivelTest. */
+.com-lateral {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 0 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+.com-lateral .principal {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+.lateral {
+  align-self: start;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+.menu-interno {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+.menu-interno a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 8px;
+  color: var(--navy);
+  font-weight: 700;
+  text-decoration: none;
+}
+.menu-interno a:hover {
+  background: var(--soft);
+}
+.menu-interno a[aria-current="page"] {
+  color: var(--navy);
+  background: var(--soft);
+}
+.ponto-pendente {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--blue);
+}
+.lateral .botao {
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+.com-lateral .cartao {
+  margin: 0 0 24px;
+}
+.numeros {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.numero h2 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--muted);
+}
+.numero .valor {
+  margin: 8px 0;
+  color: var(--navy);
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+.situacao {
+  display: inline-block;
+  padding: 2px 10px;
+  border: 1px solid;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.situacao.PENDENTE {
+  color: var(--aviso);
+  background: var(--aviso-fundo);
+  border-color: var(--aviso-borda);
+}
+.situacao.APROVADA {
+  color: var(--sucesso);
+  background: var(--sucesso-fundo);
+  border-color: var(--sucesso-borda);
+}
+.situacao.RECUSADA {
+  color: var(--erro);
+  background: var(--erro-fundo);
+  border-color: var(--erro-borda);
+}
+.situacao.CANCELADA {
+  color: var(--ink);
+  background: var(--bg);
+  border-color: var(--line);
+}
+.situacao.CONCLUIDA {
+  color: var(--navy);
+  background: var(--soft);
+  border-color: var(--azul-medio);
+}
+.duas-colunas-interna {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 24px;
+}
+.grade-interna {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 24px;
+}
+.grade-interna .campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.formulario select,
+.formulario textarea,
+.filtros-lista :where(input, select) {
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--site-borda-campo);
+  border-radius: 12px;
+  background: var(--site-fundo-campo);
+  color: var(--site-texto-campo);
+  font: inherit;
+}
+.formulario textarea {
+  min-height: 120px;
+  padding: 12px 14px;
+}
+.filtros-lista {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px 16px;
+}
+.filtros-lista .campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.filtros-lista label {
+  font-weight: 700;
+}
+.filtros-lista .botao,
+.com-lateral form .botao {
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+.historico {
+  margin: 0;
+  padding-left: 20px;
+}
+.historico li {
+  margin-bottom: 12px;
+}
+.historico p {
+  margin: 4px 0 0;
+}
+.pedido form {
+  margin-top: 12px;
+}

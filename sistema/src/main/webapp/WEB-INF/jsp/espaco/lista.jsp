@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
-<t:pagina titulo="Espaços">
+<t:interna titulo="Espaços">
   <section class="cartao">
     <p class="sobretitulo">Área Interna</p>
     <h1>Espaços</h1>
@@ -49,4 +49,4 @@
       </table>
     </div>
   </section>
-</t:pagina>
+</t:interna>

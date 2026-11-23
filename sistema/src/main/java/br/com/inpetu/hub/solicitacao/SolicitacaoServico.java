@@ -22,6 +22,9 @@ import java.util.Optional;
 import br.com.inpetu.hub.auditoria.Auditoria;
 import br.com.inpetu.hub.comum.Ambiente;
 import br.com.inpetu.hub.comum.RegraException;
+import br.com.inpetu.hub.comum.Transacao;
+import br.com.inpetu.hub.comum.log.Eventos;
+import br.com.inpetu.hub.empreendedor.EmpreendedorRepositorio;
 import br.com.inpetu.hub.espaco.Espaco;
 import br.com.inpetu.hub.espaco.EspacoRepositorio;
 import br.com.inpetu.hub.reserva.Cota;
@@ -31,6 +34,8 @@ import br.com.inpetu.hub.reserva.Horarios;
 import br.com.inpetu.hub.reserva.Orcamento;
 import br.com.inpetu.hub.reserva.Orcamentos;
 import br.com.inpetu.hub.reserva.Pedido;
+import br.com.inpetu.hub.reserva.Reserva;
+import br.com.inpetu.hub.reserva.ReservaServico;
 
 /**
  * O pedido público: estima (horário e preço, sem gravar) e registra. O registro só grava o pedido, para a equipe
@@ -47,12 +52,20 @@ public final class SolicitacaoServico {
     private final DadosDoBanco dados;
     private final EspacoRepositorio espacos;
     private final Auditoria auditoria;
+    private final EmpreendedorRepositorio empreendedores = new EmpreendedorRepositorio();
+    private final ReservaServico reservas;
+
+    private static final String COLUNAS_PEDIDO = "s.espaco_id, s.persona_id, s.data, s.hora_inicio, s.hora_fim,"
+            + " s.numero_participantes, s.inscricao_paga, s.financiado, s.academico, s.titulo, s.objetivo,"
+            + " s.observacoes, s.nome, s.tipo_documento, s.documento, s.email, s.telefone, s.empresa, s.cidade,"
+            + " s.segmento, s.cargo";
 
     public SolicitacaoServico(Ambiente ambiente) {
         this.ambiente = ambiente;
         this.dados = new DadosDoBanco(ambiente.banco());
         this.espacos = new EspacoRepositorio(ambiente.banco());
         this.auditoria = new Auditoria(ambiente.banco(), ambiente.relogio());
+        this.reservas = new ReservaServico(ambiente);
     }
 
     /** Confere o horário e calcula o orçamento. Recusa com {@link RegraException} e a mensagem para a pessoa. */
@@ -70,7 +83,7 @@ public final class SolicitacaoServico {
                 .data()));
         Orcamento orcamento = Orcamentos.calcular(pedido, cota, BigDecimal.ZERO, LocalDate.now(ambiente.relogio()),
                 configuracao, dados.precos(), dados.feriados());
-        return new Estimativa(espaco, persona, orcamento, cota);
+        return new Estimativa(pedido, espaco, persona, orcamento, cota);
     }
 
     /** Grava o pedido (conferido de novo) e devolve a referência. A mesma chave devolve o pedido já gravado. */
@@ -97,6 +110,108 @@ public final class SolicitacaoServico {
         auditoria.registrar(null, "SOLICITACAO_RECEBIDA", ALVO, id, "OK",
                 "Sem bloqueio de horário e sem alocação de cotas.");
         return referencia;
+    }
+
+    /**
+     * Aceita o pedido depois da conferência manual (decisão 13): liga ao cadastro do empreendedor (pelo documento ou
+     * pelo email) e cria a reserva PENDENTE, sem ocupar horário nem cota. Devolve o número da reserva.
+     */
+    public long aceitar(long pedidoId, long colaborador, boolean identidadeConferida, String comoConferiu) {
+        if (!identidadeConferida || comoConferiu == null || comoConferiu.isBlank() || comoConferiu.length() > 2000) {
+            throw new RegraException("Confira a identidade e informe como o vínculo com a instituição foi verificado.");
+        }
+        long reserva = Transacao.executar(ambiente.banco(), conexao -> {
+            LocalDateTime agora = LocalDateTime.now(ambiente.relogio());
+            PedidoConferido p = recebido(conexao, pedidoId, agora);
+            Estimativa estimativa = estimar(p);
+            long empreendedor = empreendedores.vincular(conexao, p);
+            long id = reservas.criar(conexao, Reserva.solicitar(estimativa.pedido(), estimativa.orcamento(), agora),
+                    empreendedor, colaborador);
+            try (PreparedStatement sql = conexao.prepareStatement("update solicitacao_publica set estado ="
+                    + " 'ENCAMINHADA', reserva_id = ?, justificativa = ?, codigo_hash = null where id = ?")) {
+                sql.setLong(1, id);
+                sql.setString(2, comoConferiu.strip());
+                sql.setLong(3, pedidoId);
+                sql.executeUpdate();
+            }
+            auditoria.gravar(conexao, colaborador, "IDENTIDADE_CONFERIDA", ALVO, pedidoId, "OK", null);
+            return id;
+        });
+        Eventos.auditoria("IDENTIDADE_CONFERIDA", ALVO, "OK");
+        return reserva;
+    }
+
+    /** Recusa um pedido ainda não analisado. */
+    public void recusar(long pedidoId, long colaborador) {
+        Transacao.executar(ambiente.banco(), conexao -> {
+            try (PreparedStatement sql = conexao.prepareStatement("update solicitacao_publica set estado = 'RECUSADA',"
+                    + " codigo_hash = null where id = ? and estado = 'RECEBIDA'")) {
+                sql.setLong(1, pedidoId);
+                if (sql.executeUpdate() != 1) {
+                    throw new RegraException("Solicitação não encontrada ou já processada.");
+                }
+            }
+            auditoria.gravar(conexao, colaborador, "SOLICITACAO_RECUSADA", ALVO, pedidoId, "OK", null);
+            return null;
+        });
+        Eventos.auditoria("SOLICITACAO_RECUSADA", ALVO, "OK");
+    }
+
+    /** Pedidos ainda não analisados, do mais antigo para o mais novo (até 200). */
+    public List<PedidoRecebido> recebidos() {
+        List<PedidoRecebido> lista = new ArrayList<>();
+        try (Connection conexao = ambiente.banco().getConnection();
+                PreparedStatement sql = conexao.prepareStatement(
+                        "select s.id, " + COLUNAS_PEDIDO + ", s.expira_em, e.nome_espaco, p.codigo, p.nome as persona"
+                                + " from solicitacao_publica s left join espaco e on e.id_espaco = s.espaco_id"
+                                + " left join persona p on p.id = s.persona_id where s.estado = 'RECEBIDA'"
+                                + " order by s.criada_em, s.id limit 200");
+                ResultSet linha = sql.executeQuery()) {
+            while (linha.next()) {
+                lista.add(new PedidoRecebido(linha.getLong("id"), pedido(linha), linha.getTimestamp("expira_em")
+                        .toLocalDateTime(), linha.getString("nome_espaco"),
+                        linha.getString("codigo") + " — " + linha
+                                .getString("persona")));
+            }
+            return lista;
+        } catch (SQLException falha) {
+            throw new IllegalStateException("Não foi possível ler os pedidos.", falha);
+        }
+    }
+
+    private PedidoConferido recebido(Connection conexao, long pedidoId, LocalDateTime agora) throws SQLException {
+        try (PreparedStatement sql = conexao.prepareStatement("select s.id, " + COLUNAS_PEDIDO
+                + ", s.estado, s.expira_em from solicitacao_publica s where s.id = ?")) {
+            sql.setLong(1, pedidoId);
+            try (ResultSet linha = sql.executeQuery()) {
+                if (!linha.next()) {
+                    throw new RegraException("Solicitação não encontrada.");
+                }
+                if (!"RECEBIDA".equals(linha.getString("estado")) || linha.getTimestamp("expira_em").toLocalDateTime()
+                        .isBefore(agora)) {
+                    throw new RegraException("Solicitação processada ou expirada.");
+                }
+                return pedido(linha);
+            }
+        }
+    }
+
+    private static PedidoConferido pedido(ResultSet l) throws SQLException {
+        return new PedidoConferido(l.getLong("espaco_id"), l.getLong("persona_id"), l.getDate("data").toLocalDate(), l
+                .getTime("hora_inicio").toLocalTime(), l.getTime("hora_fim").toLocalTime(),
+                l.getInt(
+                        "numero_participantes"),
+                l.getBoolean("inscricao_paga"), l.getBoolean("financiado"), l
+                        .getBoolean("academico"),
+                l.getString("titulo"), l.getString("objetivo"), l.getString(
+                        "observacoes"),
+                l.getString("nome"), l.getString("tipo_documento"), l
+                        .getString("documento"),
+                l.getString("email"), l.getString(
+                        "telefone"),
+                l.getString("empresa"), l.getString("cidade"), l
+                        .getString("segmento"),
+                l.getString("cargo"));
     }
 
     /** Pedidos ainda não analisados que passaram de 24 h viram EXPIRADA. Devolve quantos. */
