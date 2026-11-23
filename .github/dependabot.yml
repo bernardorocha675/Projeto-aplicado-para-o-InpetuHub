@@ -1,5 +1,18 @@
 version: 2
 updates:
+  # Sistema novo (linha 1.x). Biblioteca nova só com o ok da equipe; aqui vêm só as versões das autorizadas.
+  - package-ecosystem: maven
+    directory: "/sistema"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      # Jetty (servidor, JSP e JSTL) e Flyway (núcleo e MySQL) precisam da mesma versão entre si.
+      jetty:
+        patterns: ["org.eclipse.jetty*"]
+      flyway:
+        patterns: ["org.flywaydb*"]
+  # Sistema antigo (linha 0.5.x).
   - package-ecosystem: maven
     directory: "/aplicativo"
     schedule:
@@ -10,3 +23,7 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    groups:
+      # init e analyze precisam da mesma versão: separados, os dois PRs sempre falham.
+      codeql:
+        patterns: ["github/codeql-action*"]
