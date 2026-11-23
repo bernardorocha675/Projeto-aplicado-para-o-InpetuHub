@@ -25,7 +25,7 @@ INPETU_TESTE_MYSQL_URL="jdbc:mysql://127.0.0.1:3306/inpetu_teste" INPETU_TESTE_M
 
 Com o sistema de pé, `http://127.0.0.1:8080/saude` responde `ok` `http://127.0.0.1:8080/agenda` abre a agenda pública e `http://127.0.0.1:8080/login`, a Área Interna. Ele escuta só em `127.0.0.1`, nunca na rede.
 
-**Dados e contas (modo local).** O banco H2 fica na pasta de `-Dinpetu.dados="<pasta>"`, que o iniciador vai passar (entrega 9). Sem essa opção, ele fica em `target/dados-desenvolvimento/` (apagado pelo `clean`). Ao subir, as 5 contas públicas de demonstração (as mesmas do antigo, em [`docs/ACESSOS.md`](../docs/ACESSOS.md)) são criadas ou voltam ao padrão: uma senha trocada vale até o sistema reiniciar.
+**Dados e contas (modo local).** O banco H2 fica na pasta de `-Dinpetu.dados="<pasta>"`, que o iniciador vai passar (entrega 9). Sem essa opção, ele fica em `target/dados-desenvolvimento/` (apagado pelo `clean`). Com `-Dinpetu.parada="<arquivo>"` (o iniciador passa), o sistema encerra em ordem quando esse arquivo aparece: fecha o banco e registra `SERVER_STOPPED`. O iniciador fica em [`inicializador/`](../inicializador/README.md). Ao subir, as 5 contas públicas de demonstração (as mesmas do antigo, em [`docs/ACESSOS.md`](../docs/ACESSOS.md)) são criadas ou voltam ao padrão: uma senha trocada vale até o sistema reiniciar.
 
 ## No editor
 

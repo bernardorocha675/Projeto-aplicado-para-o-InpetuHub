@@ -36,6 +36,24 @@ public final class Banco {
         return JdbcConnectionPool.create("jdbc:h2:file:" + absoluto + OPCOES_H2, "", "");
     }
 
+    /**
+     * Fecha o banco ao encerrar: no H2 em arquivo, grava tudo, libera o arquivo (a trava do banco) e solta as conexões.
+     * Outros bancos não precisam de nada.
+     */
+    public static void fechar(DataSource banco) {
+        if (banco instanceof JdbcConnectionPool conjunto) {
+            try (java.sql.Connection conexao = conjunto.getConnection();
+                    java.sql.Statement sql = conexao
+                            .createStatement()) {
+                sql.execute("SHUTDOWN");
+            } catch (java.sql.SQLException jaFechado) {
+                // O banco já estava fechado; nada a fazer.
+            } finally {
+                conjunto.dispose();
+            }
+        }
+    }
+
     /** Banco H2 só na memória, apagado quando o processo termina; usado nos testes. */
     public static DataSource h2Memoria(String nome) {
         return JdbcConnectionPool.create("jdbc:h2:mem:" + nome + OPCOES_H2, "", "");

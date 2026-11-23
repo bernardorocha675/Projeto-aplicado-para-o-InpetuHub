@@ -2,9 +2,9 @@ name: Sistema (reescrita) — compilar, testar e conferir
 on:
   push:
     branches: ['main']
-    paths: ['sistema/**', '.github/workflows/sistema.yml', '.gitleaks*']
+    paths: ['sistema/**', 'inicializador/**', '.github/workflows/sistema.yml', '.gitleaks*']
   pull_request:
-    paths: ['sistema/**', '.github/workflows/sistema.yml', '.gitleaks*']
+    paths: ['sistema/**', 'inicializador/**', '.github/workflows/sistema.yml', '.gitleaks*']
   workflow_dispatch:
 permissions:
   contents: read
@@ -61,6 +61,10 @@ jobs:
       - name: Compilar, testar e conferir a formatação (./mvnw verify)
         timeout-minutes: 10
         run: ./mvnw -B -ntp verify
+      - name: Testar o iniciador (Python, com o jar de verdade)
+        timeout-minutes: 5
+        working-directory: inicializador
+        run: INPETU_JAR=../sistema/target/inpetu-hub-sistema.jar python3 -m unittest discover -s testes -t . -v
       - name: Mostrar testes que falharam (sem a saída dos testes)
         if: failure()
         shell: python
