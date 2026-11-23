@@ -111,3 +111,67 @@ a {
 .rodape :focus-visible {
   outline-color: #fff;
 }
+.estreito {
+  max-width: 520px;
+  margin: 0 auto;
+}
+.sobretitulo {
+  margin: 0 0 8px;
+  color: var(--navy);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 24px 0;
+}
+.formulario label {
+  font-weight: 700;
+}
+.formulario input {
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--site-borda-campo);
+  border-radius: 12px;
+  background: var(--site-fundo-campo);
+  color: var(--site-texto-campo);
+  font: inherit;
+}
+.formulario .botao {
+  align-self: flex-start;
+  margin-top: 8px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+.botao.secundario {
+  background: #fff;
+  color: var(--navy);
+  border: 1px solid var(--site-borda-campo);
+}
+.botao.secundario:hover {
+  background: var(--soft);
+}
+.mostrar-senha {
+  align-self: flex-start;
+  min-height: 44px;
+  margin-bottom: 8px;
+}
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.acoes form {
+  margin: 0;
+}
+.acoes .botao {
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}

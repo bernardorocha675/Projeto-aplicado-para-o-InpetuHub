@@ -21,6 +21,7 @@
     <flyway.version>13.11.1</flyway.version>
     <h2.version>2.5.252</h2.version>
     <mysql.version>26.10.0</mysql.version>
+    <jbcrypt.version>0.4</jbcrypt.version>
 
     <!-- Plugins de build. -->
     <clean.plugin.version>3.5.0</clean.plugin.version>
@@ -104,6 +105,13 @@
           <artifactId>protobuf-java</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+
+    <!-- Senhas: BCrypt (decisão 3b). -->
+    <dependency>
+      <groupId>org.mindrot</groupId>
+      <artifactId>jbcrypt</artifactId>
+      <version>${jbcrypt.version}</version>
     </dependency>
 
     <dependency>

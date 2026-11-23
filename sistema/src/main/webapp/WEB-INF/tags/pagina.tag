@@ -1,5 +1,6 @@
 <%@ tag pageEncoding="UTF-8" trimDirectiveWhitespaces="true" description="Layout de todas as telas" %>
 <%@ attribute name="titulo" required="true" %>
+<%@ attribute name="script" required="false" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!doctype html>
 <html lang="pt-BR">
@@ -10,6 +11,7 @@
     <link rel="icon" href="/img/favicon.jpg" />
     <link rel="stylesheet" href="/css/tokens.css" />
     <link rel="stylesheet" href="/css/base.css" />
+    <c:if test="${not empty script}"><script src="${script}" defer></script></c:if>
   </head>
   <body>
     <a class="pular" href="#conteudo">Pular para o conteúdo</a>

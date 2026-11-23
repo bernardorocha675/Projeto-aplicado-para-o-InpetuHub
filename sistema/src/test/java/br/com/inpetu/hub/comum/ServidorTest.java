@@ -19,7 +19,7 @@ class ServidorTest {
     @Test
     @Timeout(30)
     void sobeNumaPortaLivreESaudeResponde200() throws Exception {
-        try (Servidor servidor = Servidor.iniciar(0)) {
+        try (Servidor servidor = Servidor.iniciar(0, AmbienteDeTeste.novo())) {
             assertTrue(servidor.porta() > 0, "a porta 0 pede uma porta livre ao sistema");
 
             HttpResponse<String> resposta = get(servidor, "/saude");
@@ -34,7 +34,7 @@ class ServidorTest {
     @Test
     @Timeout(30)
     void naoAnunciaONomeNemAVersaoDoServidor() throws Exception {
-        try (Servidor servidor = Servidor.iniciar(0)) {
+        try (Servidor servidor = Servidor.iniciar(0, AmbienteDeTeste.novo())) {
             HttpResponse<String> resposta = get(servidor, "/saude");
 
             assertTrue(resposta.headers().firstValue("Server").isEmpty(), "o cabeçalho Server revela o Jetty");
@@ -45,7 +45,7 @@ class ServidorTest {
     @Test
     @Timeout(30)
     void caminhoDesconhecidoResponde404() throws Exception {
-        try (Servidor servidor = Servidor.iniciar(0)) {
+        try (Servidor servidor = Servidor.iniciar(0, AmbienteDeTeste.novo())) {
             assertEquals(404, get(servidor, "/nao-existe").statusCode());
         }
     }
@@ -53,7 +53,7 @@ class ServidorTest {
     @Test
     @Timeout(30)
     void escutaSoNoEnderecoLocal() throws Exception {
-        try (Servidor servidor = Servidor.iniciar(0)) {
+        try (Servidor servidor = Servidor.iniciar(0, AmbienteDeTeste.novo())) {
             assertEquals("127.0.0.1", servidor.endereco());
         }
     }
