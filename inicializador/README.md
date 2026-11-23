@@ -1,6 +1,6 @@
 # inicializador/ — iniciador do sistema novo (reescrita 1.x)
 
-Iniciador em Python (decisão 1 do plano), para Linux e Windows, x64 e ARM64 (decisão 11; sem macOS) e só para computador
+Iniciador em Python (decisão 1 do plano), para Linux x64 e Windows x64 (decisão 11; sem ARM64 nem macOS) e só para computador
 (decisão 14). Nome da pasta provisório, para não colidir com o `iniciador/` em Go do sistema antigo.
 
 O que ele faz:
@@ -21,7 +21,7 @@ Antes de subir o sistema, o iniciador:
    (a primeira abertura sempre instala);
 2. consulta as Releases do GitHub pela API pública, sem token, e só aceita tags da linha 1.x
    (`v1.2.3` ou `v1.2.3-alpha.N`, `-beta.N`, `-rc.N`; rascunhos e outras linhas são ignorados);
-3. escolhe a mais nova que tenha o pacote deste sistema (`InPETU-Hub-<Linux|Windows>-<x64|ARM64>-v<versão>.zip`) e o `SHA256SUMS.txt` já enviados (uma release incompleta é pulada);
+3. escolhe a mais nova que tenha o pacote deste sistema (`InPETU-Hub-<Linux|Windows>-x64-v<versão>.zip`) e o `SHA256SUMS.txt` já enviados (uma release incompleta é pulada);
 4. baixa, confere o SHA-256 e extrai com segurança: recusa caminhos com `..`, caminhos absolutos e links, e
    limita a quantidade e o tamanho dos arquivos. A extração vai para uma pasta provisória, que só vira
    `versoes/<versão>` depois de conferir o `bundle.json`. A troca da versão atual (`versoes/atual`) é feita de

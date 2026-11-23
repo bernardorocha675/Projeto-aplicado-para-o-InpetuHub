@@ -1,5 +1,5 @@
 name: Sistema (reescrita) — pacote e pré-release
-# Gera e testa o pacote do sistema novo para Linux e Windows, x64 e ARM64 (decisão 11; sem macOS).
+# Gera e testa o pacote do sistema novo para Linux x64 e Windows x64 (decisão 11; sem ARM64 nem macOS).
 # Em PR, só gera e testa. A pré-release só é publicada à mão (Actions → Run workflow) com "publicar" marcado,
 # a partir da main, depois do ok do responsável. Tags e assets publicados nunca são movidos nem substituídos.
 on:
@@ -68,11 +68,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # O Temurin não publica o JDK 25 para Windows ARM64: lá, o Microsoft Build of OpenJDK 25.
           - {os: ubuntu-24.04, plataforma: Linux-x64, python: python3, jdk: temurin}
-          - {os: ubuntu-24.04-arm, plataforma: Linux-ARM64, python: python3, jdk: temurin}
           - {os: windows-2025, plataforma: Windows-x64, python: python, jdk: temurin}
-          - {os: windows-11-arm, plataforma: Windows-ARM64, python: python, jdk: microsoft}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 40
     env:
@@ -148,7 +145,7 @@ jobs:
           mkdir publicar
           mv baixados/*/*.zip publicar/
           cd publicar && sha256sum *.zip > SHA256SUMS.txt && cat SHA256SUMS.txt
-          test "$(ls *.zip | wc -l)" = 4
+          test "$(ls *.zip | wc -l)" = 2
       - name: Publicar (sem mover tag nem substituir release existente)
         env:
           GH_TOKEN: ${{ github.token }}
@@ -157,6 +154,6 @@ jobs:
           if gh release view "v$VERSAO" --repo "$REPOSITORIO" > /dev/null 2>&1; then
             echo "A release v$VERSAO já existe: nada é substituído."; exit 1
           fi
-          printf 'Pré-release do sistema novo (reescrita, linha 1.x), para Linux e Windows (x64 e ARM64).\n\nBaixe o pacote do seu computador, extraia e abra o inpetu-hub (no Windows, inpetu-hub.exe). Os dados ficam em ~/.config/InPETU-Hub/1 no Linux e em %%LOCALAPPDATA%%\\InPETU-Hub\\1 no Windows (o sistema antigo, em InPETU-Hub/0.4, não é tocado).\n' > notas.md
+          printf 'Pré-release do sistema novo (reescrita, linha 1.x), para Linux x64 e Windows x64.\n\nBaixe o pacote do seu computador, extraia e abra o inpetu-hub (no Windows, inpetu-hub.exe). Os dados ficam em ~/.config/InPETU-Hub/1 no Linux e em %%LOCALAPPDATA%%\\InPETU-Hub\\1 no Windows (o sistema antigo, em InPETU-Hub/0.4, não é tocado).\n' > notas.md
           gh release create "v$VERSAO" --repo "$REPOSITORIO" --target "$GITHUB_SHA" --prerelease \
             --title "InPETU Hub $VERSAO (pré-release)" --notes-file notas.md publicar/*.zip publicar/SHA256SUMS.txt

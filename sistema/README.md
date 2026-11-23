@@ -39,8 +39,8 @@ A CI (`.github/workflows/sistema.yml`) roda `./mvnw verify`, ou seja, testes e `
 ## Verificar tudo e gerar o pacote (na raiz do repositório)
 
 - `python3 scripts/verificar.py`: testes e formatação do Java, testes do iniciador (com o jar) e dos scripts; `--pacote` também gera o pacote desta máquina e roda o teste de fumaça.
-- `python3 scripts/build_pacote.py --versao 1.0.0-alpha.N`: gera `dist/InPETU-Hub-Linux-x64-v1.0.0-alpha.N.zip` (ou `-Linux-ARM64-`) e a linha dele no `dist/SHA256SUMS.txt`. Precisa do JDK 25 (jlink/jdeps) e do `python3-tk` e `python3-venv`.
-- `.github/workflows/sistema-release.yml`: em PR, gera e testa o pacote no Linux x64 e ARM64; a pré-release só sai à mão (Run workflow, a partir da `main`, com “publicar” marcado), depois do ok do responsável.
+- `python3 scripts/build_pacote.py --versao 1.0.0-alpha.N`: gera `dist/InPETU-Hub-Linux-x64-v1.0.0-alpha.N.zip` (ou `-Windows-x64-`) e a linha dele no `dist/SHA256SUMS.txt`. Precisa do JDK 25 (jlink/jdeps) e do `python3-tk` e `python3-venv`.
+- `.github/workflows/sistema-release.yml`: em PR, gera e testa o pacote no Linux x64 e no Windows x64; a pré-release só sai à mão (Run workflow, a partir da `main`, com “publicar” marcado), depois do ok do responsável.
 
 ## Organização
 
