@@ -44,7 +44,7 @@
     if (escolhaDia) escolhaDia.value = escolhido || '';
     const nome = mes.toLocaleDateString('pt-BR', { month: 'long' });
     titulo.textContent = `${nome.charAt(0).toUpperCase()}${nome.slice(1)} ${mes.getFullYear()}`;
-    if (automatica !== true) grade.replaceChildren(el('p', 'Carregando...', 'mensagem'));
+    if (automatica !== true) grade.replaceChildren(el('p', 'Carregando…', 'mensagem'));
     try {
       const consulta = new URLSearchParams({ mes: exibido });
       if (filtro.value) consulta.set('espacoId', filtro.value);

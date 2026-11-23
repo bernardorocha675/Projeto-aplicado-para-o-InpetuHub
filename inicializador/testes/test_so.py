@@ -37,6 +37,15 @@ class SistemaOperacionalTest(unittest.TestCase):
         self.assertEqual([("abrir", [str(pathlib.Path("C:/v/inpetu-hub.exe")), "--pacote", "P"]), ("sair", 0)],
                          chamadas)
 
+    def test_sessao_continua_so_na_passagem_e_no_formato(self):
+        from inpetu_iniciador import entrega
+        sessao = "0123456789abcdef0123456789abcdef"
+        self.assertEqual(sessao, entrega.sessao([entrega.MARCA], {entrega.SESSAO: sessao}))
+        for argumentos, valor in (([], sessao), ([entrega.MARCA], "/home/fulano"), ([entrega.MARCA], "")):
+            nova = entrega.sessao(argumentos, {entrega.SESSAO: valor})
+            self.assertRegex(nova, "^[0-9a-f]{32}$")
+            self.assertNotEqual(sessao, nova)
+
     def test_passagem_no_linux_troca_o_processo(self):
         chamadas = []
         executavel = pathlib.Path("/v/inpetu-hub")

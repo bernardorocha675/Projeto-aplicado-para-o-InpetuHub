@@ -67,6 +67,52 @@ class SistemaTest(ComPasta):
         saida = (self.pastas.logs / "sistema.log").read_text(encoding="utf-8")
         self.assertIn("SERVER_READY", saida, "a saída do Java vai para o log local")
 
+    def test_mensagens_da_jvm_nao_deixam_a_pasta_no_log(self):
+        self.pacote.java.write_text("#!/bin/sh\necho 'Error: Unable to access jarfile /home/Fulano/x.jar'\n"
+                                    "echo '\tat br.com.inpetu.Classe.metodo(Classe.java:3)'\n"
+                                    "echo '{\"time\":\"t\",\"message\":\"event=SERVER_START_FAILED failure=FILE_ACCESS\"}'\n"
+                                    "exit 1\n", encoding="utf-8")
+        with self.assertRaises(ErroDeSubida) as erro:
+            self.sistema().iniciar()
+        self.assertEqual("FILE_ACCESS", erro.exception.falha)
+        texto = (self.pastas.logs / "sistema.log").read_text(encoding="utf-8")
+        self.assertNotIn("Fulano", texto)
+        self.assertIn("SERVER_START_FAILED", texto)
+        self.assertIn("Classe.java:3", texto)
+
+    def test_versao_do_sistema_vem_do_pacote_que_roda(self):
+        argumentos = self.base / "args.json"
+        modo_falso(self, "normal", argumentos)
+        base = self.pacote.jar.parents[1]
+        (base / "bundle.json").write_text('{"versao": "1.2.3"}', encoding="utf-8")
+        self.pacote = Pacote.em(base)
+        self.sistema().iniciar()
+        recebidos = json.loads(argumentos.read_text(encoding="utf-8"))
+        self.assertIn("-Dinpetu.app.version=1.2.3", recebidos)
+
+    def test_sem_bundle_a_versao_fica_com_o_proprio_jar(self):
+        argumentos = self.base / "args.json"
+        modo_falso(self, "normal", argumentos)
+        self.sistema().iniciar()
+        recebidos = json.loads(argumentos.read_text(encoding="utf-8"))
+        self.assertFalse([a for a in recebidos if a.startswith("-Dinpetu.app.version")])
+
+    def test_java_que_nao_executa_vira_mensagem_e_fecha_o_log(self):
+        self.pacote.java.chmod(0o644)
+        sistema = self.sistema()
+        with self.assertRaises(ErroDeSubida):
+            sistema.iniciar()
+        self.assertIsNone(sistema._saida)
+        self.assertIn("SYSTEM_START_FAILED", self.eventos())
+
+    def test_falha_antiga_no_log_nao_explica_a_nova(self):
+        (self.pastas.logs / "sistema.log").write_text("event=SERVER_START_FAILED failure=DATABASE_IN_USE\n",
+                                                      encoding="utf-8")
+        self.pacote.java.write_text("#!/bin/sh\nexit 1\n", encoding="utf-8")
+        with self.assertRaises(ErroDeSubida) as erro:
+            self.sistema().iniciar()
+        self.assertEqual("OTHER", erro.exception.falha)
+
     def test_java_recebe_um_idioma_utf8_e_nao_as_bibliotecas_do_iniciador(self):
         argumentos = self.base / "args.json"
         modo_falso(self, "normal", argumentos)

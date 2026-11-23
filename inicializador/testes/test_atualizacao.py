@@ -60,6 +60,23 @@ class AtualizacaoTest(ComPasta):
         self.assertIn("Atualizado para a versão 1.0.0-alpha.3", resultado.mensagem)
         self.assertIn("UPDATE_INSTALLED", [e["event"] for e in self.eventos()])
 
+    def test_escolhe_a_maior_versao_e_nao_a_primeira_da_lista(self):
+        self.instalada("1.0.0")
+        self.instalacao.marcar_atual("1.0.0")
+        self.github.publicar("1.1.0")
+        self.github.publicar("1.0.1")  # correção publicada depois: vem primeiro na lista do GitHub
+        self.assertEqual("v1.0.1", self.github.releases[0]["tag_name"])
+        self.atualizador().atualizar()
+        self.assertEqual("1.1.0", str(self.instalacao.atual()[0]))
+
+    def test_sobras_de_instalacao_interrompida_sao_apagadas(self):
+        for nome in (".parcial-abc", ".apagar-1.0.0-alpha.1"):
+            (self.pastas.versoes / nome).mkdir()
+            (self.pastas.versoes / nome / "x").write_text("x", encoding="utf-8")
+        atual = self.instalada("1.0.0")
+        self.instalacao.limpar_sobras()
+        self.assertEqual([atual.name], [p.name for p in self.pastas.versoes.iterdir()])
+
     def test_ja_na_mais_recente_nao_baixa_nada(self):
         self.instalada("1.0.0-alpha.2")
         self.instalacao.marcar_atual("1.0.0-alpha.2")

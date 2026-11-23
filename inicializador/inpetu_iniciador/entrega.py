@@ -3,11 +3,22 @@
 No Linux a passagem troca o processo (exec); no Windows abre o novo e encerra este. A trava é solta antes.
 """
 import os
+import re
+import uuid
 
 from inpetu_iniciador import so
 
 EXECUTAVEL = so.INICIADOR
 MARCA = "--entregue"
+SESSAO = "INPETU_SESSAO"
+
+
+def sessao(argumentos, ambiente):
+    """A sessão de log: a mesma na troca de executável; nova em qualquer outra abertura."""
+    recebida = ambiente.get(SESSAO, "")
+    if MARCA in argumentos and re.fullmatch(r"[0-9a-f]{32}", recebida):
+        return recebida
+    return uuid.uuid4().hex
 
 
 def precisa_entregar(propria, instalada, pasta, argumentos):
@@ -20,5 +31,6 @@ def precisa_entregar(propria, instalada, pasta, argumentos):
     return executavel
 
 
-def entregar(executavel, argumentos):
+def entregar(executavel, argumentos, sessao_atual):
+    os.environ[SESSAO] = sessao_atual
     so.trocar_processo(executavel, [*argumentos, MARCA])
