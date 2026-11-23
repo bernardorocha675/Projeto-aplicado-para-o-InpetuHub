@@ -34,7 +34,7 @@ Esta é uma versão de teste. **Use com dados fictícios.** Escolha o pacote do 
 
 ### 2. Entrar
 
-A agenda e o pedido de reserva são públicos. Para a parte da equipe, clique em **Área Interna** e use um dos [acessos de demonstração](docs/ACESSOS.md).
+A agenda e o pedido de reserva são públicos. Para a parte da equipe, clique em **Área Interna** e use um dos [acessos de demonstração](docs/GUIA.md#acessos-de-demonstração).
 
 ### 3. Encerrar
 
@@ -72,7 +72,7 @@ Projeto aplicado oficial do **InPETU Hub**, desenvolvido na disciplina de **Proj
 | Como rodar e testar | [Sistema](sistema/README.md) e [iniciador](inicializador/README.md) |
 | Andamento | [Plano da reescrita](docs/PLANO-REESCRITA.md) |
 
-Veja também [como contribuir](CONTRIBUTING.md), a [política de segurança](.github/SECURITY.md) e [toda a documentação](docs/README.md).
+Veja também o [guia de uso](docs/GUIA.md), [como contribuir](CONTRIBUTING.md), a [política de segurança](.github/SECURITY.md) e [toda a documentação](docs/README.md).
 
 ---
 

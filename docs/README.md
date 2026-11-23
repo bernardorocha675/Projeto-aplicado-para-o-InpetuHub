@@ -1,31 +1,13 @@
 # Documentação do InPETU Hub
 
-O aplicativo é utilizado pelo executável, disponível para Windows, macOS e Linux em x64/ARM64.
+| Para | Documento |
+| --- | --- |
+| Baixar e executar | [README](../README.md) |
+| Usar, entrar, achar os dados e resolver problemas | [Guia de uso](GUIA.md) |
+| Desenvolver, testar e publicar | [Como contribuir](../CONTRIBUTING.md), [sistema](../sistema/README.md) e [iniciador](../inicializador/README.md) |
+| Decisões e o que falta | [Plano](PLANO-REESCRITA.md) |
+| Situação de hoje | [Estado atual](../continuidade/ESTADO-ATUAL.md) |
 
-## Para quem usa
+## Versão 0.5
 
-- [Instalar e iniciar](COMO-INICIAR.md)
-- [Acessos de demonstração](ACESSOS.md)
-- [Atualizações, dados e backup](ATUALIZACOES.md)
-- [Consultar logs](LOGS.md)
-- [Sessões automáticas e envio](RELATORIOS.md)
-- [Testes automáticos e conferência da equipe](TESTAR.md)
-
-## Para quem desenvolve
-
-- [Plano da reescrita (base nova `sistema/`)](PLANO-REESCRITA.md) e [como contribuir](../CONTRIBUTING.md)
-- [Handover técnico](HANDOVER.md)
-- [Estrutura e desenvolvimento](ESTRUTURA.md)
-- [Validação das releases](VALIDACAO.md)
-- [Revisões do desktop](REVISAO-DESKTOP.md)
-- [Operação do receptor](RECEPTOR.md)
-
-## Registros de entregas anteriores
-
-- [Handover](historico/HANDOVER-ENTREGAS.md) e [validação](historico/VALIDACAO-ENTREGAS.md) das versões 0.4.1 a 0.4.11
-- [Relatório caçabugs: acompanhamento](BUGS.md) e [correções](CORRECOES-RELATORIO.md)
-- [Revisão dos PRs de 18/10/2026](REVISAO-PRS-2026-10-18.md)
-- [Identidade institucional (0.4.8, cancelada)](IDENTIDADE-INSTITUCIONAL.md) e [restauração da área interna (0.4.9)](RESTAURACAO-AREA-INTERNA.md)
-- [Retorno à 0.4.7 (0.4.10)](RETORNO-0.4.7.md)
-
-Versões antigas dos guias acompanham as tags e releases anteriores. O aviso `LEIA-PRIMEIRO.txt` de cada pacote é gerado por `.github/scripts/package_v04.py`.
+Ficam só os guias que o código antigo ainda cita: [instalar](COMO-INICIAR.md), [estrutura](ESTRUTURA.md), [testes](TESTAR.md), [publicação](../RELEASES.md), [receptor](RECEPTOR.md) e o [plano da interface](PLANO-INTERFACE.md), com lotes não feitos. Os demais estão na [tag v0.5.12](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/tree/v0.5.12/docs).
