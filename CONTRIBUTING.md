@@ -24,6 +24,23 @@ O trabalho novo acontece em `sistema/` (Java), `inicializador/` (Python) e `scri
 
 Commits em português do Brasil, curtos e no imperativo, depois dos testes: `Cria a tela de preços`.
 
+## Onde está cada coisa
+
+| Parte | Caminho |
+| --- | --- |
+| Início do sistema | `sistema/src/main/java/br/com/inpetu/hub/Aplicacao.java` |
+| Servidor, filtros, erros e log | `…/hub/comum/` |
+| Regras de reserva | `…/hub/reserva/` |
+| Telas | `sistema/src/main/webapp/` |
+| Banco | `sistema/src/main/resources/db/migration/` |
+| Iniciador e atualização | `inicializador/inpetu_iniciador/` |
+| Pacote, fumaça e verificação | `scripts/` |
+| CI | `.github/workflows/sistema.yml` e `sistema-release.yml` |
+
+## Continuar com o Claude Code
+
+Abra na raiz do projeto: o `CLAUDE.md` e o [estado atual](continuidade/ESTADO-ATUAL.md) são lidos sozinhos. Conversas, anexos e contas conectadas não passam de uma pessoa para outra. Se faltar um documento, forneça-o antes de pedir a mudança.
+
 ## Regras do código
 
 - **Java 25 puro**, com Servlets, JDBC e JSP. No Python, só a biblioteca padrão. Biblioteca nova só com o ok da equipe (decisão 3b do plano).

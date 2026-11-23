@@ -40,6 +40,21 @@ Consequências das bibliotecas recusadas:
 - **Conexões:** `JdbcConnectionPool` do próprio H2; no MySQL, uma conexão por requisição.
 - **Sugestões de cidade:** ficam fora da v1, com campo de texto livre. Ler a resposta do Open-Meteo sem biblioteca de JSON seria frágil.
 
+## Regras de negócio decididas
+
+- **Reservas:** só a aprovada ocupa horário e usa cota. Pedidos e reservas pendentes vencem em 24 horas. A janela vai de hoje a 31/12 do ano seguinte.
+- **Cota:** exige 15 dias de antecedência e não acumula. Cancelar com menos de 30 dias desconta 2× as horas; a dívida passa para o mês seguinte.
+- **Evento já terminado:** não é cancelado, é concluído. A exceção é força maior do gestor, com justificativa.
+- **Sinal:** 30%, ou 60% em domingo e feriado.
+- **Pagamento e identidade:** conferidos à mão pela equipe. O sistema não cobra.
+- **Espaços:** capacidade é o número de cadeiras; o resto vai em mobiliário. O que a equipe editar ou desativar prevalece.
+- **Documento:** CNPJ (14 dígitos), CPF (11), estrangeiro (4 a 30) ou Sem documento. Só a quantidade é conferida. Sem documento, o cadastro é achado pelo email. Empresa é opcional.
+- **Contato:** nome sem números, email com domínio completo e telefone com DDD, ou com + e o código do país.
+- **Visual:** o do site oficial do Hub. Links externos só depois de conferidos e em nova aba. Agenda e Área Interna ficam sempre visíveis.
+- **Uso:** o usuário final só abre o executável. Os dados ficam no computador de cada pessoa e não são compartilhados entre máquinas.
+
+As decisões da 0.5 e o porquê de cada uma estão no [contexto antigo](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/blob/cecd3df6f737ab04bf8055da9c33f4e898ae858e/continuidade/CONTEXTO.md), e a operação dela no [mapa antigo](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/blob/cecd3df6f737ab04bf8055da9c33f4e898ae858e/continuidade/OPERACAO.md).
+
 ## O que a 1.0 tem
 
 - Login, perfis `ADMIN` e `COLABORADOR`, cinco contas de demonstração e troca de senha.

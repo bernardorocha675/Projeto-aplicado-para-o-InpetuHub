@@ -1,29 +1,34 @@
 # Política de segurança
 
-O InPETU Hub busca proteger as informações utilizadas no projeto e manter o acesso à área interna restrito às pessoas autorizadas. A segurança faz parte do desenvolvimento e da manutenção do sistema.
+O InPETU Hub cuida das informações usadas no projeto e restringe a área interna às pessoas autorizadas. A segurança faz parte do desenvolvimento e da manutenção do sistema.
+
+## Versões
+
+A 1.0 está em **teste** e deve ser usada só com dados fictícios. As versões publicadas ficam na [página de releases](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases). Ao relatar um problema, informe a versão.
 
 ## Nossos cuidados
 
-- Contas, senhas e arquivos de ambientes reais devem permanecer privados. O aplicativo inclui cinco acessos públicos apenas para demonstração local; essa instalação não deve receber informações confidenciais.
-- Limitamos o acesso de cada usuário às funções permitidas para seu perfil.
-- Registramos ações importantes para ajudar a identificar problemas, sem incluir senhas ou códigos de acesso nos registros técnicos.
-- Ao digitar uma cidade, somente as letras digitadas são enviadas ao serviço público de busca de cidades (Open-Meteo), para mostrar sugestões. Nenhum outro dado do formulário é enviado.
-- Realizamos testes, revisões e acompanhamento das ferramentas utilizadas para identificar riscos e aplicar melhorias.
+- O sistema funciona só no seu computador e não fica aberto para a rede.
+- Os dados ficam no seu computador. Na versão 1.0, o programa acessa a internet para procurar e baixar atualizações no GitHub, e nenhum cadastro é enviado. Links para outros sites abrem no navegador.
+- As senhas são guardadas de forma protegida, e cada pessoa acessa só as funções do seu perfil.
+- O pacote de uma atualização é conferido antes de ser instalado.
+- Os registros técnicos são feitos para não guardar senhas nem dados de formulários.
+- Fazemos testes e revisões para achar riscos e corrigir.
 
-A versão atual é a mais recente publicada na página de releases deste repositório. As versões anteriores permanecem no repositório como histórico do desenvolvimento; a versão atual deve ser a referência para uso e acompanhamento das melhorias.
+As cinco contas de demonstração são **públicas**. Não coloque informações confidenciais numa instalação com elas.
 
-Os relatórios de testes publicados contêm somente informações de funcionamento e diagnóstico, com versão e tipos de ação. Senhas, códigos de acesso, formulários e banco de dados não fazem parte desses documentos. Os registros enviados por computadores de teste devem ser revisados pela equipe.
+Na versão 0.5, ao digitar uma cidade, só as letras digitadas vão ao serviço público Open-Meteo, para mostrar sugestões. A 1.0 não faz isso.
 
 ## Como comunicar um problema
 
-Se identificar uma possível falha de segurança, pedimos que a comunique de forma responsável e privada, antes de divulgar detalhes publicamente.
+Comunique possíveis falhas de forma privada, antes de divulgar detalhes.
 
-Se a opção **Report a vulnerability** estiver disponível na aba **Security** deste repositório, utilize-a para enviar o relato. Caso não esteja, abra uma issue apenas solicitando um canal privado de contato, sem descrever a falha nem anexar informações sensíveis.
+Use a opção **Report a vulnerability**, na aba **Security** deste repositório. Se ela não aparecer, abra uma issue pedindo apenas um canal privado, sem descrever a falha.
 
-No relato privado, informe a versão utilizada, o que foi observado, como reproduzir o problema e quais consequências ele pode causar. Não envie senhas, códigos de acesso ou dados de outras pessoas. A equipe responsável poderá solicitar informações adicionais para avaliar o caso.
+No relato privado, diga a versão, o que observou, como repetir o problema e o que ele pode causar. Não envie senhas nem dados de outras pessoas.
 
 ## Respeito aos usuários e aos dados
 
-Não publique informações pessoais, arquivos de acesso ou cópias do banco de dados em issues, pull requests ou capturas de tela. Testes que possam interromper o serviço ou acessar dados de terceiros só devem ser realizados com autorização dos responsáveis.
+Não publique informações pessoais, arquivos de acesso ou cópias do banco em issues, pull requests ou capturas de tela. Só teste o que possa afetar dados de outras pessoas com autorização.
 
-Nenhum sistema está livre de falhas. Nossos cuidados e testes reduzem riscos, mas não representam garantia de segurança absoluta. A colaboração responsável ajuda a melhorar o projeto e proteger seus usuários.
+Nenhum sistema está livre de falhas. Nossos cuidados reduzem riscos, mas não garantem segurança absoluta.
