@@ -1,7 +1,9 @@
 package br.com.inpetu.hub.comum.log;
 
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Os únicos eventos do sistema que vão para o log com texto: todos montados com campos controlados. Nunca recebe
@@ -51,6 +53,40 @@ public final class Eventos {
         LOG.log("NEGADO".equals(resultado) ? Level.WARNING : Level.INFO, texto);
     }
 
+    /** O que aconteceu na página: só códigos de uma lista (o servlet confere), a tela canônica e a linha do script. */
+    public static void tela(String tipo, String alvo, String pagina, int linha) {
+        LOG.log("CLIQUE".equals(tipo) ? Level.INFO : Level.WARNING, "event=SCREEN type=" + palavra(tipo) + " target="
+                + nome(alvo) + " page=" + RotasSeguras.canonica(pagina) + (linha > 0 ? " line=" + linha : ""));
+    }
+
+    /** Campos que o navegador recusou antes de enviar (o servidor nem recebe o formulário). */
+    public static void camposRecusados(Collection<String> campos, String pagina) {
+        LOG.warning("event=SCREEN type=CAMPO_INVALIDO fields=" + nomes(campos) + " page=" + RotasSeguras.canonica(
+                pagina));
+    }
+
+    /** Formulário recusado: só os nomes dos campos, nunca o que foi digitado. */
+    public static void formularioRecusado(String formulario, Collection<String> campos) {
+        LOG.warning("event=FORM_REJECTED form=" + palavra(formulario) + " fields=" + nomes(campos));
+    }
+
+    private static String nomes(Collection<String> campos) {
+        return campos.stream().limit(20).map(Eventos::palavra).collect(Collectors.joining(","));
+    }
+
+    /** Regra que recusou: o ponto do código, nunca a mensagem. */
+    public static void regraRecusou(String formulario, Throwable regra) {
+        StackTraceElement[] pilha = regra.getStackTrace();
+        String ponto = "OTHER";
+        if (pilha.length > 0) {
+            String classe = pilha[0].getClassName();
+            String texto = classe.substring(classe.lastIndexOf('.') + 1) + "." + pilha[0].getMethodName() + ":"
+                    + pilha[0].getLineNumber();
+            ponto = texto.matches("[A-Za-z]{1,60}\\.[A-Za-z]{1,60}:[0-9]{1,6}") ? texto : "OTHER";
+        }
+        LOG.log(Level.WARNING, "event=RULE_REJECTED form=" + palavra(formulario) + " rule=" + ponto);
+    }
+
     /** Uma tarefa periódica falhou: só o nome da tarefa e a causa (sem mensagem). */
     public static void falhaEmTarefa(String tarefa, Throwable falha) {
         LOG.log(Level.SEVERE, "event=TASK_FAILED task=" + palavra(tarefa), falha);
@@ -59,6 +95,10 @@ public final class Eventos {
     // Os nomes vêm de constantes do código; ainda assim, qualquer coisa fora do formato vira OTHER.
     private static String palavra(String valor) {
         return valor != null && valor.matches("[A-Za-z_]{1,40}") ? valor : "OTHER";
+    }
+
+    private static String nome(String valor) {
+        return valor != null && valor.matches("[A-Za-z_]{1,40}(-[a-z]{1,20})?(\\.js)?") ? valor : "OTHER";
     }
 
     private static String metodo(String metodo) {

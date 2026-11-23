@@ -6,7 +6,8 @@ import java.util.Set;
 public final class RotasSeguras {
 
     // Cada entrega acrescenta aqui as rotas que criar.
-    private static final Set<String> CONHECIDAS = Set.of("/", "/saude", "/login", "/sair", "/admin", "/conta/senha",
+    private static final Set<String> CONHECIDAS = Set.of("/", "/saude", "/tela", "/login", "/sair", "/admin",
+            "/conta/senha",
             "/agenda", "/disponibilidade", "/admin/cadastros/espacos", "/admin/cadastros/espacos/editar",
             "/admin/cadastros/espacos/salvar", "/admin/cadastros/espacos/excluir", "/reserva", "/reservas/resumo",
             "/reservas/solicitar", "/reservas/recebida", "/admin/reservas", "/admin/solicitacoes",

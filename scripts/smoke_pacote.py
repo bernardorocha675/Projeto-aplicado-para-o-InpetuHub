@@ -171,6 +171,10 @@ def conferir_telas(url):
     status, json_dia = abrir("/disponibilidade?mes=2026-11")
     if status != 200 or json.loads(json_dia)["dias"][0]["espacos"].__len__() != 10:
         falhar("a disponibilidade não trouxe os 10 espaços")
+    aviso = urllib.request.Request(url + "tela?evento=CLIQUE&alvo=DIA&pagina=/agenda", headers={"X-Inpetu-Tela": "1"})
+    with urllib.request.urlopen(aviso, timeout=30) as resposta:
+        if resposta.status != 204:
+            falhar("a página não conseguiu registrar um clique")
     _, login = abrir("/login")
     token = re.search(r'name="_csrf" value="([^"]+)"', login).group(1)
     status, painel = abrir("/login", {"_csrf": token, "usuario": "bernardo", "senha": "bernardo040"})
@@ -253,6 +257,8 @@ def main():
             falhar("o sistema não registrou as duas paradas")
         if f'"appVersion":"{versao}"' not in sistema or f'"launcherVersion":"{versao}"' not in sistema:
             falhar("as versões do pacote não chegaram ao log")
+        if "event=SCREEN type=CLIQUE target=DIA page=/agenda" not in sistema:
+            falhar("o clique da página não chegou ao log")
         for log in (dados / "logs").iterdir():
             if "Fulano" in log.read_text(encoding="utf-8", errors="replace"):
                 falhar(f"{log.name} guarda a pasta da pessoa")

@@ -257,4 +257,46 @@ class PedidoPublicoTest {
             }
         });
     }
+
+    @Test
+    void logDizOsCamposRecusadosEARegraSemOQueFoiDigitado() throws Exception {
+        com((ambiente, http, sala) -> {
+            try (CapturaDeLog log = new CapturaDeLog()) {
+                Map<String, String> c = Pedidos.campos(sala);
+                c.put("nome", "Nome 123 sigiloso");
+                c.put("email", "sigiloso@");
+                Pedidos.resumo(http, c);
+                assertTrue(log.aguardar("FORM_REJECTED").contains(
+                        "event=FORM_REJECTED form=solicitacao fields=nome,email"), log.texto());
+                c = Pedidos.campos(sala);
+                c.put("horaFim", "07:00");
+                c.put("horaInicio", "08:00");
+                Pedidos.resumo(http, c);
+                String texto = log.aguardar("RULE_REJECTED");
+                assertTrue(
+                        texto.matches("(?s).*event=RULE_REJECTED form=solicitacao rule=[A-Za-z]+\\.[a-zA-Z]+:[0-9]+.*"),
+                        texto);
+                assertFalse(texto.contains("sigiloso"), texto);
+            }
+        });
+    }
+
+    /** Achado da alpha.1: os atributos saíam colados (requiredmaxlength) e o navegador os ignorava. */
+    @Test
+    void atributosDosCamposSaemSeparados() throws Exception {
+        com((ambiente, http, sala) -> {
+            String tela = http.get("/reserva").body();
+            for (String campo : new String[]{"data", "nome", "email", "telefone", "cidade", "titulo",
+                    "numeroParticipantes"}) {
+                java.util.regex.Matcher m = java.util.regex.Pattern.compile("<input id=\"" + campo + "\"[^>]*>")
+                        .matcher(
+                                tela);
+                assertTrue(m.find(), campo);
+                assertTrue(m.group().matches("(?s)<input( [a-z-]+(=\"[^\"]*\")?)+ */>"), m.group());
+                assertTrue(m.group().contains(" required "), m.group());
+            }
+            assertTrue(tela.contains(" maxlength=\"20\""), "limite do telefone");
+            assertTrue(tela.contains(" step=\"1\""), "participantes inteiros");
+        });
+    }
 }

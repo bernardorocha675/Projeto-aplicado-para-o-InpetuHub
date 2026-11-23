@@ -96,6 +96,7 @@ public final class EspacosServlet extends HttpServlet {
         Long autor = autor(pedido);
         if (dados == null) {
             Eventos.auditoria("CADASTRO_INVALIDO", ALVO, "NEGADO");
+            Eventos.formularioRecusado(ALVO, formulario.erros.keySet());
             resposta.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             formulario(pedido, resposta, formulario);
             return;

@@ -7,7 +7,7 @@ import signal
 import sys
 import threading
 
-from inpetu_iniciador import entrega
+from inpetu_iniciador import entrega, relatorio
 from inpetu_iniciador.controle import Controle, Estado
 from inpetu_iniciador.github import Releases
 from inpetu_iniciador.preparo import preparar
@@ -107,7 +107,8 @@ def main(lista=None):
         if argumentos.sem_janela:
             return sem_janela(controle)
         from inpetu_iniciador.janela import Janela
-        janela = Janela(controle)
+        janela = Janela(controle, registrar=registro.evento,
+                        salvar_relatorio=lambda destino: relatorio.salvar(pastas, registro, destino))
         controle.iniciar()
         janela.rodar()
         return 0

@@ -9,6 +9,6 @@
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <div class="campo">
   <label for="${nome}">${fn:escapeXml(rotulo)}<c:if test="${obrigatorio}"> *</c:if></label>
-  <input id="${nome}" name="${nome}" type="${empty tipo ? 'text' : tipo}" value="${fn:escapeXml(valor)}"<c:if test="${obrigatorio}"> required</c:if><c:forEach var="a" items="${extras}"> ${a.key}="${fn:escapeXml(a.value)}"</c:forEach><c:if test="${not empty erro}"> aria-invalid="true" aria-describedby="erro-${nome}"</c:if> />
+  <input id="${nome}" name="${nome}" type="${empty tipo ? 'text' : tipo}" value="${fn:escapeXml(valor)}"<c:if test="${obrigatorio}"> required</c:if><c:forEach var="a" items="${extras}">${' '}${a.key}="${fn:escapeXml(a.value)}"</c:forEach><c:if test="${not empty erro}"> aria-invalid="true" aria-describedby="erro-${nome}"</c:if> />
   <c:if test="${not empty erro}"><p id="erro-${nome}" class="erro-campo">${fn:escapeXml(erro)}</p></c:if>
 </div>

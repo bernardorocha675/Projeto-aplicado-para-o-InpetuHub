@@ -40,8 +40,39 @@ class JanelaTest(unittest.TestCase):
     def setUp(self):
         from inpetu_iniciador.janela import Janela
         self.controle = ControleFalso()
-        self.janela = Janela(self.controle)
+        self.eventos = []
+        self.salvos = []
+        self.janela = Janela(self.controle, registrar=self.eventos.append, salvar_relatorio=self.salvar)
         self.addCleanup(lambda: self._existe() and self.janela.raiz.destroy())
+
+    def salvar(self, destino):
+        self.salvos.append(destino)
+        return destino != "/sem-permissao"
+
+    def test_salvar_relatorio_pergunta_onde_e_avisa_o_resultado(self):
+        self.janela.escolher_arquivo = lambda: "/tmp/relatorio.txt"
+        self.janela.relatorio.invoke()
+        self.assertEqual(["/tmp/relatorio.txt"], self.salvos)
+        self.assertIn("Relatório salvo", self.janela.aviso.cget("text"))
+        self.janela.escolher_arquivo = lambda: "/sem-permissao"
+        self.janela.relatorio.invoke()
+        self.assertIn("Não foi possível", self.janela.aviso.cget("text"))
+        self.janela.escolher_arquivo = lambda: ""
+        self.janela.relatorio.invoke()
+        self.assertEqual(2, len(self.salvos), "cancelar não salva")
+        self.controle.estado = Estado.ERRO
+        self.janela.atualizar()
+        self.assertFalse(self.janela.relatorio.instate(["disabled"]), "depois de um erro é quando mais ajuda")
+
+    def test_botoes_vao_para_o_log(self):
+        self.janela.iniciar.invoke()
+        self.controle.estado = Estado.RODANDO
+        self.janela.atualizar()
+        self.janela.navegador.invoke()
+        self.janela.parar.invoke()
+        self.janela.fechar()
+        self.janela.fechar()
+        self.assertEqual(["BUTTON_START", "BUTTON_BROWSER", "BUTTON_STOP", "WINDOW_CLOSED"], self.eventos)
 
     def habilitados(self):
         return [b.cget("text") for b in (self.janela.iniciar, self.janela.parar, self.janela.navegador)
