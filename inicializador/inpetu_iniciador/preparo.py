@@ -18,6 +18,7 @@ class Preparado:
 def preparar(pastas, registro, embutido, releases, argumentos, sistema_operacional=None):
     """`embutido`: a pasta do executável aberto (com bundle.json). `releases`: None para não consultar o GitHub."""
     instalacao = Instalacao(pastas)
+    instalacao.limpar_sobras()
     propria = instalacao.versao_da_pasta(embutido) if embutido else None
     atual = instalacao.atual()
     if propria is not None and (atual is None or propria > atual[0]):

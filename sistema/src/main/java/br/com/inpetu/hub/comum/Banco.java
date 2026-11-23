@@ -14,7 +14,9 @@ import org.h2.jdbcx.JdbcConnectionPool;
  */
 public final class Banco {
 
-    private static final String OPCOES_H2 = ";MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_ON_EXIT=FALSE;LOCK_TIMEOUT=10000";
+    private static final String OPCOES_H2 = ";MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_ON_EXIT=FALSE;LOCK_TIMEOUT=10000"
+            // Sem arquivo de rastro (inpetu.trace.db): nos erros ele guarda o SQL com os valores digitados.
+            + ";TRACE_LEVEL_FILE=0;TRACE_LEVEL_SYSTEM_OUT=0";
 
     private Banco() {
     }

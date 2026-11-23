@@ -109,4 +109,48 @@ class AplicacaoTest {
         linha.join(Duration.ofSeconds(30));
         assertFalse(linha.isAlive());
     }
+
+    /** Roda o main num processo à parte, como o iniciador, e devolve tudo o que ele escreveu. */
+    private static String rodarMain(int esperado, String dados, String porta) throws Exception {
+        Process processo = new ProcessBuilder(Path.of(System.getProperty("java.home"), "bin", "java").toString(),
+                "-Dinpetu.dados=" + dados, "-cp", System.getProperty("java.class.path"), "br.com.inpetu.hub.Aplicacao",
+                porta).redirectErrorStream(true).start();
+        String saida = new String(processo.getInputStream().readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+        assertTrue(processo.waitFor(60, java.util.concurrent.TimeUnit.SECONDS));
+        assertEquals(esperado, processo.exitValue(), saida);
+        return saida;
+    }
+
+    @Test
+    void falhaAoSubirNaoEscreveAPastaDaPessoaNemAMensagemDaExcecao() throws Exception {
+        Path arquivo = Files.writeString(temporaria.resolve("Pasta de Fulano"), "não é pasta");
+        String saida = rodarMain(1, arquivo.resolve("dados").toString(), "0");
+        assertTrue(saida.contains("event=SERVER_START_FAILED failure=FILE_ACCESS"), saida);
+        assertFalse(saida.contains("Fulano"), saida);
+        assertFalse(saida.contains("Exception in thread"), saida);
+        assertEquals(1, saida.split("SERVER_START_FAILED", -1).length - 1, saida);
+    }
+
+    @Test
+    void argumentoInvalidoNaoEcoaOValor() throws Exception {
+        String saida = rodarMain(1, temporaria.resolve("dados").toString(), "porta-de-Fulano");
+        assertTrue(saida.contains("event=SERVER_START_FAILED"), saida);
+        assertFalse(saida.contains("Fulano"), saida);
+    }
+
+    @Test
+    void falhaSoltaNumaLinhaDeExecucaoVaiParaOLogSemAMensagem() throws Exception {
+        try (CapturaDeLog log = new CapturaDeLog()) {
+            Aplicacao.falhasSoltasParaOLog();
+            Thread linha = new Thread(() -> {
+                throw new IllegalStateException("/home/fulano/segredo");
+            });
+            linha.start();
+            linha.join();
+            assertTrue(log.texto().contains("event=TASK_FAILED task=thread"), log.texto());
+            assertFalse(log.texto().contains("fulano"), log.texto());
+        } finally {
+            Thread.setDefaultUncaughtExceptionHandler(null);
+        }
+    }
 }

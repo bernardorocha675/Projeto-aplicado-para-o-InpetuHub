@@ -206,6 +206,10 @@ def conferir_passagem(anterior, ambiente, base, dados, versao):
     eventos = [e["event"] for e in eventos_do_iniciador(dados)]
     if "LAUNCHER_HANDOVER" not in eventos:
         falhar("o executável antigo não passou a vez para o iniciador novo")
+    todos = eventos_do_iniciador(dados)
+    passagem = [e for e in todos if e["event"] == "LAUNCHER_HANDOVER"][-1]
+    if [e for e in todos if e["event"] == "SYSTEM_READY"][-1]["sessionId"] != passagem["sessionId"]:
+        falhar("a sessão mudou na troca de executável")
     ultimo = [l for l in (dados / "logs" / "sistema.log").read_text(encoding="utf-8").splitlines()
               if "SERVER_READY" in l][-1]
     if f'"launcherVersion":"{versao}"' not in ultimo:

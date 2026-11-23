@@ -97,6 +97,12 @@ class Instalacao:
             if pasta not in guardar:
                 _apagar_inteira(pasta)
 
+    def limpar_sobras(self):
+        """Apaga o que uma instalação ou limpeza interrompida deixou (só com a trava do iniciador)."""
+        for sobra in self.pasta.iterdir():
+            if sobra.is_dir() and sobra.name.startswith((".parcial-", ".apagar-")):
+                shutil.rmtree(sobra, ignore_errors=True)
+
     def _provisoria(self):
         self.pasta.mkdir(parents=True, exist_ok=True)
         return pathlib.Path(tempfile.mkdtemp(prefix=".parcial-", dir=self.pasta))
@@ -130,6 +136,7 @@ def _apagar_inteira(pasta):
     """Renomeia antes de apagar: no Windows, uma versão em uso não pode ser renomeada e fica inteira (sem isso, os
     arquivos livres seriam apagados e a versão ficaria pela metade)."""
     lixo = pasta.with_name(f".apagar-{pasta.name}")
+    shutil.rmtree(lixo, ignore_errors=True)
     try:
         os.replace(pasta, lixo)
     except OSError:

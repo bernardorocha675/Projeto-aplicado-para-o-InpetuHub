@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.sql.DataSource;
 
@@ -20,10 +21,15 @@ public final class Transacao {
         T executar(Connection conexao) throws SQLException;
     }
 
+    // Uma vez por processo e antes de pegar a conexão: quem espera não ocupa o conjunto, e quem grava sempre consegue
+    // outra conexão para ler. A trava da linha continua valendo entre processos (MySQL).
+    private static final ReentrantLock UMA_POR_VEZ = new ReentrantLock(true);
+
     private Transacao() {
     }
 
     public static <T> T executar(DataSource banco, Trabalho<T> trabalho) {
+        UMA_POR_VEZ.lock();
         try (Connection conexao = banco.getConnection()) {
             conexao.setAutoCommit(false);
             try {
@@ -39,6 +45,8 @@ public final class Transacao {
             }
         } catch (SQLException falha) {
             throw new IllegalStateException("Não foi possível gravar.", falha);
+        } finally {
+            UMA_POR_VEZ.unlock();
         }
     }
 

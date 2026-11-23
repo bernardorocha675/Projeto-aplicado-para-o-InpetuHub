@@ -51,7 +51,7 @@
         <button type="submit" class="botao">Salvar e recalcular</button>
       </form>
       <h3>Cancelar reserva</h3>
-      <form method="post" action="/admin/reservas/${id}/cancelar" class="formulario">
+      <form method="post" action="/admin/reservas/${id}/cancelar" class="formulario" data-confirmar="Cancelar esta reserva? O horário será liberado e isso não pode ser desfeito.">
         <input type="hidden" name="_csrf" value="${csrf}" />
         <p class="alerta aviso" role="status">Com menos de 30 dias de antecedência, cancelar uma reserva aprovada que usou cota gera penalidade de 2× as horas.</p>
         <c:if test="${gestor}"><label class="caixa"><input type="checkbox" name="forcaMaior" value="sim" /> Força maior / exceção do gestor (com justificativa)</label></c:if>

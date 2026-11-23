@@ -5,6 +5,7 @@ parada (o sistema encerra em ordem e libera o banco) e só força depois do praz
 """
 import dataclasses
 import datetime
+import json
 import os
 import pathlib
 import re
@@ -15,6 +16,7 @@ import urllib.request
 
 from inpetu_iniciador import VERSAO, backup, porta, so
 from inpetu_iniciador.registro import girar
+from inpetu_iniciador.versoes import Versao
 
 JAR = "inpetu-hub-sistema.jar"
 MENSAGENS = {
@@ -39,11 +41,12 @@ class ErroDeSubida(Exception):
 class Pacote:
     java: pathlib.Path
     jar: pathlib.Path
+    versao: str = None
 
     @staticmethod
     def em(base):
         base = pathlib.Path(base)
-        pacote = Pacote(base / so.JAVA, base / "app" / JAR)
+        pacote = Pacote(base / so.JAVA, base / "app" / JAR, _versao_do_bundle(base))
         if not pacote.java.is_file() or not pacote.jar.is_file():
             raise ErroDeSubida("O pacote do sistema está incompleto. Baixe o pacote de novo.", "PACKAGE_INCOMPLETE")
         return pacote
@@ -77,22 +80,34 @@ class Sistema:
         numero = porta.livre()
         comando = [str(self.pacote.java), f"-Dinpetu.dados={self.pastas.dados}",
                    f"-Dinpetu.parada={self.pastas.parada}", f"-Dinpetu.session.id={self.sessao}",
-                   f"-Dinpetu.launcher.version={VERSAO}", f"-Dinpetu.app.version={VERSAO}", "-Dfile.encoding=UTF-8", "-jar", str(self.pacote.jar),
-                   str(numero)]
+                   f"-Dinpetu.launcher.version={VERSAO}", "-Dfile.encoding=UTF-8",
+                   # Sem o despejo de falha da JVM: ele guarda o ambiente e a linha de comando, com a pasta da pessoa.
+                   "-XX:+SuppressFatalErrorMessage"]
+        if self.pacote.versao is not None:
+            comando.append(f"-Dinpetu.app.version={self.pacote.versao}")
+        comando += ["-jar", str(self.pacote.jar), str(numero)]
         log = self.pastas.logs / "sistema.log"
+        limpar_saida(log)
         girar(log)
+        self._inicio_log = log.stat().st_size if log.exists() else 0
         self._saida = open(log, "ab")
         inicio = time.monotonic()
-        self._processo = subprocess.Popen(comando, stdin=subprocess.DEVNULL, stdout=self._saida,
-                                          stderr=subprocess.STDOUT, env=ambiente_do_java(),
-                                          **so.opcoes_do_processo())
+        try:
+            self._processo = subprocess.Popen(comando, stdin=subprocess.DEVNULL, stdout=self._saida,
+                                              stderr=subprocess.STDOUT, env=ambiente_do_java(),
+                                              **so.opcoes_do_processo())
+        except OSError as erro:
+            self._encerrado()
+            self.registro.evento("SYSTEM_START_FAILED", failure="JAVA_NOT_EXECUTABLE")
+            raise ErroDeSubida("O Java do pacote não pôde ser executado. Baixe o pacote de novo.",
+                               "JAVA_NOT_EXECUTABLE") from erro
         self.pastas.pid.write_text(str(self._processo.pid), encoding="utf-8")
         self.url = f"http://127.0.0.1:{numero}/"
         while time.monotonic() - inicio < self.prazo_subida:
             if self._processo.poll() is not None:
                 codigo = self._processo.returncode
+                falha = self._falha_no_log(log, self._inicio_log)
                 self._encerrado()
-                falha = self._falha_no_log(log)
                 self.registro.evento("SYSTEM_START_FAILED", failure=falha, exitCode=max(codigo, 0))
                 raise ErroDeSubida(MENSAGENS.get(falha, "O sistema não iniciou. Veja o log em logs/sistema.log."),
                                    falha)
@@ -126,6 +141,7 @@ class Sistema:
         if self._saida is not None:
             self._saida.close()
             self._saida = None
+            limpar_saida(self.pastas.logs / "sistema.log")
         self.pastas.pid.unlink(missing_ok=True)
         self.pastas.parada.unlink(missing_ok=True)
 
@@ -145,13 +161,38 @@ class Sistema:
         self.registro.evento("ORPHAN_STOPPED")
 
     @staticmethod
-    def _falha_no_log(log):
+    def _falha_no_log(log, inicio):
         try:
-            fim = log.read_bytes()[-20000:].decode("utf-8", "replace")
+            fim = log.read_bytes()[inicio:][-20000:].decode("utf-8", "replace")
         except OSError:
             return "OTHER"
         achados = FALHA.findall(fim)
         return achados[-1] if achados else "OTHER"
+
+
+LINHA_SEGURA = re.compile(r"\{\"|InPETU Hub pronto em http://127\.0\.0\.1:\d+/\s*$|\s+at [\w.$/@]+\([\w. :]*\)\s*$")
+OMITIDA = "[linha fora do formato omitida]"
+
+
+def limpar_saida(log):
+    """Troca as linhas que não são do log seguro (mensagens da JVM, que podem ter a pasta da pessoa)."""
+    try:
+        linhas = log.read_text(encoding="utf-8", errors="replace").splitlines()
+        seguras = [l if LINHA_SEGURA.match(l) or l.startswith("event=") else OMITIDA for l in linhas]
+        if seguras != linhas:
+            novo = log.with_name(log.name + ".novo")
+            novo.write_text("".join(l + "\n" for l in seguras), encoding="utf-8")
+            novo.replace(log)
+    except OSError:
+        pass  # sem log ou em uso: a próxima abertura limpa
+
+
+def _versao_do_bundle(base):
+    try:
+        versao = json.loads((base / "bundle.json").read_text(encoding="utf-8")).get("versao")
+    except (OSError, ValueError, AttributeError):
+        return None
+    return versao if isinstance(versao, str) and Versao.de(versao) is not None else None
 
 
 def ambiente_do_java(origem=None):

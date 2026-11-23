@@ -3,7 +3,7 @@
 <%@ attribute name="estilo" required="false" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
-<t:pagina titulo="${titulo}" estilo="${estilo}">
+<t:pagina titulo="${titulo}" estilo="${estilo}" script="/js/confirmar.js">
   <jsp:attribute name="lateral">
     <aside class="lateral">
       <p class="sobretitulo">Gestão do Hub</p>

@@ -29,18 +29,29 @@ public final class Aplicacao {
     private Aplicacao() {
     }
 
-    public static void main(String[] argumentos) throws Exception {
+    /** Nenhuma exceção sai daqui: o Java a escreveria com a mensagem, que pode ter a pasta da pessoa. */
+    public static void main(String[] argumentos) {
         Log.configurar();
-        executar(argumentos, System.getProperties());
+        falhasSoltasParaOLog();
+        try {
+            executar(argumentos, System.getProperties());
+        } catch (Throwable jaRegistrada) {
+            System.exit(1);
+        }
+    }
+
+    /** Uma exceção solta em qualquer linha de execução vai para o log sem a mensagem. */
+    static void falhasSoltasParaOLog() {
+        Thread.setDefaultUncaughtExceptionHandler((linha, falha) -> Eventos.falhaEmTarefa("thread", falha));
     }
 
     /** Sobe o sistema e só volta quando ele para (pelo arquivo de parada ou pelo fim do processo). */
     static void executar(String[] argumentos, Properties propriedades) throws Exception {
-        int porta = argumentos.length > 0 ? Integer.parseInt(argumentos[0]) : PORTA_PADRAO;
         String arquivoParada = propriedades.getProperty("inpetu.parada");
         Servidor servidor;
         Ambiente ambiente = null;
         try {
+            int porta = argumentos.length > 0 ? Integer.parseInt(argumentos[0]) : PORTA_PADRAO;
             if (arquivoParada != null) {
                 Parada.limpar(Path.of(arquivoParada));
             }
@@ -49,7 +60,7 @@ public final class Aplicacao {
             Migracoes.aplicar(ambiente.banco());
             ContasDemonstracao.restaurar(ambiente);
             servidor = Servidor.iniciar(porta, ambiente);
-        } catch (Exception falha) {
+        } catch (Exception | Error falha) {
             Eventos.inicioFalhou(falha);
             if (ambiente != null) {
                 Banco.fechar(ambiente.banco());
