@@ -7,6 +7,7 @@ Atualizado em 23/11/2026. **Mantenha este arquivo em uma página:** troque o que
 - **1.0.0-alpha.1** publicada como pré-release em 23/11/2026, para Windows x64 e Linux x64: [release](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v1.0.0-alpha.1), run 45212853659, tag em `1e28f5a`.
 - A **0.5.12** continua a “Latest” nas Releases; código e fluxo da 0.5 intactos. O iniciador antigo ignora a linha 1.x.
 - As entregas 1 a 12 estão na `main`. O README mostra só a 1.0.
+- Documentação refeita (PR #76): README, guia, CONTRIBUTING, plano e este estado. Decisões e operação antigas foram para o plano e o CONTRIBUTING, com o original no histórico.
 
 ## Evidência
 
@@ -21,7 +22,6 @@ Atualizado em 23/11/2026. **Mantenha este arquivo em uma página:** troque o que
 - Decisões abertas no [plano](../docs/PLANO-REESCRITA.md#o-que-falta).
 - Agente de privacidade (rodada completa) e scan do Claude Security: não feitos. A configuração do Claude Security está só no computador do responsável, sem commit.
 - `windows-11-arm` falhou uma vez no teste da 0.5 (run 45197291212) e passou antes e depois; causa não identificada.
-- `.github/SECURITY.md` cita a busca de cidades, que a 1.0 não tem.
 - Dependabot abertos: #54 e #56 (CodeQL, precisam entrar juntos), #57 e #70. PR #53 aberto desde 11/11.
 
 ## Não fazer sem novo pedido
