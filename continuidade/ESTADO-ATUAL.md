@@ -22,7 +22,7 @@ Atualizado em 23/11/2026. **Mantenha este arquivo em uma página:** troque o que
 - Decisões abertas no [plano](../docs/PLANO-REESCRITA.md#o-que-falta).
 - Agente de privacidade (rodada completa) e scan do Claude Security: não feitos. A configuração do Claude Security está só no computador do responsável, sem commit.
 - `windows-11-arm` falhou uma vez no teste da 0.5 (run 45197291212) e passou antes e depois; causa não identificada.
-- Dependabot abertos: #54 e #56 (CodeQL, precisam entrar juntos), #57 e #70. PR #53 aberto desde 11/11.
+- Dependências de novembro integradas (PR #78: CodeQL 4.39.3, setup-java 6.3.0 e libphonenumber 9.0.43 na 0.5, sem publicar). O Dependabot passa a agrupar o CodeQL e a acompanhar `sistema/`. PR #53 fechado sem integrar.
 
 ## Não fazer sem novo pedido
 
