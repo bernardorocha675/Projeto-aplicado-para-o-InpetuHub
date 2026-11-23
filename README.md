@@ -2,69 +2,58 @@
 
 Sistema de gestão de relacionamento (CRM) e de reservas de espaços feito para o InPETU Hub, como projeto aplicado do UniSENAI. Ele roda no seu computador e abre no navegador.
 
-**[Baixar](#baixar)** · **[Como executar](#como-executar)** · **[Versão de teste 1.0](#versão-de-teste-100-alpha1)** · **[Equipe](#equipe-e-créditos)** · **[Desenvolvimento](#desenvolvimento)**
-
 ## Sobre o projeto
 
-A equipe do Hub guardava as informações dos empreendedores em várias planilhas, sem histórico dos atendimentos e com dificuldade para organizar as reservas. O sistema reúne tudo em um só lugar:
+A equipe do Hub guardava as informações dos empreendedores em várias planilhas, sem histórico dos atendimentos e com dificuldade para organizar as reservas. O sistema está sendo construído para reunir tudo em um só lugar. Já estão prontos:
 
-- **Empreendedores:** cadastro, busca e um perfil com reservas, atendimentos, visitas e histórico.
-- **Atendimentos e visitas:** registro ligado ao empreendedor e ao colaborador responsável.
 - **Agenda pública:** qualquer pessoa consulta os dias e envia um pedido de reserva.
 - **Solicitações e reservas:** a equipe aprova, recusa ou cancela.
 - **Espaços e painel:** cadastro dos espaços e visão das próximas reservas.
 
 ## Baixar
 
-### Versão oficial
+### Versão 1.0.0-alpha.1
 
-**Versão 0.5.12**, com todas as funções acima. Escolha o pacote do seu computador; não é preciso instalar mais nada.
-
-| Computador | Executável |
-| --- | --- |
-| Windows (Intel/AMD) | [Baixar a 0.5.12](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.12/InPETU-Hub-Windows-x64-v0.5.12.zip) |
-| Windows ARM | [Baixar a 0.5.12](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.12/InPETU-Hub-Windows-ARM64-v0.5.12.zip) |
-| Mac Apple Silicon (M1 ou mais recente) | [Baixar a 0.5.12](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.12/InPETU-Hub-macOS-ARM64-v0.5.12.zip) |
-| Mac Intel | [Baixar a 0.5.12](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.12/InPETU-Hub-macOS-x64-v0.5.12.zip) |
-| Linux (Intel/AMD) | [Baixar a 0.5.12](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.12/InPETU-Hub-Linux-x64-v0.5.12.zip) |
-| Linux ARM | [Baixar a 0.5.12](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.12/InPETU-Hub-Linux-ARM64-v0.5.12.zip) |
-
-No Mac, é necessário o macOS 13 Ventura ou mais recente. Para estudar o projeto, baixe o [código completo da 0.5.12](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v0.5.12/InPETU-Hub-codigo-v0.5.12.zip). Esta versão se atualiza sozinha dentro da linha 0.5, mantendo os dados. Outras versões estão em [Releases](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases).
-
-### Versão de teste 1.0.0-alpha.1
-
-O sistema está sendo refeito, e esta é a primeira prévia. **Use só para testar, com dados fictícios.**
+Esta é uma versão de teste. **Use com dados fictícios.** Escolha o pacote do seu computador; não é preciso instalar mais nada.
 
 | Computador | Executável |
 | --- | --- |
 | Windows (Intel/AMD) | [Baixar a 1.0.0-alpha.1](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v1.0.0-alpha.1/InPETU-Hub-Windows-x64-v1.0.0-alpha.1.zip) |
 | Linux (Intel/AMD) | [Baixar a 1.0.0-alpha.1](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v1.0.0-alpha.1/InPETU-Hub-Linux-x64-v1.0.0-alpha.1.zip) |
 
-- **Já tem:** agenda pública, pedido de reserva, solicitações, reservas e cadastro de espaços.
-- **Ainda não tem:** empreendedores, atendimentos, visitas, colaboradores e as telas de administração e configuração. Por enquanto, só as reservas da persona P1 podem ser aprovadas.
-- **Os dados ficam separados:** ela não usa nem altera os dados da 0.5.12, e as duas podem ficar no mesmo computador.
+**Ainda não tem:** empreendedores, atendimentos, visitas, colaboradores e as telas de administração e configuração. Por enquanto, só as reservas da persona P1 podem ser aprovadas.
 
 ## Como executar
 
-Nas duas versões, **extraia o ZIP inteiro** antes de abrir.
+### 1. Abrir
 
-| | Versão oficial 0.5.12 | Versão de teste 1.0.0-alpha.1 |
-| --- | --- | --- |
-| **Windows** | `InPETU-Hub.exe` | `inpetu-hub.exe` |
-| **Mac** | `InPETU Hub.app` | não disponível |
-| **Linux** | `InPETU-Hub` | `inpetu-hub` |
-| **Iniciar** | O iniciador abre no navegador; espere **Pronto** e clique em **Iniciar** | O sistema inicia sozinho e abre o navegador |
-| **Encerrar** | No iniciador, **Parar** ou **Fechar iniciador** | Feche a janela do iniciador |
+1. Baixe o pacote do seu computador.
+2. **Extraia o ZIP inteiro** e abra a pasta extraída. Não abra o programa de dentro do ZIP.
+3. Abra o `inpetu-hub.exe` no Windows ou o `inpetu-hub` no Linux.
+4. Espere a janela do iniciador mostrar **Rodando**. O navegador abre sozinho na agenda. Se não abrir, clique em **Abrir navegador**.
 
-Entre na Área Interna com um dos [acessos de demonstração](docs/ACESSOS.md).
+### 2. Entrar
 
-Se o computador bloquear a abertura, confira se o arquivo veio deste repositório e:
+A agenda e o pedido de reserva são públicos. Para a parte da equipe, clique em **Área Interna** e use um dos [acessos de demonstração](docs/ACESSOS.md).
 
-- **Windows:** escolha *Mais informações → Executar assim mesmo*.
-- **Mac:** permita em *Ajustes do Sistema → Privacidade e Segurança → Abrir Mesmo Assim*.
-- **Linux:** permita a execução nas propriedades do arquivo.
+### 3. Encerrar
 
-Os dados ficam no seu computador. O passo a passo da versão oficial está em [Instalação e execução](docs/COMO-INICIAR.md).
+Feche a janela do iniciador e espere ela sumir: o sistema salva o banco antes de sair. Fechar só a aba do navegador não encerra o sistema.
+
+### Se algo não abrir
+
+Confira se o arquivo veio deste repositório e veja o seu caso:
+
+- **Aviso do Windows:** o programa não é assinado. Escolha *Mais informações → Executar assim mesmo*.
+- **Linux não executa:** nas propriedades do arquivo, permita a execução. Pelo terminal, dentro da pasta: `chmod +x inpetu-hub runtime/bin/java && ./inpetu-hub`.
+- **“O iniciador já está aberto”:** use a janela que já está aberta.
+- **“Não iniciou”:** leia a mensagem na janela e clique em **Iniciar** para tentar de novo.
+
+### Dados e atualizações
+
+Os dados ficam só no seu computador: em `%LOCALAPPDATA%\InPETU-Hub\1` no Windows e em `~/.config/InPETU-Hub/1` no Linux. A partir da segunda abertura, o sistema faz uma cópia do banco antes de iniciar.
+
+Ao abrir, o iniciador procura versões novas e atualiza sozinho. Sem internet, usa a versão já instalada.
 
 ## Equipe e créditos
 
@@ -77,11 +66,11 @@ Projeto aplicado oficial do **InPETU Hub**, desenvolvido na disciplina de **Proj
 
 ## Desenvolvimento
 
-| Assunto | Versão oficial (0.5) | Versão nova (1.0) |
-| --- | --- | --- |
-| Código | `aplicativo/`, `iniciador/` e `receptor/` | `sistema/`, `inicializador/` e `scripts/` |
-| Como rodar e testar | [Estrutura](docs/ESTRUTURA.md) e [testes](docs/TESTAR.md) | [Sistema](sistema/README.md) e [iniciador](inicializador/README.md) |
-| Andamento | [Handover técnico](docs/HANDOVER.md) e [publicação](RELEASES.md) | [Plano da reescrita](docs/PLANO-REESCRITA.md) |
+| Assunto | Onde |
+| --- | --- |
+| Código | `sistema/`, `inicializador/` e `scripts/` |
+| Como rodar e testar | [Sistema](sistema/README.md) e [iniciador](inicializador/README.md) |
+| Andamento | [Plano da reescrita](docs/PLANO-REESCRITA.md) |
 
 Veja também [como contribuir](CONTRIBUTING.md), a [política de segurança](.github/SECURITY.md) e [toda a documentação](docs/README.md).
 

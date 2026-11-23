@@ -1,3 +1,9 @@
+# README só com a versão nova (sem versão)
+
+Em 23/11/2026 o responsável editou o README num canvas, pediu para tirar as versões antigas e atualizar “Como executar”, e depois “leva para o GitHub”. O README mostra só a 1.0.0-alpha.1 (Windows x64 e Linux x64) e o `CLAUDE.md` acompanha. A 0.5.12 continua publicada e é a latest nas Releases; código, releases e dados não mudaram. Conferido: links de download e arquivos citados. Não testado: o passo a passo num Windows fora da CI.
+
+---
+
 # 1.0.0-alpha.1 publicada — primeira pré-release da reescrita (Linux x64 e Windows x64)
 
 Autorizada em 23/11/2026 (“Pode publicar”), depois do merge do PR #72 (`730811d`, CI da `main` aprovada nos runs 45209816626 e 45209816648). [1.0.0-alpha.1](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v1.0.0-alpha.1), pré-release, publicada pelo run 45212853659 na primeira tentativa; tag no commit `1e28f5a37985fa10a4f4ea205c8b3e312f530911` (o `730811d` mais relatórios automáticos em `Testes/`). A 0.5.12 continua a latest, e o iniciador antigo ignora a linha 1.x e pré-releases. Verificado: 3 arquivos, as 2 somas conferem com o que foi baixado, os 385 arquivos das 36 releases anteriores iguais (nome, tamanho e digest, antes e depois); fumaça do pacote Linux x64 baixado aprovada; uma instalação vazia no Linux achou, baixou, conferiu e instalou a alpha.1 pelo GitHub real. Não testado: o pacote Windows publicado num Windows fora da CI; atualização de uma versão publicada para outra (só com a alpha.2). A pasta `~/.config/InPETU-Hub/1` do computador de desenvolvimento, com os dados e o pacote local do teste de 17/11 (mesma numeração, outro conteúdo), foi apagada a pedido do responsável; a `0.4` ficou intacta. README reorganizado a pedido (versão oficial 0.5.12 mantida e seção da versão de teste com os dois downloads; links conferidos). Próximo: teste do time e correções na alpha.2.

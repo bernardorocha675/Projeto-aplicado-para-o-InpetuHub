@@ -33,7 +33,7 @@ Este repositório é o projeto acadêmico de Projeto Aplicado do UniSENAI, em pa
 
 Faça mudanças pequenas e verificáveis, execute os testes pertinentes e informe o que foi e o que não foi testado. Uma execução em um sistema não comprova todos os sistemas.
 
-Mudanças funcionais são entregues em GitHub Releases após a matriz da CI. Não mova tags nem substitua assets publicados. Siga `RELEASES.md`; atualize o handover da linha ativa e mantenha a seção “Versão oficial” do README breve e os links de download na versão publicada. A política de segurança é voltada ao público e deve usar linguagem simples; a menção a IA permanece discreta no rodapé.
+Mudanças funcionais são entregues em GitHub Releases após a matriz da CI. Não mova tags nem substitua assets publicados. Siga `RELEASES.md`; atualize o handover da linha ativa e mantenha os links de download do README na versão publicada (em 23/11/2026 o responsável tirou do README a 0.5.12 e a seção “Versão oficial”; ele mostra só a linha 1.x; a 0.5.12 continua nas Releases). A política de segurança é voltada ao público e deve usar linguagem simples; a menção a IA permanece discreta no rodapé.
 
 Ao concluir uma tarefa, atualize `continuidade/ESTADO-ATUAL.md` com: mudança, evidência dos testes, commit/release de referência e pendências reais. Atualize `CONTEXTO.md` apenas quando uma decisão duradoura mudar. Não marque algo como feito apenas porque foi solicitado no histórico.
 
