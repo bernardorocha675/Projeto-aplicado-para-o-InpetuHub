@@ -19,6 +19,7 @@ Atualizado em 23/11/2026. **Mantenha este arquivo em uma página:** troque o que
 ## Pendências
 
 - Time testar a alpha.1, primeiro num Windows. Correções vão para a alpha.2.
+- **alpha.2 em desenvolvimento** (branch `reescrita/logs-teste`, autorizada em 23/11/2026; publicar só com novo ok): registro de cliques, erros de página e nomes de campos recusados (`/tela`, só códigos de lista), botões do iniciador no log e **Salvar relatório**. Corrige um bug da alpha.1: os atributos dos campos do pedido saíam colados (`requiredmaxlength`), e o navegador não os exigia; o servidor sempre conferiu.
 - Decisões abertas no [plano](../docs/PLANO-REESCRITA.md#o-que-falta).
 - Agente de privacidade (rodada completa) e scan do Claude Security: não feitos. A configuração do Claude Security está só no computador do responsável, sem commit.
 - `windows-11-arm` falhou uma vez no teste da 0.5 (run 45197291212) e passou antes e depois; causa não identificada.

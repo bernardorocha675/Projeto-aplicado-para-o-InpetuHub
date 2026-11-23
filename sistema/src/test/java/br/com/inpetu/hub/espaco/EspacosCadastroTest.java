@@ -207,6 +207,7 @@ class EspacosCadastroTest {
             salvar("nome", "conteudo-privado-nao-publicar", "capacidade", "0");
             String texto = log.aguardar("CADASTRO_INVALIDO");
             assertTrue(texto.contains("event=AUDIT action=CADASTRO_INVALIDO target=espacos result=NEGADO"), texto);
+            assertTrue(texto.contains("event=FORM_REJECTED form=espacos fields=capacidade"), texto);
             assertFalse(texto.contains("conteudo-privado-nao-publicar"));
         }
     }

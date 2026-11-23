@@ -3,5 +3,7 @@
 document.addEventListener('submit', (evento) => {
   const formulario = evento.target;
   if (!(formulario instanceof HTMLFormElement) || !formulario.hasAttribute('data-confirmar')) return;
-  if (!window.confirm(formulario.getAttribute('data-confirmar'))) evento.preventDefault();
+  const aceitou = window.confirm(formulario.getAttribute('data-confirmar'));
+  window.avisarTela?.('CLIQUE', aceitou ? 'CONFIRMAR_SIM' : 'CONFIRMAR_NAO');
+  if (!aceitou) evento.preventDefault();
 });

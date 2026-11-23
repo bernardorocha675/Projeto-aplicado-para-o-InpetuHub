@@ -101,6 +101,7 @@ final class PedidoServlet extends HttpServlet {
         PedidoConferido conferido = formulario.conferir();
         if (conferido == null) {
             Eventos.auditoria("PEDIDO_INVALIDO", SolicitacaoServico.ALVO, "NEGADO");
+            Eventos.formularioRecusado(SolicitacaoServico.ALVO, formulario.getErros().keySet());
             resposta.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             formulario(pedido, resposta, formulario);
             return;
@@ -110,6 +111,7 @@ final class PedidoServlet extends HttpServlet {
             estimativa = servico.estimar(conferido);
         } catch (RegraException regra) {
             Eventos.auditoria("PEDIDO_RECUSADO", SolicitacaoServico.ALVO, "NEGADO");
+            Eventos.regraRecusou(SolicitacaoServico.ALVO, regra);
             resposta.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             pedido.setAttribute("erroGeral", regra.getMessage());
             formulario(pedido, resposta, formulario);

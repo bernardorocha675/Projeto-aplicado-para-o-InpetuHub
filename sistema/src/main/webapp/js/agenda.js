@@ -68,6 +68,7 @@
       else semDados();
     } catch (erro) {
       if (numero === pedido) {
+        window.avisarTela?.('FALHA', 'AGENDA');
         // Sem dados atuais, os horários e links da consulta anterior não podem continuar visíveis.
         detalhe.replaceChildren(el('p', 'A agenda não pôde ser atualizada. Tente consultar o mês novamente.'));
         grade.replaceChildren(el('p', erro.message, 'mensagem alerta erro'));

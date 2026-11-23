@@ -12,6 +12,8 @@ O que ele faz:
 - antes de subir, copia o banco para `backups/` (guarda as 10 mais novas) e para um sistema esquecido por uma
   execução anterior;
 - para o sistema em ordem pelo arquivo de parada (`sistema.parar`) e só força depois de 20 s;
+- salva um relatório de teste (`relatorio.py`): relê os logs das 5 últimas sessões e só copia o que está nas listas e
+  no formato; a pessoa escolhe onde salvar, e nada é enviado;
 - grava `logs/iniciador.log` (eventos, sem caminhos nem dados pessoais) e `logs/sistema.log` (o log do sistema).
 
 ## Atualização (entrega 10)

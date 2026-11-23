@@ -1,6 +1,6 @@
 # Guia de uso
 
-Vale para a versão 1.0.0-alpha.1. Para baixar, abrir e encerrar, veja o [README](../README.md#como-executar).
+Vale para a linha 1.0. **Salvar relatório** e o registro de cliques chegam na alpha.2. Para baixar, abrir e encerrar, veja o [README](../README.md#como-executar).
 
 ## Acessos de demonstração
 
@@ -55,6 +55,8 @@ Nada é enviado para a internet, a não ser a consulta de versões novas ao GitH
 - `logs/iniciador.log`: abertura, atualização e encerramento.
 - `logs/sistema.log`: o que o sistema fez, com rota, resultado e tempo.
 
+O registro começa sozinho ao abrir. Ele mostra as telas abertas, as ações, os cliques na agenda, as confirmações, os **nomes** dos campos recusados e os erros.
+
 Os logs foram feitos para não guardar senhas, dados de formulário nem a pasta da pessoa. Os horários estão em UTC: para Brasília, subtraia 3 horas.
 
 **Nunca compartilhe** a pasta `dados/` ou `backups/`: elas têm os dados cadastrados.
@@ -72,4 +74,4 @@ Os logs foram feitos para não guardar senhas, dados de formulário nem a pasta 
 
 ## Relatar um problema
 
-Informe a versão, o sistema (Windows ou Linux), o horário, o que você fez, o que esperava e o que aconteceu. Anexe só o trecho do log daquele horário, depois de conferir que não há dados pessoais. Falhas de segurança seguem a [política de segurança](../.github/SECURITY.md).
+Informe a versão, o sistema (Windows ou Linux), o horário, o que você fez, o que esperava e o que aconteceu. Na janela do iniciador, clique em **Salvar relatório**, escolha a pasta, confira o arquivo e mande para a equipe. Ele junta as 5 últimas sessões e nada é enviado sozinho. Na alpha.1, anexe só o trecho do log daquele horário. Falhas de segurança seguem a [política de segurança](../.github/SECURITY.md).

@@ -101,6 +101,7 @@ public final class Servidor implements AutoCloseable {
             contexto.addServlet(estaticos, pasta);
         }
         contexto.addServlet(SaudeServlet.class, "/saude");
+        contexto.addServlet(new ServletHolder(new TelaServlet(ambiente)), "/tela");
         rotas.forEach((caminho, servlet) -> contexto.addServlet(new ServletHolder(servlet), caminho));
         jetty.setHandler(contexto);
 

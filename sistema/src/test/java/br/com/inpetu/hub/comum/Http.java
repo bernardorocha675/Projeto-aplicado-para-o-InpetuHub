@@ -34,6 +34,11 @@ public final class Http {
         return enviar(pedido(caminho).GET().build());
     }
 
+    /** GET com um cabeçalho a mais. */
+    public HttpResponse<String> get(String caminho, String cabecalho, String valor) throws Exception {
+        return enviar(pedido(caminho).header(cabecalho, valor).GET().build());
+    }
+
     public HttpResponse<String> post(String caminho, String formulario) throws Exception {
         return enviar(pedido(caminho).header("Content-Type", "application/x-www-form-urlencoded")
                 .POST(HttpRequest.BodyPublishers.ofString(formulario))

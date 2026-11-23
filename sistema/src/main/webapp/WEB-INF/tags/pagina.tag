@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="/css/base.css" />
     <c:if test="${not empty lateral}"><link rel="stylesheet" href="/css/interna.css" /></c:if>
     <c:if test="${not empty estilo}"><link rel="stylesheet" href="${estilo}" /></c:if>
+    <script src="/js/tela.js" defer></script>
     <c:if test="${not empty script}"><script src="${script}" defer></script></c:if>
   </head>
   <body>
