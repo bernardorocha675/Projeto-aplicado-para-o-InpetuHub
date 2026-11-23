@@ -1,0 +1,70 @@
+name: Sistema (reescrita) — compilar, testar e conferir
+on:
+  push:
+    branches: ['main']
+    paths: ['sistema/**', '.github/workflows/sistema.yml', '.gitleaks*']
+  pull_request:
+    paths: ['sistema/**', '.github/workflows/sistema.yml', '.gitleaks*']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: sistema-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verificar:
+    name: Compilar, testar e formatação (ubuntu)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: sistema
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad
+        with:
+          distribution: temurin
+          java-version: '25'
+          # Dependências em cache: menos downloads do Maven Central, que às vezes cai por instantes.
+          cache: maven
+          cache-dependency-path: sistema/pom.xml
+      - name: Baixar Maven e dependências (até 3 tentativas)
+        timeout-minutes: 8
+        run: |
+          for tentativa in 1 2 3; do
+            if ./mvnw -B -ntp dependency:go-offline spotless:check -DskipTests; then exit 0; fi
+            echo "Download falhou; nova tentativa $((tentativa + 1)) de 3 em $((tentativa * 10)) s."
+            sleep $((tentativa * 10))
+          done
+          exit 1
+      - name: Compilar, testar e conferir a formatação (./mvnw verify)
+        timeout-minutes: 10
+        run: ./mvnw -B -ntp verify
+      - name: Mostrar testes que falharam (sem a saída dos testes)
+        if: failure()
+        shell: python
+        run: |
+          import glob, xml.etree.ElementTree as ET
+          for path in sorted(glob.glob('target/surefire-reports/TEST-*.xml')):
+              for case in ET.parse(path).getroot().iter('testcase'):
+                  for problem in list(case.iter('failure')) + list(case.iter('error')):
+                      frames = [l.strip() for l in (problem.text or '').splitlines() if 'br.com.inpetu' in l][:8]
+                      print(f"FALHOU {case.get('classname')}.{case.get('name')}: {problem.get('type')}: {(problem.get('message') or '')[:400]}")
+                      for frame in frames:
+                          print('   ', frame)
+  segredos:
+    name: Segredos (gitleaks)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_COMMENTS: 'false'

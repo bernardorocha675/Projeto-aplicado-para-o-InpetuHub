@@ -26,6 +26,8 @@ relatorios-testes/
 *.zip
 *.exe
 *.run
+# A pasta .run/ guarda as configurações de execução do IntelliJ (não é instalador).
+!/.run/
 *ACESSOS-PRIVADOS*/
 *ACESSOS-PRIVADOS*.zip
 

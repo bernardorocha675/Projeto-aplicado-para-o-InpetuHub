@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Rodar sistema",
+      "request": "launch",
+      "mainClass": "br.com.inpetu.hub.Aplicacao",
+      "projectName": "inpetu-hub-sistema",
+      "args": "8080",
+      "cwd": "${workspaceFolder}/sistema"
+    }
+  ]
+}

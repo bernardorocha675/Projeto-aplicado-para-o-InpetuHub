@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Formatação Java do InPETU Hub (formato de perfil do Eclipse).
+  - Maven:    ./mvnw spotless:apply (formata) e ./mvnw spotless:check (confere; roda no verify e na CI).
+  - VS Code:  lido por "java.format.settings.url" em .vscode/settings.json.
+  - IntelliJ: Settings > Editor > Code Style > Java > ⚙ > Import Scheme > Eclipse XML Profile.
+  Só as diferenças do padrão do Eclipse ficam aqui: espaços (não tab), 4 de recuo e 120 colunas.
+-->
+<profiles version="23">
+  <profile kind="CodeFormatterProfile" name="InPETU Hub" version="23">
+    <setting id="org.eclipse.jdt.core.formatter.tabulation.char" value="space"/>
+    <setting id="org.eclipse.jdt.core.formatter.tabulation.size" value="4"/>
+    <setting id="org.eclipse.jdt.core.formatter.indentation.size" value="4"/>
+    <setting id="org.eclipse.jdt.core.formatter.continuation_indentation" value="2"/>
+    <setting id="org.eclipse.jdt.core.formatter.continuation_indentation_for_array_initializer" value="2"/>
+    <setting id="org.eclipse.jdt.core.formatter.lineSplit" value="120"/>
+    <setting id="org.eclipse.jdt.core.formatter.comment.line_length" value="120"/>
+    <setting id="org.eclipse.jdt.core.formatter.comment.count_line_length_from_starting_position" value="true"/>
+    <setting id="org.eclipse.jdt.core.formatter.join_wrapped_lines" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.use_on_off_tags" value="true"/>
+    <setting id="org.eclipse.jdt.core.formatter.blank_lines_before_first_class_body_declaration" value="1"/>
+    <setting id="org.eclipse.jdt.core.formatter.insert_new_line_at_end_of_file_if_missing" value="insert"/>
+  </profile>
+</profiles>

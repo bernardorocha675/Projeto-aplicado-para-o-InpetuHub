@@ -10,13 +10,17 @@ Este repositório é o projeto acadêmico de Projeto Aplicado do UniSENAI, em pa
 
 1. Leia `continuidade/CONTEXTO.md` e `continuidade/OPERACAO.md`; para detalhes da entrega, consulte `docs/HANDOVER.md`.
 2. Confira `git status`, `VERSION`, a release mais recente e os resultados de Actions. Este contexto tem data e pode ficar desatualizado; o código e as evidências atuais prevalecem sobre o resumo.
-3. Trabalhe nos fontes ativos: `aplicativo/` (Java), `iniciador/` (Go), `receptor/` (Node). Os guias ficam em `docs/`. Versões antigas estão nas tags/releases e no backup; não recrie pastas de versões na raiz.
+3. Fontes ativos:
+   - **Reescrita (linha 1.x), em andamento desde 11/11/2026:** `sistema/` (Java 25 puro: Jetty embutido, JDBC, JSP), seguindo `docs/PLANO-REESCRITA.md`. São 12 entregas, cada uma com uma branch `reescrita/…` e um PR. Cada entrega só começa com o ok do responsável e termina parando para aguardar. Decisões novas viram pergunta. Nenhuma biblioteca fora da lista autorizada (decisão 3b do plano).
+   - **Sistema antigo (linha 0.5.x), intacto e em uso:** `aplicativo/` (Java/Spring), `iniciador/` (Go), `receptor/` (Node, abandonado na reescrita). Só recebe correções pedidas. A reescrita não toca esses arquivos nem os dados em `InPETU-Hub/0.4`.
+
+   Os guias ficam em `docs/`. Versões antigas estão nas tags/releases e no backup; não recrie pastas de versões na raiz.
 4. Preserve mudanças de outras pessoas e limite as alterações ao pedido. Quando o pedido for somente analisar, não edite, faça commit, merge ou deploy.
 
 ## Decisões que devem ser preservadas
 
 - O usuário final usa o executável; VS Code, Maven, Go e Java externo são ferramentas de desenvolvimento, não requisitos de uso da release.
-- Mantenha Windows, macOS e Linux, nas arquiteturas x64/ARM64. A instalação e os dados do usuário podem ter espaços e acentos; sempre use aspas nos comandos.
+- Mantenha Windows, macOS e Linux, nas arquiteturas x64/ARM64. Exceção, decidida em 12/11/2026: a reescrita (`sistema/` e o novo iniciador) é feita primeiro para Linux (x64 e ARM64), o Windows vem depois e o macOS fica fora; o sistema antigo segue com a matriz de hoje. A instalação e os dados do usuário podem ter espaços e acentos; sempre use aspas nos comandos.
 - Em 19/10/2026 o responsável autorizou a linha `0.5`: a 0.4.17 passa automaticamente para a 0.5, com os mesmos dados (pasta `InPETU-Hub/0.4`). Os fixes seguintes ficam na `0.5.x`; não migre automaticamente para `0.6` sem novo pedido.
 - Preserve banco, reservas, chave, ambiente e backups. Não redefina dados nem contas para corrigir um bug sem autorização específica para esse reset.
 - Existem cinco contas públicas de demonstração local. A decisão de simplificar o login não autoriza remover proteções dos outros perfis. Não reintroduza MFA obrigatório na demonstração sem novo pedido.

@@ -13,6 +13,7 @@ O aplicativo é utilizado pelo executável, disponível para Windows, macOS e Li
 
 ## Para quem desenvolve
 
+- [Plano da reescrita (base nova `sistema/`)](PLANO-REESCRITA.md) e [como contribuir](../CONTRIBUTING.md)
 - [Handover técnico](HANDOVER.md)
 - [Estrutura e desenvolvimento](ESTRUTURA.md)
 - [Validação das releases](VALIDACAO.md)

@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>br.com.inpetu</groupId>
+  <artifactId>inpetu-hub-sistema</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <name>InPETU Hub (sistema)</name>
+  <description>Base nova do InPETU Hub: Java puro com Jetty embutido.</description>
+
+  <properties>
+    <maven.compiler.release>25</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <classe.principal>br.com.inpetu.hub.Aplicacao</classe.principal>
+
+    <!-- Bibliotecas autorizadas (docs/PLANO-REESCRITA.md, decisão 3b). Novas bibliotecas só com o ok da equipe. -->
+    <jetty.version>12.1.14</jetty.version>
+    <junit.version>5.14.4</junit.version>
+
+    <!-- Plugins de build. -->
+    <clean.plugin.version>3.5.0</clean.plugin.version>
+    <resources.plugin.version>3.5.0</resources.plugin.version>
+    <compiler.plugin.version>3.16.0</compiler.plugin.version>
+    <surefire.plugin.version>3.6.1</surefire.plugin.version>
+    <jar.plugin.version>3.5.1</jar.plugin.version>
+    <shade.plugin.version>3.6.2</shade.plugin.version>
+    <install.plugin.version>3.1.4</install.plugin.version>
+    <enforcer.plugin.version>3.6.3</enforcer.plugin.version>
+    <exec.plugin.version>3.6.4</exec.plugin.version>
+    <spotless.plugin.version>3.10.4</spotless.plugin.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-bom</artifactId>
+        <version>${jetty.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty.ee11</groupId>
+        <artifactId>jetty-ee11-bom</artifactId>
+        <version>${jetty.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${junit.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <!-- Jetty embutido com Jakarta Servlet 6.1 (EE 11). -->
+    <dependency>
+      <groupId>org.eclipse.jetty.ee11</groupId>
+      <artifactId>jetty-ee11-servlet</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>${clean.plugin.version}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>${resources.plugin.version}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>${install.plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${enforcer.plugin.version}</version>
+        <executions>
+          <execution>
+            <id>exigir-java-e-maven</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireJavaVersion>
+                  <version>[25,)</version>
+                  <message>O sistema precisa do JDK 25 ou mais novo (veja sistema/README.md).</message>
+                </requireJavaVersion>
+                <requireMavenVersion>
+                  <version>[3.9,)</version>
+                  <message>Use o ./mvnw desta pasta, que baixa o Maven certo.</message>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${compiler.plugin.version}</version>
+        <configuration>
+          <compilerArgs>
+            <arg>-Xlint:all</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${surefire.plugin.version}</version>
+        <configuration>
+          <!-- Nenhum teste pode travar a CI: cada processo de teste tem um teto. -->
+          <forkedProcessExitTimeoutInSeconds>60</forkedProcessExitTimeoutInSeconds>
+          <argLine>-Dfile.encoding=UTF-8</argLine>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${jar.plugin.version}</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>${classe.principal}</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <!-- Jar único (target/inpetu-hub-sistema.jar), rodado com java -jar pelo iniciador. -->
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${shade.plugin.version}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <finalName>inpetu-hub-sistema</finalName>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>${classe.principal}</mainClass>
+                </transformer>
+              </transformers>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                    <exclude>META-INF/MANIFEST.MF</exclude>
+                    <exclude>module-info.class</exclude>
+                    <exclude>META-INF/versions/*/module-info.class</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- ./mvnw exec:java sobe o sistema sem gerar o jar. -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec.plugin.version}</version>
+        <configuration>
+          <mainClass>${classe.principal}</mainClass>
+        </configuration>
+      </plugin>
+
+      <!-- Formatação: o mesmo arquivo Eclipse XML que o VS Code e o IntelliJ leem. -->
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>${spotless.plugin.version}</version>
+        <configuration>
+          <java>
+            <eclipse>
+              <file>${project.basedir}/formatacao-java.xml</file>
+            </eclipse>
+            <removeUnusedImports />
+            <trimTrailingWhitespace />
+            <endWithNewline />
+          </java>
+        </configuration>
+        <executions>
+          <execution>
+            <id>conferir-formatacao</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
