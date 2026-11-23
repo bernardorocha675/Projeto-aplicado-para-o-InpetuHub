@@ -70,6 +70,10 @@ class Controle:
             self.url = None
             self._mudar(Estado.ERRO, str(erro))
             return
+        except Exception:  # qualquer outra falha (disco cheio, permissão): sem a mensagem, que pode ter caminhos
+            self.url = None
+            self._mudar(Estado.ERRO, "Não foi possível iniciar. Confira o espaço em disco e a permissão da pasta.")
+            return
         self._mudar(Estado.RODANDO, f"Pronto em {self.url}" + (f" {aviso}" if aviso else ""))
         if not self._ja_abriu:
             self._ja_abriu = True

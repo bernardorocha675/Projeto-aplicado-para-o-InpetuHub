@@ -13,7 +13,7 @@
         <select id="f-espaco" name="espaco"><option value="">Todos</option><c:forEach var="o" items="${espacos}"><option value="${o.valor()}"<c:if test="${o.selecionado()}"> selected</c:if>><c:out value="${o.rotulo()}" /></option></c:forEach></select></div>
       <div class="campo"><label for="f-persona">Persona</label>
         <select id="f-persona" name="persona"><option value="">Todas</option><c:forEach var="o" items="${personas}"><option value="${o.valor()}"<c:if test="${o.selecionado()}"> selected</c:if>><c:out value="${o.rotulo()}" /></option></c:forEach></select></div>
-      <div class="campo"><label for="f-busca">Solicitante</label><input id="f-busca" name="busca" value="<c:out value='${busca}' />" placeholder="Nome, empresa ou documento" /></div>
+      <div class="campo"><label for="f-busca">Solicitante</label><input id="f-busca" name="busca" value="<c:out value='${busca}' />" placeholder="Nome, empresa ou documento…" /></div>
       <div class="acoes"><button type="submit" class="botao">Filtrar</button><a class="botao secundario" href="/admin/reservas">Limpar</a></div>
     </form>
     <t:tabelaReservas linhas="${linhas}" />

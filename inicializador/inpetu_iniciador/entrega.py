@@ -1,11 +1,24 @@
 """Passagem para o iniciador de uma versão mais nova instalada (o executável baixado pela pessoa fica antigo).
 
-A passagem troca o processo (exec): a trava do iniciador é solta junto, porque o arquivo dela fecha no exec.
+No Linux a passagem troca o processo (exec); no Windows abre o novo e encerra este. A trava é solta antes.
 """
 import os
+import re
+import uuid
 
-EXECUTAVEL = "inpetu-hub"
+from inpetu_iniciador import so
+
+EXECUTAVEL = so.INICIADOR
 MARCA = "--entregue"
+SESSAO = "INPETU_SESSAO"
+
+
+def sessao(argumentos, ambiente):
+    """A sessão de log: a mesma na troca de executável; nova em qualquer outra abertura."""
+    recebida = ambiente.get(SESSAO, "")
+    if MARCA in argumentos and re.fullmatch(r"[0-9a-f]{32}", recebida):
+        return recebida
+    return uuid.uuid4().hex
 
 
 def precisa_entregar(propria, instalada, pasta, argumentos):
@@ -18,5 +31,6 @@ def precisa_entregar(propria, instalada, pasta, argumentos):
     return executavel
 
 
-def entregar(executavel, argumentos):
-    os.execv(str(executavel), [str(executavel), *argumentos, MARCA])
+def entregar(executavel, argumentos, sessao_atual):
+    os.environ[SESSAO] = sessao_atual
+    so.trocar_processo(executavel, [*argumentos, MARCA])

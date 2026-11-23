@@ -3,11 +3,12 @@ from inpetu_iniciador.controle import Controle, Estado
 from inpetu_iniciador.pastas import Pastas
 from inpetu_iniciador.registro import Registro
 from inpetu_iniciador.sistema import Pacote, Sistema
-from testes.apoio import ComPasta, modo_falso
+from testes.apoio import ComPasta, modo_falso, SO_LINUX
 
 SESSAO = "0123456789abcdef0123456789abcdef"
 
 
+@SO_LINUX
 class ControleTest(ComPasta):
 
     def controle(self):
@@ -50,7 +51,23 @@ class ControleTest(ComPasta):
         self.assertEqual(Estado.RODANDO, controle.estado)
 
 
+@SO_LINUX
 class ControleComPreparoTest(ComPasta):
+
+    def test_erro_inesperado_vira_mensagem_e_permite_tentar_de_novo(self):
+        from inpetu_iniciador.controle import Controle, Estado
+
+        def preparar():
+            raise PermissionError("/home/fulano")
+
+        class Parado:
+            rodando = False
+
+        controle = Controle(Parado(), abrir=lambda url: None, preparar=preparar)
+        controle.iniciar().result()
+        self.assertEqual(Estado.ERRO, controle.estado)
+        self.assertNotIn("fulano", controle.mensagem)
+        controle.encerrar()
 
     def test_prepara_antes_de_subir_e_passa_para_o_iniciador_novo_sem_subir(self):
         pastas = Pastas.do_ambiente(self.ambiente)

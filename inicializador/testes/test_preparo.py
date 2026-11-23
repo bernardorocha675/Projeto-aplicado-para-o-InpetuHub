@@ -1,6 +1,7 @@
 """Antes de subir: instala o pacote do executável se for mais novo, procura atualização e decide a passagem."""
 import zipfile
 
+from inpetu_iniciador import so
 from inpetu_iniciador.github import Releases
 from inpetu_iniciador.instalacao import Instalacao
 from inpetu_iniciador.pastas import Pastas
@@ -29,7 +30,7 @@ class PreparoTest(ComPasta):
         (self.base / "z.zip").write_bytes(pacote_zip(versao, pasta_raiz=False))
         with zipfile.ZipFile(self.base / "z.zip") as z:
             z.extractall(pasta)
-        for nome in ("runtime/bin/java", "inpetu-hub"):
+        for nome in (so.JAVA, so.INICIADOR):
             (pasta / nome).chmod(0o755)
         return pasta
 
@@ -48,7 +49,7 @@ class PreparoTest(ComPasta):
         self.github.publicar("1.0.0-alpha.2")
         preparo = self.preparar(self.executavel_baixado("1.0.0-alpha.1"))
         self.assertEqual("1.0.0-alpha.2", str(Instalacao(self.pastas).atual()[0]))
-        self.assertEqual(self.pastas.versoes / "1.0.0-alpha.2" / "inpetu-hub", preparo.entregar)
+        self.assertEqual(self.pastas.versoes / "1.0.0-alpha.2" / so.INICIADOR, preparo.entregar)
         self.assertIn("Atualizado", preparo.mensagem)
 
     def test_sem_internet_usa_a_versao_instalada(self):

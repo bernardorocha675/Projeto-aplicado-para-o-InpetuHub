@@ -11,6 +11,19 @@ import org.junit.jupiter.api.io.TempDir;
 class MigracoesH2Test {
 
     @Test
+    void errosDoBancoNaoViramArquivoDeRastroComOSql(@org.junit.jupiter.api.io.TempDir java.nio.file.Path pasta)
+            throws Exception {
+        javax.sql.DataSource banco = Banco.h2Arquivo(pasta.resolve("inpetu"));
+        try (java.sql.Connection conexao = banco.getConnection(); java.sql.Statement sql = conexao.createStatement()) {
+            sql.execute("create table t(v int)");
+            org.junit.jupiter.api.Assertions.assertThrows(java.sql.SQLException.class,
+                    () -> sql.execute("select cast('Fulano Sigiloso' as int) from dual"));
+        }
+        Banco.fechar(banco);
+        org.junit.jupiter.api.Assertions.assertFalse(java.nio.file.Files.exists(pasta.resolve("inpetu.trace.db")));
+    }
+
+    @Test
     void modeloEDadosIniciaisNoH2EmMemoria() throws Exception {
         ConferenciaDoModelo.conferirTudo(Banco.h2Memoria("migracoes-" + System.nanoTime()));
     }

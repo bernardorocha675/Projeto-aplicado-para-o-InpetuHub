@@ -27,7 +27,7 @@
         <textarea id="como-${s.id()}" name="como" maxlength="2000" required></textarea>
         <button type="submit" class="botao">Encaminhar para análise da reserva</button>
       </form>
-      <form method="post" action="/admin/solicitacoes/recusar">
+      <form method="post" action="/admin/solicitacoes/recusar" data-confirmar="Recusar o pedido “<c:out value='${s.titulo()}' />”? Isso não pode ser desfeito.">
         <input type="hidden" name="_csrf" value="${csrf}" />
         <input type="hidden" name="id" value="${s.id()}" />
         <button type="submit" class="botao secundario">Recusar<span class="so-leitor"> o pedido <c:out value="${s.titulo()}" /></span></button>

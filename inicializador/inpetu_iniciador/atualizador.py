@@ -4,9 +4,9 @@ Sem internet ou com o GitHub fora, o sistema sobe com a versão instalada; a fal
 """
 import dataclasses
 import hashlib
-import platform
 import tempfile
 
+from inpetu_iniciador import so
 from inpetu_iniciador.github import ErroDeAtualizacao
 from inpetu_iniciador.instalacao import PacoteInvalido
 from inpetu_iniciador.versoes import Versao
@@ -32,9 +32,8 @@ class Resultado:
 
 
 def plataforma():
-    """Linux-x64 ou Linux-ARM64, como no nome dos pacotes."""
-    maquina = platform.machine().lower()
-    return "Linux-ARM64" if maquina in ("aarch64", "arm64") else "Linux-x64"
+    """Linux-x64, Linux-ARM64, Windows-x64 ou Windows-ARM64, como no nome dos pacotes."""
+    return so.plataforma()
 
 
 class Atualizador:
@@ -71,11 +70,10 @@ class Atualizador:
         return Resultado("ATUALIZADO", f"Atualizado para a versão {versao}.", versao)
 
     def _escolher(self):
-        nome_pacote = None
-        for release in self.releases.listar():
-            versao = Versao.de(release.get("tag_name", ""))
-            if versao is None or release.get("draft"):
-                continue
+        # O GitHub lista por data; uma correção da 1.0 pode sair depois da 1.1. Vale a maior versão.
+        candidatas = [(Versao.de(r.get("tag_name", "")), r) for r in self.releases.listar() if not r.get("draft")]
+        candidatas = [c for c in candidatas if c[0] is not None]
+        for versao, release in sorted(candidatas, key=lambda c: c[0], reverse=True):
             nome_pacote = f"InPETU-Hub-{self.sistema_operacional}-v{versao}.zip"
             ativos = {a.get("name"): a for a in release.get("assets", []) if isinstance(a, dict)}
             pacote, somas = ativos.get(nome_pacote), ativos.get("SHA256SUMS.txt")

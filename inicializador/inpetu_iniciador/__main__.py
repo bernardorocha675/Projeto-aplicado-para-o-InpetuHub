@@ -1,11 +1,11 @@
 """Abre o iniciador: python3 -m inpetu_iniciador [--pacote PASTA | --desenvolvimento] [--sem-janela]."""
 import argparse
+import os
 import pathlib
 import shutil
 import signal
 import sys
 import threading
-import uuid
 
 from inpetu_iniciador import entrega
 from inpetu_iniciador.controle import Controle, Estado
@@ -51,9 +51,11 @@ def avisar(texto):
 
 def sem_janela(controle):
     """Sobe, mostra o endereço e para em ordem com Ctrl+C (ou o sinal de encerramento)."""
+    controle.abrir = lambda endereco: None  # sem janela (testes e servidores): o navegador não abre sozinho
     fim = threading.Event()
-    signal.signal(signal.SIGTERM, lambda *_: fim.set())
-    signal.signal(signal.SIGINT, lambda *_: fim.set())
+    for nome in ("SIGTERM", "SIGINT", "SIGBREAK"):
+        if hasattr(signal, nome):
+            signal.signal(getattr(signal, nome), lambda *_: fim.set())
     controle.iniciar().result()
     print(controle.mensagem, flush=True)
     if controle.estado != Estado.RODANDO:
@@ -76,7 +78,8 @@ def main(lista=None):
     if not trava.adquirir():
         avisar("O iniciador do InPETU Hub já está aberto. Use a janela que já está aberta.")
         return 1
-    sessao = uuid.uuid4().hex
+    recebidos = lista if lista is not None else sys.argv[1:]
+    sessao = entrega.sessao(recebidos, os.environ)
     registro = Registro(pastas, sessao)
     registro.evento("LAUNCHER_STARTED")
     controle = None
@@ -92,15 +95,15 @@ def main(lista=None):
             controle = Controle(sistema)
         else:
             releases = None if argumentos.sem_atualizacao else Releases(API, REPOSITORIO)
-            repassar = [a for a in (lista if lista is not None else sys.argv[1:]) if a != entrega.MARCA]
+            repassar = [a for a in recebidos if a != entrega.MARCA]
 
             def passar(executavel):
                 registro.evento("LAUNCHER_HANDOVER")
                 trava.liberar()
-                entrega.entregar(executavel, repassar)
+                entrega.entregar(executavel, repassar, sessao)
 
             controle = Controle(sistema, preparar=lambda: preparar(pastas, registro, pasta_do_executavel(argumentos),
-                                                                   releases, sys.argv[1:]), entregar=passar)
+                                                                   releases, recebidos), entregar=passar)
         if argumentos.sem_janela:
             return sem_janela(controle)
         from inpetu_iniciador.janela import Janela

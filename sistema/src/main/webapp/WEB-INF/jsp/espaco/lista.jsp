@@ -36,7 +36,7 @@
               <td>
                 <div class="acoes-linha">
                   <a class="botao secundario" href="/admin/cadastros/espacos/editar?id=${e.id()}">Editar<span class="so-leitor"> <c:out value="${e.nome()}" /></span></a>
-                <form method="post" action="/admin/cadastros/espacos/excluir">
+                <form method="post" action="/admin/cadastros/espacos/excluir" data-confirmar="Excluir o espaço <c:out value='${e.nome()}' />? Isso não pode ser desfeito.">
                   <input type="hidden" name="_csrf" value="${csrf}" />
                   <input type="hidden" name="id" value="${e.id()}" />
                   <button type="submit" class="botao secundario">Excluir<span class="so-leitor"> <c:out value="${e.nome()}" /></span></button>

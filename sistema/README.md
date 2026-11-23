@@ -9,7 +9,7 @@ Esta é a reescrita do InPETU Hub, em **Java puro**: Jakarta Servlet num Jetty e
 
 ## Comandos (dentro de `sistema/`)
 
-| Para | Linux | Windows (ainda não testado; vem depois) |
+| Para | Linux | Windows (o pacote é testado na CI; estes comandos de desenvolvimento não foram rodados no Windows) |
 |---|---|---|
 | Rodar todos os testes e conferir a formatação | `./mvnw verify` | `.\mvnw.cmd verify` |
 | Formatar o código Java | `./mvnw spotless:apply` | `.\mvnw.cmd spotless:apply` |
@@ -35,6 +35,12 @@ Abra a **raiz do repositório** (não a pasta `sistema/`):
 - **IntelliJ IDEA:** se o projeto Maven não for detectado sozinho, clique com o botão direito em `sistema/pom.xml` e escolha **Add as Maven Project**. As configurações **Rodar sistema** e **Todos os testes** aparecem no topo (pasta `.run/`). Para formatar igual à CI, importe o formatador: *Settings → Editor → Code Style → Java → ⚙ → Import Scheme → Eclipse XML Profile* → `sistema/formatacao-java.xml`.
 
 A CI (`.github/workflows/sistema.yml`) roda `./mvnw verify`, ou seja, testes e `spotless:check`. Se a formatação falhar, rode `./mvnw spotless:apply`.
+
+## Verificar tudo e gerar o pacote (na raiz do repositório)
+
+- `python3 scripts/verificar.py`: testes e formatação do Java, testes do iniciador (com o jar) e dos scripts; `--pacote` também gera o pacote desta máquina e roda o teste de fumaça.
+- `python3 scripts/build_pacote.py --versao 1.0.0-alpha.N`: gera `dist/InPETU-Hub-Linux-x64-v1.0.0-alpha.N.zip` (ou `-Linux-ARM64-`) e a linha dele no `dist/SHA256SUMS.txt`. Precisa do JDK 25 (jlink/jdeps) e do `python3-tk` e `python3-venv`.
+- `.github/workflows/sistema-release.yml`: em PR, gera e testa o pacote no Linux x64 e ARM64; a pré-release só sai à mão (Run workflow, a partir da `main`, com “publicar” marcado), depois do ok do responsável.
 
 ## Organização
 
