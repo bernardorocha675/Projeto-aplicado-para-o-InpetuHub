@@ -1,3 +1,11 @@
+# Reescrita na `main` e só x64 (sem versão)
+
+Em 23/11/2026, com autorização do responsável (“Pode fazer”), o PR #71 entrou na `reescrita/pacote` (`3f400d2`) e os PRs #58 a #68 entraram na `main`, em ordem (último: `d8dd2c2`), com a `main` idêntica ao código testado. **Nada foi publicado**; a 0.5.12 continua a mais recente. CI do commit final aprovada: sistema novo (run 45197522137) e os seis sistemas do antigo (run 45197522471). A rodada intermediária do #59 (run 45197291212) falhou só no windows-11-arm, em “Conferência e recuperação de contas importadas depois do primeiro início” do sistema antigo, que os PRs não mudaram; passou antes e depois, então parece intermitente, com causa não identificada. Releases: 36, com 385 arquivos, a mesma quantidade de arquivos de antes, nenhuma data posterior a 11/11 e as 11 somas da 0.5.12 conferem; as somas das releases anteriores não foram comparadas uma a uma (o retrato de antes se perdeu).
+
+No mesmo dia, o responsável decidiu: “Daqui pra frente faz só no windons e linux normal”. Branch `reescrita/so-x64`: o `sistema-release.yml` gera, testa e publica só Linux x64 e Windows x64 (2 pacotes); decisão 11, `CLAUDE.md`, `CONTEXTO.md` e READMEs atualizados. O código que reconhece ARM64 no iniciador e no gerador foi mantido (sem custo, já testado), mas sem pacote. O sistema antigo e seu fluxo não mudaram: o publicador dele exige os seis pacotes, e tirar ARM64 ou macOS de lá depende de novo pedido. Pendente: pré-release `1.0.0-alpha.1`, só com o ok; decisões sobre MySQL em uso, `EnviadorEmail` e reservas cobradas na v1.
+
+---
+
 # Reescrita, entrega 12 — Revisão antes da v1.0.0 (sem versão)
 
 Autorizada pelo responsável (“Pode começar a entrega 12”; retomada em 23/11/2026 com “Pode continuar”). Branch `reescrita/revisao`, sobre a `reescrita/pacote`. **Nada foi publicado.** Revisões: padrões de código e aderência ao plano (dois subagentes, só leitura, por amostra, não as 17 mil linhas), telas (`web-design-guidelines`) e acessibilidade. A de privacidade dos logs com o subagente `revisor-privacidade-logs` **não terminou** (cancelada com a sessão); foi feita por leitura do log, da auditoria, dos erros, do iniciador e da consulta ao GitHub, e a rodada completa do subagente fica pendente, se o responsável quiser.

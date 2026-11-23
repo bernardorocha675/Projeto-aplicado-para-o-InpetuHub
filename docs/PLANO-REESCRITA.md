@@ -41,7 +41,7 @@ A equipe decidiu refazer o InPETU Hub do zero só com Java, SQL, Python e HTML/C
 | 8 | JDK / formatador | **Java 25 LTS**; **formato Eclipse XML** (`sistema/formatacao-java.xml`, 4 espaços, 120 colunas), lido nativamente pelo VS Code, importado no IntelliJ e conferido com `./mvnw spotless:check` |
 | 9 | Versão | Linha **1.0.0**, com pré-releases `1.0.0-alpha.N`; dados em `InPETU-Hub/1`. O iniciador Go antigo recusa versões fora de 0.4/0.5 (`iniciador/model.go:83`), então as instalações antigas não pulam para a nova |
 | 10 | Escopo da v1 | **Núcleo + Executável** (abaixo). CRM e Administração ficam para depois, antes de remover o antigo |
-| 11 | Sistemas (12/11/2026; Windows pedido em 17/11/2026) | **Linux primeiro, x64 e ARM64**; **Windows depois**, numa etapa própria (feita em 17/11/2026: Windows x64 e ARM64, branch `reescrita/windows`); **macOS fora** da reescrita. Vale só para `sistema/` e o novo iniciador: o sistema antigo (0.5.x) mantém a matriz de hoje |
+| 11 | Sistemas (12/11/2026; Windows pedido em 17/11/2026) | **Linux primeiro, x64 e ARM64**; **Windows depois**, numa etapa própria (feita em 17/11/2026: Windows x64 e ARM64, branch `reescrita/windows`); **macOS fora** da reescrita. **Em 23/11/2026: só Windows x64 e Linux x64; ARM64 fora** da CI e da publicação. Vale só para `sistema/` e o novo iniciador: o sistema antigo (0.5.x) mantém a matriz de hoje |
 | 11 | GitHub | **Só o modelo de PR** (`.github/pull_request_template.md`); sem modelos de issue, rótulos nem quadro por enquanto |
 | 12 | Taxas e preços sem Administração | **Limitação aceita.** As regras ficam iguais às do antigo: a aprovação recusa reservas que precisam de taxas ainda não configuradas, e pedidos sem tabela de preços para o ano (2027) recebem uma mensagem amigável. Na prática, a v1 aprova reservas P1 (sem cobrança) e as que não dependem de taxa, em 2026. A tela de Configuração e Preços entra com a Administração |
 | 14 | Telas só para computador (16/11/2026) | A reescrita é feita **só para computador (Linux)**: nada de layout, testes ou conferências para celular. O CSS de celular que já existe fica como está, mas não recebe trabalho novo. A página inicial continua **básica** (`/` abre a agenda). O cabeçalho e o rodapé oficiais entram na **entrega 8**, só para computador. Os **feriados de 2027** ficam como estão, sem ação, até novo pedido |
@@ -67,7 +67,7 @@ Consequências das bibliotecas recusadas:
 
 **Executável**
 - iniciador Python;
-- pacote para Linux x64 e ARM64 primeiro; Windows depois (decisão 11); sem macOS;
+- pacote para Linux x64 e Windows x64 (decisão 11, atualizada em 23/11/2026); sem ARM64 nem macOS;
 - atualização pelas Releases;
 - CI em matriz.
 
