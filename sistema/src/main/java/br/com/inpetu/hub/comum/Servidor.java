@@ -28,6 +28,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.resource.ResourceFactory;
 
+import br.com.inpetu.hub.agenda.ModuloAgenda;
 import br.com.inpetu.hub.conta.ModuloConta;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.SessionTrackingMode;
@@ -85,6 +86,7 @@ public final class Servidor implements AutoCloseable {
         configurarJsp(contexto, rascunho);
         configurarFiltros(contexto);
         ModuloConta.registrar(contexto, ambiente);
+        ModuloAgenda.registrar(contexto, ambiente);
         configurarErros(contexto);
 
         ServletHolder estaticos = new ServletHolder("estaticos", DefaultServlet.class);
