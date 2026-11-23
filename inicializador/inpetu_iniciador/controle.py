@@ -17,9 +17,13 @@ class Estado(enum.Enum):
 
 class Controle:
 
-    def __init__(self, sistema, abrir=webbrowser.open):
+    def __init__(self, sistema, abrir=webbrowser.open, preparar=None, entregar=None):
+        """`preparar`: devolve o pacote a usar, a mensagem da atualização e, se houver, o iniciador mais novo que
+        deve assumir (aí `entregar` é chamado e este iniciador não sobe o sistema)."""
         self.sistema = sistema
         self.abrir = abrir
+        self.preparar = preparar
+        self.entregar = entregar
         self.estado = Estado.PARADO
         self.mensagem = "O sistema está parado. Clique em Iniciar."
         self.url = None
@@ -49,14 +53,24 @@ class Controle:
     def _iniciar(self):
         if self.estado == Estado.RODANDO:
             return
-        self._mudar(Estado.INICIANDO, "Iniciando o sistema e conferindo o banco…")
+        aviso = ""
         try:
+            if self.preparar is not None:
+                self._mudar(Estado.INICIANDO, "Procurando atualizações…")
+                preparado = self.preparar()
+                if preparado.entregar is not None and self.entregar is not None:
+                    self._mudar(Estado.INICIANDO, "Abrindo o iniciador da versão nova…")
+                    self.entregar(preparado.entregar)
+                    return
+                self.sistema.pacote = preparado.pacote
+                aviso = preparado.mensagem
+            self._mudar(Estado.INICIANDO, "Iniciando o sistema e conferindo o banco…")
             self.url = self.sistema.iniciar()
         except ErroDeSubida as erro:
             self.url = None
             self._mudar(Estado.ERRO, str(erro))
             return
-        self._mudar(Estado.RODANDO, f"Pronto em {self.url}")
+        self._mudar(Estado.RODANDO, f"Pronto em {self.url}" + (f" {aviso}" if aviso else ""))
         if not self._ja_abriu:
             self._ja_abriu = True
             self.abrir(self.url)

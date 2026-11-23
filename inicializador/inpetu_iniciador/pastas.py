@@ -30,6 +30,10 @@ class Pastas:
         return self.raiz / "logs"
 
     @property
+    def versoes(self):
+        return self.raiz / "versoes"
+
+    @property
     def trava(self):
         return self.raiz / "iniciador.trava"
 
@@ -42,5 +46,5 @@ class Pastas:
         return self.raiz / "sistema.pid"
 
     def criar(self):
-        for pasta in (self.dados, self.backups, self.logs):
+        for pasta in (self.dados, self.backups, self.logs, self.versoes):
             pasta.mkdir(parents=True, exist_ok=True)
