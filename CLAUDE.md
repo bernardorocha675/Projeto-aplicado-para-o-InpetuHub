@@ -8,7 +8,7 @@ Este repositório é o projeto acadêmico de Projeto Aplicado do UniSENAI, em pa
 
 ## Antes de alterar código
 
-1. Leia `continuidade/CONTEXTO.md` e `continuidade/OPERACAO.md`; para detalhes da entrega, consulte `docs/HANDOVER.md`.
+1. Leia `continuidade/CONTEXTO.md` e `continuidade/OPERACAO.md`; para decisões e o que falta, consulte `docs/PLANO-REESCRITA.md`.
 2. Confira `git status`, `VERSION`, a release mais recente e os resultados de Actions. Este contexto tem data e pode ficar desatualizado; o código e as evidências atuais prevalecem sobre o resumo.
 3. Fontes ativos:
    - **Reescrita (linha 1.x), em andamento desde 11/11/2026:** `sistema/` (Java 25 puro: Jetty embutido, JDBC, JSP), seguindo `docs/PLANO-REESCRITA.md`. São 12 entregas, cada uma com uma branch `reescrita/…` e um PR. Cada entrega só começa com o ok do responsável e termina parando para aguardar. Decisões novas viram pergunta. Nenhuma biblioteca fora da lista autorizada (decisão 3b do plano).
@@ -33,13 +33,13 @@ Este repositório é o projeto acadêmico de Projeto Aplicado do UniSENAI, em pa
 
 Faça mudanças pequenas e verificáveis, execute os testes pertinentes e informe o que foi e o que não foi testado. Uma execução em um sistema não comprova todos os sistemas.
 
-Mudanças funcionais são entregues em GitHub Releases após a matriz da CI. Não mova tags nem substitua assets publicados. Siga `RELEASES.md`; atualize o handover da linha ativa e mantenha os links de download do README na versão publicada (em 23/11/2026 o responsável tirou do README a 0.5.12 e a seção “Versão oficial”; ele mostra só a linha 1.x; a 0.5.12 continua nas Releases). A política de segurança é voltada ao público e deve usar linguagem simples; a menção a IA permanece discreta no rodapé.
+Mudanças funcionais são entregues em GitHub Releases após a matriz da CI. Não mova tags nem substitua assets publicados. Siga `RELEASES.md`; atualize o plano e mantenha os links de download do README na versão publicada (em 23/11/2026 o responsável tirou do README a 0.5.12 e a seção “Versão oficial”; ele mostra só a linha 1.x; a 0.5.12 continua nas Releases). A política de segurança é voltada ao público e deve usar linguagem simples; a menção a IA permanece discreta no rodapé.
 
 Ao concluir uma tarefa, atualize `continuidade/ESTADO-ATUAL.md` com: mudança, evidência dos testes, commit/release de referência e pendências reais. Atualize `CONTEXTO.md` apenas quando uma decisão duradoura mudar. Não marque algo como feito apenas porque foi solicitado no histórico.
 
 As conexões do ChatGPT não são transferidas ao Claude Code. Verifique as integrações disponíveis na nova ferramenta; nunca registre credenciais nestes documentos.
 
-Entregas e evidências anteriores estão em `continuidade/HISTORICO.md`, no handover e nas releases. O envio dos PCs ao GitHub ainda não foi ativado: a integração Render exige identificar explicitamente o workspace, e nada nesta área autoriza selecionar My Workspace sem a resposta do usuário. Não declarar envio real como concluído. Cada lote termina ao ser entregue: parar e aguardar nova autorização.
+Entregas e evidências anteriores estão no histórico do Git, na tag `v0.5.12` e nas releases. Mantenha o `ESTADO-ATUAL.md` em uma página. O envio dos PCs ao GitHub ainda não foi ativado: a integração Render exige identificar explicitamente o workspace, e nada nesta área autoriza selecionar My Workspace sem a resposta do usuário. Não declarar envio real como concluído. Cada lote termina ao ser entregue: parar e aguardar nova autorização.
 
 Em 18/10/2026, o responsável retirou o suporte Android do projeto ativo. Manter somente desktop Windows/macOS/Linux. Histórico, releases Android já publicadas e materiais privados de recuperação permanecem preservados; não retomar Android sem nova autorização.
 

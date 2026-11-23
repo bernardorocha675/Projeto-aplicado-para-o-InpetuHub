@@ -53,7 +53,7 @@ Falhas de SMTP são testadas com serviço simulado, sem enviar emails reais. Nã
 5. Sem SMTP, confirme a solicitação: a tela deve explicar conferência manual e não pedir código. Isso não aprova nem bloqueia horário. Com SMTP configurado, código ativo deve manter oito dígitos, expiração e limite de tentativas; teste SMTP real exige configuração separada.
 6. Todos os campos obrigatórios devem ter `*`. Confira agenda com dia livre/parcial/ocupado e em janela estreita; os sete dias da semana devem ficar visíveis.
 
-Evidências e limites: [CORRECOES-RELATORIO.md](CORRECOES-RELATORIO.md).
+Evidências e limites: [CORRECOES-RELATORIO.md](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/blob/v0.5.12/docs/CORRECOES-RELATORIO.md).
 
 ## Abertura e atualização — fix 0.4.11
 

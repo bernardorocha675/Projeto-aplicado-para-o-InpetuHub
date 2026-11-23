@@ -18,7 +18,7 @@ O plano gratuito pode levar cerca de um minuto para reativar e perde a fila em r
 
 A entrada de diagnósticos não atesta identidade ou integridade do computador. O coletor reconstrói os arquivos; nunca executa conteúdo recebido. Limites: 3 MiB/requisição, 5.000 eventos/sessão, quatro requisições simultâneas, 20 relatórios/40 MiB em fila, 50 novos relatórios/dia UTC e 120 recebimentos/origem a cada 15 minutos. A origem pode ser um proxy do provedor.
 
-O índice permite até 5.000 sessões antes de exigir arquivamento. A coleta pode atrasar e requer Actions habilitado. Não usar como evidência autenticada de segurança nem publicar dados confidenciais. Ver Testes/README.md e RELATORIOS.md.
+O índice permite até 5.000 sessões antes de exigir arquivamento. A coleta pode atrasar e requer Actions habilitado. Não usar como evidência autenticada de segurança nem publicar dados confidenciais. Ver Testes/README.md e [RELATORIOS.md](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/blob/v0.5.12/docs/RELATORIOS.md).
 
 ## Testes
 

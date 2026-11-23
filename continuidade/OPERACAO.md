@@ -17,7 +17,7 @@ Os caminhos abaixo partem da raiz do repositório. Os fontes ativos estão em ap
 | Coletor e identidade | `.github/scripts/collect-reports.mjs`, `verify-collector-identity.mjs`, `.github/workflows/collect-test-reports.yml` |
 | Empacotamento e smoke | `.github/scripts/package_v04.py`, `smoke_v04.py` |
 | Publicação | `.github/workflows/release-v0.4.yml`, `.github/scripts/publish_v04.py`, `VERSION`, `RELEASE-NOTES.md`, `RELEASES.md` |
-| Guias para pessoas | `docs/COMO-INICIAR.md`, `TESTAR.md`, `ACESSOS.md`, `ATUALIZACOES.md`, `HANDOVER.md` |
+| Guias para pessoas | `docs/COMO-INICIAR.md`, `TESTAR.md`, `GUIA.md` (a `ATUALIZACOES.md` e o `HANDOVER.md` estão na tag `v0.5.12`) |
 
 ## Comandos de desenvolvimento
 

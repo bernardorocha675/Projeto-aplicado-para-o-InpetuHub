@@ -61,7 +61,7 @@ A cópia local permanece até confirmação final de publicação. HTTP 202 sign
 
 Os relatórios públicos omitem dados livres e incluem códigos, IDs locais, tipos de erro e pontos do código. Não atestam identidade/integridade do dispositivo. Há limites de eventos/tamanho/fila; eventos omitidos por limite são contados. CONCLUIDO significa encerramento normal; erros individuais precisam ser conferidos.
 
-Detalhes de limites, formatos e operação estão em `docs/RELATORIOS.md`, `docs/RECEPTOR.md` e `Testes/README.md`.
+Detalhes de limites, formatos e operação estão em `docs/RELATORIOS.md` (na tag `v0.5.12`), `docs/RECEPTOR.md` e `Testes/README.md`.
 
 ## Forma de continuidade a partir da reorganização
 
