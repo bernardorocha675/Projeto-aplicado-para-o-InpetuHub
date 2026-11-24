@@ -10,7 +10,8 @@ O InPETU Hub foi refeito do zero com Java, SQL, Python e HTML/CSS/JS, sem Go, No
 | Windows | Na `main` (PR #69); só x64 desde o PR #72 |
 | 12: revisão | Na `main` (PR #71) |
 | 1.0.0-alpha.1 | Publicada em 23/11/2026 |
-| **Teste do time e correções (alpha.2)** | **Próxima** |
+| 1.0.0-alpha.2: registro dos testes e relatório | Publicada em 23/11/2026 |
+| **Teste do time e correções (alpha.3)** | **Próxima** |
 | v1.0.0 | Depois, só com o ok do responsável |
 
 ## Decisões
@@ -84,5 +85,5 @@ As decisões da 0.5 e o porquê de cada uma estão no [contexto antigo](https://
 ## Riscos ainda não testados
 
 - O pacote num Windows fora da CI, e o aviso de programa não assinado.
-- A atualização de uma versão publicada para outra (só com a alpha.2).
+- A atualização entre versões publicadas no Windows (no Linux, conferida da alpha.1 para a alpha.2).
 - Telas com MySQL, leitor de tela real e Linux além do Ubuntu.

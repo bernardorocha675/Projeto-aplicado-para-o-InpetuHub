@@ -1,25 +1,24 @@
 # Estado atual
 
-Atualizado em 23/11/2026. **Mantenha este arquivo em uma página:** troque o que mudou em vez de acrescentar. Os registros anteriores estão no [histórico](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/blob/7129fccce3aedc9590a69b2ab4a5655a5a89910f/continuidade/ESTADO-ATUAL.md).
+Atualizado em 24/11/2026. **Mantenha este arquivo em uma página:** troque o que mudou em vez de acrescentar. Os registros anteriores estão no [histórico](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/blob/7129fccce3aedc9590a69b2ab4a5655a5a89910f/continuidade/ESTADO-ATUAL.md).
 
 ## Onde estamos
 
-- **1.0.0-alpha.1** publicada como pré-release em 23/11/2026, para Windows x64 e Linux x64: [release](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v1.0.0-alpha.1), run 45212853659, tag em `1e28f5a`.
+- **1.0.0-alpha.2** publicada como pré-release em 23/11/2026, para Windows x64 e Linux x64: [release](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/tag/v1.0.0-alpha.2), run 45285575671, tag em `872ad0e`. Traz o registro do que acontece nos testes, o **Salvar relatório** e a correção dos campos do pedido (PR #80). A alpha.1 é de 23/11/2026, tag em `1e28f5a`.
 - A **0.5.12** continua a “Latest” nas Releases; código e fluxo da 0.5 intactos. O iniciador antigo ignora a linha 1.x.
 - As entregas 1 a 12 estão na `main`. O README mostra só a 1.0.
 - Documentação refeita (PR #76): README, guia, CONTRIBUTING, plano e este estado. Decisões e operação antigas foram para o plano e o CONTRIBUTING, com o original no histórico.
 
 ## Evidência
 
-- Entrega 12 (Linux x64): 213 testes Java (1 pulado: MySQL), 64 do iniciador com o jar real, 10 dos scripts, axe sem violações em 19 telas e estados.
+- alpha.2 (Linux x64): 219 testes Java (1 pulado: MySQL), 75 do iniciador com o jar real e a janela na tela, 10 dos scripts. Na entrega 12, axe sem violações em 19 telas e estados.
 - CI: pacotes de Linux e Windows aprovados, com a troca de versão na fumaça; migrações com MySQL 8.4.
-- Depois de publicar: somas conferidas, 385 arquivos das releases antigas iguais, fumaça do pacote Linux baixado e instalação pelo GitHub real.
+- Depois de publicar a alpha.2: somas conferidas, 388 arquivos das releases antigas iguais, fumaça do pacote Linux baixado, e a **alpha.1 publicada se atualizou sozinha para a alpha.2 pelo GitHub**, com a mesma sessão de log.
 - Restauração de um backup conferida no Linux, com o jar atual (23/11/2026).
 
 ## Pendências
 
-- Time testar a alpha.1, primeiro num Windows. Correções vão para a alpha.2.
-- **alpha.2 em desenvolvimento** (branch `reescrita/logs-teste`, autorizada em 23/11/2026; publicar só com novo ok): registro de cliques, erros de página e nomes de campos recusados (`/tela`, só códigos de lista), botões do iniciador no log e **Salvar relatório**. Corrige um bug da alpha.1: os atributos dos campos do pedido saíam colados (`requiredmaxlength`), e o navegador não os exigia; o servidor sempre conferiu.
+- Time testar a alpha.2, primeiro num Windows, e mandar o relatório salvo. Correções vão para a alpha.3.
 - Decisões abertas no [plano](../docs/PLANO-REESCRITA.md#o-que-falta).
 - Agente de privacidade (rodada completa) e scan do Claude Security: não feitos. A configuração do Claude Security está só no computador do responsável, sem commit.
 - `windows-11-arm` falhou uma vez no teste da 0.5 (run 45197291212) e passou antes e depois; causa não identificada.
