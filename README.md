@@ -12,14 +12,14 @@ A equipe do Hub guardava as informações dos empreendedores em várias planilha
 
 ## Baixar
 
-### Versão 1.0.0-alpha.1
+### Versão 1.0.0-alpha.2
 
 Esta é uma versão de teste. **Use com dados fictícios.** Escolha o pacote do seu computador; não é preciso instalar mais nada.
 
 | Computador | Executável |
 | --- | --- |
-| Windows (Intel/AMD) | [Baixar a 1.0.0-alpha.1](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v1.0.0-alpha.1/InPETU-Hub-Windows-x64-v1.0.0-alpha.1.zip) |
-| Linux (Intel/AMD) | [Baixar a 1.0.0-alpha.1](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v1.0.0-alpha.1/InPETU-Hub-Linux-x64-v1.0.0-alpha.1.zip) |
+| Windows (Intel/AMD) | [Baixar a 1.0.0-alpha.2](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v1.0.0-alpha.2/InPETU-Hub-Windows-x64-v1.0.0-alpha.2.zip) |
+| Linux (Intel/AMD) | [Baixar a 1.0.0-alpha.2](https://github.com/bernardorocha675/Projeto-aplicado-para-o-InpetuHub/releases/download/v1.0.0-alpha.2/InPETU-Hub-Linux-x64-v1.0.0-alpha.2.zip) |
 
 **Ainda não tem:** empreendedores, atendimentos, visitas, colaboradores e as telas de administração e configuração. Por enquanto, só as reservas da persona P1 podem ser aprovadas.
 

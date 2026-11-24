@@ -1,6 +1,6 @@
 # Guia de uso
 
-Vale para a linha 1.0. **Salvar relatório** e o registro de cliques chegam na alpha.2. Para baixar, abrir e encerrar, veja o [README](../README.md#como-executar).
+Vale para a versão 1.0.0-alpha.2. Para baixar, abrir e encerrar, veja o [README](../README.md#como-executar).
 
 ## Acessos de demonstração
 
@@ -74,4 +74,4 @@ Os logs foram feitos para não guardar senhas, dados de formulário nem a pasta 
 
 ## Relatar um problema
 
-Informe a versão, o sistema (Windows ou Linux), o horário, o que você fez, o que esperava e o que aconteceu. Na janela do iniciador, clique em **Salvar relatório**, escolha a pasta, confira o arquivo e mande para a equipe. Ele junta as 5 últimas sessões e nada é enviado sozinho. Na alpha.1, anexe só o trecho do log daquele horário. Falhas de segurança seguem a [política de segurança](../.github/SECURITY.md).
+Informe a versão, o sistema (Windows ou Linux), o horário, o que você fez, o que esperava e o que aconteceu. Na janela do iniciador, clique em **Salvar relatório**, escolha a pasta, confira o arquivo e mande para a equipe. Ele junta as 5 últimas sessões e nada é enviado sozinho. Falhas de segurança seguem a [política de segurança](../.github/SECURITY.md).
