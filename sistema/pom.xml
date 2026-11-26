@@ -18,7 +18,7 @@
     <!-- Bibliotecas autorizadas (docs/PLANO-REESCRITA.md, decisão 3b). Novas bibliotecas só com o ok da equipe. -->
     <jetty.version>12.1.14</jetty.version>
     <junit.version>5.14.4</junit.version>
-    <flyway.version>13.11.1</flyway.version>
+    <flyway.version>13.13.0</flyway.version>
     <h2.version>2.5.252</h2.version>
     <mysql.version>26.10.0</mysql.version>
     <jbcrypt.version>0.4</jbcrypt.version>
