@@ -16,7 +16,7 @@
     <classe.principal>br.com.inpetu.hub.Aplicacao</classe.principal>
 
     <!-- Bibliotecas autorizadas (docs/PLANO-REESCRITA.md, decisão 3b). Novas bibliotecas só com o ok da equipe. -->
-    <jetty.version>12.1.14</jetty.version>
+    <jetty.version>12.1.15</jetty.version>
     <junit.version>5.14.4</junit.version>
     <flyway.version>13.11.1</flyway.version>
     <h2.version>2.5.252</h2.version>
